@@ -17,6 +17,15 @@ class server(commands.Cog):
             await ctx.reply(file=File(f, file_name), mention_author=True)
             f.close
 
+    @commands.command(description="Send a Nekopara character from my personal collection.", brief="Send a picture of a chosen character from Nekopara")
+    async def nekopara(self, ctx, *frien):
+        aru2 = ezogaming_regex("Nekopara", frien)
+        dir = f'{NekoparaPath}\\' + aru2
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, file_name), mention_author=True)
+            f.close
+
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
         # some of the directories here are hardcoded due to them being on other parts of my pc, unfortunately

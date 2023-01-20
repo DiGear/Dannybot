@@ -19,9 +19,9 @@ bot = commands.Bot(
 # print a success message upon boot, and then change the bots activity
 @bot.event
 async def on_ready():
-    print("-----------------------------------------")
+    print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
-    print("-----------------------------------------")
+    print("---------------------------------------------------------------------")
     await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
