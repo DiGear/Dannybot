@@ -53,7 +53,7 @@ devs = [
     158418656861093888,  # EzoGaming
 ]
 
-# .env shit
+# .env
 Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removbebg_key = os.getenv("REMOVEBG_KEY")
