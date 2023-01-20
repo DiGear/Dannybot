@@ -41,7 +41,7 @@ load_dotenv()
 # Variables
 # ----------
 
-# dannybot shit
+# dannybot config
 dannybot_prefix = "d2." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
