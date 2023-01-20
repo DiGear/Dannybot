@@ -17,6 +17,8 @@ class image(commands.Cog):
     async def meme(self, ctx, context, *, meme_text: typing.Optional[str] = "ValueError"):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
         # ezogaming shit
+        # this downloads the image to be meme'd and then configures all of the args appropriately
+        # there has to be a better way to do this
         with open(f"{dannybot}\\cache\\meme_in.png", 'wb') as f:
             try:
                 f.write(requests.get(context).content)
@@ -39,33 +41,29 @@ class image(commands.Cog):
                     f.write(requests.get(context).content)
                     f.close
         # end ezogaming shit
-        try:
+        # split the meme text by top and bottom
+        if ("|" in meme_text):
             meme_text_splitted = meme_text.split("|")
-            Top_Text = meme_text_splitted[0]
-            Bottom_Text = meme_text_splitted[1]
-        except:
-            Top_Text = meme_text
+            Top_Text = meme_text_splitted[0].upper()
+            Bottom_Text = meme_text_splitted[1].upper()
+        else:
+            Top_Text = meme_text.upper()
             Bottom_Text = ""
-        Top_Text = Top_Text.upper()
-        Bottom_Text = Bottom_Text.upper()
-        png_path = (f"{dannybot}\\cache\\meme_in.png")
-        gif_path = None  # i plan to use this later
-        is_gif = None
+        # display it in console for debugging purposes
         print("Top_Text is: [" + Top_Text + "]")
         print("Bottom_Text is: [" + Bottom_Text + "]")
-
-        if '.gif' in context:
+        png_path = (f"{dannybot}\\cache\\meme_in.png")
+        # determine if we need to call the standard or gif function
+        if '.gif' not in context:
+            make_meme(Top_Text, Bottom_Text, png_path)
+        else:
             with open(f"{dannybot}\\cache\\gif.gif", 'wb') as f:
                 f.write(requests.get(context).content)
                 f.close
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
-        if '.gif' not in context:
-            is_gif = False
-            make_meme(Top_Text, Bottom_Text, png_path)
-        else:
-            is_gif = True
             make_meme_gif(Top_Text, Bottom_Text)
-        if (is_gif):
+        # determine if we need to send a gif or png in response
+        if '.gif' in context:
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", 'rb') as f:
                 await ctx.reply(file=File(f, 'meme.gif'), mention_author=True)
                 cleanup_ffmpeg()
