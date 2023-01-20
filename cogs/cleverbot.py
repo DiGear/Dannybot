@@ -24,11 +24,13 @@ class cleverbot(commands.Cog):
                 # this resets the conversation upon request
                 if "new conversation" in input.content:
                     cw.reset()
+                    return
                 elif "> " in input.content:
                     return
                 else:
                     # send the resulting message cleverbot api returns for our given unput
                     await input.channel.send(cw.say(input.content), reference=input)
+                    return
 
 
 async def setup(bot: commands.Bot):
