@@ -40,6 +40,7 @@ class image(commands.Cog):
                     context = await message_history_img_handler(ctx)
                     f.write(requests.get(context).content)
                     f.close
+        png_path = (f"{dannybot}\\cache\\meme_in.png")
         # end ezogaming shit
         # split the meme text by top and bottom
         if ("|" in meme_text):
@@ -49,10 +50,6 @@ class image(commands.Cog):
         else:
             Top_Text = meme_text.upper()
             Bottom_Text = ""
-        # display it in console for debugging purposes
-        print("Top_Text is: [" + Top_Text + "]")
-        print("Bottom_Text is: [" + Bottom_Text + "]")
-        png_path = (f"{dannybot}\\cache\\meme_in.png")
         # determine if we need to call the standard or gif function
         if '.gif' not in context:
             make_meme(Top_Text, Bottom_Text, png_path)
