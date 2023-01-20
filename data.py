@@ -93,33 +93,22 @@ def ezogaming_regex(datalist, dataentry):
     results = entry[sort[i2]]
     return results
 
-# python 3.10 adds switch cases
-#
-# i am on python 3.8.1 still...
-
-
 def undertext(name):
     # character overrides
-    if name == "danny":
-        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png"
-    elif name == "danny-funny":
-        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png"
-    elif name == "danny-angry":
-        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png"
-    elif name == "danny-pissed":
-        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png"
-    elif name in ["flashlight", "ezo", "ezogaming"]:
-        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png"
-    elif name == "incine":
-        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png"
-    elif name == "pizzi":
-        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png"
-    elif name == "cris":
-        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png"
-    elif name == "seki":
-        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png"
-    else:
-        name = name
+    underdict = {
+    "danny" : "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
+    "danny-funny" : "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
+    "danny-angry" : "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
+    "danny-pissed" : "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
+    "flashlight" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
+    "ezo" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
+    "ezogaming" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
+    "incine" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
+    "pizzi" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png",
+    "cris" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
+    "seki" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png"
+}
+    name = underdict.get(name, name)
 
     # link overrides
     if name.startswith("https://"):
