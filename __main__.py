@@ -3,7 +3,9 @@
 # the developer list is located at line 25
 import asyncio
 import os
+import sys
 import time
+import traceback
 
 import discord
 from discord.ext import commands
@@ -40,6 +42,49 @@ async def on_message(input):
         await input.channel.send("Developer mode is active. Only verified developers can interact with the bot at this time.")
     else:
         await bot.process_commands(input)
+
+# error handling code
+@bot.event
+async def on_command_error(ctx, error):
+    if hasattr(ctx.command, "on_error"):
+        return
+
+    cog = ctx.cog
+    if cog:
+        if cog._get_overridden_method(cog.cog_command_error) is not None:
+            return
+
+    ignored = (commands.CommandNotFound,)
+
+    error = getattr(error, "original", error)
+
+    if isinstance(error, ignored):
+        return
+
+    if isinstance(error, commands.DisabledCommand):
+        await ctx.send(f"{ctx.command} has been disabled.")
+
+    elif isinstance(error, commands.errors.NotOwner):
+        await ctx.send(f"{ctx.command} requires a higher permission level.")
+
+    elif isinstance(error, commands.NoPrivateMessage):
+        try:
+            await ctx.author.send(f"{ctx.command} can not be used in Private Messages.")
+        except discord.HTTPException:
+            pass
+    else:
+        await ctx.send(
+            "An undefined error has occured.\n```\n"
+            + str(error.__traceback__)
+            + "\n"
+            + str(error)
+            + "```\nIf you are seeing this, ping either FDG or EzoGaming."
+        )
+        print("Ignoring exception in command {}:".format(
+            ctx.command), file=sys.stderr)
+        traceback.print_exception(
+            type(error), error, error.__traceback__, file=sys.stderr
+        )
 
 # this is a ping command and it's pretty self-explanatory
 @bot.command(
