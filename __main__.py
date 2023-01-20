@@ -111,6 +111,18 @@ async def reload(ctx, module):
     await bot.load_extension(f"cogs.{module}")
     await ctx.send(f"Reloaded {module} module!")
 
+@bot.command(
+    name="clear cache",
+    description="This is an owner only command. It allows for any module to be reloaded on the fly.",
+    brief="Clears Dannybots cache"
+)
+@commands.is_owner()
+async def clear_cache(ctx):
+    for file in os.listdir(f'{dannybot}\\cache'):
+        if 'git' not in file and '.' in file:
+            os.remove(f'{dannybot}\\cache\\{file}')
+    await ctx.send(f"Cleared cache!")
+
 # stage all of our cogs
 async def load_extensions():
     for filename in os.listdir("./cogs"):
