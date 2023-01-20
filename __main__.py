@@ -1,6 +1,4 @@
 # this is the file that boots up every other file.
-# you should never need to touch anything in here, other than to change the list of developers.
-# the developer list is located at line 25
 import asyncio
 import os
 import sys
@@ -11,6 +9,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+# if you can't find a variable used in this file its probably imported from here
 from data import *
 
 load_dotenv()
@@ -21,14 +20,6 @@ bot = commands.Bot(
     activity=discord.Activity(name="for d.help", type=3),
     intents=discord.Intents.all(),
 )
-
-# debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
-debug_mode = True
-# put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
-devs = [
-    343224184110841856,  # Danny
-    158418656861093888,  # EzoGaming
-]
 
 # print a success message upon boot, and then change the bots activity
 @bot.event
@@ -92,7 +83,7 @@ async def on_command_error(ctx, error):
 @bot.command(
     description="Calculate bot latency using time.monotonic(), and send the results.",
     brief="Sends the current bot latency"
-    )
+)
 async def ping(ctx):
     before = time.monotonic()
     message = await ctx.send("Ping is...")

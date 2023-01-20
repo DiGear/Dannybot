@@ -1,4 +1,5 @@
 # this is where most of the bullshit will be taking place
+# anything you need to configure will be located in here
 import json
 import os
 import random
@@ -8,7 +9,23 @@ import PIL
 import requests
 from PIL import ImageDraw, ImageFont
 
+# ----------
+# Variables
+# ----------
+
+# easy to call variable that stores our current working directory
 dannybot = os.getcwd()
+# debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
+debug_mode = True
+# put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
+devs = [
+    343224184110841856,  # Danny
+    158418656861093888,  # EzoGaming
+]
+
+# ----------
+# Functions
+# ----------
 
 
 def unpack_gif(file):
