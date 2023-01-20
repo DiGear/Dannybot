@@ -25,7 +25,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
-# this utilizes the above debug mode features to check for verified developers, and process command input
+# check if config.debug_mode is true and treat the message handler appropriately
 @bot.event
 async def on_message(input):
     if (debug_mode and input.content.startswith(bot.command_prefix) and input.author.id not in devs):

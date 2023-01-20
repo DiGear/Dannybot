@@ -46,6 +46,7 @@ dannybot_prefix = "d2." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 debug_mode = True # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
+logs_channel = 971178342550216705 #channel to log command and cleverbot usage
 # put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
 devs = [
     343224184110841856,  # Danny

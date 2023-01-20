@@ -3,9 +3,6 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-# set this to your logging channel ID
-logs_channel = 971178342550216705
-
 
 class logging(commands.Cog):
     def __init__(self, bot: commands.Bot):
