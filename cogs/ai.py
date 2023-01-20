@@ -56,6 +56,18 @@ class ai(commands.Cog):
         request_is_processing = False
         return
 
+    @commands.command(aliases=['quote'], description="Sends AI generated quotes using the inspirobot API.", brief="Get AI generated inspirational posters")
+    async def inspire(self, ctx):
+        link = "http://inspirobot.me/api?generate=true"
+        f = requests.get(link)
+        File_Url = f.text
+        img = PIL.Image.open(requests.get(File_Url, stream=True).raw)
+        img.save(f"{dannybot}\\cache\\quote.jpg", "JPEG")
+        f = discord.File(f"{dannybot}\\cache\\quote.jpg", filename="quote.jpg")
+        embed = discord.Embed(color=0xffc7ed)
+        embed.set_image(url="attachment://quote.jpg")
+        embed.set_footer(text="Powered by https://inspirobot.me/")
+        await ctx.reply(file=f, embed=embed, mention_author=True)
 
     @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
     async def dalle(self, ctx, *, prompt):
