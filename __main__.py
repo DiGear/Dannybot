@@ -39,33 +39,42 @@ async def on_message(input):
 # error handling code
 @bot.event
 async def on_command_error(ctx, error):
+    # ignore "intentional errors"/errors that get caught mid-function
     if hasattr(ctx.command, "on_error"):
         return
 
+    # ignore errors that happen in cogs that contain error handlers already
     cog = ctx.cog
     if cog:
         if cog._get_overridden_method(cog.cog_command_error) is not None:
             return
 
+    # set specific errors to be ignored, such as the commands.CommandNotFound error
     ignored = (commands.CommandNotFound,)
 
     error = getattr(error, "original", error)
 
+    # ignore errors in the ignore list
     if isinstance(error, ignored):
         return
 
+    # command is disabled
     if isinstance(error, commands.DisabledCommand):
         await ctx.send(f"{ctx.command} has been disabled.")
 
+    # command requires developer permissions
     elif isinstance(error, commands.errors.NotOwner):
-        await ctx.send(f"{ctx.command} requires a higher permission level.")
+        await ctx.send(f"{ctx.command} is reserved for Dannybot developers.")
 
+    # command was sent in a DM
     elif isinstance(error, commands.NoPrivateMessage):
+        # send the error response in the DM, if possible
         try:
             await ctx.author.send(f"{ctx.command} can not be used in Private Messages.")
         except discord.HTTPException:
             pass
     else:
+        # this is a catch-all for any other types of errors, they will be sent in chat and the console for debugging purposes
         await ctx.send(
             "An undefined error has occured.\n```\n"
             + str(error.__traceback__)
