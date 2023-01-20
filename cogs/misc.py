@@ -1,5 +1,4 @@
 # this is where the shit hits the fan, pretty much
-
 import typing
 import urllib
 import urllib.request

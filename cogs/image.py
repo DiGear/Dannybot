@@ -1,7 +1,4 @@
 # this is where the shit hits the fan, pretty much
-
-#try except block amount: 2
-
 import typing
 
 import requests
