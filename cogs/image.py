@@ -1,9 +1,4 @@
 # this is where the shit hits the fan, pretty much
-import typing
-
-import requests
-from discord import File
-from discord.ext import commands
 
 # if you can't find a variable used in this file its probably imported from here
 from data import *
@@ -63,7 +58,7 @@ class image(commands.Cog):
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
             make_meme_gif(Top_Text, Bottom_Text)
             repack_gif()
-            
+
         # determine if we need to send a gif or png in response
         if '.gif' in context:
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", 'rb') as f:
