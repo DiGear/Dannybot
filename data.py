@@ -270,19 +270,18 @@ async def resolve_args(ctx, args, attachments):
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
     imageSize = img.size
+
+    # fix font size calc
     fontSize = int(imageSize[1]/5)
+    if fontSize  <= 0:
+        fontSize = 1
+
     font = ImageFont.truetype(
         f"{dannybot}\\assets\\impactjpn.otf", fontSize)
     topTextSize = font.getsize(Top_Text)
     bottomTextSize = font.getsize(Bottom_Text)
-    while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
-        fontSize = fontSize - 1
-
-        topTextSize = font.getsize(Top_Text)
-        bottomTextSize = font.getsize(Bottom_Text)
     topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
-    topTextPositionY = 0
-    topTextPosition = (topTextPositionX, topTextPositionY)
+    topTextPosition = (topTextPositionX, 0)
     bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
     bottomTextPositionY = imageSize[1] - bottomTextSize[1]
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
@@ -305,47 +304,45 @@ def make_meme(Top_Text, Bottom_Text, path):
     return
 
 # gif version
+# will only have comments on what has been modified
 def make_meme_gif(Top_Text, Bottom_Text):
+
+    # iterate through every frame in the ffmpeg folder and edit them
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
         if '.png' in frame:
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
+
             imageSize = img.size
             fontSize = int(imageSize[1]/5)
+            if fontSize  <= 0:
+                fontSize = 1
             font = ImageFont.truetype(
                 f"{dannybot}\\assets\\impactjpn.otf", fontSize)
             topTextSize = font.getsize(Top_Text)
             bottomTextSize = font.getsize(Bottom_Text)
-            while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
-                fontSize = fontSize - 1
-                font = ImageFont.truetype(
-                    f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-                topTextSize = font.getsize(Top_Text)
-                bottomTextSize = font.getsize(Bottom_Text)
             topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
-            topTextPositionY = 0
-            topTextPosition = (topTextPositionX, topTextPositionY)
+            topTextPosition = (topTextPositionX, 0)
             bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
             bottomTextPositionY = imageSize[1] - bottomTextSize[1]
             bottomTextPosition = (
                 bottomTextPositionX, bottomTextPositionY - 10)
             draw = ImageDraw.Draw(img)
-
-            # FIX THE FUCKING STROKE SIZE
             top_outline = int((topTextSize[0]//75))
             bottom_outline = int((bottomTextSize[0]//75))
             if top_outline <= 0:
                 top_outline = 1
             if bottom_outline <= 0:
                 bottom_outline = 1
-
             draw.text(topTextPosition, Top_Text, (255, 255, 255),
                       font=font, stroke_width=top_outline, stroke_fill=(0, 0, 0))
             draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
                       font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
 
+            # save each frame of the gif individually, and then pack it back into a gif
             img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
             print("frame " + frame + " processed")
     repack_gif()
+
     return
 
 # dalle shit
