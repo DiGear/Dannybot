@@ -143,6 +143,7 @@ def ezogaming_regex(datalist, dataentry):
 # 1/20/23: FunnyDannyG remembers that python has dictionaries
 def undertext(name):
     # character overrides
+    # you could also put this in a JSON
     underdict = {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
         "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
