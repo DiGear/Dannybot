@@ -34,6 +34,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
+#this utilized the above debug mode features to check for verified developers, and process command input
 @bot.event
 async def on_message(input):
     if (debug_mode and input.content.startswith(bot.command_prefix) and input.author.id not in devs):
@@ -41,6 +42,7 @@ async def on_message(input):
     else:
         await bot.process_commands(input)
 
+#this is a test command and will probably get deleted really soon
 @bot.command()
 async def hi(ctx):
     await ctx.send("hi")
