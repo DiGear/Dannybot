@@ -1,5 +1,8 @@
 # this is where most of the bullshit will be taking place
 # anything you need to configure will be located in here
+
+#try except block amount: 1
+
 import json
 import os
 import random

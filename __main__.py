@@ -1,4 +1,7 @@
 # this is the file that boots up every other file.
+
+#try except block amount: 1
+
 import asyncio
 import os
 import sys
