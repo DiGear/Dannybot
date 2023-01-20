@@ -1,0 +1,9 @@
+#your bot will need tokens/keys for all of the following in order to work
+#fill in all of these values appropriately, and then rename this file to ".env"
+TOKEN=
+
+OPENAI_API_KEY=
+
+CLEVERBOT_KEY=
+
+REMOVEBG_KEY=
