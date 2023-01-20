@@ -351,8 +351,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
     return
 
 # dalle shit
-
-
+#Rotty wrote this code and I don't feel like reading through it and commenting everything
 async def generate_images(prompt: str) -> str(io.BytesIO):
     async with aiohttp.ClientSession() as session:
         async with session.post(DALLE_API, json={"prompt": prompt}) as response:
