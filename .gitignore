@@ -2,6 +2,7 @@
 database/*/
 cache/*
 tools/*/
+DANNYBOT_OLD
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

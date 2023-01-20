@@ -229,13 +229,13 @@ async def message_history_img_handler(ctx):
                     return a
 
 # go through the last 500 messages sent in the channel a command is ran in and check for audio
+# this isn't commented its just the same shit as the above function
 async def message_history_audio_handler(ctx):
     channel = ctx.message.channel
-    extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a',
-                  'oga', 'WAV', 'OGG', 'MP3', 'FLAC', 'AIFF', 'OPUS', 'M4A', 'OGA']
+    extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga']
     async for msg in channel.history(limit=500):
-        if len(msg.attachments) > 0:
-            ext = msg.attachments[0].url.split('.')[-1]
+        if msg.attachments:
+            ext = msg.attachments[0].url.split('.')[-1].lower()
             if ext in extensions:
                 return msg.attachments[0].url
         if 'http' in msg.content:
@@ -247,13 +247,13 @@ async def message_history_audio_handler(ctx):
                 return a
 
 # go through the last 500 messages sent in the channel a command is ran in and check for videos
+# this isn't commented its just the same shit as the above function
 async def message_history_video_handler(ctx):
     channel = ctx.message.channel
-    extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov',
-                  'mkv', 'MP4', 'AVI', 'MPEG', 'MPG', 'WEBM', 'MOV', 'MKV']
+    extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
     async for msg in channel.history(limit=500):
-        if len(msg.attachments) > 0:
-            ext = msg.attachments[0].url.split('.')[-1]
+        if msg.attachments:
+            ext = msg.attachments[0].url.split('.')[-1].lower()
             if ext in extensions:
                 return msg.attachments[0].url
         if 'http' in msg.content:
