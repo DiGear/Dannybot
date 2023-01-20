@@ -11,7 +11,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from functions import *
+from data import *
 
 load_dotenv()
 
