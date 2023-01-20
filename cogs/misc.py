@@ -1,5 +1,6 @@
 # this is where the shit hits the fan, pretty much
 
+import typing
 import urllib
 import urllib.request
 
@@ -16,6 +17,28 @@ class misc(commands.Cog):
         self.bot = bot
 
     @commands.command(
+        description="Use a custom flamingtext.com api to generate logos using random presets.",
+        brief="Generate a logo with a random font."
+    )
+    async def logo(self, ctx, *, logotext: typing.Optional[str] = "Your Text Here"):
+        # choose a random type from the array
+        logotype = random.choice(logolist)
+
+    # add the text to the end of a flamingtext image url
+        url = (
+            "https://flamingtext.com/net-fu/proxy_form.cgi?script="
+            + str(logotype)
+            + "-logo&text="
+            + str(logotext)
+            + "&_loc=generate&imageoutput=true"
+        )
+        url = furl.furl(url).url
+        image = urllib.request.URLopener()
+        image.retrieve(url, f"{dannybot}\\cache\\logo_out.png")
+
+        await ctx.reply(file=File(f"{dannybot}\\cache\\logo_out.png"), mention_author=True)
+
+    @commands.command(
         description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.",
         brief="Generate a custom Undertale-Styled textbox"
     )
@@ -26,7 +49,6 @@ class misc(commands.Cog):
                str(Text) + "&character=" + str(undertext(CharacterName)))
         url = furl.furl(url).url
         image = urllib.request.URLopener()
-        print(url)
         image.retrieve(url, f"{dannybot}\\cache\\undertext_out.png")
 
         await ctx.reply(file=File(f"{dannybot}\\cache\\undertext_out.png"), mention_author=True)

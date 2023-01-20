@@ -25,6 +25,45 @@ devs = [
     343224184110841856,  # Danny
     158418656861093888,  # EzoGaming
 ]
+#logo list for the logo command
+logolist = [
+    "clan",
+    "neon",
+    "fluffy",
+    "water",
+    "smurfs",
+    "style",
+    "runner",
+    "blackbird",
+    "fabulous",
+    "glow",
+    "chrominium",
+    "amped",
+    "supermarket",
+    "crafts",
+    "fire",
+    "steel",
+    "glossy",
+    "fifties",
+    "retro",
+    "beauty",
+    "birdy",
+    "inferno",
+    "winner",
+    "uprise",
+    "global",
+    "silver",
+    "minions",
+    "magic",
+    "fancy",
+    "orlando",
+    "fortune",
+    "swordfire",
+    "roman",
+    "golden",
+    "outline",
+    "funtime",
+]
 
 # ----------
 # Functions
