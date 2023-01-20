@@ -1,14 +1,5 @@
 # this is the file that boots up every other file.
 # should really shouldnt need to touch this file ever
-import asyncio
-import os
-import sys
-import time
-import traceback
-
-import discord
-from discord.ext import commands
-from dotenv import load_dotenv
 
 # if you can't find a variable used in this file its probably imported from here
 from data import *

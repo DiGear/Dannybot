@@ -1,11 +1,4 @@
 # this is where the shit hits the fan, pretty much
-import typing
-import urllib
-import urllib.request
-
-import furl
-from discord import File
-from discord.ext import commands
 
 # if you can't find a variable used in this file its probably imported from here
 from data import *

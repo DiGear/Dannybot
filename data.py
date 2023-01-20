@@ -7,11 +7,23 @@ import json
 import os
 import random
 import re
+import sys
+import time
+import traceback
+import typing
+import urllib
+import urllib.request
 
 import aiohttp
+import discord
+import furl
 import numpy
 import PIL
 import requests
+from cleverwrap import CleverWrap
+from discord import File
+from discord.ext import commands
+from dotenv import load_dotenv
 from PIL import Image, ImageDraw, ImageFont
 
 # ----------
