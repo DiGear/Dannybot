@@ -62,6 +62,7 @@ class image(commands.Cog):
                 f.close
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
             make_meme_gif(Top_Text, Bottom_Text)
+            repack_gif()
         # determine if we need to send a gif or png in response
         if '.gif' in context:
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", 'rb') as f:

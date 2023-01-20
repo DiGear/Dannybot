@@ -85,7 +85,7 @@ def unpack_gif(file):
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
-    os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp0001.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
+    os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
 
@@ -343,6 +343,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
             draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
                       font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
 
+            img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
             print("frame " + frame + " processed")
     repack_gif()
     return
