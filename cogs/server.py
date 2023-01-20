@@ -10,7 +10,7 @@ class server(commands.Cog):
 
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
-        # some of the directories here are hardcoded due to them being on othe parts of my pc, unfortunately
+        # some of the directories here are hardcoded due to them being on other parts of my pc, unfortunately
         embed = discord.Embed(title="Dannybot File Totals", color=0xf77e9a)
         embed.add_field(name="Pizzi AI Image Files:", value=fileCount(f"{dannybot}\\database\\Dooter"), inline=True)
         embed.add_field(name="Public File Repository:", value=fileCount(f"{dannybot}\\database\\Pooter"), inline=True)
