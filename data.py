@@ -290,7 +290,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextPositionY = imageSize[1] - bottomTextSize[1]
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
-    # FIX THE FUCKING STROKE SIZE
+    # FIXED THE FUCKING STROKE SIZE
     # idk why i never bothered to calculate stroke size like this
     # it divides the size of both top and bottom text by 75 and uses that as the stroke size
     # also we make sure it doesn't equal 0
@@ -318,7 +318,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
     # iterate through every frame in the ffmpeg folder and edit them
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
         if '.png' in frame:
-            
+
             # open image in PIL
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
 
