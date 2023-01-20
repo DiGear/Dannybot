@@ -23,6 +23,7 @@ import aiohttp
 import discord
 import furl
 import numpy
+import openai
 import PIL
 import requests
 from cleverwrap import CleverWrap
@@ -31,21 +32,30 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from PIL import Image, ImageDraw, ImageFont
 
+from fifteen import FifteenAPI
+
+#loading dotenv
+load_dotenv()
+
 # ----------
 # Variables
 # ----------
 
-#this is the bots prefix
-dannybot_prefix = "d2."
-# easy to call variable that stores our current working directory
-dannybot = os.getcwd()
-# debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
-debug_mode = True
+# dannybot shit
+dannybot_prefix = "d2." #bot prefix
+dannybot_token = os.getenv("TOKEN")
+dannybot = os.getcwd() # easy to call variable that stores our current working directory
+debug_mode = True # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
 # put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
 devs = [
     343224184110841856,  # Danny
     158418656861093888,  # EzoGaming
 ]
+# .env shit
+Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
+removbebg_key = os.getenv("REMOVEBG_KEY")
+
 # logo list for the logo command
 logolist = [
     "clan",

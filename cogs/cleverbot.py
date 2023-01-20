@@ -4,9 +4,6 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-load_dotenv()
-cw = CleverWrap(os.getenv("CLEVERBOT_KEY"))
-
 
 class cleverbot(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -20,13 +17,13 @@ class cleverbot(commands.Cog):
             if not input.author.bot:
                 # this resets the conversation upon request
                 if "new conversation" in input.content:
-                    cw.reset()
+                    Cleverbot.reset()
                     return
                 elif "> " in input.content:
                     return
                 else:
                     # send the resulting message cleverbot api returns for our given unput
-                    await input.channel.send(cw.say(input.content), reference=input)
+                    await input.channel.send(Cleverbot.say(input.content), reference=input)
                     return
 
 

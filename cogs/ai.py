@@ -3,6 +3,9 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+# this shit is dumb i wanna find a better way
+global request_is_processing
+request_is_processing = False
 
 class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):

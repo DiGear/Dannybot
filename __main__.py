@@ -9,8 +9,6 @@ print("-----------------------------------------")
 print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
 print("-----------------------------------------")
 
-load_dotenv()
-
 bot = commands.Bot(
     command_prefix=(dannybot_prefix),
     status=discord.Status.online,
@@ -132,6 +130,6 @@ async def load_extensions():
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start(os.getenv("TOKEN"))
+        await bot.start(dannybot_token)
 
 asyncio.run(main())
