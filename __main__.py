@@ -115,7 +115,7 @@ async def reload(ctx, module):
 
 @bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
 @commands.is_owner()
-async def clear_cache(ctx):
+async def cache(ctx):
     for file in os.listdir(f'{dannybot}\\cache'):
         if 'git' not in file and '.' in file:
             os.remove(f'{dannybot}\\cache\\{file}')
