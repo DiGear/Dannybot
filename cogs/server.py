@@ -13,7 +13,7 @@ class server(commands.Cog):
         # some of the directories here are hardcoded due to them being on other parts of my pc, unfortunately
         embed = discord.Embed(title="Dannybot File Totals", color=0xf77e9a)
         embed.add_field(name="Pizzi AI Image Files:", value=fileCount(f"{dannybot}\\database\\Dooter"), inline=True)
-        embed.add_field(name="Public File Repository:", value=fileCount(f"{dannybot}\\database\\Pooter"), inline=True)
+        embed.add_field(name="Pooter Files:", value=fileCount(f"{dannybot}\\database\\Pooter"), inline=True)
         embed.add_field(name="Leffrey Files:", value=fileCount(f"{dannybot}\\database\\Leffrey"), inline=True)
         embed.add_field(name="Femboy Files:", value=fileCount(f"{dannybot}\\database\\Femboy"), inline=True)
         embed.add_field(name="Fanboy Files:", value=fileCount(f"{dannybot}\\database\\Fanboy"), inline=True)
