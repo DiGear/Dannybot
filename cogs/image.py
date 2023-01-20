@@ -67,10 +67,10 @@ class image(commands.Cog):
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
         if '.gif' not in context:
             is_gif = False
-            make_meme(Top_Text, Bottom_Text, png_path, is_gif)
+            make_meme(Top_Text, Bottom_Text, png_path)
         else:
             is_gif = True
-            make_meme(Top_Text, Bottom_Text, png_path, is_gif)
+            make_meme_gif(Top_Text, Bottom_Text, png_path)
         if (is_gif):
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", 'rb') as f:
                 await ctx.reply(file=File(f, 'meme.gif'), mention_author=True)

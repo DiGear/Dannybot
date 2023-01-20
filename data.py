@@ -218,70 +218,67 @@ async def resolve_args(ctx, args, attachments):
 
 # ok back to FunnyDannyG code :)
 
-
-def make_meme(Top_Text, Bottom_Text, path, is_gif):
-    if (is_gif):  # the function completely splits into two based on if its a gif or not and I do not currently know how I would fix this
-        for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
-            if '.png' in frame:
-                img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
-                imageSize = img.size
-                fontSize = int(imageSize[1]/5)
-                font = ImageFont.truetype(
-                    f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-                topTextSize = font.getsize(Top_Text)
-                bottomTextSize = font.getsize(Bottom_Text)
-                while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
-                    fontSize = fontSize - 1
-                    font = ImageFont.truetype(
-                        f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-                    topTextSize = font.getsize(Top_Text)
-                    bottomTextSize = font.getsize(Bottom_Text)
-                topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
-                topTextPositionY = 0
-                topTextPosition = (topTextPositionX, topTextPositionY)
-                bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
-                bottomTextPositionY = imageSize[1] - bottomTextSize[1]
-                bottomTextPosition = (
-                    bottomTextPositionX, bottomTextPositionY - 10)
-                Top_Text_BW = font.getsize(str(Top_Text))
-                Bottom_Text_BW = font.getsize(str(Bottom_Text))
-                draw = ImageDraw.Draw(img)
-                draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=(
-                    Top_Text_BW[0]//200), stroke_fill=(0, 0, 0))
-                draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=(
-                    Bottom_Text_BW[0]//200), stroke_fill=(0, 0, 0))
-                img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
-                print("frame " + frame + " processed")
-    else:
-        img = PIL.Image.open(path)
-        imageSize = img.size
-        fontSize = int(imageSize[1]/5)
+def make_meme(Top_Text, Bottom_Text, path):
+    img = PIL.Image.open(path)
+    imageSize = img.size
+    fontSize = int(imageSize[1]/5)
+    font = ImageFont.truetype(
+        f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+    topTextSize = font.getsize(Top_Text)
+    bottomTextSize = font.getsize(Bottom_Text)
+    while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
+        fontSize = fontSize - 1
         font = ImageFont.truetype(
             f"{dannybot}\\assets\\impactjpn.otf", fontSize)
         topTextSize = font.getsize(Top_Text)
         bottomTextSize = font.getsize(Bottom_Text)
-        while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
-            fontSize = fontSize - 1
+    topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
+    topTextPositionY = 0
+    topTextPosition = (topTextPositionX, topTextPositionY)
+    bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
+    bottomTextPositionY = imageSize[1] - bottomTextSize[1]
+    bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
+    Top_Text_BW = font.getsize(str(Top_Text))
+    Bottom_Text_BW = font.getsize(str(Bottom_Text))
+    draw = ImageDraw.Draw(img)
+    draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=(
+        Top_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+    draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=(
+        Bottom_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+    img.save(f"{dannybot}\\cache\\meme_out.png")
+    return
+
+def make_meme_gif(Top_Text, Bottom_Text, path):
+    for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
+        if '.png' in frame:
+            img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
+            imageSize = img.size
+            fontSize = int(imageSize[1]/5)
             font = ImageFont.truetype(
                 f"{dannybot}\\assets\\impactjpn.otf", fontSize)
             topTextSize = font.getsize(Top_Text)
             bottomTextSize = font.getsize(Bottom_Text)
-        topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
-        topTextPositionY = 0
-        topTextPosition = (topTextPositionX, topTextPositionY)
-        bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
-        bottomTextPositionY = imageSize[1] - bottomTextSize[1]
-        bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
-        Top_Text_BW = font.getsize(str(Top_Text))
-        Bottom_Text_BW = font.getsize(str(Bottom_Text))
-        draw = ImageDraw.Draw(img)
-        draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=(
-            Top_Text_BW[0]//200), stroke_fill=(0, 0, 0))
-        draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=(
-            Bottom_Text_BW[0]//200), stroke_fill=(0, 0, 0))
-        img.save(f"{dannybot}\\cache\\meme_out.png")
-    if (is_gif):
-        repack_gif()
-        return
-    else:
-        return
+            while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
+                fontSize = fontSize - 1
+                font = ImageFont.truetype(
+                    f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+                topTextSize = font.getsize(Top_Text)
+                bottomTextSize = font.getsize(Bottom_Text)
+            topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
+            topTextPositionY = 0
+            topTextPosition = (topTextPositionX, topTextPositionY)
+            bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
+            bottomTextPositionY = imageSize[1] - bottomTextSize[1]
+            bottomTextPosition = (
+                bottomTextPositionX, bottomTextPositionY - 10)
+            Top_Text_BW = font.getsize(str(Top_Text))
+            Bottom_Text_BW = font.getsize(str(Bottom_Text))
+            draw = ImageDraw.Draw(img)
+            draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=(
+                Top_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+            draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=(
+                Bottom_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+            img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+            print("frame " + frame + " processed")
+            repack_gif()
+            return
