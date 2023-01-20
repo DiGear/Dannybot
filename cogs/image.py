@@ -16,6 +16,7 @@ class image(commands.Cog):
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, context, *, meme_text: typing.Optional[str] = "ValueError"):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+
         # ezogaming shit
         # this downloads the image to be meme'd and then configures all of the args appropriately
         # there has to be a better way to do this
@@ -41,6 +42,7 @@ class image(commands.Cog):
                     f.write(requests.get(context).content)
                     f.close
         png_path = (f"{dannybot}\\cache\\meme_in.png")
+
         # end ezogaming shit
         # split the meme text by top and bottom and then capitalize it
         if ("|" in meme_text):
@@ -50,6 +52,7 @@ class image(commands.Cog):
         else:
             Top_Text = meme_text.upper()
             Bottom_Text = ""
+
         # determine if we need to call the standard or gif function
         if '.gif' not in context:
             make_meme(Top_Text, Bottom_Text, png_path)
@@ -60,6 +63,7 @@ class image(commands.Cog):
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
             make_meme_gif(Top_Text, Bottom_Text)
             repack_gif()
+            
         # determine if we need to send a gif or png in response
         if '.gif' in context:
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", 'rb') as f:
