@@ -42,7 +42,7 @@ class image(commands.Cog):
                     f.close
         png_path = (f"{dannybot}\\cache\\meme_in.png")
         # end ezogaming shit
-        # split the meme text by top and bottom
+        # split the meme text by top and bottom and then capitalize it
         if ("|" in meme_text):
             meme_text_splitted = meme_text.split("|")
             Top_Text = meme_text_splitted[0].upper()
