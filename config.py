@@ -51,6 +51,7 @@ devs = [
     343224184110841856,  # Danny
     158418656861093888,  # EzoGaming
 ]
+
 # .env shit
 Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
