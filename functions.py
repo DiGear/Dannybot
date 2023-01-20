@@ -4,7 +4,9 @@ import os
 import random
 import re
 
+import PIL
 import requests
+from PIL import ImageDraw, ImageFont
 
 dannybot = os.getcwd()
 
@@ -71,9 +73,11 @@ def ezogaming_regex(datalist, dataentry):
     results = entry[sort[i2]]
     return results
 
-#python 3.10 adds switch cases
+# python 3.10 adds switch cases
 #
-#i am on python 3.8.1 still...
+# i am on python 3.8.1 still...
+
+
 def undertext(name):
     # character overrides
     if name == "danny":
@@ -102,6 +106,7 @@ def undertext(name):
         name = "custom&url=" + name
     return name
 
+
 def gettenor(url=''):
     apikey = "8FMRE051ZV31"
     gifid = url[url.rindex('-')+1:]
@@ -114,11 +119,14 @@ def gettenor(url=''):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
-#idk how any of this shit works
-#ezogaming wrote all of this
+# idk how any of this shit works
+# ezogaming wrote all of this
+
+
 async def message_history_img_handler(ctx):
     channel = ctx.message.channel
-    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'gif','PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'WEBP', 'GIF']
+    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp',
+                  'gif', 'PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'WEBP', 'GIF']
     async for msg in channel.history(limit=500):
         if len(msg.attachments) > 0:
             ext = msg.attachments[0].url.split('.')[-1]
@@ -139,7 +147,8 @@ async def message_history_img_handler(ctx):
 
 async def message_history_audio_handler(ctx):
     channel = ctx.message.channel
-    extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga', 'WAV', 'OGG', 'MP3', 'FLAC', 'AIFF', 'OPUS', 'M4A', 'OGA']
+    extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a',
+                  'oga', 'WAV', 'OGG', 'MP3', 'FLAC', 'AIFF', 'OPUS', 'M4A', 'OGA']
     async for msg in channel.history(limit=500):
         if len(msg.attachments) > 0:
             ext = msg.attachments[0].url.split('.')[-1]
@@ -156,7 +165,8 @@ async def message_history_audio_handler(ctx):
 
 async def message_history_video_handler(ctx):
     channel = ctx.message.channel
-    extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv', 'MP4', 'AVI', 'MPEG', 'MPG', 'WEBM', 'MOV', 'MKV']
+    extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov',
+                  'mkv', 'MP4', 'AVI', 'MPEG', 'MPG', 'WEBM', 'MOV', 'MKV']
     async for msg in channel.history(limit=500):
         if len(msg.attachments) > 0:
             ext = msg.attachments[0].url.split('.')[-1]
@@ -169,3 +179,99 @@ async def message_history_video_handler(ctx):
                 a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
                 a = a.split('?')[0]
                 return a
+
+
+async def resolve_args(ctx, args, attachments):
+    try:
+        if 'http' in args[0]:
+            url = args[0]
+            kys = args[1:]
+            text = ' '.join(kys)
+            return [url.split('?')[0], text]
+        elif attachments:
+            url = attachments[0].url
+            text = ' '.join(args)
+            return [url.split('?')[0], text]
+        else:
+            url = await message_history_img_handler(ctx)
+            text = ' '.join(args)
+            return [url, text]
+    except IndexError:
+        if attachments:
+            url = attachments[0].url
+            text = ' '.join(args)
+            return [url.split('?')[0], text]
+        else:
+            url = await message_history_img_handler(ctx)
+            text = ' '.join(args)
+            return [url, text]
+
+# ok back to FunnyDannyG code :)
+
+
+def make_meme(Top_Text, Bottom_Text, path, is_gif):
+    if (is_gif):  # the function completely splits into two based on if its a gif or not and I do not currently know how I would fix this
+        for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
+            if '.png' in frame:
+                img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
+                imageSize = img.size
+                fontSize = int(imageSize[1]/5)
+                font = ImageFont.truetype(
+                    f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+                topTextSize = font.getsize(Top_Text)
+                bottomTextSize = font.getsize(Bottom_Text)
+                while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
+                    fontSize = fontSize - 1
+                    font = ImageFont.truetype(
+                        f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+                    topTextSize = font.getsize(Top_Text)
+                    bottomTextSize = font.getsize(Bottom_Text)
+                topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
+                topTextPositionY = 0
+                topTextPosition = (topTextPositionX, topTextPositionY)
+                bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
+                bottomTextPositionY = imageSize[1] - bottomTextSize[1]
+                bottomTextPosition = (
+                    bottomTextPositionX, bottomTextPositionY - 10)
+                Top_Text_BW = font.getsize(str(Top_Text))
+                Bottom_Text_BW = font.getsize(str(Bottom_Text))
+                draw = ImageDraw.Draw(img)
+                draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=(
+                    Top_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+                draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=(
+                    Bottom_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+                img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+                print("frame " + frame + " processed")
+    else:
+        img = PIL.Image.open(path)
+        imageSize = img.size
+        fontSize = int(imageSize[1]/5)
+        font = ImageFont.truetype(
+            f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+        topTextSize = font.getsize(Top_Text)
+        bottomTextSize = font.getsize(Bottom_Text)
+        while topTextSize[0] > imageSize[0]-20 or bottomTextSize[0] > imageSize[0]-20:
+            fontSize = fontSize - 1
+            font = ImageFont.truetype(
+                f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+            topTextSize = font.getsize(Top_Text)
+            bottomTextSize = font.getsize(Bottom_Text)
+        topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
+        topTextPositionY = 0
+        topTextPosition = (topTextPositionX, topTextPositionY)
+        bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
+        bottomTextPositionY = imageSize[1] - bottomTextSize[1]
+        bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
+        Top_Text_BW = font.getsize(str(Top_Text))
+        Bottom_Text_BW = font.getsize(str(Bottom_Text))
+        draw = ImageDraw.Draw(img)
+        draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=(
+            Top_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+        draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=(
+            Bottom_Text_BW[0]//200), stroke_fill=(0, 0, 0))
+        img.save(f"{dannybot}\\cache\\meme_out.png")
+    if (is_gif):
+        repack_gif()
+        return
+    else:
+        return
