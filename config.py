@@ -424,3 +424,5 @@ async def make_collage(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     )
     print("3x3 Generated")
     return images
+
+# fluidsynth stuff will be moved into here in due time
