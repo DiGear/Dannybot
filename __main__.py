@@ -4,6 +4,11 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+# make it look nice in the console
+print("-----------------------------------------")
+print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
+print("-----------------------------------------")
+
 load_dotenv()
 
 bot = commands.Bot(
@@ -16,7 +21,9 @@ bot = commands.Bot(
 # print a success message upon boot, and then change the bots activity
 @bot.event
 async def on_ready():
-    print(f"{bot.user} successfully booted up on discord.py version {discord.__version__}")
+    print("-----------------------------------------")
+    print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
+    print("-----------------------------------------")
     await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
