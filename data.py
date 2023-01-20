@@ -93,6 +93,7 @@ def ezogaming_regex(datalist, dataentry):
     results = entry[sort[i2]]
     return results
 
+# 1/20/23: FunnyDannyG remembers that python has dictionaries
 def undertext(name):
     # character overrides
     underdict = {
