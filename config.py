@@ -57,6 +57,8 @@ Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removbebg_key = os.getenv("REMOVEBG_KEY")
 
+# tool paths
+
 # logo list for the logo command
 logolist = [
     "clan",
@@ -205,24 +207,23 @@ def gettenor(url=''):
 
 # go through the last 500 messages sent in the channel a command is ran in and check for images
 async def message_history_img_handler(ctx):
-    channel = ctx.message.channel
-    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp',
-                  'gif', 'PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'WEBP', 'GIF']
-    async for msg in channel.history(limit=500):
-        if len(msg.attachments) > 0:
-            ext = msg.attachments[0].url.split('.')[-1]
+    channel = ctx.message.channel #define shorthand variable for the message channel
+    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'] #define the extensions the command is looking for in attachments
+    async for msg in channel.history(limit=500): #check the last 500 messages
+        if msg.attachments: #check if there are attachments (will return a List or a None depending on if there are attachments)
+            ext = msg.attachments[0].url.split('.')[-1].lower() #extract extension from URL of first attachment and temporarily convert it to lowercase to fix case-sensitivity
             if ext in extensions:
-                return msg.attachments[0].url
+                return msg.attachments[0].url #return url of first attachment in message
         if 'http' in msg.content:
-            if 'https://tenor.com/view/' in msg.content:
-                a = (str(gettenor(msg.content)))
+            if 'https://tenor.com/view/' in msg.content: #check if its a tenor url
+                a = (str(gettenor(msg.content))) #get the gif url from tenor API
                 return a
             else:
                 aa = str(msg.content)
-                ext = aa.split('.')[-1]
+                ext = aa.split('.')[-1].lower()  #extract extension from URL and temporarily convert it to lowercase to fix case-sensitivity
                 if ext in extensions:
-                    a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
-                    a = a.split('?')[0]
+                    a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0] #extract just url from the text, so a message like "Balls! (its here: http://balls.com/balls.png) Balls!" just returns the first url in the message
+                    a = a.split('?')[0] #removes ? from the end of a url so it doesnt download a ?width=500 image
                     return a
 
 # go through the last 500 messages sent in the channel a command is ran in and check for audio
@@ -262,27 +263,32 @@ async def message_history_video_handler(ctx):
                 return a
 
 # i honestly don't even know what this is for
+# danny its a function that extracts url/arguments from a command run
 async def resolve_args(ctx, args, attachments):
     try:
-        if 'http' in args[0]:
-            url = args[0]
-            kys = args[1:]
-            text = ' '.join(kys)
+        if 'http' in args[0]: #see if first in the list of "args" is a URL
+            #Case of "d.meme http://balls.com/balls.png balls|balls"
+            url = args[0] #first in list of "args" is set as the url
+            text = ' '.join(args[1:]) #everything after that is set as the text and combined to a string
             return [url.split('?')[0], text]
-        elif attachments:
+        elif attachments: #otherwise check if there are attachments
+            #Case of "d.meme balls|balls" with attached file
             url = attachments[0].url
-            text = ' '.join(args)
-            return [url.split('?')[0], text]
-        else:
+            text = ' '.join(args) #the command text is everything in the args since there is no url as the first arg
+            return [url.split('?')[0], text] #get everything leading up to "?width=500"-type shenenigans
+        else: #if there are no attachments or a link, run the context handler
+            #Case of "d.meme balls|balls" with no attachment
             url = await message_history_img_handler(ctx)
             text = ' '.join(args)
             return [url, text]
-    except IndexError:
-        if attachments:
+    except IndexError: #this happens whem there is no args[0] because the command was simply, say, "d.explode" with no arguments.
+        if attachments: #check if there are attachments
+            #Case of "d.meme balls|balls" with attached file
             url = attachments[0].url
             text = ' '.join(args)
-            return [url.split('?')[0], text]
-        else:
+            return [url.split('?')[0], text] #get everything leading up to "?width=500"-type shenenigans
+        else: #if there are no attachments or a link, run the context handler
+            #Case of "d.meme balls|balls" with no attachment
             url = await message_history_img_handler(ctx)
             text = ' '.join(args)
             return [url, text]
