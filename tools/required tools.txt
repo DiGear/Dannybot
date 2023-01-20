@@ -1,4 +1,4 @@
 Dannybot has various folders for storing image databases. These toolss are not included. You will need to manually add them.
 
-waifu2xcaffe
-UltimateVocalRemover
+waifu2x-caffe
+UltimateVocalRemover (good luck finding a CLI version lmao)

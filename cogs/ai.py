@@ -11,6 +11,19 @@ class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
+    async def waifu(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        Link_To_File = cmd_info[0]
+        await ctx.send("Upscaling. Please wait...")
+        with open(f'{dannybot}\\cache\\w2x_in.png', 'wb') as f:
+            f.write(requests.get(Link_To_File).content)
+            f.close
+        os.system(f"{Waifu2x} -i {dannybot}\\cache\\w2x_in.png -o {dannybot}\\cache\\w2x_out.png -m noise_scale --scale_ratio 2 --noise_level 2 -x")
+        with open(f'{dannybot}\\cache\\w2x_out.png', 'rb') as f:
+            await ctx.reply(file=File(f, 'waifu2x.png'))
+        f.close
+
     @commands.command(aliases=['15', '15tts'], description="Sends AI sentences using a very real and legitimate 15.ai API.", brief="Use 15.ai to generate funny sentences")
     async def fifteen(self, ctx, *, msg):
         def check(msg):

@@ -58,6 +58,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 removbebg_key = os.getenv("REMOVEBG_KEY")
 
 # tool paths
+UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover\\python inference.py" # set this to the path of your inference.py file in your install of UltimateVocalRemover
+Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe
 
 # logo list for the logo command
 logolist = [
