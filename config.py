@@ -122,13 +122,8 @@ def cleanup_ffmpeg():
 
 # iterate through a folder and count every file
 def fileCount(folder):
-    total = 0  # set total to 0 to begin with
-    # recursively walk down the folder passed into the function
-    for files in os.walk(folder):
-
-        total += len(files)  # add each file found to total
-    return total  # send the total
-
+    return sum([len(files) for r, d, files in os.walk(folder)])
+    
 # overcomplicated function for parsing and matching data with a list of aliases
 def ezogaming_regex(datalist, dataentry):
     # ezogaming if you would like to add comments to this catastrophe, be my guest
