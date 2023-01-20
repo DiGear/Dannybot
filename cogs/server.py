@@ -27,7 +27,7 @@ class server(commands.Cog):
         embed.add_field(name="Animal Girl Images:", value=fileCount(f"{dannybot}\\database\\Mimi"), inline=True)
         embed.add_field(name="Kemono Friends Files:", value=fileCount("E:\\Anime\\Kemono Friends\\"), inline=True)
 
-        await ctx.reply(embed=embed, mention_author=True)  # send the embed
+        await ctx.reply(embed=embed, mention_author=True)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(server(bot))
