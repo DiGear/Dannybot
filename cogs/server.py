@@ -11,22 +11,10 @@ class server(commands.Cog):
     @commands.command(description="Send a Kemono Friends character from my personal collection.", brief="Send a picture of a chosen character from Kemono Friends")
     async def friend(self, ctx, *frien):
         aru2 = ezogaming_regex("Kemofure", frien)
-        # set the directory to the result of the regex folder comparison
-        dir = 'E:\\Anime\\Kemono Friends\\' + aru2
-        # define file_name as an image from the directory
+        dir = f'{KemonoFriendsPath}\\' + aru2
         file_name = random.choice(os.listdir(dir))
         with open(f'{dir}\\{file_name}', 'rb') as f:
-            f2 = discord.File(f, filename=file_name)
-            # count the amount of files in the directory
-            friendcount = str(
-                len(os.listdir('E:\\Anime\Kemono Friends\\' + aru2)))
-            embed = discord.Embed(title="Image of " + aru2, color=0xffc7ed,
-                                  description="")  # generate embed
-            embed.set_image(url="attachment://"+str(file_name))
-            embed.set_footer(text="Found " + friendcount +
-                             " results for " + aru2)
-            # send embed
-            await ctx.reply(file=f2, embed=embed, mention_author=True)
+            await ctx.reply(file=f, mention_author=True)
 
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
