@@ -103,7 +103,6 @@ async def ping(ctx):
 @bot.command(hidden=True)
 @commands.is_owner()
 async def say(ctx, *, args):
-    # this literally just repeats what is stored in "args"
     await ctx.send(args)
     # delete the command message, leaving only what Dannybot sends
     await ctx.message.delete()

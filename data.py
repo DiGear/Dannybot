@@ -77,25 +77,25 @@ DALLE_FORMAT = "png"
 # Functions
 # ----------
 
-
+# take a provided gif file and unpack each frame to /cache/ffmpeg
 def unpack_gif(file):
     os.system(
         f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y')
     return
 
-
+# take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp0001.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
 
-
+# take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
 def repack_gif_JPG():
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.jpg" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
 
-
+# clear the ffmpeg and ffmpeg/output folders of any residual files
 def cleanup_ffmpeg():
     for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
         if '.png' in file:
@@ -104,7 +104,7 @@ def cleanup_ffmpeg():
         if '.png' in file:
             os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
 
-
+# iterate through a folder and count every file
 def fileCount(folder):
     total = 0  # set total to 0 to begin with
     # recursively walk down the folder passed into the function
@@ -113,7 +113,7 @@ def fileCount(folder):
         total += len(files)  # add each file found to total
     return total  # send the total
 
-
+# overcomplicated function for parsing and matching data with a list of aliases
 def ezogaming_regex(datalist, dataentry):
     # ezogaming if you would like to add comments to this catastrophe, be my guest
     # this may even be rewritten completely by the time you are reading this
@@ -163,7 +163,7 @@ def undertext(name):
         name = "custom&url=" + name
     return name
 
-
+# grab the url of a gif file using the tenor api
 def gettenor(url=''):
     apikey = "8FMRE051ZV31"
     gifid = url[url.rindex('-')+1:]
@@ -176,8 +176,10 @@ def gettenor(url=''):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
-# idk how any of this shit works
-# ezogaming wrote all of this
+# idk how any of the next few functions work
+# ezogaming wrote all of them
+
+# go through the last 500 messages sent in the channel a command is ran in and check for images
 async def message_history_img_handler(ctx):
     channel = ctx.message.channel
     extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp',
@@ -199,7 +201,7 @@ async def message_history_img_handler(ctx):
                     a = a.split('?')[0]
                     return a
 
-
+# go through the last 500 messages sent in the channel a command is ran in and check for audio
 async def message_history_audio_handler(ctx):
     channel = ctx.message.channel
     extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a',
@@ -217,7 +219,7 @@ async def message_history_audio_handler(ctx):
                 a = a.split('?')[0]
                 return a
 
-
+# go through the last 500 messages sent in the channel a command is ran in and check for videos
 async def message_history_video_handler(ctx):
     channel = ctx.message.channel
     extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov',
@@ -235,7 +237,7 @@ async def message_history_video_handler(ctx):
                 a = a.split('?')[0]
                 return a
 
-
+# i honestly don't even know what this is for
 async def resolve_args(ctx, args, attachments):
     try:
         if 'http' in args[0]:
@@ -262,6 +264,9 @@ async def resolve_args(ctx, args, attachments):
             return [url, text]
 
 # ok back to FunnyDannyG code :)
+
+# primary function of the meme command
+# take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
     imageSize = img.size
@@ -344,7 +349,9 @@ def make_meme_gif(Top_Text, Bottom_Text):
     return
 
 # dalle shit
-# Rotty wrote this code and I don't feel like reading through it and commenting everything
+# Rotty wrote the following three and I don't feel like reading through it and commenting everything
+
+# communicate with the dalle API and ask it to generate our prompt
 async def generate_images(prompt: str) -> str(io.BytesIO):
     async with aiohttp.ClientSession() as session:
         async with session.post(DALLE_API, json={"prompt": prompt}) as response:
@@ -359,7 +366,7 @@ async def generate_images(prompt: str) -> str(io.BytesIO):
             else:
                 return None
 
-
+# generate the images for dalles 3x3 grid
 def make_collage_sync(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     image_arrays = [numpy.array(PIL.Image.open(image)) for image in images]
     image_ct = 1
@@ -379,7 +386,7 @@ def make_collage_sync(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     collage.seek(0)
     return collage
 
-
+# assemble and save the image grid
 async def make_collage(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     images = await asyncio.get_running_loop().run_in_executor(
         None, make_collage_sync, images, wrap
