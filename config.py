@@ -4,6 +4,7 @@
 # ----------
 # Imports
 # ----------
+
 import asyncio
 import base64
 import io
@@ -123,7 +124,7 @@ def cleanup_ffmpeg():
 # iterate through a folder and count every file
 def fileCount(folder):
     return sum([len(files) for r, d, files in os.walk(folder)])
-    
+
 # overcomplicated function for parsing and matching data with a list of aliases
 def ezogaming_regex(datalist, dataentry):
     # ezogaming if you would like to add comments to this catastrophe, be my guest
