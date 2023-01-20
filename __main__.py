@@ -3,6 +3,7 @@
 # the developer list is located at line 25
 import asyncio
 import os
+import time
 
 import discord
 from discord.ext import commands
@@ -32,7 +33,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
-# this utilized the above debug mode features to check for verified developers, and process command input
+# this utilizes the above debug mode features to check for verified developers, and process command input
 @bot.event
 async def on_message(input):
     if (debug_mode and input.content.startswith(bot.command_prefix) and input.author.id not in devs):
@@ -40,10 +41,26 @@ async def on_message(input):
     else:
         await bot.process_commands(input)
 
-# this is a test command and will probably get deleted really soon
-@bot.command()
-async def hi(ctx):
-    await ctx.send("hi")
+# this is a ping command and it's pretty self-explanatory
+@bot.command(
+    description="Calculate bot latency using time.monotonic(), and send the results.",
+    brief="Sends the current bot latency"
+    )
+async def ping(ctx):
+    before = time.monotonic()
+    message = await ctx.send("Ping is...")
+    ping = (time.monotonic() - before) * 1000
+    await message.edit(content=f"Ping is {int(ping)}ms")
+    print(f'Dannybot was pinged at {int(ping)}ms')
+
+# say command because every good bot should be a vessel for its creator to speak through
+@bot.command(hidden=True)
+@commands.is_owner()
+async def say(ctx, *, args):
+    # this literally just repeats what is stored in "args"
+    await ctx.send(args)
+    # delete the command message, leaving only what Dannybot sends
+    await ctx.message.delete()
 
 # this command reloads a specified cog. used for testing, you can call this command to update code on a cog without restarting the whole bot
 @bot.command(

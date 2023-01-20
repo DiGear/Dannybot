@@ -1,4 +1,5 @@
 # this cog only exists to manage the cleverbot api
+# it just looked really bad to run all of this in the main files on_message function
 import os
 
 import discord
