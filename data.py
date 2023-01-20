@@ -239,8 +239,18 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextPositionY = imageSize[1] - bottomTextSize[1]
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
     draw = ImageDraw.Draw(img)
-    draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=int((topTextSize[0]//75)), stroke_fill=(0, 0, 0))
-    draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=int((bottomTextSize[0]//75)), stroke_fill=(0, 0, 0))
+
+    #FIX THE FUCKING STROKE SIZE
+    top_outline = int((topTextSize[0]//75))
+    bottom_outline = int((bottomTextSize[0]//75))
+    if top_outline <= 0:
+        top_outline = 1
+    if bottom_outline <= 0:
+        bottom_outline = 1
+
+    draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=top_outline, stroke_fill=(0, 0, 0))
+    draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
+
     img.save(f"{dannybot}\\cache\\meme_out.png")
     return
 
@@ -268,9 +278,18 @@ def make_meme_gif(Top_Text, Bottom_Text):
             bottomTextPosition = (
                 bottomTextPositionX, bottomTextPositionY - 10)
             draw = ImageDraw.Draw(img)
-            draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=int((topTextSize[0]//75)), stroke_fill=(0, 0, 0))
-            draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=int((bottomTextSize[0]/75)), stroke_fill=(0, 0, 0))
-            img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+
+            #FIX THE FUCKING STROKE SIZE
+            top_outline = int((topTextSize[0]//75))
+            bottom_outline = int((bottomTextSize[0]//75))
+            if top_outline <= 0:
+                top_outline = 1
+            if bottom_outline <= 0:
+                bottom_outline = 1
+
+            draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=top_outline, stroke_fill=(0, 0, 0))
+            draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
+
             print("frame " + frame + " processed")
     repack_gif()
     return
