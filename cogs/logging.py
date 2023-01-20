@@ -1,7 +1,7 @@
 # log command usage to the console and to a specified channel
 
 # if you can't find a variable used in this file its probably imported from here
-from data import *
+from config import *
 
 # set this to your logging channel ID
 logs_channel = 971178342550216705

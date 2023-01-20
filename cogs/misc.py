@@ -1,7 +1,7 @@
 # this is where the shit hits the fan, pretty much
 
 # if you can't find a variable used in this file its probably imported from here
-from data import *
+from config import *
 
 
 class misc(commands.Cog):

@@ -2,7 +2,7 @@
 # should really shouldnt need to touch this file ever
 
 # if you can't find a variable used in this file its probably imported from here
-from data import *
+from config import *
 
 load_dotenv()
 

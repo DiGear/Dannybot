@@ -2,7 +2,7 @@
 # it just looked really bad to run all of this in the main files on_message function
 
 # if you can't find a variable used in this file its probably imported from here
-from data import *
+from config import *
 
 load_dotenv()
 cw = CleverWrap(os.getenv("CLEVERBOT_KEY"))
