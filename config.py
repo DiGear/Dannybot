@@ -57,6 +57,13 @@ Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removbebg_key = os.getenv("REMOVEBG_KEY")
 
+# external paths
+KemonoFriendsPath = "E:\\Anime\\Kemono Friends\\" # put your kemono friends regex files into here
+NekoparaPath = "E:\\Anime\\Nekopara\\" # put your nekopara regex files into here
+PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
+VideosPath = "C:\\Users\\weebm\\Videos" # set this to your videos folder
+GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
+
 # tool paths
 UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover\\python inference.py" # set this to the path of your inference.py file in your install of UltimateVocalRemover
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe
