@@ -5,6 +5,7 @@ import requests
 from discord import File
 from discord.ext import commands
 
+# if you can't find a variable used in this file its probably imported from here
 from data import *
 
 
@@ -18,7 +19,7 @@ class image(commands.Cog):
     )
     async def meme(self, ctx, context, *, meme_text: typing.Optional[str] = "ValueError"):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
-        #ezogaming shit
+        # ezogaming shit
         with open(f"{dannybot}\\cache\\meme_in.png", 'wb') as f:
             try:
                 f.write(requests.get(context).content)
@@ -40,7 +41,7 @@ class image(commands.Cog):
                     context = await message_history_img_handler(ctx)
                     f.write(requests.get(context).content)
                     f.close
-        #end ezogaming shit
+        # end ezogaming shit
         try:
             meme_text_splitted = meme_text.split("|")
             Top_Text = meme_text_splitted[0]
@@ -51,7 +52,7 @@ class image(commands.Cog):
         Top_Text = Top_Text.upper()
         Bottom_Text = Bottom_Text.upper()
         png_path = (f"{dannybot}\\cache\\meme_in.png")
-        gif_path = None #i plan to use this later
+        gif_path = None  # i plan to use this later
         is_gif = None
         print("Top_Text is: [" + Top_Text + "]")
         print("Bottom_Text is: [" + Bottom_Text + "]")
@@ -76,6 +77,7 @@ class image(commands.Cog):
             with open(f"{dannybot}\\cache\\meme_out.png", 'rb') as f:
                 await ctx.reply(file=File(f, 'meme.png'), mention_author=True)
                 f.close
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(image(bot))
