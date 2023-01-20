@@ -40,6 +40,7 @@ async def on_message(input):
         await bot.process_commands(input)
 
 # error handling code
+# theres probably a better way to do this
 @bot.event
 async def on_command_error(ctx, error):
     # ignore "intentional errors"/errors that get caught mid-function
@@ -124,8 +125,7 @@ async def reload(ctx, module):
     await ctx.send(f"Reloaded {module} module!")
 
 @bot.command(
-    name="clear cache",
-    description="This is an owner only command. It allows for any module to be reloaded on the fly.",
+    description="This is an owner only command. It clears Dannybots cache of all temporary files.",
     brief="Clears Dannybots cache"
 )
 @commands.is_owner()

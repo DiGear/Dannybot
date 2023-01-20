@@ -1,16 +1,21 @@
 # this is where most of the bullshit will be taking place
 # anything you need to configure will be located in here
 
-#try except block amount: 1
+# try except block amount: 1
 
+import asyncio
+import base64
+import io
 import json
 import os
 import random
 import re
 
+import aiohttp
+import numpy
 import PIL
 import requests
-from PIL import ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 # ----------
 # Variables
@@ -25,7 +30,7 @@ devs = [
     343224184110841856,  # Danny
     158418656861093888,  # EzoGaming
 ]
-#logo list for the logo command
+# logo list for the logo command
 logolist = [
     "clan",
     "neon",
@@ -64,6 +69,10 @@ logolist = [
     "outline",
     "funtime",
 ]
+
+# dalle shit
+DALLE_API = "https://backend.craiyon.com/generate"
+DALLE_FORMAT = "png"
 
 # ----------
 # Functions
@@ -133,21 +142,23 @@ def ezogaming_regex(datalist, dataentry):
     return results
 
 # 1/20/23: FunnyDannyG remembers that python has dictionaries
+
+
 def undertext(name):
     # character overrides
     underdict = {
-    "danny" : "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
-    "danny-funny" : "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
-    "danny-angry" : "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
-    "danny-pissed" : "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
-    "flashlight" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
-    "ezo" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
-    "ezogaming" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
-    "incine" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
-    "pizzi" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png",
-    "cris" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
-    "seki" : "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png"
-}
+        "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
+        "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
+        "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
+        "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
+        "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
+        "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
+        "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png",
+        "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
+        "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png",
+        "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
+        "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png"
+    }
     name = underdict.get(name, name)
 
     # link overrides
@@ -257,6 +268,7 @@ async def resolve_args(ctx, args, attachments):
 
 # ok back to FunnyDannyG code :)
 
+
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
     imageSize = img.size
@@ -279,7 +291,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
     draw = ImageDraw.Draw(img)
 
-    #FIX THE FUCKING STROKE SIZE
+    # FIX THE FUCKING STROKE SIZE
     top_outline = int((topTextSize[0]//75))
     bottom_outline = int((bottomTextSize[0]//75))
     if top_outline <= 0:
@@ -287,11 +299,14 @@ def make_meme(Top_Text, Bottom_Text, path):
     if bottom_outline <= 0:
         bottom_outline = 1
 
-    draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=top_outline, stroke_fill=(0, 0, 0))
-    draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
+    draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font,
+              stroke_width=top_outline, stroke_fill=(0, 0, 0))
+    draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
+              font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
 
     img.save(f"{dannybot}\\cache\\meme_out.png")
     return
+
 
 def make_meme_gif(Top_Text, Bottom_Text):
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
@@ -318,7 +333,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
                 bottomTextPositionX, bottomTextPositionY - 10)
             draw = ImageDraw.Draw(img)
 
-            #FIX THE FUCKING STROKE SIZE
+            # FIX THE FUCKING STROKE SIZE
             top_outline = int((topTextSize[0]//75))
             bottom_outline = int((bottomTextSize[0]//75))
             if top_outline <= 0:
@@ -326,9 +341,56 @@ def make_meme_gif(Top_Text, Bottom_Text):
             if bottom_outline <= 0:
                 bottom_outline = 1
 
-            draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font, stroke_width=top_outline, stroke_fill=(0, 0, 0))
-            draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255), font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
+            draw.text(topTextPosition, Top_Text, (255, 255, 255),
+                      font=font, stroke_width=top_outline, stroke_fill=(0, 0, 0))
+            draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
+                      font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
 
             print("frame " + frame + " processed")
     repack_gif()
     return
+
+# dalle shit
+
+
+async def generate_images(prompt: str) -> str(io.BytesIO):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(DALLE_API, json={"prompt": prompt}) as response:
+            if response.status == 200:
+                print("Dalle server is OK")
+                response_data = await response.json()
+                images = [
+                    io.BytesIO(base64.decodebytes(bytes(image, "utf-8")))
+                    for image in response_data["images"]
+                ]
+                return images
+            else:
+                return None
+
+
+def make_collage_sync(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
+    image_arrays = [numpy.array(PIL.Image.open(image)) for image in images]
+    image_ct = 1
+    for image in images:
+        print(str(image_ct) + " image(s) generated out of " + str(image_ct))
+        image_ct += 1
+        image.seek(0)
+    collage_horizontal_arrays = [
+        numpy.hstack(image_arrays[i: i + wrap])
+        for i in range(0, len(image_arrays), wrap)
+    ]
+    collage_array = numpy.vstack(collage_horizontal_arrays)
+    collage_image = Image.fromarray(collage_array)
+    collage = io.BytesIO()
+    collage_image.save(collage, format=DALLE_FORMAT)
+    print("Attempting to generate 3x3")
+    collage.seek(0)
+    return collage
+
+
+async def make_collage(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
+    images = await asyncio.get_running_loop().run_in_executor(
+        None, make_collage_sync, images, wrap
+    )
+    print("3x3 Generated")
+    return images
