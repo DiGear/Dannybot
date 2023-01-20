@@ -1,8 +1,8 @@
 # dannybot files
-database/
-cache/
-cache/ffmpeg/
-cache/ffmpeg/output/
+database/*/
+cache/*/
+!cache/ffmpeg/
+!cache/ffmpeg/output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

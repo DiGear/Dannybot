@@ -1,0 +1,11 @@
+Dannybot has various folders for storing image databases. These folders and their contents are not included. You will need to manually create the folders.
+
+Burger
+Dooter
+Fanboy
+Femboy
+Glasscup
+Pooter
+Taurs
+
+If you don't know what these folders are then you probably shouldn't be hosting a fork of Dannybot lmao
