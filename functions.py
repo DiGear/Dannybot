@@ -1,7 +1,10 @@
 # this is where most of the bullshit will be taking place
+import json
 import os
 import random
 import re
+
+import requests
 
 dannybot = os.getcwd()
 
@@ -67,3 +70,102 @@ def ezogaming_regex(datalist, dataentry):
     sort[i2]
     results = entry[sort[i2]]
     return results
+
+#python 3.10 adds switch cases
+#
+#i am on python 3.8.1 still...
+def undertext(name):
+    # character overrides
+    if name == "danny":
+        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png"
+    elif name == "danny-funny":
+        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png"
+    elif name == "danny-angry":
+        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png"
+    elif name == "danny-pissed":
+        name = "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png"
+    elif name in ["flashlight", "ezo", "ezogaming"]:
+        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552733170384926/FFlash.png"
+    elif name == "incine":
+        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png"
+    elif name == "pizzi":
+        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png"
+    elif name == "cris":
+        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png"
+    elif name == "seki":
+        name = "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png"
+    else:
+        name = name
+
+    # link overrides
+    if name.startswith("https://"):
+        name = "custom&url=" + name
+    return name
+
+def gettenor(url=''):
+    apikey = "8FMRE051ZV31"
+    gifid = url[url.rindex('-')+1:]
+    r = requests.get(
+        "https://api.tenor.com/v1/gifs?ids=%s&key=%s&media_filter=minimal" % (gifid, apikey))
+
+    if r.status_code == 200:
+        gifs = json.loads(r.content)
+    else:
+        gifs = None
+    return gifs['results'][0]['media'][0]['gif']['url']
+
+#idk how any of this shit works
+#ezogaming wrote all of this
+async def message_history_img_handler(ctx):
+    channel = ctx.message.channel
+    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'gif','PNG', 'JPG', 'JPEG', 'GIF', 'BMP', 'WEBP', 'GIF']
+    async for msg in channel.history(limit=500):
+        if len(msg.attachments) > 0:
+            ext = msg.attachments[0].url.split('.')[-1]
+            if ext in extensions:
+                return msg.attachments[0].url
+        if 'http' in msg.content:
+            if 'https://tenor.com/view/' in msg.content:
+                a = (str(gettenor(msg.content)))
+                return a
+            else:
+                aa = str(msg.content)
+                ext = aa.split('.')[-1]
+                if ext in extensions:
+                    a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
+                    a = a.split('?')[0]
+                    return a
+
+
+async def message_history_audio_handler(ctx):
+    channel = ctx.message.channel
+    extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga', 'WAV', 'OGG', 'MP3', 'FLAC', 'AIFF', 'OPUS', 'M4A', 'OGA']
+    async for msg in channel.history(limit=500):
+        if len(msg.attachments) > 0:
+            ext = msg.attachments[0].url.split('.')[-1]
+            if ext in extensions:
+                return msg.attachments[0].url
+        if 'http' in msg.content:
+            aa = str(msg.content)
+            ext = aa.split('.')[-1]
+            if ext in extensions:
+                a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
+                a = a.split('?')[0]
+                return a
+
+
+async def message_history_video_handler(ctx):
+    channel = ctx.message.channel
+    extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv', 'MP4', 'AVI', 'MPEG', 'MPG', 'WEBM', 'MOV', 'MKV']
+    async for msg in channel.history(limit=500):
+        if len(msg.attachments) > 0:
+            ext = msg.attachments[0].url.split('.')[-1]
+            if ext in extensions:
+                return msg.attachments[0].url
+        if 'http' in msg.content:
+            aa = str(msg.content)
+            ext = aa.split('.')[-1]
+            if ext in extensions:
+                a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
+                a = a.split('?')[0]
+                return a
