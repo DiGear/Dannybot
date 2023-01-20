@@ -1,5 +1,9 @@
 # this is where most of the bullshit will be taking place
 # anything you need to configure will be located in here
+
+# ----------
+# Imports
+# ----------
 import asyncio
 import base64
 import io
