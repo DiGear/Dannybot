@@ -57,7 +57,7 @@ class ai(commands.Cog):
         return
 
 
-    @commands.command()
+    @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
     async def dalle(self, ctx, *, prompt):
         # rotty shit
         images = None
