@@ -16,10 +16,7 @@ class misc(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(
-        description="Use a custom flamingtext.com api to generate logos using random presets.",
-        brief="Generate a logo with a random font."
-    )
+    @commands.command(description="Use a custom flamingtext.com api to generate logos using random presets.", brief="Generate a logo with a random font.")
     async def logo(self, ctx, *, logotext: typing.Optional[str] = "Your Text Here"):
         # choose a random type from the array
         logotype = random.choice(logolist)
@@ -31,10 +28,7 @@ class misc(commands.Cog):
 
         await ctx.reply(file=File(f"{dannybot}\\cache\\logo_out.png"), mention_author=True)
 
-    @commands.command(
-        description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.",
-        brief="Generate a custom Undertale-Styled textbox"
-    )
+    @commands.command(description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.", brief="Generate a custom Undertale-Styled textbox")
     async def undertext(self, ctx, CharacterName, *, Text):
         Name = str(undertext(CharacterName))
         # allow for blank textbox generation
@@ -46,10 +40,7 @@ class misc(commands.Cog):
 
         await ctx.reply(file=File(f"{dannybot}\\cache\\undertext_out.png"), mention_author=True)
 
-    @commands.command(
-        description="Generate a custom Deltarune-Styled textbox by defining the character and text to be said.",
-        brief="Generate a custom Deltarune-Styled textbox"
-    )
+    @commands.command(description="Generate a custom Deltarune-Styled textbox by defining the character and text to be said.", brief="Generate a custom Deltarune-Styled textbox")
     async def deltatext(self, ctx, CharacterName, *, Text):
         Name = str(undertext(CharacterName))
         # allow for blank textbox generation

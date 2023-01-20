@@ -21,6 +21,8 @@ from PIL import Image, ImageDraw, ImageFont
 # Variables
 # ----------
 
+#this is the bots prefix
+dannybot_prefix = "d2."
 # easy to call variable that stores our current working directory
 dannybot = os.getcwd()
 # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
@@ -142,8 +144,6 @@ def ezogaming_regex(datalist, dataentry):
     return results
 
 # 1/20/23: FunnyDannyG remembers that python has dictionaries
-
-
 def undertext(name):
     # character overrides
     underdict = {
@@ -181,8 +181,6 @@ def gettenor(url=''):
 
 # idk how any of this shit works
 # ezogaming wrote all of this
-
-
 async def message_history_img_handler(ctx):
     channel = ctx.message.channel
     extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp',
@@ -267,8 +265,6 @@ async def resolve_args(ctx, args, attachments):
             return [url, text]
 
 # ok back to FunnyDannyG code :)
-
-
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
     imageSize = img.size
@@ -307,7 +303,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     img.save(f"{dannybot}\\cache\\meme_out.png")
     return
 
-
+# gif version
 def make_meme_gif(Top_Text, Bottom_Text):
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
         if '.png' in frame:
@@ -351,7 +347,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
     return
 
 # dalle shit
-#Rotty wrote this code and I don't feel like reading through it and commenting everything
+# Rotty wrote this code and I don't feel like reading through it and commenting everything
 async def generate_images(prompt: str) -> str(io.BytesIO):
     async with aiohttp.ClientSession() as session:
         async with session.post(DALLE_API, json={"prompt": prompt}) as response:

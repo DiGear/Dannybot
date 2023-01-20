@@ -16,10 +16,7 @@ class image(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(
-        description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext",
-        brief="Turns an image into an impact font meme"
-    )
+    @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, context, *, meme_text: typing.Optional[str] = "ValueError"):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
         # ezogaming shit

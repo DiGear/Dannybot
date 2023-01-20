@@ -1,7 +1,5 @@
 # this is the file that boots up every other file.
-
-#try except block amount: 1
-
+# should really shouldnt need to touch this file ever
 import asyncio
 import os
 import sys
@@ -18,7 +16,7 @@ from data import *
 load_dotenv()
 
 bot = commands.Bot(
-    command_prefix=("d2."),
+    command_prefix=(dannybot_prefix),
     status=discord.Status.online,
     activity=discord.Activity(name="for d.help", type=3),
     intents=discord.Intents.all(),
@@ -93,10 +91,7 @@ async def on_command_error(ctx, error):
         )
 
 # this is a ping command and it's pretty self-explanatory
-@bot.command(
-    description="Calculate bot latency using time.monotonic(), and send the results.",
-    brief="Sends the current bot latency"
-)
+@bot.command(description="Calculate bot latency using time.monotonic(), and send the results.", brief="Sends the current bot latency")
 async def ping(ctx):
     before = time.monotonic()
     message = await ctx.send("Ping is...")
@@ -114,20 +109,14 @@ async def say(ctx, *, args):
     await ctx.message.delete()
 
 # this command reloads a specified cog. used for testing, you can call this command to update code on a cog without restarting the whole bot
-@bot.command(
-    description="This is an owner only command. It allows for any module to be reloaded on the fly.",
-    brief="Debug tool for modules"
-)
+@bot.command(description="This is an owner only command. It allows for any module to be reloaded on the fly.", brief="Debug tool for modules")
 @commands.is_owner()
 async def reload(ctx, module):
     await bot.unload_extension(f"cogs.{module}")
     await bot.load_extension(f"cogs.{module}")
     await ctx.send(f"Reloaded {module} module!")
 
-@bot.command(
-    description="This is an owner only command. It clears Dannybots cache of all temporary files.",
-    brief="Clears Dannybots cache"
-)
+@bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
 @commands.is_owner()
 async def clear_cache(ctx):
     for file in os.listdir(f'{dannybot}\\cache'):
