@@ -274,6 +274,7 @@ async def message_history_video_handler(ctx):
 
 # i honestly don't even know what this is for
 # danny its a function that extracts url/arguments from a command run
+# ok asshat
 async def resolve_args(ctx, args, attachments):
     try:
         if 'http' in args[0]: #see if first in the list of "args" is a URL
