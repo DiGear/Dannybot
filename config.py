@@ -225,12 +225,12 @@ async def message_history_img_handler(ctx):
     async for msg in channel.history(limit=500): #check the last 500 messages
         
         # TENOR IS NOT FUN TO HANDLE
-        if 'http' in msg.content:
-            if 'https://tenor.com/view/' in msg.content: #check if its a tenor url
-                for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
-                    tenorid = x.group(1)
-                a = (str(gettenor(tenorid))) #get the gif url from tenor API
-                return a
+        if 'https://tenor.com/view/' in msg.content: # check if we have a tenor url
+            # extract the tenor gif id from the message contents
+            for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
+                tenorid = x.group(1)
+            a = (str(gettenor(tenorid))) #get the gif url from tenor API
+            return a
            # end tenor bullshit 
             
         if msg.attachments: #check if there are attachments (will return a List or a None depending on if there are attachments)

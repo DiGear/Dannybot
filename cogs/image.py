@@ -8,6 +8,7 @@ class image(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    # i have a feeling im making this more complicated than it needs to be
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, *args):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
@@ -38,7 +39,7 @@ class image(commands.Cog):
             Top_Text = meme_text.upper()
             Bottom_Text = ""
 
-        # determine if we need to call the standard or gif function
+        # determine if we need to call the standard function or gif function
         if (is_gif):
             with open(f"{dannybot}\\cache\\gif.gif", 'wb') as f:
                 f.write(requests.get(file_url).content)
@@ -59,7 +60,6 @@ class image(commands.Cog):
             with open(f"{dannybot}\\cache\\meme_out.png", 'rb') as f:
                 await ctx.reply(file=File(f, 'meme.png'), mention_author=True)
                 f.close
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(image(bot))
