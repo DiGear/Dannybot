@@ -53,6 +53,10 @@ devs = [
     158418656861093888,  # EzoGaming
 ]
 
+#configs for the image manipulation commands
+MemeWidth_LowerCap = 250 # the smallest image width the meme command will use. if the image is thinner than this, it will proportionally scale to this size
+MemeWidth_UpperCap = 2000 # the largest image width the meme command will use. if the image is thinner than this, it will proportionally scale to this size
+
 # .env
 Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -312,6 +316,23 @@ def make_meme(Top_Text, Bottom_Text, path):
     # open image in PIL
     img = PIL.Image.open(path)
 
+    # make sure the image is within the configured lower and upper caps
+    # lower cap
+    if img.size[0] < MemeWidth_LowerCap:
+        ratio = (MemeWidth_LowerCap/float(img.size[0]))
+        new_height = int((float(img.size[1])*float(ratio)))
+        img = img.resize((MemeWidth_LowerCap, new_height), Image.Resampling.LANCZOS)
+        img.save(path) # save image with new size
+        img = PIL.Image.open(path) # reopen the image
+
+    # upper cap
+    if img.size[0] > MemeWidth_UpperCap:
+        ratio = (MemeWidth_UpperCap/float(img.size[0]))
+        new_height = int((float(img.size[1])*float(ratio)))
+        img = img.resize((MemeWidth_UpperCap, new_height), Image.Resampling.LANCZOS)
+        img.save(path) # save image with new size
+        img = PIL.Image.open(path) # reopen the image
+
     # fixed font size calc
     # proportionally scales the font to the size of the image, and make sure it doesn't equal 0
     imageSize = img.size
@@ -362,7 +383,25 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
             # open image in PIL
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
+            path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
 
+            # make sure the image is within the configured lower and upper caps
+            # lower cap
+            if img.size[0] < MemeWidth_LowerCap:
+                ratio = (MemeWidth_LowerCap/float(img.size[0]))
+                new_height = int((float(img.size[1])*float(ratio)))
+                img = img.resize((MemeWidth_LowerCap, new_height), Image.Resampling.LANCZOS)
+                img.save(path) # save image with new size
+                img = PIL.Image.open(path) # reopen the image
+
+            # upper cap
+            if img.size[0] > MemeWidth_UpperCap:
+                ratio = (MemeWidth_UpperCap/float(img.size[0]))
+                new_height = int((float(img.size[1])*float(ratio)))
+                img = img.resize((MemeWidth_UpperCap, new_height), Image.Resampling.LANCZOS)
+                img.save(path) # save image with new size
+                img = PIL.Image.open(path) # reopen the image
+            
             # fixed font size calc
             # proportionally scales the font to the size of the image, and make sure it doesn't equal 0
             imageSize = img.size
