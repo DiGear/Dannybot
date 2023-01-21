@@ -355,7 +355,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     # FIXED THE FUCKING STROKE SIZE
     # idk why i never bothered to calculate stroke size like this
     # it divides the size of both top and bottom text by 75 and uses that as the stroke size
-    # also we make sure it doesn't equal 0
+    # also we make sure the stroke size is AT LEAST 1
     top_outline = int((topTextSize[0]//75))
     bottom_outline = int((bottomTextSize[0]//75))
     if top_outline <= 0:
@@ -424,7 +424,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
             # FIX THE FUCKING STROKE SIZE
             # idk why i never bothered to calculate stroke size like this
             # it divides the size of both top and bottom text by 75 and uses that as the stroke size
-            # also we make sure it doesn't equal 0
+            # also we make sure the stroke size is AT LEAST 1
             top_outline = int((topTextSize[0]//75))
             bottom_outline = int((bottomTextSize[0]//75))
             if top_outline <= 0:
