@@ -204,9 +204,8 @@ def undertext(name):
     return name
 
 # grab the url of a gif file using the tenor api
-def gettenor(url=''):
+def gettenor(gifid=None):
     apikey = "8FMRE051ZV31"
-    gifid = url[url.rindex('-')+1:]
     r = requests.get(
         "https://api.tenor.com/v1/gifs?ids=%s&key=%s&media_filter=minimal" % (gifid, apikey))
 
@@ -224,14 +223,20 @@ async def message_history_img_handler(ctx):
     channel = ctx.message.channel #define shorthand variable for the message channel
     extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'] #define the extensions the command is looking for in attachments
     async for msg in channel.history(limit=500): #check the last 500 messages
+        
+        # TENOR IS NOT FUN TO HANDLE
+        if 'http' in msg.content:
+            if 'https://tenor.com/view/' in msg.content: #check if its a tenor url
+                for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
+                    tenorid = x.group(1)
+                a = (str(gettenor(tenorid))) #get the gif url from tenor API
+                return a
+           # end tenor bullshit 
+            
         if msg.attachments: #check if there are attachments (will return a List or a None depending on if there are attachments)
             ext = msg.attachments[0].url.split('.')[-1].lower() #extract extension from URL of first attachment and temporarily convert it to lowercase to fix case-sensitivity
             if ext in extensions:
                 return msg.attachments[0].url #return url of first attachment in message
-        if 'http' in msg.content:
-            if 'https://tenor.com/view/' in msg.content: #check if its a tenor url
-                a = (str(gettenor(msg.content))) #get the gif url from tenor API
-                return a
             else:
                 aa = str(msg.content)
                 ext = aa.split('.')[-1].lower()  #extract extension from URL and temporarily convert it to lowercase to fix case-sensitivity
@@ -279,6 +284,7 @@ async def message_history_video_handler(ctx):
 # i honestly don't even know what this is for
 # danny its a function that extracts url/arguments from a command run
 # ok asshat
+# update: i figured out how to use this
 async def resolve_args(ctx, args, attachments):
     try:
         if 'http' in args[0]: #see if first in the list of "args" is a URL
