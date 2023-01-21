@@ -1,4 +1,4 @@
-# obligatory moderation commands
+# obligatory moderation commands - FDG
 
 # if you can't find a variable used in this file its probably imported from here
 from config import *

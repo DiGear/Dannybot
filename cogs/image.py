@@ -1,4 +1,4 @@
-# this is where the shit hits the fan, pretty much
+# this is where the shit hits the fan, pretty much - FDG
 
 # if you can't find a variable used in this file its probably imported from here
 from config import *
@@ -8,7 +8,7 @@ class image(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    # i have a feeling im making this more complicated than it needs to be
+    # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, *args):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
@@ -18,7 +18,7 @@ class image(commands.Cog):
         file_url = context[0]
         meme_text = context[1]
         
-        # gif files suck!
+        # gif files suck! - FDG
         if '.gif' in file_url or 'https://tenor.com/' in file_url:
             is_gif = True
         else:

@@ -49,8 +49,8 @@ debug_mode = True # debug mode is a setting which makes the bot only respond to 
 logs_channel = 971178342550216705 #channel to log command and cleverbot usage
 # put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
 devs = [
-    343224184110841856,  # Danny
-    158418656861093888,  # EzoGaming
+    343224184110841856,  # FDG
+    158418656861093888,  # Ezo
 ]
 
 #configs for the image manipulation commands
@@ -154,8 +154,8 @@ def fileCount(folder):
 
 # overcomplicated function for parsing and matching data with a list of aliases
 def ezogaming_regex(datalist, dataentry):
-    # ezogaming if you would like to add comments to this catastrophe, be my guest
-    # this may even be rewritten completely by the time you are reading this
+    # ezogaming if you would like to add comments to this catastrophe, be my guest - FDG
+    # this may even be rewritten completely by the time you are reading this - FDG
     with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f:
         entry = f.readlines()
         entry = [x.rstrip() for x in entry]
@@ -179,10 +179,10 @@ def ezogaming_regex(datalist, dataentry):
     results = entry[sort[i2]]
     return results
 
-# 1/20/23: FunnyDannyG remembers that python has dictionaries
+# 1/20/23: FDG remembers that python has dictionaries
 def undertext(name):
     # character overrides
-    # you could also put this in a JSON
+    # you could also put this in a JSON - FDG
     underdict = {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
         "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
@@ -203,7 +203,7 @@ def undertext(name):
         name = "custom&url=" + name
     return name
 
-# grab the url of a gif file using the tenor api
+# grab the gif url of a tenor id using the tenor api
 def gettenor(gifid=None):
     apikey = "8FMRE051ZV31"
     r = requests.get(
@@ -215,16 +215,13 @@ def gettenor(gifid=None):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
-# idk how any of the next few functions work
-# ezogaming wrote all of them
-
 # go through the last 500 messages sent in the channel a command is ran in and check for images
 async def message_history_img_handler(ctx):
     channel = ctx.message.channel #define shorthand variable for the message channel
     extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'] #define the extensions the command is looking for in attachments
     async for msg in channel.history(limit=500): #check the last 500 messages
         
-        # TENOR IS NOT FUN TO HANDLE
+        # TENOR IS NOT FUN TO HANDLE - FDG
         if 'https://tenor.com/view/' in msg.content: # check if we have a tenor url
             # extract the tenor gif id from the message contents
             for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
@@ -281,10 +278,10 @@ async def message_history_video_handler(ctx):
                 a = a.split('?')[0]
                 return a
 
-# i honestly don't even know what this is for
-# danny its a function that extracts url/arguments from a command run
-# ok asshat
-# update: i figured out how to use this
+# i honestly don't even know what this is for - FDG
+# danny its a function that extracts url/arguments from a command run - Ezo
+# ok asshat - FDG
+# update: i figured out how to use this - FDG
 async def resolve_args(ctx, args, attachments):
     try:
         if 'http' in args[0]: #see if first in the list of "args" is a URL
@@ -314,7 +311,7 @@ async def resolve_args(ctx, args, attachments):
             text = ' '.join(args)
             return [url, text]
 
-# ok back to FunnyDannyG code :)
+# ok back to my code :) - FDG
 
 # primary function of the meme command
 # take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
@@ -358,7 +355,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextPositionY = imageSize[1] - bottomTextSize[1]
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
-    # FIXED THE FUCKING STROKE SIZE
+    # FIXED THE FUCKING STROKE SIZE - FDG
     # idk why i never bothered to calculate stroke size like this
     # it divides the size of both top and bottom text by 75 and uses that as the stroke size
     # also we make sure the stroke size is AT LEAST 1
@@ -427,7 +424,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
             bottomTextPositionY = imageSize[1] - bottomTextSize[1]
             bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
-            # FIX THE FUCKING STROKE SIZE
+            # FIX THE FUCKING STROKE SIZE - FDG
             # idk why i never bothered to calculate stroke size like this
             # it divides the size of both top and bottom text by 75 and uses that as the stroke size
             # also we make sure the stroke size is AT LEAST 1
@@ -453,7 +450,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
     return
 
 # dalle shit
-# Rotty wrote the following three and I don't feel like reading through it and commenting everything
+# rotty wrote the following three and I don't feel like reading through it and commenting everything - FDG
 
 # communicate with the dalle API and ask it to generate our prompt
 async def generate_images(prompt: str) -> str(io.BytesIO):
@@ -498,4 +495,4 @@ async def make_collage(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     print("3x3 Generated")
     return images
 
-# fluidsynth stuff will be moved into here in due time
+# fluidsynth stuff will be moved into here in due time - FDG

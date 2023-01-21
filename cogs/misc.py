@@ -1,4 +1,4 @@
-# this is where the shit hits the fan, pretty much
+# idk what other cog to put these in - FDG
 
 # if you can't find a variable used in this file its probably imported from here
 from config import *

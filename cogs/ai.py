@@ -3,7 +3,7 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-# this shit is kind of dumb i wanna find a better way
+# this shit is kind of dumb i wanna find a better way to do this - FDG
 global request_is_processing
 request_is_processing = False
 

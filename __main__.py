@@ -34,7 +34,7 @@ async def on_message(input):
         await bot.process_commands(input)
 
 # error handling code
-# theres probably a better way to do this
+# theres probably a better way to do this - FDG
 @bot.event
 async def on_command_error(ctx, error):
     # ignore "intentional errors"/errors that get caught mid-function
@@ -78,7 +78,7 @@ async def on_command_error(ctx, error):
             + str(error.__traceback__)
             + "\n"
             + str(error)
-            + "```\nIf you are seeing this, ping either FDG or EzoGaming."
+            + "```\nIf you are seeing this, ping FDG for assistance."
         )
         print("Ignoring exception in command {}:".format(
             ctx.command), file=sys.stderr)
@@ -95,7 +95,7 @@ async def ping(ctx):
     await message.edit(content=f"Ping is {int(ping)}ms")
     print(f'Dannybot was pinged at {int(ping)}ms')
 
-# say command because every good bot should be a vessel for its creator to speak through
+# say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.command(hidden=True)
 @commands.is_owner()
 async def say(ctx, *, args):

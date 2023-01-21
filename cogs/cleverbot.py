@@ -1,5 +1,5 @@
 # this cog only exists to manage the cleverbot api
-# it just looked really bad to run all of this in the main files on_message function
+# it just looked really bad to run all of this in the main files on_message function - FDG
 
 # if you can't find a variable used in this file its probably imported from here
 from config import *
