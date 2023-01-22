@@ -426,21 +426,18 @@ def make_meme_gif(Top_Text, Bottom_Text):
             bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
             # FIXED THE FUCKING STROKE SIZE - FDG
-            # it divides the size of both top and bottom text by 75 and uses that as the stroke size
+            # it divides the size of top text by 75 and uses that as the stroke size
             # also we make sure the stroke size is AT LEAST 1
-            top_outline = int((topTextSize[0]//75))
-            bottom_outline = int((bottomTextSize[0]//75))
-            if top_outline <= 0:
-                top_outline = 1
-            if bottom_outline <= 0:
-                bottom_outline = 1
+            outline = int((topTextSize[0]//75))
+            if outline <= 0:
+                outline = 1
 
             # draw the text
             draw = ImageDraw.Draw(img)
             draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font,
-                    stroke_width=top_outline, stroke_fill=(0, 0, 0))
+                    stroke_width=outline, stroke_fill=(0, 0, 0))
             draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
-                    font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
+                    font=font, stroke_width=outline, stroke_fill=(0, 0, 0))
 
             # save the resulting image
             img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
