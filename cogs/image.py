@@ -11,7 +11,6 @@ class image(commands.Cog):
     # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, *args):
-        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
         
         # distinquish between command arguments and command file uploads
         context = await resolve_args(ctx, args, ctx.message.attachments)
@@ -23,12 +22,10 @@ class image(commands.Cog):
             is_gif = True
         else:
             is_gif = False
-        
-        # this downloads the image to be meme'd and then configures all of the args appropriately
-        with open(f"{dannybot}\\cache\\meme_in.png", 'wb') as f:
-                    f.write(requests.get(file_url).content)
-                    f.close
-        png_path = (f"{dannybot}\\cache\\meme_in.png")
+
+        # prepare the meme text for the api
+        meme_text = jacebrowning_encode(meme_text)
+        print(meme_text)
 
         # split the meme text by top and bottom and then capitalize it
         if ("|" in meme_text):
@@ -37,29 +34,21 @@ class image(commands.Cog):
             Bottom_Text = meme_text_splitted[1].upper()
         else:
             Top_Text = meme_text.upper()
-            Bottom_Text = ""
+            Bottom_Text = "_"
+        
+        # final encoding step
+        if Top_Text == "":
+            Top_Text = "_"
+        if Bottom_Text == "":
+            Bottom_Text = "_"
 
         # determine if we need to call the standard function or gif function
         if (is_gif):
-            with open(f"{dannybot}\\cache\\gif.gif", 'wb') as f:
-                f.write(requests.get(file_url).content)
-                f.close
-            unpack_gif(f"{dannybot}\\cache\\gif.gif")
-            make_meme_gif(Top_Text, Bottom_Text)
-            repack_gif()
+            url = f"https://api.memegen.link/images/custom/{Top_Text}/{Bottom_Text}.gif?background={file_url}&font=impact"
+            await ctx.reply(url, mention_author=True)
         else:
-            make_meme(Top_Text, Bottom_Text, png_path)
-
-        # determine if we need to send a gif or png in response
-        if (is_gif):
-            with open(f"{dannybot}\\cache\\ffmpeg_out.gif", 'rb') as f:
-                await ctx.reply(file=File(f, 'meme.gif'), mention_author=True)
-                cleanup_ffmpeg()
-                f.close
-        else:
-            with open(f"{dannybot}\\cache\\meme_out.png", 'rb') as f:
-                await ctx.reply(file=File(f, 'meme.png'), mention_author=True)
-                f.close
-
+            url = f"https://api.memegen.link/images/custom/{Top_Text}/{Bottom_Text}.png?background={file_url}&font=impact"
+            await ctx.reply(url, mention_author=True)
+            
 async def setup(bot: commands.Bot):
     await bot.add_cog(image(bot))
