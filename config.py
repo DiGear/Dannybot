@@ -343,10 +343,9 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextSize = font.getsize(Bottom_Text)
     while topTextSize[0] > img.size[0]-20 or bottomTextSize[0] > img.size[0]-20:
         fontSize = fontSize - 1
-        font = font
+        font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
         topTextSize = font.getsize(Top_Text)
         bottomTextSize = font.getsize(Bottom_Text)
-        break
     if fontSize  <= 0:
         fontSize = 1
     topTextPositionX = (img.size[0]/2) - (topTextSize[0]/2)
