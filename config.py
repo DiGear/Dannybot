@@ -312,8 +312,6 @@ async def resolve_args(ctx, args, attachments):
             text = ' '.join(args)
             return [url, text]
 
-# ok back to my code :) - FDG
-
 # primary function of the meme command
 # take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
 # this is stolen from a, like, decade old repo
