@@ -11,20 +11,18 @@ class cleverbot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
-        # check for a valid "talk to dannybot" channel
-        if "talk-to-dannybot" in str(input.channel.name):
-            # make sure the user isn't a bot
-            if not input.author.bot:
-                # this resets the conversation upon request
-                if "new conversation" in input.content:
-                    Cleverbot.reset()
-                    return
-                elif "> " in input.content:
-                    return
-                else:
-                    # send the resulting message cleverbot api returns for our given unput
-                    await input.channel.send(Cleverbot.say(input.content), reference=input)
-                    return
+        # check for a valid "talk to dannybot" channel and make sure the user isn't a bot
+        if "talk-to-dannybot" in str(input.channel.name) and not input.author.bot:
+            # this resets the conversation upon request
+            if "new conversation" in input.content:
+                Cleverbot.reset()
+                return
+            elif "> " in input.content:
+                return
+            else:
+                # send the resulting message cleverbot api returns for our given unput
+                await input.channel.send(Cleverbot.say(input.content), reference=input)
+                return
 
 
 async def setup(bot: commands.Bot):
