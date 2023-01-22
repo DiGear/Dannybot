@@ -235,7 +235,7 @@ async def message_history_img_handler(ctx):
             ext = msg.attachments[0].url.split('.')[-1].lower() #extract extension from URL of first attachment and temporarily convert it to lowercase to fix case-sensitivity
             if ext in extensions:
                 return msg.attachments[0].url #return url of first attachment in message
-            else:
+        else:
                 aa = str(msg.content)
                 ext = aa.split('.')[-1].lower()  #extract extension from URL and temporarily convert it to lowercase to fix case-sensitivity
                 if ext in extensions:
@@ -358,21 +358,18 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
     # FIXED THE FUCKING STROKE SIZE - FDG
-    # it divides the size of both top and bottom text by 75 and uses that as the stroke size
+    # it divides the size of top text by 75 and uses that as the stroke size
     # also we make sure the stroke size is AT LEAST 1
-    top_outline = int((topTextSize[0]//75))
-    bottom_outline = int((bottomTextSize[0]//75))
-    if top_outline <= 0:
-        top_outline = 1
-    if bottom_outline <= 0:
-        bottom_outline = 1
+    outline = int((topTextSize[0]//75))
+    if outline <= 0:
+        outline = 1
 
     # draw the text
     draw = ImageDraw.Draw(img)
     draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font,
-              stroke_width=top_outline, stroke_fill=(0, 0, 0))
+              stroke_width=outline, stroke_fill=(0, 0, 0))
     draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
-              font=font, stroke_width=bottom_outline, stroke_fill=(0, 0, 0))
+              font=font, stroke_width=outline, stroke_fill=(0, 0, 0))
 
     # save the resulting image
     img.save(f"{dannybot}\\cache\\meme_out.png")
