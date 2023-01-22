@@ -314,7 +314,6 @@ async def resolve_args(ctx, args, attachments):
             return [url, text]
 
 # ok back to my code :) - FDG
-
 def jacebrowning_encode(text):
     encoded_text = "?"
     encodelist = {

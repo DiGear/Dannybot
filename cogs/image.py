@@ -11,6 +11,7 @@ class image(commands.Cog):
     # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, *args):
+        await ctx.send("Processing. Please wait... The URL may not immediately embed.", delete_after=10)
         
         # distinquish between command arguments and command file uploads
         context = await resolve_args(ctx, args, ctx.message.attachments)
