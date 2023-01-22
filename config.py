@@ -56,7 +56,7 @@ devs = [
 
 #configs for the image manipulation commands
 MemeWidth_LowerCap = 250 # the smallest image width the meme command will use. if the image is thinner than this, it will proportionally scale to this size
-MemeWidth_UpperCap = 2000 # the largest image width the meme command will use. if the image is thinner than this, it will proportionally scale to this size
+MemeWidth_UpperCap = 2000 # the largest image width the meme command will use. if the image is wider than this, it will proportionally scale to this size
 
 # .env
 Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
