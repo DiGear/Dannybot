@@ -316,6 +316,7 @@ async def resolve_args(ctx, args, attachments):
 
 # primary function of the meme command
 # take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
+# this is stolen from a, like, decade old repo
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
 
@@ -341,6 +342,8 @@ def make_meme(Top_Text, Bottom_Text, path):
     font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
     topTextSize = font.getsize(Top_Text)
     bottomTextSize = font.getsize(Bottom_Text)
+    
+    # find the biggest font size that works, and then make sure its at least 1
     while topTextSize[0] > img.size[0]-20 or bottomTextSize[0] > img.size[0]-20:
         fontSize = fontSize - 1
         font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
@@ -348,6 +351,8 @@ def make_meme(Top_Text, Bottom_Text, path):
         bottomTextSize = font.getsize(Bottom_Text)
     if fontSize  <= 0:
         fontSize = 1
+    
+    # center and position the text
     topTextPositionX = (img.size[0]/2) - (topTextSize[0]/2)
     topTextPosition = (topTextPositionX, 0)
     bottomTextPositionX = (img.size[0]/2) - (bottomTextSize[0]/2)
@@ -355,7 +360,6 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
     # FIXED THE FUCKING STROKE SIZE - FDG
-    # idk why i never bothered to calculate stroke size like this
     # it divides the size of both top and bottom text by 75 and uses that as the stroke size
     # also we make sure the stroke size is AT LEAST 1
     top_outline = int((topTextSize[0]//75))
@@ -403,28 +407,30 @@ def make_meme_gif(Top_Text, Bottom_Text):
                 img = img.resize((MemeWidth_UpperCap, new_height), Image.Resampling.LANCZOS)
                 img.save(path) # save image with new size
                 img = PIL.Image.open(path) # reopen the image
-            
-            # fixed font size calc
-            # proportionally scales the font to the size of the image, and make sure it doesn't equal 0
-            imageSize = img.size
-            fontSize = int(imageSize[1]/5)
-            if fontSize  <= 0:
-                fontSize = 1
-
-            font = ImageFont.truetype(
-                f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-
+                
             # scale and position the text
+            fontSize = int(img.size[0])
+            font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
             topTextSize = font.getsize(Top_Text)
             bottomTextSize = font.getsize(Bottom_Text)
-            topTextPositionX = (imageSize[0]/2) - (topTextSize[0]/2)
+            
+            # find the biggest font size that works, and then make sure its at least 1
+            while topTextSize[0] > img.size[0]-20 or bottomTextSize[0] > img.size[0]-20:
+                fontSize = fontSize - 1
+                font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
+                topTextSize = font.getsize(Top_Text)
+                bottomTextSize = font.getsize(Bottom_Text)
+            if fontSize  <= 0:
+                fontSize = 1
+            
+            # center and position the text
+            topTextPositionX = (img.size[0]/2) - (topTextSize[0]/2)
             topTextPosition = (topTextPositionX, 0)
-            bottomTextPositionX = (imageSize[0]/2) - (bottomTextSize[0]/2)
-            bottomTextPositionY = imageSize[1] - bottomTextSize[1]
+            bottomTextPositionX = (img.size[0]/2) - (bottomTextSize[0]/2)
+            bottomTextPositionY = img.size[1] - bottomTextSize[1]
             bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
 
-            # FIX THE FUCKING STROKE SIZE - FDG
-            # idk why i never bothered to calculate stroke size like this
+            # FIXED THE FUCKING STROKE SIZE - FDG
             # it divides the size of both top and bottom text by 75 and uses that as the stroke size
             # also we make sure the stroke size is AT LEAST 1
             top_outline = int((topTextSize[0]//75))
