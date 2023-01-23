@@ -99,11 +99,10 @@ class image(commands.Cog):
         # i hate using these - FDG
         try:
             effect_val = int(context[1])
+            if effect_val <= 0.9:
+                effect_val = 1
         except:
             effect_val = None
-
-        if effect_val <= 0.9:
-            effect_val = 1
             
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
         if '.gif' in File_Url:
