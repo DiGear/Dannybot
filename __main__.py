@@ -12,6 +12,7 @@ print("-----------------------------------------")
 if cache_clear_onLaunch:
     print("clearing cache from previous session...")
     clear_cache()
+    print("-----------------------------------------")
 
 bot = commands.Bot(
     command_prefix=(dannybot_prefix),
