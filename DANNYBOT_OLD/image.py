@@ -82,7 +82,7 @@ class Image(commands.Cog):
             repack_gif()
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'mirrored.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
         else:
             im = PIL.Image.open('I:\\Dannybot\\cogs\\cache\\mirror.png')
@@ -122,7 +122,7 @@ class Image(commands.Cog):
             repack_gif()
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'flipped.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
         else:
             im = PIL.Image.open('I:\\Dannybot\\cogs\\cache\\flip.png')
@@ -196,7 +196,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'magik.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
         else:  # still
             with magick(filename="I:\\Dannybot\\cogs\\cache\\distin.png") as img:
@@ -260,7 +260,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'deepfry.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
 
         else:  # still
@@ -316,7 +316,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'shit.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
 
         else:  # still
@@ -364,7 +364,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'koala.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
 
         else:
@@ -417,7 +417,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'explode.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
         else:  # still
             with magick(filename='I:\\Dannybot\\cogs\\cache\\expin.png') as img:
@@ -466,7 +466,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'implode.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
         else:  # still
             with magick(filename='I:\\Dannybot\\cogs\\cache\\impin.png') as img:
@@ -510,7 +510,7 @@ class Image(commands.Cog):
 
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'radial.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
 
         else:  # still
@@ -577,7 +577,7 @@ class Image(commands.Cog):
         if (is_gif):
             with open(f'I:\\Dannybot\\cogs\\cache\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'meme.gif'), mention_author=True)
-                cleanup_ffmpeg()
+                cleanup_gif()
                 f.close
         else:
             with open(f'I:\\Dannybot\\cogs\\cache\memeout.png', 'rb') as f:
@@ -708,7 +708,7 @@ class Image(commands.Cog):
             # prepare the file for sending
             with open(f'I:\\Dannybot\\cogs\\cache\\outgif.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'caption.gif'), mention_author=True)
-                cleanup_ffmpeg()  # delete the temporary files made from the unpacking and repacking of gifs
+                cleanup_gif()  # delete the temporary files made from the unpacking and repacking of gifs
                 f.close
 
         else:
