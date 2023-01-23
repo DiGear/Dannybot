@@ -8,6 +8,77 @@ class image(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(description="Flips a provided image vertically.", brief="Flips an image vertically")
+    async def flip(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        File_Url = cmd_info[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        if '.gif' in File_Url:
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+        else:
+            with open(f'{dannybot}\\cache\\flip.png', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+
+        if '.gif' in File_Url:
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    im = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
+                    im_mirror = ImageOps.flip(im)
+                    im_mirror.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+            repack_gif()
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'flipped.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:
+            im = PIL.Image.open(f'{dannybot}\\cache\\flip.png')
+            im_mirror = ImageOps.flip(im)
+            im_mirror.save(f'{dannybot}\\cache\\flipped.png')
+            file_name = f"{dannybot}\\cache\\flipped.png"
+            with open(f'{file_name}', 'rb') as f:
+                await ctx.reply(file=File(f, 'flipped.png'), mention_author=True)
+                f.close
+
+    @commands.command(description="Flips a provided image horizontally.", brief="Flips an image horizontally")
+    async def mirror(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        File_Url = cmd_info[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        if '.gif' in File_Url:
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+        else:
+            with open(f'{dannybot}\\cache\\mirror.png', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+
+        if '.gif' in File_Url:
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    im = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
+                    im_mirror = ImageOps.mirror(im)
+                    im_mirror.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+            repack_gif()
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'mirrored.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:
+            im = PIL.Image.open(f'{dannybot}\\cache\\mirror.png')
+            im_mirror = ImageOps.mirror(im)
+            im_mirror.save(f'{dannybot}\\cache\\mirrored.png')
+            file_name = f"{dannybot}\\cache\\mirrored.png"
+            with open(f'{file_name}', 'rb') as f:
+                await ctx.reply(file=File(f, 'mirrored.png'), mention_author=True)
+                f.close
+
+
     # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, *args):

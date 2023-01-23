@@ -35,7 +35,7 @@ def repack_gif_shittify():
     return
 
 
-def cleanup_gif():
+def cleanup_ffmpeg():
     for file in os.listdir('I:\\Dannybot\\cogs\\cache\\GIF'):
         if '.png' in file:
             os.remove('I:\\Dannybot\\cogs\\cache\\GIF\\'+file)
