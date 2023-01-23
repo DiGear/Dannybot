@@ -316,6 +316,19 @@ async def resolve_args(ctx, args, attachments):
             text = ' '.join(args)
             return [url, text]
 
+def deepfry(filename):
+    image = PIL.Image.open(f'{dannybot}\\cache\\deepfry_in.png').convert('RGB')
+    image.save(f'{dannybot}\\cache\\deepfry_in.jpg', quality=15)
+    with magick(filename=f'{dannybot}\\cache\\deepfry_in.jpg') as img:
+        img.level(0.2, 0.9, gamma=1.1)
+        img.level(0.2, 0.9, gamma=1.1)
+        img.sharpen(radius=8, sigma=4)
+        img.noise("laplacian", attenuate=1.0)
+        img.level(0.2, 0.9, gamma=1.1)
+        img.sharpen(radius=8, sigma=4)
+        img.save(filename=f'{dannybot}\\cache\\{filename}')
+    return
+
 # primary function of the meme command
 # take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
 # this is stolen from a, like, decade old repo
