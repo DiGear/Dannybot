@@ -316,8 +316,8 @@ async def resolve_args(ctx, args, attachments):
             text = ' '.join(args)
             return [url, text]
 
-def deepfry(inputname, outputname):
-    image = PIL.Image.open(f'{dannybot}\\cache\\{inputname}').convert('RGB')
+def deepfry(inputpath, outputpath):
+    image = PIL.Image.open(f'{inputpath}').convert('RGB')
     image.save(f'{dannybot}\\cache\\deepfry_in.jpg', quality=15)
     with magick(filename=f'{dannybot}\\cache\\deepfry_in.jpg') as img:
         img.level(0.2, 0.9, gamma=1.1)
@@ -326,7 +326,7 @@ def deepfry(inputname, outputname):
         img.noise("laplacian", attenuate=1.0)
         img.level(0.2, 0.9, gamma=1.1)
         img.sharpen(radius=8, sigma=4)
-        img.save(filename=f'{dannybot}\\cache\\{outputname}')
+        img.save(filename=f'{outputpath}')
     return
 
 # primary function of the meme command
