@@ -61,7 +61,8 @@ MemeWidth_UpperCap = 2000 # the largest image width the meme command will use. i
 # .env
 Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
-removbebg_key = os.getenv("REMOVEBG_KEY")
+removebg_key = os.getenv("REMOVEBG_KEY")
+tenor_apikey =  os.getenv("TENOR_KEY")
 
 # external paths
 KemonoFriendsPath = "E:\\Anime\\Kemono Friends" # put your kemono friends regex files into here
@@ -206,7 +207,7 @@ def undertext(name):
 
 # grab the gif url of a tenor id using the tenor api
 def gettenor(gifid=None):
-    apikey = "8FMRE051ZV31"
+    apikey = tenor_apikey
     r = requests.get(
         "https://api.tenor.com/v1/gifs?ids=%s&key=%s&media_filter=minimal" % (gifid, apikey))
 
