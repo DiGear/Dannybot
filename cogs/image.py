@@ -78,6 +78,18 @@ class image(commands.Cog):
                 await ctx.reply(file=File(f, 'mirrored.png'), mention_author=True)
                 f.close
 
+    @commands.command(aliases=['petthe', 'pet-the', 'pet_the'], description="Applies a petting hand gif to the provided image.", brief="That funny hand-petting gif that was a popular meme for a bit")
+    async def pet(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        Link_To_File = cmd_info[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        with open(f'{dannybot}\\cache\\pet_in.png', 'wb') as f:
+            f.write(requests.get(Link_To_File).content)
+            f.close
+        petpet.make(f'{dannybot}\\cache\\pet_in.png', f'{dannybot}\\cache\\pet_out.gif')
+        with open(f'{dannybot}\\cache\\pet_out.gif', 'rb') as f:
+            await ctx.reply(file=File(f, 'pet_the.gif')) 
+            f.close
 
     # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")

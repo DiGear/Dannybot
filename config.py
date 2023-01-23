@@ -30,6 +30,7 @@ from cleverwrap import CleverWrap
 from textwrap import wrap
 from discord import File
 from discord.ext import commands
+from petpetgif import petpet
 from dotenv import load_dotenv
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
                  ImageFilter, ImageFont, ImageOps, ImageSequence)
