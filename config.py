@@ -48,6 +48,7 @@ load_dotenv()
 dannybot_prefix = "d2." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
+cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
 debug_mode = True # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
 logs_channel = 971178342550216705 #channel to log command and cleverbot usage
 # put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
@@ -152,6 +153,12 @@ def cleanup_ffmpeg():
     for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
         if '.png' in file:
             os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
+
+def clear_cache():
+    for file in os.listdir(f'{dannybot}\\cache'):
+        if 'git' not in file and '.' in file:
+            os.remove(f'{dannybot}\\cache\\{file}')
+            print(f"deleted {dannybot}\\cache\\{file}")
 
 # iterate through a folder and count every file
 def fileCount(folder):

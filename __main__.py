@@ -8,6 +8,9 @@ from config import *
 print("-----------------------------------------")
 print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
 print("-----------------------------------------")
+if cache_clear_onLaunch:
+    print("clearing cache from previous session...")
+    clear_cache()
 
 bot = commands.Bot(
     command_prefix=(dannybot_prefix),
