@@ -169,6 +169,40 @@ class image(commands.Cog):
                 await ctx.reply(file=File(f, 'deepfried.png'), mention_author=True)
                 f.close
 
+    @commands.command(description="Turns a provided image into a low quality jpeg.", brief="Turns an image into a low quality jpeg")
+    async def shittify(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        File_Url = cmd_info[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        if '.gif' in File_Url:
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+        else:
+            with open(f'{dannybot}\\cache\\jpg_in.png', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+
+        if '.gif' in File_Url:
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    image = PIL.Image.open(f'{dannybot}\\cache\\ffmpeg\\{frame}').convert('RGB')
+                    image.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}.jpg", quality=15)
+            repack_gif_JPG()
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'jpg-ed.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:
+            image = PIL.Image.open(f'{dannybot}\\cache\\jpg_in.png').convert('RGB')
+            image.save(f'{dannybot}\\cache\\jpg_out.jpg', quality=15)
+            file_name = f'{dannybot}\\cache\\jpg_out.jpg'
+            with open(f'{file_name}', 'rb') as f:
+                await ctx.reply(file=File(f, 'jpg-ed.jpg'), mention_author=True)
+                f.close
+
+
     # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
     async def meme(self, ctx, *args):
