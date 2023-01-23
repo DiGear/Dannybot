@@ -2,3 +2,4 @@ Dannybot has various folders for storing image databases. These toolss are not i
 
 waifu2x-caffe
 UltimateVocalRemover (good luck finding a CLI version lmao)
+FluidSynth 2.0.0 or higher
