@@ -129,6 +129,7 @@ class image(commands.Cog):
                 await ctx.reply(file=File(f, 'magik.gif'), mention_author=True)
                 cleanup_ffmpeg()
                 f.close
+                return
         else:
             with magick(filename=f'{dannybot}\\cache\\magik_in.png') as img:
                 img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=int(0.5 * effect_val) if effect_val else 1, rigidity=0)
@@ -137,6 +138,7 @@ class image(commands.Cog):
             with open(f'{dannybot}\\cache\\magik_out.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'magik.png'), mention_author=True)
                 f.close
+                return
                 
     @commands.command(aliases=['df'], description="'Deepfries' the provided image.", brief="'Deepfries' an image")
     async def deepfry(self, ctx, *args):
@@ -202,6 +204,46 @@ class image(commands.Cog):
                 await ctx.reply(file=File(f, 'jpg-ed.jpg'), mention_author=True)
                 f.close
 
+    @commands.command(aliases=['oatmeal'], description="Makes an image super pixelated. The name(s) of the command are in reference to Vinesauce Joel.", brief="Makes an image super pixelated")
+    async def koala(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        File_Url = cmd_info[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        if '.gif' in File_Url:
+            with open(f"{dannybot}\\cache\\gif.gif", 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+        else:
+            with open(f'{dannybot}\\cache\\koala_in.png', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+
+        if '.gif' in File_Url:
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    image = PIL.Image.open(f'{dannybot}\\cache\\ffmpeg\\{frame}')
+                    koala1 = image.resize((round(image.size[0]*0.07), round(image.size[1]*0.07)), PIL.Image.Resampling.NEAREST)
+                    koala1.save(f'{dannybot}\\cache\\ffmpeg\\output\\{frame}')
+                    image = PIL.Image.open(f'{dannybot}\\cache\\ffmpeg\\output\\{frame}')
+                    koala2 = image.resize((round(image.size[0]*9.6835), round(image.size[1]*9.72)), PIL.Image.Resampling.NEAREST)
+                    koala2.save(f'{dannybot}\\cache\\ffmpeg\\output\\{frame}')
+            repack_gif()
+
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'koala.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:
+            image = PIL.Image.open(f'{dannybot}\\cache\\koala_in.png')
+            koala1 = image.resize((round(image.size[0]*0.07), round(image.size[1]*0.07)), PIL.Image.Resampling.NEAREST)
+            koala1.save(f'{dannybot}\\cache\\koala_small.png')
+            image = PIL.Image.open(f'{dannybot}\\cache\\koala_small.png')
+            koala2 = image.resize((round(image.size[0]*9.6835), round(image.size[1]*9.72)), PIL.Image.Resampling.NEAREST)
+            koala2.save(f'{dannybot}\\cache\\koala_out.png')
+            with open(f'{dannybot}\\cache\\koala_out.png', 'rb') as f:
+                await ctx.reply(file=File(f, 'koala.png'), mention_author=True)
+                f.close
 
     # i have a feeling im making this more complicated than it needs to be - FDG
     @commands.command(description="Turn a provided image into an impact font meme using the syntax: toptext|bottomtext", brief="Turns an image into an impact font meme")
