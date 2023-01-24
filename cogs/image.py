@@ -103,6 +103,7 @@ class image(commands.Cog):
                 effect_val = 1
         except:
             effect_val = None
+
             
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
         if '.gif' in File_Url:
