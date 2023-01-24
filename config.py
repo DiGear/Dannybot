@@ -159,6 +159,15 @@ def clear_cache():
         if 'git' not in file and '.' in file:
             os.remove(f'{dannybot}\\cache\\{file}')
             print(f"deleted {dannybot}\\cache\\{file}")
+    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+        if '.png' in file:
+            os.remove(f'{dannybot}\\cache\\ffmpeg\\{file}')
+            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
+    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
+        if '.png' in file:
+            os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
+            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
+    return
 
 # iterate through a folder and count every file
 def fileCount(folder):
