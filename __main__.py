@@ -9,6 +9,9 @@ print("-----------------------------------------")
 print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
 print("-----------------------------------------")
 
+# asyncio bad btw
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 if cache_clear_onLaunch:
     print("clearing cache from previous session...")
     clear_cache()
@@ -107,6 +110,14 @@ async def say(ctx, *, args):
     await ctx.send(args)
     # delete the command message, leaving only what Dannybot sends
     await ctx.message.delete()
+
+@bot.command(description="Delete the most recent command output in the current channel. This only affects Dannybot.", brief="Undo the last command output")
+async def undo(ctx):
+    channel = ctx.message.channel
+    async for msg in channel.history(limit=500):
+        if msg.author.id == 847276836172988426:
+            await msg.delete()
+            return
 
 # this command reloads a specified cog. used for testing, you can call this command to update code on a cog without restarting the whole bot
 @bot.command(description="This is an owner only command. It allows for any module to be reloaded on the fly.", brief="Debug tool for modules")
