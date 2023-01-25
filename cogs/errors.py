@@ -30,7 +30,7 @@ class errors(commands.Cog):
 
         # command requires developer permissions
         elif isinstance(error, commands.errors.NotOwner):
-            await ctx.send(f"{ctx.command} is reserved for Dannybot developers.")
+            await ctx.send(f"{ctx.command} is reserved for Dannybot developers. <:trollface:855665633509507092>") # trollface emote is from dannybots mother server, will need to replace emote or remove it
 
         # command was sent in a DM
         elif isinstance(error, commands.NoPrivateMessage):
