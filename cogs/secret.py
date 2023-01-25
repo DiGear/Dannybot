@@ -8,9 +8,12 @@ class secret(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(hidden=True, aliases=["eez nuts"])
-    async def _deez_nutz_(self, ctx):
-        await ctx.reply("goteem", mention_author=True)
+    @commands.command(hidden=True)
+    async def eez(self, ctx, args):
+        if args == 'nutz' or args == 'nuts':
+            await ctx.reply("goteem", mention_author=True)
+        else:
+            return
 
     @commands.command(hidden=True)
     async def bruh(self, ctx):
