@@ -49,6 +49,7 @@ load_dotenv()
 # dannybot config
 dannybot_prefix = "d." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
+dannybot_denialRatio = 1000 # chance for dannybot to deny your command input
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
 debug_mode = False # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
