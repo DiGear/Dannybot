@@ -52,7 +52,8 @@ dannybot_token = os.getenv("TOKEN") #token
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
 debug_mode = False # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
-logs_channel = 971178342550216705 #channel to log command and cleverbot usage
+logs_channel = 971178342550216705 # channel to log command and cleverbot usage
+talking_channel = "talk-to-dannybot" # channel to limit cleverbot usage to
 # put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
 devs = [
     343224184110841856,  # FDG

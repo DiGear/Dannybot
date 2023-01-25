@@ -14,7 +14,7 @@ class cleverbot(commands.Cog):
     async def on_message(self, input: discord.Message):
         
         # check for a valid "talk to dannybot" channel and make sure the user isn't a bot
-        if "talk-to-dannybot" in str(input.channel.name) and not input.author.bot:
+        if {talking_channel} not in str(input.channel.name) and not input.author.bot:
             
             # this resets the conversation upon request
             if "new conversation" in input.content:
