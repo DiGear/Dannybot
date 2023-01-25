@@ -41,7 +41,7 @@ async def on_message(input):
         await input.channel.send("Developer mode is active. Only verified developers can interact with the bot at this time.")
     else:
         rng = random.randint(0, dannybot_denialRatio)
-        if rng == dannybot_denialRatio:
+        if rng == dannybot_denialRatio and input.content.startswith({dannybot_prefix}):
             await input.channel.send("no", reference=input)
         else:
             await bot.process_commands(input)
