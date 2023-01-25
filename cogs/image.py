@@ -94,20 +94,7 @@ class image(commands.Cog):
     async def magik(self, ctx, *args):
         context = await resolve_args(ctx, args, ctx.message.attachments)
         File_Url = context[0]
-        
-        # i hate using these - FDG
-        try:
-            effect_val = int(context[1])
-            # lower bound
-            if effect_val <= 0.9:
-                effect_val = 1
-            # upper bound
-            if effect_val <= 15.1:
-                effect_val = 15
-        except:
-            effect_val = None
-
-            
+    
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
         if '.gif' in File_Url:
             with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
@@ -122,9 +109,10 @@ class image(commands.Cog):
             unpack_gif(f'{dannybot}\\cache\\gif.gif')
             for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
                 if '.png' in frame:
+                    imagebounds(frame)
                     with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
-                        img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=int(0.5 * effect_val) if effect_val else 1, rigidity=0)
-                        img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=int(effect_val) if effect_val else 2, rigidity=0)
+                        img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=1, rigidity=0)
+                        img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=2, rigidity=0)
                         img.save(filename=f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
             repack_gif()
 
@@ -134,9 +122,10 @@ class image(commands.Cog):
                 f.close
                 return
         else:
+            imagebounds(f'{dannybot}\\cache\\magik_in.png')
             with magick(filename=f'{dannybot}\\cache\\magik_in.png') as img:
-                img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=int(0.5 * effect_val) if effect_val else 1, rigidity=0)
-                img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=int(effect_val) if effect_val else 2, rigidity=0)
+                img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=1, rigidity=0)
+                img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=2, rigidity=0)
                 img.save(filename=f'{dannybot}\\cache\\magik_out.png')
             with open(f'{dannybot}\\cache\\magik_out.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'magik.png'), mention_author=True)
