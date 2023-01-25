@@ -4,8 +4,6 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-nameRecall_list = ['buddy', 'pal', 'dude', 'bro']
-
 class cleverbot(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -29,10 +27,6 @@ class cleverbot(commands.Cog):
                 
                 # remove all punctuation and capitalization to make it seem more discord user-like
                 response = str(response.translate(str.maketrans('', '', string.punctuation))).lower()
-                
-                # dumb - FDG
-                for i in range(len(nameRecall_list)):
-                    response = response.replace(nameRecall_list[i], str(input.author.name))
                 
                 # send the resulting message cleverbot api returns for our given unput
                 await input.channel.send(response, reference=input)
