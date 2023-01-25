@@ -3,7 +3,6 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-
 class image(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -99,8 +98,12 @@ class image(commands.Cog):
         # i hate using these - FDG
         try:
             effect_val = int(context[1])
+            # lower bound
             if effect_val <= 0.9:
                 effect_val = 1
+            # upper bound
+            if effect_val <= 15.1:
+                effect_val = 15
         except:
             effect_val = None
 
