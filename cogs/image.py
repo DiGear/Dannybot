@@ -90,7 +90,7 @@ class image(commands.Cog):
             await ctx.reply(file=File(f, 'pet_the.gif')) 
             f.close
             
-    @commands.command(aliases=['distort', 'magic'], description="Applies a liquid rescale effect to the provided image, using the provided value.", brief="Recreation of NotSoBots 'magik' command")
+    @commands.command(aliases=['distort', 'magic'], description="Applies a liquid rescale effect to the provided image.", brief="Recreation of NotSoBots 'magik' command")
     async def magik(self, ctx, *args):
         context = await resolve_args(ctx, args, ctx.message.attachments)
         File_Url = context[0]
