@@ -18,7 +18,7 @@ if cache_clear_onLaunch:
     print("-----------------------------------------")
 
 bot = commands.Bot(
-    command_prefix=(dannybot_prefix),
+    command_prefix=commands.when_mentioned_or([dannybot_prefix, "#"]),
     status=discord.Status.online,
     activity=discord.Activity(name="for d.help", type=3),
     intents=discord.Intents.all(),
