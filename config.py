@@ -45,7 +45,7 @@ load_dotenv()
 # ----------
 
 # dannybot config
-dannybot_prefix = "d2." #bot prefix
+dannybot_prefix = "d." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
