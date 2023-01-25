@@ -15,16 +15,6 @@ class reactions(commands.Cog):
             # dannybot
             if "dannybot" in str(input.content).lower():
                 await input.channel.send("me", reference=input)
-            
-            # slur
-            if any(slurs in str(input.content).lower() for slurs in slur):
-                if any(slurs not in input.author.name.lower() for slurs in slur):
-                    slur_sayer = str(input.author.display_name).upper()
-                    await input.channel.send(f"SLUR DETECTED\nFUCK YOU {slur_sayer}")
-                else:
-                    await input.channel.send('SLUR DETECTED\nFUCK YOU')
-            return
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(reactions(bot))
