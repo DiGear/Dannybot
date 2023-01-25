@@ -9,16 +9,11 @@ class errors(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(ctx, error):
-        # ignore "intentional errors"/errors that get caught mid-function
+    async def on_command_error(self, ctx, error):
+        
+        # ignore "intentional errors": errors that get caught mid-function
         if hasattr(ctx.command, "on_error"):
             return
-
-        # ignore errors that happen in cogs that contain error handlers already
-        cog = ctx.cog
-        if cog:
-            if cog._get_overridden_method(cog.cog_command_error) is not None:
-                return
 
         # set specific errors to be ignored, such as the commands.CommandNotFound error
         ignored = (commands.CommandNotFound,)
@@ -39,25 +34,15 @@ class errors(commands.Cog):
 
         # command was sent in a DM
         elif isinstance(error, commands.NoPrivateMessage):
-            # send the error response in the DM, if possible
-            try:
+            try: # send the error response in the DM, if possible
                 await ctx.author.send(f"{ctx.command} can not be used in Private Messages.")
             except discord.HTTPException:
                 pass
         else:
             # this is a catch-all for any other types of errors, they will be sent in chat and the console for debugging purposes
-            await ctx.send(
-                "An undefined error has occured.\n```\n"
-                + str(error.__traceback__)
-                + "\n"
-                + str(error)
-                + "```\nIf you are seeing this, ping FDG for assistance."
-            )
-            print("Ignoring exception in command {}:".format(
-                ctx.command), file=sys.stderr)
-            traceback.print_exception(
-                type(error), error, error.__traceback__, file=sys.stderr
-            )
+            await ctx.send(f"An undefined error has occured.\n```\n{error.__traceback__}\n{error}```\nIf you are seeing this, ping FDG for assistance.")
+            print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
 async def setup(bot: commands.Bot):
