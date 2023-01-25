@@ -58,8 +58,8 @@ devs = [
 ]
 
 #configs for the image manipulation commands
-MemeWidth_LowerCap = 250 # the smallest image width the meme command will use. if the image is thinner than this, it will proportionally scale to this size
-MemeWidth_UpperCap = 2000 # the largest image width the meme command will use. if the image is wider than this, it will proportionally scale to this size
+imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
+imageUpper = 1500 # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
 
 # .env
 Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
@@ -345,28 +345,35 @@ def deepfry(inputpath, outputpath):
         img.save(filename=f'{outputpath}')
     return
 
+def imagebounds(path):
+
+    img = PIL.Image.open(path)
+
+    # lower cap
+    if img.size[0] < imageLower:
+        ratio = (imageLower/float(img.size[0]))
+        new_height = int((float(img.size[1])*float(ratio)))
+        img = img.resize((imageLower, new_height), Image.Resampling.LANCZOS)
+        img.save(path) # save image with new size
+        return
+
+    # upper cap
+    if img.size[0] > imageUpper:
+        ratio = (imageUpper/float(img.size[0]))
+        new_height = int((float(img.size[1])*float(ratio)))
+        img = img.resize((imageUpper, new_height), Image.Resampling.LANCZOS)
+        img.save(path) # save image with new size
+        return
+    return
+
 # primary function of the meme command
 # take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
 # this is stolen from a, like, decade old repo
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
 
-    # make sure the image is within the configured lower and upper caps
-    # lower cap
-    if img.size[0] < MemeWidth_LowerCap:
-        ratio = (MemeWidth_LowerCap/float(img.size[0]))
-        new_height = int((float(img.size[1])*float(ratio)))
-        img = img.resize((MemeWidth_LowerCap, new_height), Image.Resampling.LANCZOS)
-        img.save(path) # save image with new size
-        img = PIL.Image.open(path) # reopen the image
-
-    # upper cap
-    if img.size[0] > MemeWidth_UpperCap:
-        ratio = (MemeWidth_UpperCap/float(img.size[0]))
-        new_height = int((float(img.size[1])*float(ratio)))
-        img = img.resize((MemeWidth_UpperCap, new_height), Image.Resampling.LANCZOS)
-        img.save(path) # save image with new size
-        img = PIL.Image.open(path) # reopen the image
+    imagebounds(path)
+    img = PIL.Image.open(path) # reopen the image
         
     # scale and position the text
     fontSize = int(img.size[0])
@@ -419,22 +426,8 @@ def make_meme_gif(Top_Text, Bottom_Text):
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
             path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
 
-            # make sure the image is within the configured lower and upper caps
-            # lower cap
-            if img.size[0] < MemeWidth_LowerCap:
-                ratio = (MemeWidth_LowerCap/float(img.size[0]))
-                new_height = int((float(img.size[1])*float(ratio)))
-                img = img.resize((MemeWidth_LowerCap, new_height), Image.Resampling.LANCZOS)
-                img.save(path) # save image with new size
-                img = PIL.Image.open(path) # reopen the image
-
-            # upper cap
-            if img.size[0] > MemeWidth_UpperCap:
-                ratio = (MemeWidth_UpperCap/float(img.size[0]))
-                new_height = int((float(img.size[1])*float(ratio)))
-                img = img.resize((MemeWidth_UpperCap, new_height), Image.Resampling.LANCZOS)
-                img.save(path) # save image with new size
-                img = PIL.Image.open(path) # reopen the image
+            imagebounds(path)
+            img = PIL.Image.open(path) # reopen the image
                 
             # scale and position the text
             fontSize = int(img.size[0])
