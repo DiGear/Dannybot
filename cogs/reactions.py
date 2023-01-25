@@ -10,8 +10,9 @@ class reactions(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
+        if "talk-to-dannybot" not in str(input.channel.name) and not input.author.bot:
         # put reactions here
-        return
+            return
 
 
 async def setup(bot: commands.Bot):
