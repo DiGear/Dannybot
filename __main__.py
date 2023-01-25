@@ -36,7 +36,7 @@ async def on_ready():
 # check if config.debug_mode is true and treat the message handler appropriately
 @bot.event
 async def on_message(input):
-    if (debug_mode and input.content.startswith(bot.command_prefix) and input.author.id not in devs):
+    if (debug_mode and input.content.startswith({dannybot_prefix}) and input.author.id not in devs):
         await input.channel.send("Developer mode is active. Only verified developers can interact with the bot at this time.")
     else:
         await bot.process_commands(input)
