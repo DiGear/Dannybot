@@ -16,10 +16,14 @@ class reactions(commands.Cog):
             if "dannybot" in str(input.content).lower():
                 await input.channel.send("me", reference=input)
             
-            # slur    
+            # slur
             if slur in str(input.content).lower():
                 await input.channel.send("SLUR DETECTED")
-                await input.channel.send(f'FUCK YOU {input.author.name}')
+                if slur not in input.author.name.lower():
+                    slur_sayer = str(input.author.name).upper()
+                    await input.channel.send(f'FUCK YOU {slur_sayer}')
+                else:
+                    await input.channel.send('FUCK YOU')
             return
 
 
