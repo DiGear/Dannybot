@@ -7,6 +7,7 @@
 
 import asyncio
 import base64
+import hashlib
 import io
 import json
 import os
@@ -18,6 +19,7 @@ import traceback
 import typing
 import urllib
 import urllib.request
+from textwrap import wrap
 
 import aiohttp
 import discord
@@ -27,14 +29,13 @@ import openai
 import PIL
 import requests
 from cleverwrap import CleverWrap
-from textwrap import wrap
 from discord import File
 from discord.ext import commands
-from petpetgif import petpet
 from dotenv import load_dotenv
-from wand.image import Image as magick
+from petpetgif import petpet
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
                  ImageFilter, ImageFont, ImageOps, ImageSequence)
+from wand.image import Image as magick
 
 from fifteen import FifteenAPI
 
@@ -78,6 +79,9 @@ GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
 UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover\\python inference.py" # set this to the path of your inference.py file in your install of UltimateVocalRemover
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 Fluidsynth = f"{dannybot}\\tools\\Fluidsynth\\fluidsynth.exe"  # set this to the path of your fluidsynth.exe file in your install of FluidSynth
+
+# list of accepted files for the bots public database
+database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga', 'mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
 
 # logo list for the logo command
 logolist = [
@@ -153,6 +157,9 @@ def cleanup_ffmpeg():
     for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
         if '.png' in file:
             os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
+            
+def randhex(bits):
+    return hashlib.sha256(str(random.getrandbits(bits)).encode('utf-8')).hexdigest()
 
 def clear_cache():
     for file in os.listdir(f'{dannybot}\\cache'):

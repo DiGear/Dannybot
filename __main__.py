@@ -111,6 +111,17 @@ async def say(ctx, *, args):
     # delete the command message, leaving only what Dannybot sends
     await ctx.message.delete()
 
+@bot.command(hidden=True)
+@commands.is_owner()
+async def dbpurge(ctx):
+    invalidFiles = 0
+    for file in os.listdir(f'{dannybot}\\database\\Pooter'):
+            ext = file.split('.')[-1].lower()
+            if ext not in database_acceptedFiles:
+                os.remove(f'{dannybot}\\database\\Pooter\\{file}')
+                invalidFiles =+ 1
+    await ctx.send(f'Purged Pooter database of {invalidFiles} invalid files!')
+
 @bot.command(description="Delete the most recent command output in the current channel. This only affects Dannybot.", brief="Undo the last command output")
 async def undo(ctx):
     channel = ctx.message.channel
