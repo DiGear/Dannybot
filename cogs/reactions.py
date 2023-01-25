@@ -11,8 +11,15 @@ class reactions(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         if talking_channel not in str(input.channel.name) and not input.author.bot:
+            
+            # dannybot
             if "dannybot" in str(input.content).lower():
                 await input.channel.send("me", reference=input)
+            
+            # slur    
+            if slur in str(input.content).lower():
+                await input.channel.send("SLUR DETECTED")
+                await input.channel.send(f'FUCK YOU {input.author.name}')
             return
 
 
