@@ -8,6 +8,30 @@ class misc(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
+    async def download(self, ctx, file_download, format='mp3'):
+        await ctx.send('Ok. Downloading...')
+        # defines
+        file_download = file_download.split("&")[0]
+        video_formats = ['mp4', 'webm']
+        audio_formats = ['mp3', 'ogg', 'flac', 'wav']
+        
+        os.chdir(f"{dannybot}\\cache")
+        
+        try:
+            if format in video_formats:
+                os.system(f'"youtube-dl -o "ytdl.%(ext)s" -r 999M --external-downloader {aria2c} --external-downloader-args "-x 16 -s 16 -k 1M" --no-playlist -f {format} {file_download}"')
+            elif format in audio_formats:
+                os.system(f'"youtube-dl -o "ytdl.%(ext)s" -r 999M --external-downloader {aria2c} --external-downloader-args "-x 16 -s 16 -k 1M" --no-playlist --audio-format {format} {file_download}"')
+            else:
+                await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
+        except:
+            os.chdir(f"{dannybot}")
+            
+        await ctx.reply(file=discord.File(f'ytdl.{format}'))
+        os.remove(f'ytdl.{format}')
+        os.chdir(f"{dannybot}")
+
     @commands.command(name="8ball", description="Ask Dannybot a question and he will respond with one of many answers.", brief="Ask a question and get an answer")
     async def _8ball(self, ctx, *, question):
         await ctx.send(f'Question: {question}\nAnswer: {random.choice(ball_responses)}')

@@ -82,6 +82,7 @@ GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
 UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover\\python inference.py" # set this to the path of your inference.py file in your install of UltimateVocalRemover
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 Fluidsynth = f"{dannybot}\\tools\\Fluidsynth\\fluidsynth.exe"  # set this to the path of your fluidsynth.exe file in your install of FluidSynth
+aria2c =  f"{dannybot}\\tools\\Aria2c\\aria2c.exe" # set this to aria2c
 
 # list of accepted files for the bots public database
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga', 'mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
@@ -251,7 +252,7 @@ def undertext(name):
         "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png",
         "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
         "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
-        "leffrey" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068092769438019584/leffreyportrait1.png",
+        "leffrey" : "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
         "suggagugga" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
     }
     name = underdict.get(name, name)
