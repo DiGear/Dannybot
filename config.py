@@ -86,11 +86,6 @@ Fluidsynth = f"{dannybot}\\tools\\Fluidsynth\\fluidsynth.exe"  # set this to the
 # list of accepted files for the bots public database
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga', 'mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
 
-# list of slurs in case you needed one
-slur = ["nigger", "nigga","nig","faggot","fag","towel head","towelhead","chink","beaner","coon","gook","spic","tranny","alphabet mafia",\
-"ching chong", "interesting", "gypsy", "muppetfucker", "moosefucker","modern farm equipment","guati", "cheesehead","glonni","terrone","cracker",\
-"dyke","spook", "monkey","redskin","fairy","oreo","limey","jap","gringo","honky","negro","wetback"]
-
 # logo list for the logo command
 logolist = [
     "clan",
