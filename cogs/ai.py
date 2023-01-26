@@ -13,7 +13,7 @@ class ai(commands.Cog):
 
     @commands.command(aliases=['GPT3'],  description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
     async def write(self, ctx, *, prompt):
-        gpt_prompt = str("write me " + str(prompt))
+        gpt_prompt = str(f"write me {prompt}")
         print(gpt_prompt)
         response = openai.Completion.create(
             engine="text-davinci-003",
@@ -25,7 +25,22 @@ class ai(commands.Cog):
             presence_penalty=0.0
         )
         await ctx.reply(response['choices'][0]['text'], mention_author=True)
-
+        
+    @commands.command(aliases=['4chan'], description="Interact with GPT3 using Dannybot to generate greentexts.", brief="Get AI generated greentexts based on provided prompts")
+    async def greentext(self, ctx, *, prompt):
+        gpt_prompt = str(f"write me a funny 4chan greentext\n>be me\n{prompt}")
+        print(gpt_prompt)
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=gpt_prompt,
+            temperature=0.7,
+            max_tokens=256,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0
+        )
+        # eh whatever
+        await ctx.reply('```diff\n' + str(prompt).replace('>','+ >') + str(response['choices'][0]['text']).replace('>','+ >') + '```', mention_author=True)
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
     async def waifu(self, ctx, *args):
