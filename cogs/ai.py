@@ -11,6 +11,27 @@ class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(aliases=['GPT3'],  description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
+    async def write(self, ctx, *, prompt):
+        gpt_prompt = str("write me " + str(prompt))
+        print(gpt_prompt)
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=gpt_prompt,
+            temperature=0.7,
+            max_tokens=1024,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0
+        )
+        with open(f'{dannybot}\\cache\\GPT3.txt', 'w') as f:
+            f.write(response['choices'][0]['text'])
+            f.close
+        with open(f'{dannybot}\\cache\\GPT3.txt', 'rb') as f:
+            await ctx.reply(file=File(f, 'GPT3.txt'), mention_author=True)
+            f.close
+
+
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
     async def waifu(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
