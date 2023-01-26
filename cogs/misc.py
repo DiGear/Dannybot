@@ -8,6 +8,10 @@ class misc(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.command(name="8ball", description="Ask Dannybot a question and he will respond with one of many answers.", brief="Ask a question and get an answer")
+    async def _8ball(self, ctx, *, question):
+        await ctx.send(f'Question: {question}\nAnswer: {random.choice(ball_responses)}')
+
     @commands.command(description="Use a custom flamingtext.com api to generate logos using random presets.", brief="Generate a logo with a random font.")
     async def logo(self, ctx, *, logotext: typing.Optional[str] = "Your Text Here"):
         # choose a random type from the array
