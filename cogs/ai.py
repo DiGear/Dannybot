@@ -19,17 +19,12 @@ class ai(commands.Cog):
             engine="text-davinci-003",
             prompt=gpt_prompt,
             temperature=0.7,
-            max_tokens=1024,
+            max_tokens=256,
             top_p=1.0,
             frequency_penalty=0.0,
             presence_penalty=0.0
         )
-        with open(f'{dannybot}\\cache\\GPT3.txt', 'w') as f:
-            f.write(response['choices'][0]['text'])
-            f.close
-        with open(f'{dannybot}\\cache\\GPT3.txt', 'rb') as f:
-            await ctx.reply(file=File(f, 'GPT3.txt'), mention_author=True)
-            f.close
+        await ctx.send(response['choices'][0]['text'])
 
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
