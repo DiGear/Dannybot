@@ -219,6 +219,7 @@ def ezogaming_regex(datalist, dataentry):
 def undertext(name):
     # character overrides
     # you could also put this in a JSON - FDG
+    name = name.replace('_',"-")
     underdict = {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
         "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
@@ -230,7 +231,9 @@ def undertext(name):
         "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
         "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png",
         "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
-        "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png"
+        "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
+        "leffrey" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068092769438019584/leffreyportrait1.png",
+        "suggagugga" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
     }
     name = underdict.get(name, name)
 
