@@ -24,7 +24,7 @@ class ai(commands.Cog):
             frequency_penalty=0.0,
             presence_penalty=0.0
         )
-        await ctx.send(response['choices'][0]['text'])
+        await ctx.reply(response['choices'][0]['text'], mention_author=True)
 
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
