@@ -439,7 +439,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     # FIXED THE FUCKING STROKE SIZE - FDG
     # it divides the size of top text by 75 and uses that as the stroke size
     # also we make sure the stroke size is AT LEAST 1
-    outline = int((topTextSize[0]//75))
+    outline = int((topTextSize[0]//75) + bottomTextSize[0]//75)
     if outline <= 0:
         outline = 1
 
