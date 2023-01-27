@@ -15,6 +15,8 @@ class sentience(commands.Cog):
         
         rng = random.randint(0, dannybot_sentienceRatio)
         if rng == dannybot_sentienceRatio:
+            
+            Cleverbot.reset()
         
             # declare the response as a variable
             response = Cleverbot.say(input.content)
