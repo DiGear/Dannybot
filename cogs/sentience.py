@@ -14,6 +14,8 @@ class sentience(commands.Cog):
         rng = None
         
         rng = random.randint(0, dannybot_sentienceRatio)
+        if "." in input.content:
+            return
         if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix):
             
             Cleverbot.reset()
