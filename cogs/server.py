@@ -32,6 +32,15 @@ class server(commands.Cog):
                     f.write(requests.get(Link_To_File).content)
                     f.close
 
+    @commands.command(aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
+    async def neko(self, ctx):
+        with requests.Session() as s:
+            api_output = s.get("https://nekos.life/api/v2/img/neko")
+        output = api_output.text
+        x = json.loads(output, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
+        url = x.url
+        await ctx.reply(url, mention_author=True)
+
     @commands.command(description="Send a Kemono Friends character from my personal collection.", brief="Send a picture of a chosen character from Kemono Friends")
     async def friend(self, ctx, *frien):
         aru2 = ezogaming_regex("Kemofure", frien)

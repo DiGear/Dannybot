@@ -29,6 +29,7 @@ import numpy
 import openai
 import PIL
 import requests
+from collections import namedtuple
 from cleverwrap import CleverWrap
 from discord import File
 from discord.ext import commands
@@ -75,6 +76,7 @@ tenor_apikey =  os.getenv("TENOR_KEY")
 
 # external paths
 KemonoFriendsPath = "E:\\Anime\\Kemono Friends" # put your kemono friends regex files into here
+MimiPath = "E:\\Anime\\Kemono girls" # put your animal girl files here
 NekoparaPath = "E:\\Anime\\Nekopara" # put your nekopara regex files into here
 PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
 VideosPath = "C:\\Users\\weebm\\Videos" # set this to your videos folder
