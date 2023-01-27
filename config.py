@@ -60,6 +60,7 @@ talking_channel = "talk-to-dannybot" # channel to limit 24/7 cleverbot usage to
 devs = [
     343224184110841856,  # FDG
     158418656861093888,  # Ezo
+    249411048518451200,  # Rotty
 ]
 
 #configs for the image manipulation commands
