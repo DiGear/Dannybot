@@ -23,7 +23,7 @@ class sentience(commands.Cog):
             response = str(response.translate(str.maketrans('', '', string.punctuation))).lower()
             
             # send the resulting message cleverbot api returns for our given unput
-            await input.channel.send(response, reference=input)
+            await input.channel.send(response)
             return
 
 
