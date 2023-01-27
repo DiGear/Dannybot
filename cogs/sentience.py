@@ -14,7 +14,7 @@ class sentience(commands.Cog):
         rng = None
         
         rng = random.randint(0, dannybot_sentienceRatio)
-        if rng == dannybot_sentienceRatio:
+        if rng == dannybot_sentienceRatio and not input.author.bot:
             
             Cleverbot.reset()
         
