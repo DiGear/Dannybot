@@ -12,6 +12,7 @@ class sentience(commands.Cog):
     async def on_ready(self):
         # reset cleverbot memory
         Cleverbot.reset()
+        print('Cleverbot memory wiped!')
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
