@@ -11,10 +11,7 @@ class reactions(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         if talking_channel not in str(input.channel.name) and not input.author.bot:
-            
-            # dannybot
-            if "dannybot" in str(input.content).lower():
-                await input.channel.send("me", reference=input)
+            return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(reactions(bot))

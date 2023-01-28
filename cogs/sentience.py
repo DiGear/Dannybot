@@ -9,6 +9,11 @@ class sentience(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
+    async def on_ready(self):
+        # reset cleverbot memory
+        Cleverbot.reset()
+
+    @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         
         rng = None
@@ -18,8 +23,6 @@ class sentience(commands.Cog):
             return
        
         if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix) or "dannybot" in input.content:
-            
-            Cleverbot.reset()
         
             # declare the response as a variable
             response = Cleverbot.say(input.content)
