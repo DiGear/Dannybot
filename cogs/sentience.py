@@ -16,7 +16,8 @@ class sentience(commands.Cog):
         rng = random.randint(0, dannybot_sentienceRatio)
         if "." in input.content:
             return
-        if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix):
+       
+        if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix) or "dannybot" in input.content:
             
             Cleverbot.reset()
         
@@ -25,6 +26,8 @@ class sentience(commands.Cog):
             
             # remove all punctuation and capitalization to make it seem more discord user-like
             response = str(response.translate(str.maketrans('', '', string.punctuation))).lower()
+            
+            reponse = response.replace('dannybot', '')
             
             # send the resulting message cleverbot api returns for our given unput
             await input.channel.send(response)
