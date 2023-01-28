@@ -7,10 +7,6 @@ from config import *
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        # reset cleverbot memory
         Cleverbot.reset()
         print('Cleverbot memory wiped!')
 
