@@ -9,18 +9,6 @@ class secret(commands.Cog):
         self.bot = bot
 
     @commands.command(hidden=True)
-    async def eez(self, ctx, args):
-        if args == 'nutz' or args == 'nuts':
-            await ctx.reply("goteem", mention_author=True)
-        else:
-            return
-
-    @commands.command(hidden=True)
-    async def bruh(self, ctx):
-        await ctx.reply("https://www.youtube.com/watch?v=beQMZ9-Ovs4", mention_author=True)
-
-       
-    @commands.command(hidden=True)
     async def poopoo(self, ctx):
         pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
         with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:

@@ -40,6 +40,14 @@ class server(commands.Cog):
         x = json.loads(output, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
         url = x.url
         await ctx.reply(url, mention_author=True)
+        
+    @commands.command(description="Send a picture of an animal girl.", brief="Send a picture of an animal girl")
+    async def mimi(self, ctx):
+        file_name = random.choice(os.listdir(MimiPath))
+        with open(f'{MimiPath}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, file_name), mention_author=True)
+            f.close
+
 
     @commands.command(description="Send a Kemono Friends character from my personal collection.", brief="Send a picture of a chosen character from Kemono Friends")
     async def friend(self, ctx, *frien):

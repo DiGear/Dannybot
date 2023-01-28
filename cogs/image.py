@@ -109,7 +109,7 @@ class image(commands.Cog):
             unpack_gif(f'{dannybot}\\cache\\gif.gif')
             for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
                 if '.png' in frame:
-                    imagebounds(frame)
+                    imagebounds(f"{dannybot}\\cache\\ffmpeg\\{frame}")
                     with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
                         img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=1, rigidity=0)
                         img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=2, rigidity=0)
