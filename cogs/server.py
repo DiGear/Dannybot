@@ -11,6 +11,7 @@ class server(commands.Cog):
     @commands.command(aliases=['poo'], description="Send or recieve a file from a user-built archive of files. You can upload 9 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.")
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         downloads = 1
+        reaction = '🐎'
         f_name = randhex(128)
         if ctx.message.attachments:
             for i in ctx.message.attachments:
@@ -31,6 +32,7 @@ class server(commands.Cog):
                 with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f:
                     f.write(requests.get(Link_To_File).content)
                     f.close
+        await ctx.message.add_reaction(reaction)
 
     @commands.command(aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
     async def neko(self, ctx):
