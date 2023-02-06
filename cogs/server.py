@@ -21,6 +21,7 @@ class server(commands.Cog):
                 with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f:
                     f.write(requests.get(Link_To_File).content)
                     f.close
+                await ctx.message.add_reaction(reaction)
                 await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {Link_To_File}')
         elif File_Url == None:
             pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
@@ -32,7 +33,7 @@ class server(commands.Cog):
                 with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f:
                     f.write(requests.get(Link_To_File).content)
                     f.close
-        await ctx.message.add_reaction(reaction)
+                await ctx.message.add_reaction(reaction)
 
     @commands.command(aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
     async def neko(self, ctx):
@@ -47,16 +48,6 @@ class server(commands.Cog):
     async def mimi(self, ctx):
         file_name = random.choice(os.listdir(MimiPath))
         with open(f'{MimiPath}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-
-
-    @commands.command(description="Send a Kemono Friends character from my personal collection.", brief="Send a picture of a chosen character from Kemono Friends")
-    async def friend(self, ctx, *frien):
-        aru2 = ezogaming_regex("Kemofure", frien)
-        dir = f'{KemonoFriendsPath}\\' + aru2
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, file_name), mention_author=True)
             f.close
 
@@ -85,7 +76,6 @@ class server(commands.Cog):
         embed.add_field(name="Burger Files:", value=fileCount(f"{dannybot}\\database\\Burger"), inline=True)
         embed.add_field(name="Nekopara Files:", value=fileCount(NekoparaPath), inline=True)
         embed.add_field(name="Animal Girl Images:", value=fileCount(f"{dannybot}\\database\\Mimi"), inline=True)
-        embed.add_field(name="Kemono Friends Files:", value=fileCount(KemonoFriendsPath), inline=True)
 
         await ctx.reply(embed=embed, mention_author=True)
 
