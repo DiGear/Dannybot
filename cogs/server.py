@@ -72,7 +72,6 @@ class server(commands.Cog):
         embed.add_field(name="Image Files:", value=fileCount(PicturesPath), inline=True)
         embed.add_field(name="GIF Files:", value=fileCount(GifsPath), inline=True)
         embed.add_field(name="Glass Cup Images:", value=fileCount(f"{dannybot}\\database\\Glasscup"), inline=True)
-        embed.add_field(name="Koishi Images:", value=fileCount(f"{dannybot}\\database\\Koishi"), inline=True)
         embed.add_field(name="Burger Files:", value=fileCount(f"{dannybot}\\database\\Burger"), inline=True)
         embed.add_field(name="Nekopara Files:", value=fileCount(NekoparaPath), inline=True)
         embed.add_field(name="Animal Girl Images:", value=fileCount(f"{dannybot}\\database\\Mimi"), inline=True)
