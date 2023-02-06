@@ -25,7 +25,7 @@ class sentience(commands.Cog):
             response = Cleverbot.say(input.content)
             
             # remove all punctuation and capitalization to make it seem more discord user-like
-            response = str(response.translate(str.maketrans('', '', string.punctuation))).lower()
+            response = str(response.translate(str.maketrans('', '', string.punctuation))).upper()
             
             reponse = response.replace('dannybot', '')
             
