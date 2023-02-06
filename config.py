@@ -50,7 +50,7 @@ load_dotenv()
 # dannybot config
 dannybot_prefix = "d." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
-dannybot_denialRatio = 1000 # chance for dannybot to deny your command input
+dannybot_denialRatio = 255 # chance for dannybot to deny your command input
 dannybot_sentienceRatio = 100 # chance for dannybot to speak on his own
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
