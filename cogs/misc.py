@@ -49,6 +49,29 @@ class misc(commands.Cog):
 
         await ctx.reply(file=File(f"{dannybot}\\cache\\deltatext_out.png"), mention_author=True)
 
+    @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
+    async def download(self, ctx, file_download, format='mp3'):
+        await ctx.send('Ok. Downloading...')
+        # defines
+        file_download = file_download.split("&")[0]
+        video_formats = ['mp4', 'webm']
+        audio_formats = ['mp3', 'ogg', 'flac', 'wav']
+
+        os.chdir(f"{dannybot}\\cache")
+
+        try:
+            if format in video_formats:
+                os.system(f'"yt-dlp -o "ytdl.%(ext)s" --no-check-certificate --no-playlist -f {format} {file_download}"')
+            elif format in audio_formats:
+                os.system(f'"yt-dlp -o "ytdl.%(ext)s" --no-check-certificate --no-playlist --audio-format {format} -x {file_download}"')
+            else:
+                await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
+        except:
+            os.chdir(f"{dannybot}")
+
+        await ctx.reply(file=discord.File(f'ytdl.{format}'))
+        os.remove(f'ytdl.{format}')
+        os.chdir(f"{dannybot}")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(misc(bot))
