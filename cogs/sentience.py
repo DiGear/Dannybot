@@ -23,14 +23,13 @@ class sentience(commands.Cog):
         
             # declare the response as a variable
             response = Cleverbot.say(input.content)
-            
-            # remove all punctuation and capitalization to make it seem more discord user-like
+
             response = str(response.translate(str.maketrans('', '', string.punctuation))).upper()
             
             reponse = response.replace('dannybot', '')
             
             # send the resulting message cleverbot api returns for our given unput
-            await input.channel.send(response)
+            await input.channel.send(response, reference=input)
             return
 
 
