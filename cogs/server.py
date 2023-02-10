@@ -16,7 +16,7 @@ class server(commands.Cog):
         if ctx.message.attachments:
             for i in ctx.message.attachments:
                 Link_To_File = i.url
-                await ctx.send(f'Downloading... {downloads} of {len(ctx.message.attachments)}', delete_after=3)
+                await ctx.send(f'Downloading... {downloads} of {len(ctx.message.attachments)}', delete_after=1)
                 downloads += 1
                 with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f:
                     f.write(requests.get(Link_To_File).content)
@@ -29,7 +29,7 @@ class server(commands.Cog):
                 await ctx.reply(file=File(f, pooter_file))
         else:
                 Link_To_File = File_Url
-                await ctx.send("Downloading... (1 of 1)", delete_after=3)
+                await ctx.send("Downloading... (1 of 1)", delete_after=1)
                 with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f:
                     f.write(requests.get(Link_To_File).content)
                     f.close
