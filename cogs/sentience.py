@@ -32,6 +32,8 @@ class sentience(commands.Cog):
             
             # send the resulting message cleverbot api returns for our given unput
             await input.channel.send(response, reference=input)
+            
+            # random image chance
             if rng == 4:
                 pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
                 with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
