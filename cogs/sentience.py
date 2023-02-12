@@ -31,12 +31,12 @@ class sentience(commands.Cog):
             rng = random.randint(0,4)
             
             # send the resulting message cleverbot api returns for our given unput
+            await input.channel.send(response, reference=input)
             if rng == 4:
                 pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
                 with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
-                    await input.channel.send(response, reference=input, file=discord.File(pooter_file))
-            else:
-                await input.channel.send(response, reference=input)  
+                    picture = discord.File(f)
+                    await input.channel.send(file=picture)
             return
 
 async def setup(bot: commands.Bot):
