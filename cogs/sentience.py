@@ -19,12 +19,18 @@ class sentience(commands.Cog):
         if "." in input.content:
             return
        
+        if input.author.bot:
+           return
+       
         if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix) or "dannybot" in input.content:
         
             # declare the response as a variable
             response = Cleverbot.say(input.content)
 
-            response = str(response.translate(str.maketrans('', '', string.punctuation))).upper()
+            response = str(response.translate(str.maketrans('', '', string.punctuation))).lower()
+            
+            if not input.author.id == 343224184110841856:
+                response = response.upper()
             
             reponse = response.replace('dannybot', '')
             
@@ -38,7 +44,7 @@ class sentience(commands.Cog):
                 pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
                 with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
                     picture = discord.File(f)
-                    await input.channel.send(file=picture)
+                    await input.channel.send(file=picture, filename="dannybot")
             return
 
 async def setup(bot: commands.Bot):
