@@ -18,7 +18,8 @@ if cache_clear_onLaunch:
     print("-----------------------------------------")
 
 bot = commands.Bot(
-    command_prefix=commands.when_mentioned_or(dannybot_prefix, "#"),
+    # everyone shits themselves when the extra prefixes are removed so i guess im keeping them hardcoded in
+    command_prefix=commands.when_mentioned_or(dannybot_prefix, "#", "D."),
     status=discord.Status.online,
     activity=discord.Activity(name="for d.help", type=3),
     intents=discord.Intents.all(),
