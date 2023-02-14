@@ -54,15 +54,8 @@ dannybot_denialRatio = 255 # chance for dannybot to deny your command input
 dannybot_sentienceRatio = 100 # chance for dannybot to speak on his own
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
-debug_mode = False # debug mode is a setting which makes the bot only respond to commands from the user IDs listed in "devs"
 logs_channel = 971178342550216705 # channel to log command and cleverbot usage
 talking_channel = "talk-to-dannybot" # channel to limit 24/7 cleverbot usage to
-# put your user ID here, as well as any other user IDs that you would like to be able to bypass debug mode
-devs = [
-    343224184110841856,  # FDG
-    158418656861093888,  # Ezo
-    249411048518451200,  # Rotty
-]
 
 #configs for the image manipulation commands
 imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
@@ -81,6 +74,7 @@ NekoparaPath = "E:\\Anime\\Nekopara" # put your nekopara regex files into here
 PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
 VideosPath = "C:\\Users\\weebm\\Videos" # set this to your videos folder
 GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
+Cookies = f"{dannybot}\\assets" # set this to your YT-DL cookies folder
 
 # tool paths
 UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover\\python inference.py" # set this to the path of your inference.py file in your install of UltimateVocalRemover

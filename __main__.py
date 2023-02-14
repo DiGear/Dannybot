@@ -38,14 +38,11 @@ async def on_ready():
 @bot.event
 async def on_message(input):
     rng = None
-    if (debug_mode and input.content.startswith(dannybot_prefix) and input.author.id not in devs):
-        await input.channel.send("Developer mode is active. Only verified developers can interact with the bot at this time.")
+    rng = random.randint(0, dannybot_denialRatio)
+    if rng == dannybot_denialRatio and input.content.startswith(dannybot_prefix):
+        await input.channel.send("no", reference=input)
     else:
-        rng = random.randint(0, dannybot_denialRatio)
-        if rng == dannybot_denialRatio and input.content.startswith(dannybot_prefix):
-            await input.channel.send("no", reference=input)
-        else:
-            await bot.process_commands(input)
+        await bot.process_commands(input)
 
 # this is a ping command and it's pretty self-explanatory
 @bot.command(description="Calculate bot latency using time.monotonic(), and send the results.", brief="Sends the current bot latency")
