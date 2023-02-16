@@ -7,8 +7,6 @@ from config import *
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        Cleverbot.reset()
-        print('Cleverbot memory wiped!')
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
@@ -25,21 +23,27 @@ class sentience(commands.Cog):
         if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix) or "dannybot" in input.content:
         
             # declare the response as a variable
-            response = Cleverbot.say(input.content)
-
-            response = str(response.translate(str.maketrans('', '', string.punctuation))).lower()
+            gpt_prompt = str(f"have a conversation with me\nme: {input.content}")
             
-            if not input.author.id == 343224184110841856:
-                response = response.upper()
+            response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=gpt_prompt,
+            temperature=0.7,
+            max_tokens=256,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0
+            )
             
-            reponse = response.replace('dannybot', '')
-            
-            rng = random.randint(0,4)
+            response = response['choices'][0]['text'].replace("dannybot", "")
+            response = response.lower()
+            response = response.replace("you: ", "")
             
             # send the resulting message cleverbot api returns for our given unput
             await input.channel.send(response, reference=input)
             
             # random image chance
+            rng = random.randint(0,4)
             if rng == 4:
                 pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
                 with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:

@@ -30,7 +30,6 @@ import openai
 import PIL
 import requests
 from collections import namedtuple
-from cleverwrap import CleverWrap
 from discord import File
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -62,7 +61,6 @@ imageLower = 250 # the smallest image width image commands will use. if the imag
 imageUpper = 1500 # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
 
 # .env
-Cleverbot = CleverWrap(os.getenv("CLEVERBOT_KEY"))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey =  os.getenv("TENOR_KEY")

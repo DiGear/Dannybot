@@ -21,7 +21,7 @@ bot = commands.Bot(
     # everyone shits themselves when the extra prefixes are removed so i guess im keeping them hardcoded in
     command_prefix=commands.when_mentioned_or(dannybot_prefix, "#", "D."),
     status=discord.Status.online,
-    activity=discord.Activity(name="for d.help", type=3),
+    activity=discord.Activity(name="Made in Abyss", type=3),
     intents=discord.Intents.all(),
 )
 
