@@ -23,7 +23,8 @@ class sentience(commands.Cog):
         if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix) or "dannybot" in input.content:
         
             # declare the response as a variable
-            gpt_prompt = str(f"have a conversation with me\nme: {input.content}")
+            parsedInput = input.content.replace("dannybot", "")
+            gpt_prompt = str(f"have a conversation with me\nme: {parsedInput}")
             
             response = openai.Completion.create(
             engine="text-davinci-003",
@@ -34,13 +35,11 @@ class sentience(commands.Cog):
             frequency_penalty=0.0,
             presence_penalty=0.0
             )
-            
-            response = response['choices'][0]['text'].replace("dannybot", "")
-            response = response.lower()
-            response = response.replace("you: ", "")
+
+            response = response.split(":")
             
             # send the resulting message cleverbot api returns for our given unput
-            await input.channel.send(response, reference=input)
+            await input.channel.send(response[1], reference=input)
             
             # random image chance
             rng = random.randint(0,4)
