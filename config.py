@@ -232,9 +232,20 @@ def ezogaming_regex(datalist, dataentry):
     return results
 
 # 1/20/23: FDG remembers that python has dictionaries
-def undertext(name):
+def undertext(name, text, isAnimated):
+    
+    # animated override
+    if "animated-" in name:
+        name = name.replace("animated-","")
+        isAnimated = True
+    
+    # AU style overrides
+    if "uf" in name:
+        name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
+        text = f"color=%23b93b3c%20{text}"
+        
+    
     # character overrides
-    # you could also put this in a JSON - FDG
     name = name.replace('_',"-")
     underdict = {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
@@ -248,6 +259,7 @@ def undertext(name):
         "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552743626780732/FPizzi.png",
         "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
         "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
+        "seki-eyes": "https://cdn.discordapp.com/attachments/560608550850789377/1075684786489798696/sekiportrait2.png",
         "leffrey" : "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
         "suggagugga" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
     }
@@ -256,7 +268,11 @@ def undertext(name):
     # link overrides
     if name.startswith("https://"):
         name = "custom&url=" + name
-    return name
+        
+    # finalizing
+    name = name
+    text = text
+    return name, text, isAnimated
 
 # grab the gif url of a tenor id using the tenor api
 def gettenor(gifid=None):
