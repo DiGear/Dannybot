@@ -28,8 +28,7 @@ class misc(commands.Cog):
     async def undertext(self, ctx, CharacterName, *, Text):
         Name = str(undertext(CharacterName))
         # allow for blank textbox generation
-        if(Text.endswith("_ _")):
-            Text = "%20"
+        Text = Text.replace("_ _", "%20")
         url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={Text}&character={Name}").url
         image = urllib.request.URLopener()
         image.retrieve(url, f"{dannybot}\\cache\\undertext_out.png")
