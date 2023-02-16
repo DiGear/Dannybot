@@ -43,19 +43,6 @@ class misc(commands.Cog):
             await ctx.reply(file=File(f"{dannybot}\\cache\\undertext_out.gif"), mention_author=True)
             return
 
-    @commands.command(description="Generate a custom Deltarune-Styled textbox by defining the character and text to be said.", brief="Generate a custom Deltarune-Styled textbox")
-    async def deltatext(self, ctx, CharacterName, *, Text):
-        Name = str(undertext(CharacterName))
-        # allow for blank textbox generation
-        if(Text.endswith("_ _")):
-            Text = "%20"
-        url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={Text}&mode=darkworld&box=deltarune&character={Name}").url
-        url = furl.furl(url).url
-        image = urllib.request.URLopener()
-        image.retrieve(url, f"{dannybot}\\cache\\deltatext_out.png")
-
-        await ctx.reply(file=File(f"{dannybot}\\cache\\deltatext_out.png"), mention_author=True)
-
     @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
     async def download(self, ctx, file_download, format='mp3'):
         await ctx.send('Ok. Downloading...')
