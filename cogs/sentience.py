@@ -36,7 +36,7 @@ class sentience(commands.Cog):
             presence_penalty=0.0
             )
 
-            response = response.split(":")
+            response = response['choices'][0]['text'].split(":")
             
             # send the resulting message cleverbot api returns for our given unput
             await input.channel.send(response[1], reference=input)
