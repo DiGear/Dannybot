@@ -14,7 +14,7 @@ class sentience(commands.Cog):
         rng = None
         
         rng = random.randint(0, dannybot_sentienceRatio)
-        if "." in input.content:
+        if "." in input.content and not "dannybot" in input.content:
             return
        
         if input.author.bot:
