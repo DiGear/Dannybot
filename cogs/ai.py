@@ -100,7 +100,7 @@ class ai(commands.Cog):
         embed.set_footer(text="Powered by https://inspirobot.me/")
         await ctx.reply(file=f, embed=embed, mention_author=True)
 
-    @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images", aliases=["dalle"])
+    @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
     async def dalle(self, ctx, *, prompt):
         # rotty shit, this is the main function that runs when the command is called
         images = None

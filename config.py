@@ -146,6 +146,18 @@ logolist = [
     "funtime",
 ]
 
+# this is for the undertext command
+deltarune_dw = [
+    'dark', 
+    'dw',
+    'ralsei',
+    'lancer',
+    'king', 'jevil',
+    'queen',
+    'spamton'
+]
+
+
 # dalle shit
 DALLE_API = "https://backend.craiyon.com/generate"
 DALLE_FORMAT = "png"
@@ -249,7 +261,6 @@ def ezogaming_regex(datalist, dataentry):
     # return the entry
     return results
 
-# 1/20/23: FDG remembers that python has dictionaries
 def undertext(name, text, isAnimated):
     
     # animated override: if the name contains "animated-", remove it and set isAnimated to True
@@ -261,7 +272,8 @@ def undertext(name, text, isAnimated):
     if "uf" in name: # underfell
         name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
         text = f"color=%23b93b3c%20{text}"
-        
+    if name in deltarune_dw: # deltarune
+        name = f"{name}&box=deltarune&mode=darkworld"    
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
     name = name.replace('_',"-")
