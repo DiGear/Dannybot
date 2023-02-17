@@ -182,9 +182,11 @@ def cleanup_ffmpeg():
         if '.png' in file:
             os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
             
+# generate a random hexadecimal string
 def randhex(bits):
     return hashlib.sha256(str(random.getrandbits(bits)).encode('utf-8')).hexdigest()
 
+# clear the cache folder of all files
 def clear_cache():
     for file in os.listdir(f'{dannybot}\\cache'):
         if 'git' not in file and '.' in file:
@@ -206,46 +208,63 @@ def fileCount(folder):
 
 # overcomplicated function for parsing and matching data with a list of aliases
 def ezogaming_regex(datalist, dataentry):
-    # ezogaming if you would like to add comments to this catastrophe, be my guest - FDG
-    # this may even be rewritten completely by the time you are reading this - FDG
+    # NEVER TRY TO COMMENT EZOGAMING CODE - FDG
+    # open the file with the list of entries
     with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f:
+        # read the file
         entry = f.readlines()
+        # remove the newline character
         entry = [x.rstrip() for x in entry]
+    # open the file with the list of aliases
     with open(f"{dannybot}\\ezogaming\\{datalist}_checker") as f:
+        # read the file
         entryalias = f.readlines()
+        # remove the newline character
         entryalias = [x.rstrip() for x in entryalias]
+    # join the list of words into a string
     aru = " ".join(dataentry[:])
+    # remove all non-alphabetical characters
     inp = re.sub("[^a-z]", "", aru.lower())
+    # create a list of the same length as the list of entries
     sort = [0] * len(entry)
+    # fill the list with the index of the entry
     for i in range(0, len(entry)):
         sort[i] = i
+    # shuffle the list
     random.shuffle(sort)
+    # for each entry
     for i2 in range(0, len(entry)):
+        # remove all non-alphabetical characters
         inputStripped = inp.strip()
         aliasStripped = re.sub(
             "[^a-z]", "", entryalias[sort[i2]].lower().strip())
         entrystripped = re.sub("[^a-z]", "", entry[sort[i2]].lower().strip())
+        # if the input is in the entry or the alias
         if (inputStripped in entrystripped) or inputStripped in aliasStripped:
+            # stop the loop
             break
+    # get the index of the entry
     sort[i2]
+    # get the entry
     results = entry[sort[i2]]
+    # return the entry
     return results
 
 # 1/20/23: FDG remembers that python has dictionaries
 def undertext(name, text, isAnimated):
     
-    # animated override
+    # animated override: if the name contains "animated-", remove it and set isAnimated to True
     if "animated-" in name:
         name = name.replace("animated-","")
         isAnimated = True
     
-    # AU style overrides
-    if "uf" in name:
+    # AU style overrides: if the name contains a valid AU, add the AU style to the name and text
+    if "uf" in name: # underfell
         name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
         text = f"color=%23b93b3c%20{text}"
         
     
-    # character overrides
+    # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
     name = name.replace('_',"-")
     underdict = {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
@@ -266,11 +285,11 @@ def undertext(name, text, isAnimated):
     }
     name = underdict.get(name, name)
 
-    # link overrides
+    # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
     if name.startswith("https://"):
         name = "custom&url=" + name
         
-    # finalizing
+    # finalizing: set the name and text to the name and text, then return the name, text, and isAnimated
     name = name
     text = text
     return name, text, isAnimated
