@@ -49,11 +49,12 @@ load_dotenv()
 # dannybot config
 dannybot_prefix = "d." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
-dannybot_denialRatio = 255 # chance for dannybot to deny your command input
+dannybot_denialRatio = 500 # chance for dannybot to deny your command input
 dannybot_sentienceRatio = 150 # chance for dannybot to speak on his own
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
 logs_channel = 971178342550216705 # channel to log commands
+database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga', 'mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv'] # list of accepted files for the bots public database
 
 #configs for the image manipulation commands
 imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
@@ -66,21 +67,18 @@ tenor_apikey =  os.getenv("TENOR_KEY")
 
 # external paths
 KemonoFriendsPath = "E:\\Anime\\Kemono Friends" # put your kemono friends regex files into here
-MimiPath = "E:\\Anime\\Kemono girls" # put your animal girl files here
 NekoparaPath = "E:\\Anime\\Nekopara" # put your nekopara regex files into here
+MimiPath = "E:\\Anime\\Kemono girls" # put your animal girl files here
 PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
 VideosPath = "C:\\Users\\weebm\\Videos" # set this to your videos folder
 GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
-Cookies = f"{dannybot}\\assets" # set this to your YT-DL cookies folder
 
-# tool paths
+# internal paths
+Cookies = f"{dannybot}\\assets" # set this to your YT-DL cookies folder
 UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover\\python inference.py" # set this to the path of your inference.py file in your install of UltimateVocalRemover
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 Fluidsynth = f"{dannybot}\\tools\\Fluidsynth\\fluidsynth.exe"  # set this to the path of your fluidsynth.exe file in your install of FluidSynth
 aria2c =  f"{dannybot}\\tools\\Aria2c\\aria2c.exe" # set this to aria2c
-
-# list of accepted files for the bots public database
-database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga', 'mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
 
 # 8ball responses for the 8ball command
 ball_responses = [
@@ -169,7 +167,7 @@ DALLE_FORMAT = "png"
 # Functions
 # ----------
 
-# take a provided gif file and unpack each frame to /cache/ffmpeg
+# take a provided gif file and unpack each frame to /cache/ffmpegs
 def unpack_gif(file):
     print("unpacking gif...")
     os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y')
