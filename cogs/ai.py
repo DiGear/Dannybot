@@ -100,24 +100,27 @@ class ai(commands.Cog):
         embed.set_footer(text="Powered by https://inspirobot.me/")
         await ctx.reply(file=f, embed=embed, mention_author=True)
 
-    @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
+    @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images", aliases=["dalle"])
     async def dalle(self, ctx, *, prompt):
-        # rotty shit
+        # rotty shit, this is the main function that runs when the command is called
         images = None
         attempt = 0
         print("-------------------------------------")
         print(f'Dalle command ran with prompt "{prompt}"')
+        # this while loop is to make sure that the image generation request is successful
         while not images:
             if attempt > 0:
                 print(
                     f'Image generate request failed on attempt {attempt} for prompt "{prompt}"'
                 )
             attempt += 1
+            # this is the function that sends the request to the craiyon API
             images = await generate_images(prompt)
             print(
                 f'Successfully started image generation with prompt "{prompt}" on attempt {attempt}'
             )
             prompt_hyphenated = prompt.replace(" ", "-")
+            # this is the function that makes the collage
             collage = await make_collage(images, 3)
             b = collage
             collage = discord.File(
