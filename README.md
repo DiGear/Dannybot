@@ -20,8 +20,6 @@ Also, I would like to thank my friends for helping me get the bot to the point i
 # Usage
 ---
 
-You will need Python 3.8.1 (running it in a VENV or something like anaconda should work fine)
-
 This bot needs way more python modules than is worth mentioning here, so just make sure you have everything in `requirements.txt`.
 
 This bot requires a bit of setting up in order to host.
