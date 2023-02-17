@@ -11,6 +11,9 @@ class sentience(commands.Cog):
         self.conversing_user = None
         self.conversing_channel = None
        
+# my plan is to have this toggled by start and stop emotes that dannybot appends to every messages he sends
+# you can click the start emote once to begin conversing and click to stop button to end conversing
+
         # self.conversing = True
         # self.conversing_user = input.author.name
         # self.conversing_channel = input.channel
