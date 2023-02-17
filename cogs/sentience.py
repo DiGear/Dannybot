@@ -23,7 +23,7 @@ class sentience(commands.Cog):
         if rng == dannybot_sentienceRatio and not input.author.bot and not input.content.startswith(dannybot_prefix) or "dannybot" in input.content:
         
             # declare the response as a variable
-            gpt_prompt = str(f"{input.author.name}: {input.content} Dannybot::")
+            gpt_prompt = str(f"Respond to the following chat message. {input.author.name}: {input.content} Dannybot::")
             
             response = openai.Completion.create(
             engine="text-davinci-003",
