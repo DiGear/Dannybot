@@ -6,9 +6,12 @@ from config import *
 
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
+        
+        # im waiting for ChatGPT access to do this, I just wanted to get a headstart on the code - FDG
         self.conversing = False
         self.conversing_user = None
         self.conversing_channel = None
+        
         self.bot = bot
 
     @commands.Cog.listener()
