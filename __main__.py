@@ -31,7 +31,6 @@ async def on_ready():
     print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
     print("---------------------------------------------------------------------")
-    await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
 @bot.event
