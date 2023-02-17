@@ -154,7 +154,10 @@ deltarune_dw = [
     'lancer',
     'king', 'jevil',
     'queen',
-    'spamton'
+    'spamton',
+    "clyde",
+    "lori",
+    "rhombo"
 ]
 
 
@@ -282,6 +285,7 @@ def undertext(name, text, isAnimated):
         "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
         "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
         "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
+        "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
         "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
         "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
         "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
@@ -302,7 +306,7 @@ def undertext(name, text, isAnimated):
         
     # finalizing: set the name and text to the name and text, then return the name, text, and isAnimated
     name = name
-    text = text
+    text = text.replace("_ _", "%20")
     return name, text, isAnimated
 
 # grab the gif url of a tenor id using the tenor api

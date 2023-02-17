@@ -28,7 +28,6 @@ class misc(commands.Cog):
     async def undertext(self, ctx, CharacterName, *, Text):
         data = undertext(CharacterName, Text, False)
         # allow for blank textbox generation
-        Text = Text.replace("_ _", "%20")
         animated = data[2]
         if not animated:
             url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={data[1]}&character={data[0]}").url
