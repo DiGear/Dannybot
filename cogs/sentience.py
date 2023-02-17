@@ -11,6 +11,10 @@ class sentience(commands.Cog):
         self.conversing = False
         self.conversing_user = None
         self.conversing_channel = None
+       
+        # self.conversing = True
+        # self.conversing_user = input.author.name
+        # self.conversing_channel = input.channel
         
         self.bot = bot
 
