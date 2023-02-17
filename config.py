@@ -53,8 +53,7 @@ dannybot_denialRatio = 255 # chance for dannybot to deny your command input
 dannybot_sentienceRatio = 150 # chance for dannybot to speak on his own
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
-logs_channel = 971178342550216705 # channel to log command and cleverbot usage
-talking_channel = "talk-to-dannybot" # channel to limit 24/7 cleverbot usage to
+logs_channel = 971178342550216705 # channel to log commands
 
 #configs for the image manipulation commands
 imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
@@ -296,6 +295,7 @@ def undertext(name, text, isAnimated):
 
 # grab the gif url of a tenor id using the tenor api
 def gettenor(gifid=None):
+    # get the api key from the config file
     apikey = tenor_apikey
     r = requests.get(
         "https://api.tenor.com/v1/gifs?ids=%s&key=%s&media_filter=minimal" % (gifid, apikey))
@@ -312,12 +312,12 @@ async def message_history_img_handler(ctx):
     extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'] #define the extensions the command is looking for in attachments
     async for msg in channel.history(limit=500): #check the last 500 messages
         
-        # TENOR IS NOT FUN TO HANDLE - FDG
+        # TENOR IS NOT FUN TO HANDLE - FDG (tenor is a gif hosting site)
         if 'https://tenor.com/view/' in msg.content: # check if we have a tenor url
             # extract the tenor gif id from the message contents
             for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)): # you can do basically anything with regex - FDG
                 tenorid = x.group(1)
-            a = (str(gettenor(tenorid))) #get the gif url from tenor API
+            a = (str(gettenor(tenorid))) #get the gif url from tenor API (gettenor is a function that returns the url of a gif from tenor)
             return a
            # end tenor bullshit 
             
@@ -402,10 +402,13 @@ async def resolve_args(ctx, args, attachments):
             text = ' '.join(args)
             return [url, text]
 
+# deepfry an image
 def deepfry(inputpath, outputpath):
+    # open image
     image = PIL.Image.open(f'{inputpath}').convert('RGB')
     image.save(f'{dannybot}\\cache\\deepfry_in.jpg', quality=15)
     with magick(filename=f'{dannybot}\\cache\\deepfry_in.jpg') as img:
+        # apply deepfry
         img.level(0.2, 0.9, gamma=1.1)
         img.level(0.2, 0.9, gamma=1.1)
         img.sharpen(radius=8, sigma=4)
@@ -415,24 +418,34 @@ def deepfry(inputpath, outputpath):
         img.save(filename=f'{outputpath}')
     return
 
+# resize image to fit within bounds
 def imagebounds(path):
-
+    # open image
     img = PIL.Image.open(path)
 
-    # lower cap
+    # if image is smaller than lower cap
     if img.size[0] < imageLower:
+        # calculate ratio
         ratio = (imageLower/float(img.size[0]))
+        # calculate new height
         new_height = int((float(img.size[1])*float(ratio)))
+        # resize image
         img = img.resize((imageLower, new_height), Image.Resampling.LANCZOS)
-        img.save(path) # save image with new size
+        # save image with new size
+        img.save(path)
         return
 
-    # upper cap
+    # if image is larger than upper cap
     if img.size[0] > imageUpper:
+        # calculate ratio
         ratio = (imageUpper/float(img.size[0]))
         new_height = int((float(img.size[1])*float(ratio)))
         img = img.resize((imageUpper, new_height), Image.Resampling.LANCZOS)
-        img.save(path) # save image with new size
+        # calculate new height
+        img = img.resize((imageUpper, new_height), Image.Resampling.LANCZOS)
+        # resize image
+        # save image with new size
+        img.save(path)
         return
     return
 
