@@ -16,6 +16,5 @@ class logging(commands.Cog):
             await self.bot.get_channel(logs_channel).send(f"{input.author.name} {input.author.id} issued {input.content}")
             return
 
-
 async def setup(bot: commands.Bot):
     await bot.add_cog(logging(bot))

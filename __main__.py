@@ -19,9 +19,9 @@ if cache_clear_onLaunch:
 
 bot = commands.Bot(
     # everyone shits themselves when the extra prefixes are removed so i guess im keeping them hardcoded in
-    command_prefix=commands.when_mentioned_or(dannybot_prefix, "#", "D."),
+    command_prefix=(dannybot_prefix, "#", "D."),
     status=discord.Status.online,
-    activity=discord.Activity(name="Made in Abyss", type=3),
+    activity=discord.Activity(name="Nekopara Vol. 2", type=1),
     intents=discord.Intents.all(),
 )
 
@@ -34,7 +34,6 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.Activity(name="for d.help", type=3)))
     return
 
-# check if config.debug_mode is true and treat the message handler appropriately
 @bot.event
 async def on_message(input):
     rng = None

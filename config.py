@@ -171,24 +171,29 @@ DALLE_FORMAT = "png"
 
 # take a provided gif file and unpack each frame to /cache/ffmpeg
 def unpack_gif(file):
-    os.system(
-        f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y')
+    print("unpacking gif...")
+    os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y')
     return
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
+    print("generating palette...")
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
+    print("repacking gif...")
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
 def repack_gif_JPG():
+    print("generating palette...")
+    print("repacking gif (jpg)...")
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
 
 # clear the ffmpeg and ffmpeg/output folders of any residual files
 def cleanup_ffmpeg():
+    print("cleaning up...")
     for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
         if '.png' in file:
             os.remove(f'{dannybot}\\cache\\ffmpeg\\{file}')
@@ -279,7 +284,6 @@ def undertext(name, text, isAnimated):
         name = f"{name}&box=deltarune&mode=darkworld"
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
-    name = name.replace('_',"-")
     underdict = {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
         "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
