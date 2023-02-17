@@ -276,7 +276,7 @@ def undertext(name, text, isAnimated):
         name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
         text = f"color=%23b93b3c%20{text}"
     if name in deltarune_dw: # deltarune
-        name = f"{name}&box=deltarune&mode=darkworld"    
+        name = f"{name}&box=deltarune&mode=darkworld"
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
     name = name.replace('_',"-")
@@ -303,7 +303,11 @@ def undertext(name, text, isAnimated):
     # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
     if name.startswith("https://"):
         name = "custom&url=" + name
-        
+    
+    # text overrides: modify the box and text display based on passed parameters
+    if "font=wingdings" in text:
+        name = f"{name}&asterisk=null"
+    
     # finalizing: set the name and text to the name and text, then return the name, text, and isAnimated
     name = name
     text = text.replace("_ _", "%20")
