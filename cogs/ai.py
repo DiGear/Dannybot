@@ -26,6 +26,25 @@ class ai(commands.Cog):
         )
         await ctx.reply(response['choices'][0]['text'], mention_author=True)
         
+    @commands.command(aliases=['code'],  description="Interact with GPT3-Code using Dannybot.", brief="Get AI generated code based on provided prompts")
+    async def python(self, ctx, *, prompt):
+        response = openai.Completion.create(
+        model="code-davinci-002",
+        prompt= f"\"\"\"\n{prompt}\n\"\"\"\n",
+        temperature=0,
+        max_tokens=1300,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+        )
+        
+        with open(f'{dannybot}\\cache\\code.py', 'w') as f:
+            f.write(response['choices'][0]['text'])
+            f.close
+        with open(f'{dannybot}\\cache\\code.py', 'rb') as f:
+            await ctx.reply(file=File(f, 'code.py'), mention_author=True)
+            f.close
+        
     @commands.command(aliases=['4chan'], description="Interact with GPT3 using Dannybot to generate greentexts.", brief="Get AI generated greentexts based on provided prompts")
     async def greentext(self, ctx, *, prompt):
         gpt_prompt = str(f"write me a 4chan greentext\n>be me\n{prompt}")
