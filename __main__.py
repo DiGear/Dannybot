@@ -35,9 +35,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(input):
-    rng = None
-    rng = random.randint(0, dannybot_denialRatio)
-    if rng == dannybot_denialRatio and input.content.startswith(dannybot_prefix):
+    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and input.content.startswith(dannybot_prefix):
         await input.channel.send("no", reference=input)
     else:
         await bot.process_commands(input)

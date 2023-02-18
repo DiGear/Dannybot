@@ -26,17 +26,15 @@ class misc(commands.Cog):
 
     @commands.command(description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.", brief="Generate a custom Undertale-Styled textbox")
     async def undertext(self, ctx, CharacterName, *, Text):
-        data = undertext(CharacterName, Text, False)
-        # allow for blank textbox generation
-        animated = data[2]
+        charname, chartext, animated = (CharacterName, Text, False)
         if not animated:
-            url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={data[1]}&character={data[0]}").url
+            url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={chartext}&character={charname}").url
             image = urllib.request.URLopener()
             image.retrieve(url, f"{dannybot}\\cache\\undertext_out.png")
             await ctx.reply(file=File(f"{dannybot}\\cache\\undertext_out.png"), mention_author=True)
             return
         else:
-            url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.gif?text={data[1]}&character={data[0]}&animate=true").url
+            url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.gif?text={chartext}&character={charname}&animate=true").url
             image = urllib.request.URLopener()
             image.retrieve(url, f"{dannybot}\\cache\\undertext_out.gif")
             await ctx.reply(file=File(f"{dannybot}\\cache\\undertext_out.gif"), mention_author=True)

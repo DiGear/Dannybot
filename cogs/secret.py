@@ -18,23 +18,21 @@ class secret(commands.Cog):
             await ctx.reply(file=File(f, pooter_file))
 
     @commands.command(hidden=True)
-    async def taur_add(self, ctx, File_Url: typing.Optional[str] = "File_Is_Attachment"):
-        whitelist = [206392667351941121, 343224184110841856] # hardcoded whitelist lol lmao
-        if not ctx.author.id in whitelist:
+    async def taur_add(self, ctx, file_url: typing.Optional[str] = "File_Is_Attachment"):
+        if not ctx.author.id in [206392667351941121, 343224184110841856]: # hardcoded whitelist lol lmao
             await ctx.send("You are not whitelisted for this command!")
             return
         else:
-            if(File_Url == "File_Is_Attachment"):
-                Link_To_File = ctx.message.attachments[0].url
+            if(file_url == "File_Is_Attachment"):
+                link_to_file = ctx.message.attachments[0].url
             else:
-                Link_To_File = File_Url
+                link_to_file = file_url
             await ctx.send("Downloading...", delete_after=5)
 
-            filename = randhex(64)
 
             # this code block writes the image data to a file
-            with open(f"{dannybot}\\database\\Taurs\\{filename}.png", 'wb') as f:
-                f.write(requests.get(Link_To_File).content)
+            with open(f"{dannybot}\\database\\Taurs\\{randhex(64)}.png", 'wb') as f:
+                f.write(requests.get(link_to_file).content)
                 f.close
             await ctx.send("File Downloaded!", delete_after=5)
 

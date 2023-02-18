@@ -10,8 +10,7 @@ class reactions(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
-        if "<@847276836172988426>" in input.content:
-            await input.channel.send('IM TELLING DAD <@343224184110841856>')
+        return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(reactions(bot))

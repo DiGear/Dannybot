@@ -224,8 +224,8 @@ def fileCount(folder):
     return sum([len(files) for r, d, files in os.walk(folder)])
 
 # overcomplicated function for parsing and matching data with a list of aliases
+# NEVER TRY TO COMMENT EZOGAMING CODE - FDG
 def ezogaming_regex(datalist, dataentry):
-    # NEVER TRY TO COMMENT EZOGAMING CODE - FDG
     # open the file with the list of entries
     with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f:
         # read the file
@@ -282,7 +282,7 @@ def undertext(name, text, isAnimated):
         name = f"{name}&box=deltarune&mode=darkworld"
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
-    underdict = {
+    name = (lambda name: {
         "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
         "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
         "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
@@ -299,12 +299,11 @@ def undertext(name, text, isAnimated):
         "seki-evil": "https://cdn.discordapp.com/attachments/1063552619110477844/1075687740793946122/sekiportrait3.png",
         "leffrey" : "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
         "suggagugga" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
-    }
-    name = underdict.get(name, name)
+    }.get(name, name))(name)
 
     # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
     if name.startswith("https://"):
-        name = "custom&url=" + name
+        name = f"custom&url={name}"
     
     # text overrides: modify the box and text display based on passed parameters
     if "font=wingdings" in text:
@@ -330,33 +329,26 @@ def gettenor(gifid=None):
 
 # go through the last 500 messages sent in the channel a command is ran in and check for images
 async def message_history_img_handler(ctx):
-    channel = ctx.message.channel #define shorthand variable for the message channel
-    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'] #define the extensions the command is looking for in attachments
-    async for msg in channel.history(limit=500): #check the last 500 messages
-        
-        # TENOR IS NOT FUN TO HANDLE - FDG (tenor is a gif hosting site)
-        if 'https://tenor.com/view/' in msg.content: # check if we have a tenor url
-            # extract the tenor gif id from the message contents
-            for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)): # you can do basically anything with regex - FDG
+    channel = ctx.message.channel
+    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
+    async for msg in channel.history(limit=500):
+        # if the message contains a tenor link, get the tenor id and return the gif
+        if 'https://tenor.com/view/' in msg.content:
+            for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
                 tenorid = x.group(1)
-            a = (str(gettenor(tenorid))) #get the gif url from tenor API (gettenor is a function that returns the url of a gif from tenor)
-            return a
-           # end tenor bullshit 
-            
-        if msg.attachments: #check if there are attachments (will return a List or a None depending on if there are attachments)
-            ext = msg.attachments[0].url.split('.')[-1].lower() #extract extension from URL of first attachment and temporarily convert it to lowercase to fix case-sensitivity
+            return (str(gettenor(tenorid)))
+        # if the message contains an attachment, check if it's an image and return the url
+        if msg.attachments:
+            ext = msg.attachments[0].url.split('.')[-1].lower()
             if ext in extensions:
-                return msg.attachments[0].url #return url of first attachment in message
+                return msg.attachments[0].url
         else:
-                aa = str(msg.content)
-                ext = aa.split('.')[-1].lower()  #extract extension from URL and temporarily convert it to lowercase to fix case-sensitivity
+                ext = str(msg.content).split('.')[-1].lower()
                 if ext in extensions:
-                    a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0] #extract just url from the text, so a message like "Balls! (its here: http://balls.com/balls.png) Balls!" just returns the first url in the message
-                    a = a.split('?')[0] #removes ? from the end of a url so it doesnt download a ?width=500 image
-                    return a
+                    return re.findall("(?=http).*?(?= |\n|$)", msg.content)[0].split('?')[0]
 
 # go through the last 500 messages sent in the channel a command is ran in and check for audio
-# this isn't commented its just the same shit as the above function
+# this isn't commented its just the same shit as the above function just with less optimizations due to most usage being image related
 async def message_history_audio_handler(ctx):
     channel = ctx.message.channel
     extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga']
@@ -374,7 +366,7 @@ async def message_history_audio_handler(ctx):
                 return a
 
 # go through the last 500 messages sent in the channel a command is ran in and check for videos
-# this isn't commented its just the same shit as the above function
+# this isn't commented its just the same shit as the above function(s) just with less optimizations due to most usage being image related
 async def message_history_video_handler(ctx):
     channel = ctx.message.channel
     extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
@@ -391,38 +383,25 @@ async def message_history_video_handler(ctx):
                 a = a.split('?')[0]
                 return a
 
-# i honestly don't even know what this is for - FDG
-# danny its a function that extracts url/arguments from a command run - Ezo
-# ok asshat - FDG
-# update: i figured out how to use this - FDG
+# extracts url/arguments from a command
 async def resolve_args(ctx, args, attachments):
     try:
         if 'http' in args[0]: #see if first in the list of "args" is a URL
             #Case of "d.meme http://balls.com/balls.png balls|balls"
-            url = args[0] #first in list of "args" is set as the url
-            text = ' '.join(args[1:]) #everything after that is set as the text and combined to a string
-            return [url.split('?')[0], text]
+            return [args[0].split('?')[0], ' '.join(args[1:])] #everything after that is set as the text and combined to a string
         elif attachments: #otherwise check if there are attachments
             #Case of "d.meme balls|balls" with attached file
-            url = attachments[0].url
-            text = ' '.join(args) #the command text is everything in the args since there is no url as the first arg
-            return [url.split('?')[0], text] #get everything leading up to "?width=500"-type shenenigans
+            return [attachments[0].url.split('?')[0], ' '.join(args)] #the command text is everything in the args since there is no url as the first arg
         else: #if there are no attachments or a link, run the context handler
             #Case of "d.meme balls|balls" with no attachment
-            url = await message_history_img_handler(ctx)
-            text = ' '.join(args)
-            return [url, text]
+            return [await message_history_img_handler(ctx), ' '.join(args)]
     except IndexError: #this happens whem there is no args[0] because the command was simply, say, "d.explode" with no arguments.
         if attachments: #check if there are attachments
             #Case of "d.meme balls|balls" with attached file
-            url = attachments[0].url
-            text = ' '.join(args)
-            return [url.split('?')[0], text] #get everything leading up to "?width=500"-type shenenigans
+            return [attachments[0].url.split('?')[0], ' '.join(args)] #get everything leading up to "?width=500"-type shenenigans
         else: #if there are no attachments or a link, run the context handler
             #Case of "d.meme balls|balls" with no attachment
-            url = await message_history_img_handler(ctx)
-            text = ' '.join(args)
-            return [url, text]
+            return [await message_history_img_handler(ctx), ' '.join(args)]
 
 # deepfry an image
 def deepfry(inputpath, outputpath):
@@ -442,34 +421,19 @@ def deepfry(inputpath, outputpath):
 
 # resize image to fit within bounds
 def imagebounds(path):
-    # open image
-    img = PIL.Image.open(path)
+    # open image and get size
+    image = PIL.Image.open(path)
+    width, height = image.size
 
     # if image is smaller than lower cap
-    if img.size[0] < imageLower:
-        # calculate ratio
-        ratio = (imageLower/float(img.size[0]))
-        # calculate new height
-        new_height = int((float(img.size[1])*float(ratio)))
-        # resize image
-        img = img.resize((imageLower, new_height), Image.Resampling.LANCZOS)
-        # save image with new size
-        img.save(path)
-        return
+    if width < imageLower:
+        # resize image and save
+        image.resize((imageLower, int(height * (imageLower/float(width)))), Image.Resampling.LANCZOS).save(path)
 
     # if image is larger than upper cap
-    if img.size[0] > imageUpper:
-        # calculate ratio
-        ratio = (imageUpper/float(img.size[0]))
-        new_height = int((float(img.size[1])*float(ratio)))
-        img = img.resize((imageUpper, new_height), Image.Resampling.LANCZOS)
-        # calculate new height
-        img = img.resize((imageUpper, new_height), Image.Resampling.LANCZOS)
-        # resize image
-        # save image with new size
-        img.save(path)
-        return
-    return
+    elif width > imageUpper:
+        # resize image and save
+        image.resize((imageUpper, int(height * (imageUpper/float(width)))), Image.Resampling.LANCZOS).save(path)
 
 # primary function of the meme command
 # take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image

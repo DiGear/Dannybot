@@ -42,8 +42,7 @@ class server(commands.Cog):
             api_output = s.get("https://nekos.life/api/v2/img/neko")
         output = api_output.text
         x = json.loads(output, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-        url = x.url
-        await ctx.reply(url, mention_author=True)
+        await ctx.reply(x.url, mention_author=True)
         
     @commands.command(description="Send a picture of an animal girl.", brief="Send a picture of an animal girl")
     async def mimi(self, ctx):
