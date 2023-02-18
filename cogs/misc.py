@@ -26,7 +26,7 @@ class misc(commands.Cog):
 
     @commands.command(description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.", brief="Generate a custom Undertale-Styled textbox")
     async def undertext(self, ctx, CharacterName, *, Text):
-        charname, chartext, animated = (CharacterName, Text, False)
+        charname, chartext, animated = undertext(CharacterName, Text, False)
         if not animated:
             url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={chartext}&character={charname}").url
             image = urllib.request.URLopener()
