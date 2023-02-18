@@ -38,7 +38,7 @@ class ai(commands.Cog):
         presence_penalty=0
         )
         
-        with open(f'{dannybot}\\cache\\code.py', 'w') as f:
+        with open(f'{dannybot}\\cache\\code.py', 'w', encoding="utf-8") as f:
             f.write(response['choices'][0]['text'])
             f.close
         with open(f'{dannybot}\\cache\\code.py', 'rb') as f:

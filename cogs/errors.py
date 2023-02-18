@@ -26,11 +26,11 @@ class errors(commands.Cog):
 
         # command is disabled
         if isinstance(error, commands.DisabledCommand):
-            await ctx.send(f"{ctx.command} has been disabled.")
+            await ctx.reply(f"{ctx.command} has been disabled.")
 
         # command requires developer permissions
         elif isinstance(error, commands.errors.NotOwner):
-            await ctx.send(f"{ctx.command} is reserved for Dannybot developers. <:trollface:855665633509507092>") # trollface emote is from dannybots mother server, will need to replace emote or remove it
+            await ctx.reply(f"{ctx.command} is reserved for Dannybot developers. <:trollface:855665633509507092>") # trollface emote is from dannybots mother server, will need to replace emote or remove it
 
         # command was sent in a DM
         elif isinstance(error, commands.NoPrivateMessage):
@@ -40,7 +40,7 @@ class errors(commands.Cog):
                 pass
         else:
             # this is a catch-all for any other types of errors, they will be sent in chat and the console for debugging purposes
-            await ctx.send(f"An undefined error has occured.\n```\n{error.__traceback__}\n{error}```\nIf you are seeing this, ping FDG for assistance.")
+            await ctx.reply(f"An undefined error has occured.\n```\n{error.__traceback__}\n{error}```\nIf you are seeing this, ping FDG for assistance.")
             print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
