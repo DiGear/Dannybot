@@ -31,10 +31,10 @@ class ai(commands.Cog):
         response = openai.Completion.create(
         model="code-davinci-002",
         prompt= f"\"\"\"\n{prompt}\n\"\"\"\n",
-        temperature=0,
-        max_tokens=1300,
+        temperature=0.2,
+        max_tokens=700,
         top_p=1,
-        frequency_penalty=0,
+        frequency_penalty=1,
         presence_penalty=0
         )
         
