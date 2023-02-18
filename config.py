@@ -227,21 +227,11 @@ def fileCount(folder):
 # NEVER TRY TO COMMENT EZOGAMING CODE - FDG
 def ezogaming_regex(datalist, dataentry):
     # open the file with the list of entries
-    with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f:
-        # read the file
-        entry = f.readlines()
-        # remove the newline character
-        entry = [x.rstrip() for x in entry]
+    with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f: entry = [x.rstrip() for x in f.readlines()]
     # open the file with the list of aliases
-    with open(f"{dannybot}\\ezogaming\\{datalist}_checker") as f:
-        # read the file
-        entryalias = f.readlines()
-        # remove the newline character
-        entryalias = [x.rstrip() for x in entryalias]
-    # join the list of words into a string
-    aru = " ".join(dataentry[:])
-    # remove all non-alphabetical characters
-    inp = re.sub("[^a-z]", "", aru.lower())
+    with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f: entryalias = [x.rstrip() for x in f.readlines()]
+    # remove all non-alphabetic characters from the input
+    inp = re.sub("[^a-z]", "", " ".join(dataentry[:]).lower())
     # create a list of the same length as the list of entries
     sort = [0] * len(entry)
     # fill the list with the index of the entry
@@ -249,14 +239,13 @@ def ezogaming_regex(datalist, dataentry):
         sort[i] = i
     # shuffle the list
     random.shuffle(sort)
-    # for each entry
+    # for each entry in the list
     for i2 in range(0, len(entry)):
-        # remove all non-alphabetical characters
+        # remove all non-alphabetic characters from the input, entry, and aliases
         inputStripped = inp.strip()
-        aliasStripped = re.sub(
-            "[^a-z]", "", entryalias[sort[i2]].lower().strip())
+        aliasStripped = re.sub("[^a-z]", "", entryalias[sort[i2]].lower().strip())
         entrystripped = re.sub("[^a-z]", "", entry[sort[i2]].lower().strip())
-        # if the input is in the entry or the alias
+        # if a match is found between the input with the entry OR alias
         if (inputStripped in entrystripped) or inputStripped in aliasStripped:
             # stop the loop
             break
@@ -264,7 +253,6 @@ def ezogaming_regex(datalist, dataentry):
     sort[i2]
     # get the entry
     results = entry[sort[i2]]
-    # return the entry
     return results
 
 def undertext(name, text, isAnimated):
