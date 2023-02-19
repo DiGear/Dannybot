@@ -27,7 +27,7 @@ class audio(commands.Cog):
             v.close
 
     # i need to find a nice way to implement a viewable list of soundfonts
-    @commands.command(description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
+    @commands.command(alisases=['nathans'], description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
     async def midislap(self, ctx, *args):
         sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
         context = await resolve_args(ctx, args, ctx.message.attachments)
@@ -46,9 +46,9 @@ class audio(commands.Cog):
             await ctx.reply("Please choose a valid soundfont!")
         else:
             await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
-            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.mp3 -r 44100")
-            with open(f'{dannybot}\\cache\\midislap.mp3', 'rb') as f:
-                await ctx.reply(file=File(f, 'midislap.mp3'))
+            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.oga -r 44100")
+            with open(f'{dannybot}\\cache\\midislap.oga', 'rb') as f:
+                await ctx.reply(file=File(f, 'midislap.ogg'))
                 f.close
 
 async def setup(bot: commands.Bot):
