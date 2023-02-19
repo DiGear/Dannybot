@@ -574,4 +574,5 @@ async def make_collage(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
 # generate list from directory of files
 def listgen(directory):
     list =  os.listdir(directory)
-    
+    string = ', '.join(list)
+    return string
