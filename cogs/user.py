@@ -25,5 +25,24 @@ class user(commands.Cog):
         banner_url = user.banner.url
         await ctx.send(f"{banner_url}")
 
+    @commands.command(description="Grab the command author's account information, and then send it in an embed. If a User ID or @Mention is provided. Send their account information instead.", brief="Display provided users information")
+    async def info(self, ctx, member: discord.Member = None):
+        member = ctx.author if not member else member
+        perms = '\n'.join(
+            perm for perm, value in member.guild_permissions if value)
+        embed = discord.Embed(title="User Information", color=0xffb6c1)
+        embed.set_thumbnail(url=member.avatar.url)
+        embed.add_field(name="Discord Name:", value=str(
+            member.name) + "#" + (member.discriminator), inline=False)
+        embed.add_field(name="ID:", value=str(member.id), inline=False)
+        embed.add_field(name="Is Bot Account:", value=str(member.bot))
+        embed.add_field(name="Account Creation Date:", value=member.created_at.strftime(
+            "%#d, %B, %Y at %I:%M %p UTC"), inline=False)
+        embed.add_field(name="Server Nickname:", value=str(
+            member.display_name), inline=False)
+        embed.add_field(name='Server Permissions:', value=perms)
+        embed.set_footer(text="Command ran on " + str(member.guild) + ".")
+        await ctx.reply(embed=embed, mention_author=True)
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(user(bot))
