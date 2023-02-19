@@ -1,4 +1,4 @@
-Dannybot has various folders for storing image databases. These tools are not included. You will need to manually add them.
+Dannybot has various tools to power his commands. These tools are not included. You will need to manually add them.
 
 waifu2x-caffe
 UltimateVocalRemover (good luck finding a CLI version lmao)
