@@ -9,15 +9,6 @@ class secret(commands.Cog):
         self.bot = bot
 
     @commands.command(hidden=True)
-    async def poopoo(self, ctx):
-        pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
-        with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
-            await ctx.reply(file=File(f, pooter_file))
-        pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
-        with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
-            await ctx.reply(file=File(f, pooter_file))
-
-    @commands.command(hidden=True)
     async def taur_add(self, ctx, file_url: typing.Optional[str] = "File_Is_Attachment"):
         if not ctx.author.id in [206392667351941121, 343224184110841856]: # hardcoded whitelist lol lmao
             await ctx.send("You are not whitelisted for this command!")
