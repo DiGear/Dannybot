@@ -435,6 +435,39 @@ class image(commands.Cog):
             with open(f'{dannybot}\\cache\memeout.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'caption.png'), mention_author=True)
                 f.close
+                
+    @commands.command(description="Applies a set amount of radial blur to a provided image.", brief="Applies radial blur to an image")
+    async def radial(self, ctx, *args):
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        Link_To_File = cmd_info[0]
+        if '.gif' in Link_To_File:  # animated
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(Link_To_File).content)
+                f.close
+        else:  # still
+            with open(f'{dannybot}\\cache\\radin.png', 'wb') as f:
+                f.write(requests.get(Link_To_File).content)
+                f.close
+        if '.gif' in Link_To_File:  # animated
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    with magick(filename=f'{dannybot}\\cache\\ffmpeg\\{frame}') as img:
+                        img.rotational_blur(angle=6)
+                        img.save(filename=f'{dannybot}\\cache\\ffmpeg\\output\\{frame}')
+            repack_gif()
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'radial.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:  # still
+            with magick(filename=f'{dannybot}\\cache\\radin.png') as img:
+                img.rotational_blur(angle=6)
+                img.save(filename=f"{dannybot}\\cache\\radout.png")
+            with open(f'{dannybot}\\cache\\radout.png', 'rb') as f:
+                await ctx.reply(file=File(f, 'radial_blur.png'), mention_author=True)
+                f.close
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(image(bot))
