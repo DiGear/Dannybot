@@ -23,6 +23,7 @@ import urllib.request
 from textwrap import wrap
 
 import aiohttp
+import pyfluidsynth
 import discord
 import furl
 import numpy
@@ -77,8 +78,6 @@ GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
 Cookies = f"{dannybot}\\assets" # set this to your YT-DL cookies folder
 UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover" # set this to the path of your install of UltimateVocalRemover
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
-Fluidsynth = f"{dannybot}\\tools\\Fluidsynth\\fluidsynth.exe"  # set this to the path of your fluidsynth.exe file in your install of FluidSynth
-aria2c =  f"{dannybot}\\tools\\Aria2c\\aria2c.exe" # set this to aria2c
 
 # 8ball responses for the 8ball command
 ball_responses = [
