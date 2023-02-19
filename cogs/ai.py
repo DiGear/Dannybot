@@ -119,6 +119,26 @@ class ai(commands.Cog):
         embed.set_footer(text="Powered by https://inspirobot.me/")
         await ctx.reply(file=f, embed=embed, mention_author=True)
 
+    @commands.command(aliases=['pngify', 'transparent'], description="Runs the provided image through a (free) API call to remove.bg, to make the image transparent.", brief="Remove the background from an image using AI")
+    async def removebg(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        Link_To_File = cmd_info[0]
+        await ctx.send("Removing background. Please wait...", delete_after=5)
+        with open(f'{dannybot}\\cache\\removebgtemp.png', 'wb') as f:
+            f.write(requests.get(Link_To_File).content)
+            f.close
+        response = requests.post("https://api.remove.bg/v1.0/removebg", data={"image_url": str(Link_To_File), "size": "auto"}, headers={"X-Api-Key": os.getenv("REMOVEBG_KEY")},)
+        if response.status_code == requests.codes.ok:
+            with open(f'{dannybot}\\cache\\removebg.png', 'wb') as out:
+                out.write(response.content)
+                f.close
+            with open(f'{dannybot}\\cache\\removebg.png', 'rb') as f:
+                await ctx.reply(file=File(f, 'removed.png'), mention_author=True)
+                f.close
+        else:
+            await ctx.reply("Processing of the image failed. This is most likely because no background was detected.", mention_author=True)
+            print(response.content)
+
     @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
     async def dalle(self, ctx, *, prompt):
         # rotty shit, this is the main function that runs when the command is called
