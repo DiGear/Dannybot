@@ -36,7 +36,7 @@ class pooter(commands.Cog):
                 await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {Link_To_File}')
                 await ctx.message.add_reaction(reaction)
                 
-    @commands.command(hidden=True)
+    @commands.command(brief="Send 2 files from a public archive.")
     async def poopoo(self, ctx):
         pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
         with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
