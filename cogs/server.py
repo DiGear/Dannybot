@@ -77,6 +77,13 @@ class server(commands.Cog):
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, 'fan.png'), mention_author=True)
             
+    @commands.command(description="Send a picture of a glass cup.", brief="Send a picture of a glass cup")
+    async def glasscupimage(self, ctx):
+        dir = f"{dannybot}\\database\\Glasscup"
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, 'glass.png'), mention_author=True)
+            
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
         embed = discord.Embed(title="Dannybot File Totals", color=0xf77e9a)
