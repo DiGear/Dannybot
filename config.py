@@ -50,7 +50,6 @@ load_dotenv()
 dannybot_prefix = "d." #bot prefix
 dannybot_token = os.getenv("TOKEN") #token
 dannybot_denialRatio = 500 # chance for dannybot to deny your command input
-dannybot_sentienceRatio = 150 # chance for dannybot to speak on his own
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
 logs_channel = 971178342550216705 # channel to log commands
@@ -571,3 +570,8 @@ async def make_collage(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     )
     print("3x3 Generated")
     return images
+
+# generate list from directory of files
+def listgen(directory):
+    list =  os.listdir(directory)
+    
