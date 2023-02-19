@@ -377,6 +377,64 @@ class image(commands.Cog):
             with open(f'{dannybot}\\cache\\imploded.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'imploded.png'), mention_author=True)
                 f.close
+                
+    @commands.command(description="Command to caption memes in the same way websites like ifunny do, where it puts a white box at the top of the image with black caption text.", brief="White box; black text caption an image")
+    async def caption(self, ctx, context, *, meme_text: typing.Optional[str] = "ValueError"):
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        with open(f'{dannybot}\\cache\memein.png', 'wb') as f:
+            try:  # this assume the image was linked to, and attempts to download the file via the link
+                f.write(requests.get(context).content)
+                f.close
+            except:  # if false
+                if ctx.message.attachments:
+                    print(meme_text)  # displays the contents of meme_text
+                    # interpret the context variable as the meme text to be used in the command instead
+                    meme_text_Fallback_Value = context
+                    # displays the contents of meme_text again
+                    print(meme_text_Fallback_Value)
+                    meme_text = context + " " + meme_text  # merge the two values
+                    if ("ValueError" in meme_text):  # error handler if the meme text cant be found
+                        # honesly i don't know what the fuck its doing here
+                        meme_text = meme_text_Fallback_Value
+                    print(meme_text)
+                    context = ctx.message.attachments[0].url
+                    f.write(requests.get(context).content)
+                    f.close
+                else:
+                    print(meme_text)  # displays the contents of meme_text
+                    # interpret the context variable as the meme text to be used in the command instead
+                    meme_text_Fallback_Value = context
+                    # displays the contents of meme_text again
+                    print(meme_text_Fallback_Value)
+                    meme_text = context + " " + meme_text  # merge the two values
+                    if ("ValueError" in meme_text):  # error handler if the meme text cant be found
+                        # honesly i don't know what the fuck its doing here
+                        meme_text = meme_text_Fallback_Value
+                    print(meme_text)
+                    context = await message_history_img_handler(ctx)
+                    f.write(requests.get(context).content)
+                    f.close
+        if '.gif' in context:
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(context).content)
+                f.close
+            # convert the gif for frames for processing
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    os.system(f'python -m dankcli "{dannybot}\\cache\\ffmpeg\\{frame}" "{meme_text}" --filename "{dannybot}\\cache\\ffmpeg\\output\\{str(frame).replace(".png", "")}')
+            repack_gif()
+            # prepare the file for sending
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'caption.gif'), mention_author=True)
+                cleanup_ffmpeg()  # delete the temporary files made from the unpacking and repacking of gifs
+                f.close
+        else:
+            os.system(f'python -m dankcli "{dannybot}\\cache\\memein.png" "{meme_text}" --filename "{dannybot}\\cache\\memeout"')
+            # prepare the file for sending
+            with open(f'{dannybot}\\cache\memeout.png', 'rb') as f:
+                await ctx.reply(file=File(f, 'caption.png'), mention_author=True)
+                f.close
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(image(bot))
