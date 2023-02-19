@@ -3,7 +3,6 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-
 class audio(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -27,26 +26,26 @@ class audio(commands.Cog):
             i.close
             v.close
 
+    # i need to find a nice way to implement a viewable list of soundfonts
     @commands.command(description="Renders a midi file with a random soundfont, and sends the resulting mp3. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
     async def midislap(self, ctx, *args):
-        # distinquish between command arguments and command file uploads
+        sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
         context = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = context[0]
-        SF2 = context[1]
-        with open(f'midislap.mid', 'wb') as midi_file:
+        if not context[1]:
+            SF2 = random.choice(sf2s)
+        else:
+            SF2 = context[1] + ".sf2"
+        with open(f'{dannybot}\\cache\\midislap.mid', 'wb') as midi_file:
             midi_file.write(requests.get(file_url).content)
             midi_file.close
-            sf2s = ["sm64.bat", "bw2.bat", "frlg.bat", "8bit.bat", "sega.bat", "touhou.bat", "mc.bat", "gba.bat", "n64.bat", "dppt.bat", "general.bat", "sgm.bat"]
-            if (SF2 == "File_Is_Attachment"):
-                SF2 = random.choice(sf2s)
-            else:
-                soundfontchoice = (SF2 + ".bat")
-            if (os.path.exists(soundfontchoice)):
-                os.system(soundfontchoice)
-                os.system('ffmpeg -y -i slapped.wav -vn -ar 44100  -ac 2 -b:a 96k slappednorm.mp3')
-                with open(f'slappednorm.mp3', 'rb') as f:
-                    await ctx.reply('Midislapped with ' + str(soundfontchoice).replace('.bat', '.sf2'), file=File(f, 'midislap.mp3'))
-                    f.close
+        if SF2 not in sf2s:
+            await ctx.reply("Please choose a valid soundfont!")
+        else:
+            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.flac -r 44100")
+            with open(f'{dannybot}\\cache\\midislap.flac', 'rb') as f:
+                await ctx.reply(file=File(f, 'midislap.flac'))
+                f.close
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(audio(bot))
