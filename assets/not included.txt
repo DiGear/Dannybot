@@ -1,0 +1,1 @@
+soundfonts for the SF2 folder are needed. dannybot will automatically configure them for use with the midislap command. gm or gm2 soundfonts are advised.
