@@ -21,7 +21,7 @@ class user(commands.Cog):
     @commands.command(description="Grab the command author's banner(s), and send it. If a User ID or @Mention is provided. Send their banner instead.", brief="Display provided users banner(s)" )
     async def banner(self, ctx, member: discord.Member = None):
         member = ctx.author if not member else member
-        user = await self.client.fetch_user(member.id)
+        user = await self.bot.fetch_user(member.id)
         banner_url = user.banner.url
         await ctx.send(f"{banner_url}")
 
