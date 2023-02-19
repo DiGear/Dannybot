@@ -1,5 +1,6 @@
-Dannybot has various folders for storing image databases. These toolss are not included. You will need to manually add them.
+Dannybot has various folders for storing image databases. These tools are not included. You will need to manually add them.
 
 waifu2x-caffe
 UltimateVocalRemover (good luck finding a CLI version lmao)
-FluidSynth 2.0.0 or higher
+FluidSynth 2.0.0 or higher (put in your PATH)
+FFMpeg (put in your PATH)
