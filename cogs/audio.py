@@ -46,9 +46,9 @@ class audio(commands.Cog):
             await ctx.reply("Please choose a valid soundfont!")
         else:
             await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
-            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.flac -r 44100")
-            with open(f'{dannybot}\\cache\\midislap.flac', 'rb') as f:
-                await ctx.reply(file=File(f, 'midislap.flac'))
+            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.mp3 -r 44100")
+            with open(f'{dannybot}\\cache\\midislap.mp3', 'rb') as f:
+                await ctx.reply(file=File(f, 'midislap.mp3'))
                 f.close
 
 async def setup(bot: commands.Bot):
