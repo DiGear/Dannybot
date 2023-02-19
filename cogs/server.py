@@ -47,6 +47,13 @@ class server(commands.Cog):
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, file_name), mention_author=True)
             f.close
+    @commands.command(description="Send a picture of Leffrey.", brief="Send a picture of Leffrey")          
+    async def leffrey(self, ctx):
+        dir = f"{dannybot}\\database\\Leffrey"
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, file_name), mention_author=True)
+            f.close
             
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
