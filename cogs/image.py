@@ -290,5 +290,93 @@ class image(commands.Cog):
                 await ctx.reply(file=File(f, 'meme.png'), mention_author=True)
                 f.close
 
+    @commands.command(aliases=['bulge'], description="Applies a bulge effect to a provided image by a specified amount. The default value is 0.5", brief="Fisheye an image by a specified amount")
+    async def explode(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        File_Url = cmd_info[0]
+        cmd_args = cmd_info[1].split(' ')
+        Effect_Value = cmd_args[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        if '.gif' in File_Url:  # animated
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+        else:  # still
+            with open(f'{dannybot}\\cache\\expin.png', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+
+        if '.gif' in File_Url:  # animated
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
+                        try:
+                            img.implode(amount=-float(Effect_Value))
+                        except:
+                            img.implode(amount=-float(0.5))  # default value
+                        img.save(filename=f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+            repack_gif()
+
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'explode.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:  # still
+            with magick(filename=f'{dannybot}\\cache\\expin.png') as img:
+                try:
+                    img.implode(amount=-float(Effect_Value))
+                except:
+                    img.implode(amount=-float(0.5))  # default value
+
+                img.save(filename=f'{dannybot}\\cache\\exploded.png')
+            with open(f'{dannybot}\\cache\\exploded.png', 'rb') as f:
+                await ctx.reply(file=File(f, 'exploded.png'), mention_author=True)
+                f.close
+                
+    @commands.command(aliases=['pinch'], description="Applies a pinch effect to a provided image by a specified amount. The default value is 0.5", brief="Reverse fisheye an image by a specified amount")
+    async def implode(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        File_Url = cmd_info[0]
+        cmd_args = cmd_info[1].split(' ')
+        Effect_Value = cmd_args[0]
+        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
+        if '.gif' in File_Url:  # animated
+            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+        else:  # still
+            with open(f'{dannybot}\\cache\\impin.png', 'wb') as f:
+                f.write(requests.get(File_Url).content)
+                f.close
+
+        if '.gif' in File_Url:  # animated
+            unpack_gif(f'{dannybot}\\cache\\gif.gif')
+            for frame in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+                if '.png' in frame:
+                    with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
+                        try:
+                            img.implode(amount=float(Effect_Value))
+                        except:
+                            img.implode(amount=float(0.5))  # default value
+                        img.save(filename=f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+            repack_gif()
+
+            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+                await ctx.reply(file=File(f, 'implode.gif'), mention_author=True)
+                cleanup_ffmpeg()
+                f.close
+        else:  # still
+            with magick(filename=f'{dannybot}\\cache\\impin.png') as img:
+                try:
+                    img.implode(amount=-float(Effect_Value))
+                except:
+                    img.implode(amount=-float(0.5))  # default value
+
+                img.save(filename=f'{dannybot}\\cache\\imploded.png')
+            with open(f'{dannybot}\\cache\\imploded.png', 'rb') as f:
+                await ctx.reply(file=File(f, 'imploded.png'), mention_author=True)
+                f.close
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(image(bot))
