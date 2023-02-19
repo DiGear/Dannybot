@@ -23,7 +23,6 @@ import urllib.request
 from textwrap import wrap
 
 import aiohttp
-import fluidsynth
 import discord
 import furl
 import numpy
