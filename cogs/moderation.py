@@ -1,5 +1,7 @@
 # obligatory moderation commands - FDG
 
+# this shit is still empty lol
+
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
