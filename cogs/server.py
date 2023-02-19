@@ -31,6 +31,14 @@ class server(commands.Cog):
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, file_name), mention_author=True)
             f.close
+            
+    @commands.command(description="Send a video from my personal collection.", brief="Send a video from my camera roll")
+    async def vid(self, ctx):
+        dir = VideosPath
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, file_name), mention_author=True)
+            f.close
 
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
