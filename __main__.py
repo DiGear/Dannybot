@@ -38,6 +38,7 @@ async def on_message(input):
     if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and input.content.startswith(dannybot_prefix):
         await input.channel.send("no", reference=input)
     else:
+        os.chdir(f"{dannybot}") # always make sure we're in dannybots directory
         await bot.process_commands(input)
 
 # this is a ping command and it's pretty self-explanatory
