@@ -2,6 +2,9 @@
 database/*/
 cache/*
 tools/*/
+assets/cookies.txt
+*.sf2
+!general.sf2
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -132,5 +135,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-assets/cookies.txt
-*.sf2
