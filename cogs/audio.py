@@ -27,7 +27,7 @@ class audio(commands.Cog):
             v.close
 
     # i need to find a nice way to implement a viewable list of soundfonts
-    @commands.command(description="Renders a midi file with a random soundfont, and sends the resulting mp3. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
+    @commands.command(description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
     async def midislap(self, ctx, *args):
         sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
         context = await resolve_args(ctx, args, ctx.message.attachments)
