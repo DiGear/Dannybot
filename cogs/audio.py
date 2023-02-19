@@ -31,7 +31,7 @@ class audio(commands.Cog):
     async def midislap(self, ctx, *args):
         sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
         context = await resolve_args(ctx, args, ctx.message.attachments)
-        if context[0].startswith("list"):
+        if not args:
             await ctx.reply(str(listgen(f"{dannybot}\\assets\\SF2\\")).replace(".sf2", ""))
             return
         file_url = context[0]
@@ -45,7 +45,7 @@ class audio(commands.Cog):
         if SF2 not in sf2s:
             await ctx.reply("Please choose a valid soundfont!")
         else:
-            await ctx.send("Generating... Use 'd.midislap list' to see a list of selectable soundfonts...", delete_after=10)
+            await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
             os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.flac -r 44100")
             with open(f'{dannybot}\\cache\\midislap.flac', 'rb') as f:
                 await ctx.reply(file=File(f, 'midislap.flac'))
