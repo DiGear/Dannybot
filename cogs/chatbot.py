@@ -27,7 +27,7 @@ class sentience(commands.Cog):
             return
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
-        if not input.author.bot and not input.content.startswith(dannybot_prefix) and "dannybot" in input.content or self.conversing: # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot or the bot is conversing with someone
+        if not input.author.bot and not input.content.startswith(dannybot_prefix) and "dannybot" in input.content.lower() or self.conversing: # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot or the bot is conversing with someone
         
             # declare the response as a variable and set it to the openai api
             if self.conversing: # if the bot is conversing with someone
