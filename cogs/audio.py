@@ -12,7 +12,7 @@ class audio(commands.Cog):
     async def acapella(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = cmd_info[0]
-        with open(f'I:\\Dannybot\\cogs\\dependencies\\UVR\\audio.mp3', 'wb') as f:
+        with open(f'{UltimateVocalRemover}\\audio.mp3', 'wb') as f:
             f.write(requests.get(file_url).content)
             f.close
         await ctx.send("Splitting. Please wait...")
@@ -21,12 +21,11 @@ class audio(commands.Cog):
         os.system('python inference.py --input audio.mp3 --gpu 0')
         os.system("ffmpeg -i audio_Instruments.wav -vn -ar 44100 -ac 2 -b:a 192k audio_Instruments.mp3 -y")
         os.system("ffmpeg -i audio_Vocals.wav -vn -ar 44100 -ac 2 -b:a 192k audio_Vocals.mp3 -y")
-        with open(f'audio_Instruments.mp3', 'rb') as f:
-            await ctx.reply(file=File(f, 'Inst.mp3'))
-            f.close
-        with open(f'audio_Vocals.mp3', 'rb') as f:
-            await ctx.reply(file=File(f, 'Vocal.mp3'))
-            f.close
+        with open(f'audio_Instruments.mp3', 'rb') as i, open(f'audio_Vocals.mp3', 'rb') as v:
+            await ctx.reply(file=File(i, 'Inst.mp3'))
+            await ctx.reply(file=File(v, 'Vocal.mp3'))
+            i.close
+            v.close
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(audio(bot))
