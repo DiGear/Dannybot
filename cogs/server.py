@@ -55,6 +55,14 @@ class server(commands.Cog):
             await ctx.reply(file=File(f, file_name), mention_author=True)
             f.close
             
+    @commands.command(description="Send a GIF file.", brief="Send a GIF file")
+    async def gif(self, ctx):
+        dir = GifsPath
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, file_name), mention_author=True)
+            f.close
+            
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
         embed = discord.Embed(title="Dannybot File Totals", color=0xf77e9a)
