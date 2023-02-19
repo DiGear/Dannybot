@@ -69,7 +69,7 @@ KemonoFriendsPath = "E:\\Anime\\Kemono Friends" # put your kemono friends regex 
 NekoparaPath = "E:\\Anime\\Nekopara" # put your nekopara regex files into here
 MimiPath = "E:\\Anime\\Kemono girls" # put your animal girl files here
 PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
-VideosPath = "C:\\Users\\weebm\\Videos" # set this to your videos folder
+VideosPath = "C:\\Users\\weebm\\Videos\\epic" # set this to your videos folder
 GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
 
 # internal paths
