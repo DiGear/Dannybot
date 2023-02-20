@@ -47,7 +47,7 @@ load_dotenv()
 # ----------
 
 # dannybot config
-dannybot_prefix = "d." #bot prefix
+dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
 dannybot_denialRatio = 500 # chance for dannybot to deny your command input
 dannybot = os.getcwd() # easy to call variable that stores our current working directory

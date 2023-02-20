@@ -23,11 +23,11 @@ class sentience(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         
-        if "." in input.content and not "dannybot" in input.content and not self.conversing and not input.content.startswith(dannybot_prefix): # if the message contains a period and is not a command or a message to dannybot or the bot is conversing with someone
+        if "." in input.content and not "dannybot" in input.content and not self.conversing and not any(input.content.startswith(prefix) for prefix in dannybot_prefixes): # if the message contains a period and is not a command or a message to dannybot or the bot is conversing with someone
             return
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
-        if not input.author.bot and not input.content.startswith(dannybot_prefix) and "dannybot" in input.content.lower() or self.conversing: # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot or the bot is conversing with someone
+        if not input.author.bot and not any(input.content.startswith(prefix) for prefix in dannybot_prefixes) and "dannybot" in input.content.lower() or self.conversing: # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot or the bot is conversing with someone
         
             # declare the response as a variable and set it to the openai api
             if self.conversing: # if the bot is conversing with someone

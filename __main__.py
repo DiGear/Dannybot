@@ -19,7 +19,7 @@ if cache_clear_onLaunch:
 
 bot = commands.Bot(
     # everyone shits themselves when the extra prefixes are removed so i guess im keeping them hardcoded in
-    command_prefix=(dannybot_prefix, "#", "D."),
+    command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
     activity=discord.Activity(name="Nekopara Vol. 2", type=1),
     intents=discord.Intents.all(),
@@ -35,7 +35,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(input):
-    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and input.content.startswith(dannybot_prefix):
+    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
         await input.channel.send("no", reference=input)
     else:
         os.chdir(f"{dannybot}") # always make sure we're in dannybots directory
