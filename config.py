@@ -548,7 +548,7 @@ def make_collage_sync(images: str(io.BytesIO), wrap: int) -> io.BytesIO:
     image_arrays = [numpy.array(PIL.Image.open(image)) for image in images]
     image_ct = 1
     for image in images:
-        print(str(image_ct) + " image(s) generated out of " + str(image_ct))
+        print(str(image_ct) + " image(s) generated out of " + "9")
         image_ct += 1
         image.seek(0)
     collage_horizontal_arrays = [
