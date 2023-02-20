@@ -261,7 +261,7 @@ def undertext(name, text, isAnimated):
     if "uf" in name: # underfell
         name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
         text = f"color=%23b93b3c%20{text}"
-    if name in deltarune_dw or "dw" or "dark" in name: # deltarune
+    if name in deltarune_dw: # deltarune
         name = f"{name}&box=deltarune&mode=darkworld"
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
