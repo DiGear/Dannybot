@@ -31,7 +31,7 @@ class audio(commands.Cog):
     async def midislap(self, ctx, *args):
         sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
         context = await resolve_args(ctx, args, ctx.message.attachments)
-        if not args:
+        if not args and not ctx.message.attachments:
             await ctx.reply(str(listgen(f"{dannybot}\\assets\\SF2\\")).replace(".sf2", ""))
             return
         file_url = context[0]
