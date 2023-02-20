@@ -143,8 +143,6 @@ logolist = [
 
 # this is for the undertext command
 deltarune_dw = [
-    'dark', 
-    'dw',
     'ralsei',
     'lancer',
     'king', 'jevil',
@@ -263,7 +261,7 @@ def undertext(name, text, isAnimated):
     if "uf" in name: # underfell
         name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
         text = f"color=%23b93b3c%20{text}"
-    if name in deltarune_dw: # deltarune
+    if name in deltarune_dw or "dw" or "dark" in name: # deltarune
         name = f"{name}&box=deltarune&mode=darkworld"
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
@@ -287,7 +285,7 @@ def undertext(name, text, isAnimated):
     }.get(name, name))(name)
 
     # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
-    if name.startswith("https://"):
+    if name.startswith("http"):
         name = f"custom&url={name}"
     
     # text overrides: modify the box and text display based on passed parameters
@@ -317,17 +315,17 @@ async def message_history_img_handler(ctx):
     channel = ctx.message.channel
     extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
     async for msg in channel.history(limit=500):
-        # if the message contains a tenor link, get the tenor id and return the gif
-        if 'https://tenor.com/view/' in msg.content:
-            for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
-                tenorid = x.group(1)
-            return (str(gettenor(tenorid)))
         # if the message contains an attachment, check if it's an image and return the url
         if msg.attachments:
             ext = msg.attachments[0].url.split('.')[-1].lower()
             if ext in extensions:
                 return msg.attachments[0].url
         else:
+                # if the message contains a tenor link, get the tenor id and return the gif
+                if 'https://tenor.com/view/' in msg.content:
+                    for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
+                        tenorid = x.group(1)
+                    return (str(gettenor(tenorid)))
                 ext = str(msg.content).split('.')[-1].lower()
                 if ext in extensions:
                     return re.findall("(?=http).*?(?= |\n|$)", msg.content)[0].split('?')[0]
