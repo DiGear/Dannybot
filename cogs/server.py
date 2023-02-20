@@ -83,6 +83,13 @@ class server(commands.Cog):
         file_name = random.choice(os.listdir(dir))
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, 'glass.png'), mention_author=True)
+        
+    @commands.command(description="Send a picture of a plastic cup.", brief="Send a picture of a plastic cup")
+    async def glasscupimage(self, ctx):
+        dir = f"{dannybot}\\database\\Plasticcup"
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, 'plastic.png'), mention_author=True)
             
     @commands.command(description="Send a picture of a burger.", brief="Send a picture of a burger")
     async def burger(self, ctx):
@@ -103,6 +110,7 @@ class server(commands.Cog):
         embed.add_field(name="Image Files:", value=fileCount(PicturesPath), inline=True)
         embed.add_field(name="GIF Files:", value=fileCount(GifsPath), inline=True)
         embed.add_field(name="Glass Cup Images:", value=fileCount(f"{dannybot}\\database\\Glasscup"), inline=True)
+        embed.add_field(name="Plastic Cup Images:", value=fileCount(f"{dannybot}\\database\\Plasticcup"), inline=True)
         embed.add_field(name="Burger Files:", value=fileCount(f"{dannybot}\\database\\Burger"), inline=True)
         embed.add_field(name="Nekopara Files:", value=fileCount(NekoparaPath), inline=True)
         embed.add_field(name="Animal Girl Images:", value=fileCount(f"{dannybot}\\database\\Mimi"), inline=True)
