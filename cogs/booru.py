@@ -4,11 +4,11 @@
 from config import *
 
 
-class pooter(commands.Cog):
+class booru(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         
-    @commands.command(aliases=['poo'], description="Send or recieve a file from a user-built archive of files. You can upload 9 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.")
+    @commands.command(aliases=['poo'], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.")
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         downloads = 1
         reaction = '✅'
@@ -46,4 +46,4 @@ class pooter(commands.Cog):
             await ctx.reply(file=File(f, pooter_file))
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(pooter(bot))
+    await bot.add_cog(booru(bot))
