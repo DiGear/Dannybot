@@ -23,7 +23,7 @@ class sentience(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         
-        if "." in input.content and not "dannybot" in input.content and not self.conversing and not any(input.content.startswith(prefix) for prefix in dannybot_prefixes): # if the message contains a period and is not a command or a message to dannybot or the bot is conversing with someone
+        if "." in input.content and not "dannybot" in input.content.lower() and not self.conversing and not any(input.content.startswith(prefix) for prefix in dannybot_prefixes): # if the message contains a period and is not a command or a message to dannybot or the bot is conversing with someone
             return
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
