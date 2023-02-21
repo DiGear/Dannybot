@@ -51,7 +51,7 @@ dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
 dannybot_denialRatio = 500 # chance for dannybot to deny your command input
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
-cache_clear_onLaunch = False # dannybot will clear his cache on launch if set to true
+cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
 logs_channel = 971178342550216705 # channel to log commands
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga', 'mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv'] # list of accepted files for the bots public database
 

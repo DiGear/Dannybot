@@ -46,8 +46,8 @@ class audio(commands.Cog):
             await ctx.reply("Please choose a valid soundfont!")
         else:
             await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
-            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap.oga -r 44100")
-            with open(f'{dannybot}\\cache\\midislap.oga', 'rb') as f:
+            os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.oga -r 44100")
+            with open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.oga', 'rb') as f:
                 await ctx.reply(f"Midislapped with {SF2}:", file=File(f, 'midislap.ogg'))
                 f.close
 
