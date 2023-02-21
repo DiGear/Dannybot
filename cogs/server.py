@@ -78,14 +78,14 @@ class server(commands.Cog):
             await ctx.reply(file=File(f, 'fan.png'), mention_author=True)
             
     @commands.command(description="Send a picture of a glass cup.", brief="Send a picture of a glass cup")
-    async def glasscupimage(self, ctx):
+    async def glasscup(self, ctx):
         dir = f"{dannybot}\\database\\Glasscup"
         file_name = random.choice(os.listdir(dir))
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, 'glass.png'), mention_author=True)
         
     @commands.command(description="Send a picture of a plastic cup.", brief="Send a picture of a plastic cup")
-    async def glasscupimage(self, ctx):
+    async def plasticcup(self, ctx):
         dir = f"{dannybot}\\database\\Plasticcup"
         file_name = random.choice(os.listdir(dir))
         with open(f'{dir}\\{file_name}', 'rb') as f:
