@@ -61,7 +61,6 @@ class misc(commands.Cog):
             os.chdir(f"{dannybot}")
 
         await ctx.reply(file=discord.File(f'ytdl.{format}'))
-        os.remove(f'ytdl.{format}')
         os.chdir(f"{dannybot}")
 
 async def setup(bot: commands.Bot):
