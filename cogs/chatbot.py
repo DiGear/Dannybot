@@ -33,7 +33,7 @@ class sentience(commands.Cog):
             if self.conversing: # if the bot is conversing with someone
                 gpt_prompt = str(f"Respond to the following chat message. {self.conversing_user}: {input.content} Dannybot::")
             else: # if the bot is not conversing with someone
-                gpt_prompt = str(f"Respond to the following chat message. (refer to people by their provided name) {input.author.name}: {input.content} Dannybot::")
+                gpt_prompt = str(f"Respond to the following chat message. {input.author.name}: {input.content} Dannybot::")
             response = openai.Completion.create( # get the response from the openai api
             engine="text-davinci-003",
             prompt=gpt_prompt,
