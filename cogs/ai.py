@@ -47,7 +47,7 @@ class ai(commands.Cog):
         
     @commands.command(aliases=['4chan'], description="Interact with GPT3 using Dannybot to generate greentexts.", brief="Get AI generated greentexts based on provided prompts")
     async def greentext(self, ctx, *, prompt):
-        gpt_prompt = str(f"write me a 4chan greentext\n>be me\n{prompt}")
+        gpt_prompt = str(f"write me a funny 4chan greentext\n>be me\n{prompt}")
         print(gpt_prompt)
         response = openai.Completion.create(
             engine="text-davinci-003",
