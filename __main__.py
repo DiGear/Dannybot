@@ -12,11 +12,7 @@ print("-----------------------------------------")
 # asyncio bad btw
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-if cache_clear_onLaunch:
-    print("clearing cache from previous session...")
-    clear_cache()
-    print("-----------------------------------------")
-
+# define our prefix(es) and status
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
@@ -24,6 +20,7 @@ bot = commands.Bot(
     intents=discord.Intents.all(),
 )
 
+# do this when everything else is done
 @bot.event
 async def on_ready():
     # print a success message upon boot
@@ -32,8 +29,10 @@ async def on_ready():
     print("---------------------------------------------------------------------")
     return
 
+# this is our message handler
 @bot.event
 async def on_message(input):
+    # teehee funny chance for the bot to just say no
     if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
         await input.channel.send("no", reference=input)
     else:
@@ -57,6 +56,7 @@ async def say(ctx, *, args):
     # delete the command message, leaving only what Dannybot sends
     await ctx.message.delete()
 
+# theres definitely a better way to do this
 @bot.command(description="Delete the most recent command output in the current channel. This only affects Dannybot.", brief="Undo the last command output")
 async def undo(ctx):
     channel = ctx.message.channel
@@ -73,6 +73,7 @@ async def reload(ctx, module):
     await bot.load_extension(f"cogs.{module}")
     await ctx.send(f"Reloaded {module} module!")
 
+# this clears the cache manually in case you need to do it with the bot still up
 @bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
 @commands.is_owner()
 async def cache(ctx):
@@ -91,6 +92,10 @@ async def load_extensions():
 # load all of our cogs and start the bot
 async def main():
     async with bot:
+        if cache_clear_onLaunch:
+            print("clearing cache from previous session...")
+            clear_cache()
+            print("-----------------------------------------")
         await load_extensions()
         await bot.start(dannybot_token)
 
