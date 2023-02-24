@@ -11,7 +11,7 @@ class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(aliases=['GPT3'],  description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
+    @commands.command(aliases=['gpt'],  description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
     async def write(self, ctx, *, prompt):
         gpt_prompt = str(f"write me {prompt}")
         print(gpt_prompt)
