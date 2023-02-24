@@ -89,7 +89,7 @@ async def load_extensions():
             await bot.load_extension(f"cogs.{filename[:-3]}")
             print("imported module: " + f"{filename[:-3]}")
 
-# load all of our cogs and start the bot
+# run all of our startup tasks including loading all cogs, and clearing the cache if enabled
 async def main():
     async with bot:
         if cache_clear_onLaunch:
