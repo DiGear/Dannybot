@@ -18,7 +18,6 @@ if cache_clear_onLaunch:
     print("-----------------------------------------")
 
 bot = commands.Bot(
-    # everyone shits themselves when the extra prefixes are removed so i guess im keeping them hardcoded in
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
     activity=discord.Activity(name="Nekopara Vol. 2", type=1),
