@@ -25,14 +25,8 @@ bot = commands.Bot(
     intents=discord.Intents.all(),
 )
 
-# this will be revolutionary i promise
-tree = app_commands.CommandTree(bot)
-
 @bot.event
 async def on_ready():
-    
-    await tree.sync(guild=discord.Object(id=779136383033147403))
-    
     # print a success message upon boot
     print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
