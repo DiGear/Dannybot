@@ -39,24 +39,6 @@ class misc(commands.Cog):
             image.retrieve(url, f"{dannybot}\\cache\\undertext_out.gif")
             await ctx.reply(file=File(f"{dannybot}\\cache\\undertext_out.gif"), mention_author=True)
             return
-    
-    # undertext slash commands test    
-    @commands.tree.command(name='undertext', description='Generate a custom Undertale-Styled textbox')
-    async def undertext_slash(self, interaction: discord.Interaction, character: str, expression: str, text: str, animated: bool):
-        character, text, animated = undertext(character, text, animated)
-        if not animated:
-            url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.png?text={text}&character={character}").url
-            image = urllib.request.URLopener()
-            image.retrieve(url, f"{dannybot}\\cache\\undertext_out.png")
-            await interaction.response.send_message(file=File(f"{dannybot}\\cache\\undertext_out.png"), mention_author=True)
-            return
-        else:
-            url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.gif?text={text}&character={character}&animate=true").url
-            image = urllib.request.URLopener()
-            image.retrieve(url, f"{dannybot}\\cache\\undertext_out.gif")
-            await interaction.response.send_message(file=File(f"{dannybot}\\cache\\undertext_out.gif"), mention_author=True)
-            return
-
 
     @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
     async def download(self, ctx, file_download, format='mp3'):
