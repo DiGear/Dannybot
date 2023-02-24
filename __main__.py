@@ -25,9 +25,15 @@ bot = commands.Bot(
     intents=discord.Intents.all(),
 )
 
-# print a success message upon boot, and then change the bots activity
+# this will be revolutionary i promise
+tree = app_commands.CommandTree(bot)
+
 @bot.event
 async def on_ready():
+    
+    await tree.sync(guild=discord.Object(id=779136383033147403))
+    
+    # print a success message upon boot
     print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
     print("---------------------------------------------------------------------")

@@ -20,6 +20,7 @@ import traceback
 import typing
 import urllib
 import urllib.request
+from collections import namedtuple
 from textwrap import wrap
 
 import aiohttp
@@ -29,8 +30,7 @@ import numpy
 import openai
 import PIL
 import requests
-from collections import namedtuple
-from discord import File
+from discord import File, app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 from petpetgif import petpet
