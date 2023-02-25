@@ -42,6 +42,7 @@ class misc(commands.Cog):
 
     @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
     async def download(self, ctx, file_download, format='mp3'):
+        clear_cache() # this is not how bugs should be fixed but 🖕
         await ctx.send('Ok. Downloading...')
         # defines
         file_download = file_download.split("&")[0]
