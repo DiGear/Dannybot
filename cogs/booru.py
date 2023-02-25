@@ -3,12 +3,26 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-
 class booru(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(aliases=['poo'], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
+    @commands.Cog.listener()
+    async def on_message(self, input: discord.Message):
+        if any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
+            poopoo = -1
+            for i in input.content.split("poo"):
+                    poopoo += 1
+            if poopoo > 1:
+                for poo in range(0, poopoo):
+                    pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
+                    with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
+                        picture = discord.File(f)
+                        await input.channel.send(file=picture)
+                        f.close
+                    poo - 1
+
+    @commands.command(aliases=["poo"], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         downloads = 1 #downloads counter
         reaction = '✅' #reaction to add to message
@@ -35,15 +49,6 @@ class booru(commands.Cog):
                     f.close #close the file
                 await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {Link_To_File}') #send a message to the logs channel
                 await ctx.message.add_reaction(reaction) #add a reaction to the message
-                
-    @commands.command(brief="Send 2 files from a public archive.")
-    async def poopoo(self, ctx):
-        pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
-        with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
-            await ctx.reply(file=File(f, pooter_file))
-        pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
-        with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
-            await ctx.reply(file=File(f, pooter_file))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(booru(bot))
