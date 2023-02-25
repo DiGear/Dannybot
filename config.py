@@ -214,12 +214,26 @@ def clear_cache():
             print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
     return
 
-# iterate through a folder and count every file
+# get the amount of files in a folder
 def fileCount(folder):
-    return sum([len(files) for r, d, files in os.walk(folder)])
+    return sum(len(filenames) for dirpath, dirnames, filenames in os.walk(folder))
+
+# get the total size of all files in a folder
+def fileSize(folder):   
+    # get the file size
+    total_size = sum(os.path.getsize(os.path.join(dirpath, f)) for dirpath, dirnames, filenames in os.walk(folder) for f in filenames) 
+    # for loop to convert file size to bytes, KB, MB, GB, TB
+    for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+        # if file size is less than 1024 bytess
+        if total_size < 1024.0:
+            # return file size and type
+            return "%3.1f %s" % ( total_size, x)
+        # divide file size by 1024
+        total_size /= 1024.0
+    return total_size
 
 # overcomplicated function for parsing and matching data with a list of aliases
-# NEVER TRY TO COMMENT EZOGAMING CODE - FDG
+# NEVER TRY TO COMMENT EZOGAMING CODE - FDGs
 def ezogaming_regex(datalist, dataentry):
     # open the file with the list of entries
     with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f: entry = [x.rstrip() for x in f.readlines()]
