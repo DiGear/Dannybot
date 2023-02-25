@@ -42,7 +42,6 @@ class misc(commands.Cog):
 
     @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
     async def download(self, ctx, file_download, format='mp3'):
-        clear_cache() # this is not how bugs should be fixed but 🖕
         await ctx.send('Ok. Downloading...')
         # defines
         file_download = file_download.split("&")[0]
@@ -53,9 +52,9 @@ class misc(commands.Cog):
 
         try:
             if format in video_formats:
-                os.system(f'"yt-dlp -o "ytdl.%(ext)s" --no-check-certificate --no-playlist -f {format} {file_download}"')
+                os.system(f'"yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist -f {format} {file_download}"')
             elif format in audio_formats:
-                os.system(f'"yt-dlp -o "ytdl.%(ext)s" --no-check-certificate --no-playlist --audio-format {format} -x {file_download}"')
+                os.system(f'"yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist --audio-format {format} -x {file_download}"')
             else:
                 await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
         except:
