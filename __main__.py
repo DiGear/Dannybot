@@ -69,9 +69,16 @@ async def undo(ctx):
 @bot.command(description="This is an owner only command. It allows for any module to be reloaded on the fly.", brief="Debug tool for modules")
 @commands.is_owner()
 async def reload(ctx, module):
-    await bot.unload_extension(f"cogs.{module}")
-    await bot.load_extension(f"cogs.{module}")
-    await ctx.send(f"Reloaded {module} module!")
+    if module == "all":
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                await bot.unload_extension(f"cogs.{filename[:-3]}")
+                await bot.load_extension(f"cogs.{filename[:-3]}")
+        await ctx.send("Reloaded all modules!")
+    else:
+        await bot.unload_extension(f"cogs.{module}")
+        await bot.load_extension(f"cogs.{module}")
+        await ctx.send(f"Reloaded {module} module!")
 
 # this clears the cache manually in case you need to do it with the bot still up
 @bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
