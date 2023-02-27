@@ -9,7 +9,22 @@ class reactions(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_message(self, input: discord.Message):
+    async def on_message(self, message: discord.Message):
+        for react in ['python', 'py']:
+            if react in message.content:
+                await message.add_reaction('🐍')
+        for react in ['java', 'jar']:
+            if react in message.content and not "javascript" in message.content:
+                await message.add_reaction('♨️')
+        for react in ['javascript', 'js']:
+            if react in message.content:
+                await message.add_reaction('🐒')
+        for react in ['ruby', 'rb']:
+            if react in message.content:
+                await message.add_reaction('💎')
+        for react in ['true', 'truth', "fact"]:
+            if react in message.content:
+                await message.add_reaction('👏')
         return
 
 async def setup(bot: commands.Bot):
