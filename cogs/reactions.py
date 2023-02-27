@@ -14,7 +14,9 @@ class reactions(commands.Cog):
             '🐍': ['python', 'py'],
             '♨️': ['java', 'jar'],
             '💎': ['ruby', 'rb'],
-            '👏': ['true', 'truth', 'fact']
+            '👏': ['true', 'truth', 'fact'],
+            '✋': ['yay'],
+            '💥': ['yay']
         }
         for emoji, keywords in reactions.items():
             for keyword in keywords:
