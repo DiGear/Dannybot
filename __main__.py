@@ -70,10 +70,9 @@ async def undo(ctx):
 @commands.is_owner()
 async def reload(ctx, module):
     if module == "all":
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                await bot.unload_extension(f"cogs.{filename[:-3]}")
-                await bot.load_extension(f"cogs.{filename[:-3]}")
+        for filename in [f for f in os.listdir("./cogs") if f.endswith(".py")]:
+            await bot.unload_extension(f"cogs.{filename[:-3]}")
+            await bot.load_extension(f"cogs.{filename[:-3]}")
         await ctx.send("Reloaded all modules!")
     else:
         await bot.unload_extension(f"cogs.{module}")
@@ -84,17 +83,15 @@ async def reload(ctx, module):
 @bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
 @commands.is_owner()
 async def cache(ctx):
-    for file in os.listdir(f'{dannybot}\\cache'):
-        if 'git' not in file and '.' in file:
-            os.remove(f'{dannybot}\\cache\\{file}')
+    for file in [f for f in os.listdir(f'{dannybot}\\cache') if 'git' not in file and '.' in file]:
+        os.remove(f'{dannybot}\\cache\\{file}')
     await ctx.send(f"Cleared cache!")
 
 # stage all of our cogs
 async def load_extensions():
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await bot.load_extension(f"cogs.{filename[:-3]}")
-            print("imported module: " + f"{filename[:-3]}")
+    for filename in [f for f in os.listdir("./cogs") if f.endswith(".py")]:
+        await bot.load_extension(f"cogs.{filename[:-3]}")
+        print("imported module: " + f"{filename[:-3]}")
 
 # run all of our startup tasks including loading all cogs, and clearing the cache if enabled
 async def main():
