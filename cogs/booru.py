@@ -18,7 +18,7 @@ class booru(commands.Cog):
                     pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
                     with open(f'{dannybot}\\database\\Pooter\\{pooter_file}', 'rb') as f:
                         picture = discord.File(f)
-                        await input.channel.send(file=picture)
+                        await input.channel.send(file=picture, reference=input)
                         f.close
                     poo - 1
 
