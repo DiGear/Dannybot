@@ -65,9 +65,9 @@ removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey =  os.getenv("TENOR_KEY")
 
 # external paths
-KemonoFriendsPath = "E:\\Anime\\Kemono Friends" # put your kemono friends regex files into here
-NekoparaPath = "E:\\Anime\\Nekopara" # put your nekopara regex files into here
-MimiPath = "E:\\Anime\\Kemono girls" # put your animal girl files here
+KemonoFriendsPath = "I:\\Anime\\Kemono Friends" # put your kemono friends regex files into here
+NekoparaPath = "I:\\Anime\\Nekopara" # put your nekopara regex files into here
+MimiPath = "I:\\Anime\\Kemono girls" # put your animal girl files here
 PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
 VideosPath = "C:\\Users\\weebm\\Videos\\epic" # set this to your videos folder
 GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
