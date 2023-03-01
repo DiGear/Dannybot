@@ -14,8 +14,6 @@ class reactions(commands.Cog):
             await message.channel.send("https://cdn.discordapp.com/attachments/947963019319709777/1080006889468862555/maxresdefault.png", reference=message)
         elif message.content.lower().startswith("balls out"):
             await message.channel.send("https://cdn.discordapp.com/attachments/947963019319709777/1080011687979122779/latest.png", reference=message)
-        else:
-            return
         reactions = {
             '🐍': ['python', 'py'],
             '♨️': ['java', 'jar'],
