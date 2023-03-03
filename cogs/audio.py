@@ -17,7 +17,7 @@ class audio(commands.Cog):
         await ctx.send("Splitting. Please wait...")
         os.system(f"cd {UltimateVocalRemover}")
         os.chdir(f"{UltimateVocalRemover}")
-        os.system('python inference.py --input audio.mp3 --gpu 0')
+        os.system('python inference.py --input audio.mp3 --tta --gpu 0')
         os.system("ffmpeg -i audio_Instruments.wav -vn -ar 44100 -ac 2 -b:a 192k audio_Instruments.mp3 -y")
         os.system("ffmpeg -i audio_Vocals.wav -vn -ar 44100 -ac 2 -b:a 192k audio_Vocals.mp3 -y")
         with open(f'audio_Instruments.mp3', 'rb') as i, open(f'audio_Vocals.mp3', 'rb') as v:
