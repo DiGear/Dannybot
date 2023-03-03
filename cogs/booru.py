@@ -32,7 +32,7 @@ class booru(commands.Cog):
                 Link_To_File = i.url #get the url
                 await ctx.send(f'Downloading... {downloads} of {len(ctx.message.attachments)}', delete_after=1) #send a message saying how many downloads there are
                 downloads += 1 #add 1 to the downloads counter
-                with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f: #open a file with the random hex name and the file extension
+                with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-6:]}', 'wb') as f: #open a file with the random hex name and the file extension
                     f.write(requests.get(Link_To_File).content) #write the file to the file
                     f.close #close the file
                 await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {Link_To_File}') #send a message to the logs channel
@@ -44,7 +44,7 @@ class booru(commands.Cog):
         else: #if there is a url
                 Link_To_File = File_Url #get the url
                 await ctx.send("Downloading... (1 of 1)", delete_after=1) #send a message saying how many downloads there are
-                with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-4:]}', 'wb') as f: #open a file with the random hex name and the file extension
+                with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-6:]}', 'wb') as f: #open a file with the random hex name and the file extension
                     f.write(requests.get(Link_To_File).content) #write the file to the file
                     f.close #close the file
                 await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {Link_To_File}') #send a message to the logs channel
