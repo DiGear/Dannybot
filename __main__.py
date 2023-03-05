@@ -16,7 +16,7 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
-    activity=discord.Activity(name="Nekopara Vol. 2", type=1),
+    activity=discord.Activity(name="Garten of Banban 2", type=1),
     intents=discord.Intents.all(),
 )
 
