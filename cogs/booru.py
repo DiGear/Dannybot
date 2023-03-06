@@ -29,6 +29,9 @@ class booru(commands.Cog):
         f_name = randhex(128) #random hex name for file
         if ctx.message.attachments: #if there are attachments
             for i in ctx.message.attachments: #for each attachment
+                if not any(ext in i.url for ext in database_acceptedFiles):
+                    await ctx.send(f'This file is not a valid image or video file!')
+                    return
                 Link_To_File = i.url #get the url
                 await ctx.send(f'Downloading... {downloads} of {len(ctx.message.attachments)}', delete_after=1) #send a message saying how many downloads there are
                 downloads += 1 #add 1 to the downloads counter
@@ -43,6 +46,9 @@ class booru(commands.Cog):
                 await ctx.reply(file=File(f, pooter_file)) #send the file
         else: #if there is a url
                 Link_To_File = File_Url #get the url
+                if not any(ext in File_Url for ext in database_acceptedFiles):
+                    await ctx.send(f'This file is not a valid image or video file!')
+                    return
                 await ctx.send("Downloading... (1 of 1)", delete_after=1) #send a message saying how many downloads there are
                 with open(f'{dannybot}\\database\\Pooter\\{f_name}{Link_To_File[-6:]}', 'wb') as f: #open a file with the random hex name and the file extension
                     f.write(requests.get(Link_To_File).content) #write the file to the file
