@@ -313,6 +313,7 @@ def undertext(name, text, isAnimated):
     
     # finalizing: set the name and text to the name and text, then return the name, text, and isAnimated
     name = name
+    #replacing the discord double underscore shit with spaces
     text = text.replace("_ _", "%20")
     return name, text, isAnimated
 
