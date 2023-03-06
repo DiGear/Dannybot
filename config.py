@@ -49,7 +49,8 @@ load_dotenv()
 # dannybot config
 dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
-dannybot_denialRatio = 500 # chance for dannybot to deny your command input
+dannybot_denialRatio = 250 # chance for dannybot to deny your command input
+dannybot_denialResponses = ['no', 'no.' 'nah', 'nope', 'no thanks'] # what dannybot says upon denial
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
 logs_channel = 971178342550216705 # channel to log commands
@@ -285,6 +286,7 @@ def undertext(name, text, isAnimated):
         "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
         "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
         "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
+        "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
         "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
         "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
         "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
