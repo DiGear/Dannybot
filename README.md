@@ -1,16 +1,16 @@
 # Dannybot
 
-The swiss army knife of Discord bots. Originally written for a small group of friends to use as a front-end for various services.
+The swiss army knife of chat bots. Originally written for a small group of friends to use as a front-end for various services.
 
 ---
 
-Dannybot is *both* a character designed by the [owner of this repo](https://www.youtube.com/channel/UCvFaYPlNH5xA8u6EETrdbtg) and a Discord bot portraying said character.
+Dannybot is *both* a character designed by the [owner of this repo](https://www.youtube.com/channel/UCvFaYPlNH5xA8u6EETrdbtg) and a chat bot portraying said character.
 
 ---
 ## Notes from FDG
 ---
 
-This bot has been in the works for three years. It has been ported to cogs, refactored several times, stolen many lines of code from stack overflow. But it's finally being entirely written from scratch. This bot was always meant to be for use in my personal discord server. But I think other people may take interest in seeing how it works, and also have the option to host their own modified versions of Dannybot.
+This bot has been in the works for three years. It has been ported to cogs, refactored several times, stolen many lines of code from stack overflow. But it's finally being entirely written from scratch. This bot was always meant to be for use in my personal chat server. But I think other people may take interest in seeing how it works, and also have the option to host their own modified versions of Dannybot.
 
 This bot has historically (and probably still does to some extent) take code from sources such as stack overflow. I do not mind if you take code from this bot in order to learn or improve, but please don't claim to have written the code yourself.
 
