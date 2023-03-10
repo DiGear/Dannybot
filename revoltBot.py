@@ -12,6 +12,7 @@ class Client(commands.CommandsClient):
     async def get_prefix(self, message: revolt.Message):
         return dannybot_prefixes[0]
 
+#revolt.py is still primative feeling
     async def on_message(self, message: revolt.Message):
         if message.content.startswith(dannybot_prefixes[0]):
             command_name = message.content.split(dannybot_prefixes[0])
