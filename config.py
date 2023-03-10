@@ -30,12 +30,14 @@ import numpy
 import openai
 import PIL
 import requests
+import revolt
 from discord import File, app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 from petpetgif import petpet
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
                  ImageFilter, ImageFont, ImageOps, ImageSequence)
+from revolt.ext import commands
 from wand.image import Image as magick
 
 from fifteen import FifteenAPI
@@ -49,6 +51,7 @@ load_dotenv()
 # dannybot config
 dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
+dannybot_token_revolt = os.getenv("REVOLT_TOKEN") #revolt token
 dannybot_denialRatio = 250 # chance for dannybot to deny your command input
 dannybot_denialResponses = ['no', 'no.' 'nah', 'nope', 'no thanks'] # what dannybot says upon denial
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
@@ -287,7 +290,7 @@ def undertext(name, text, isAnimated):
         "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
         "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
         "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228005256044575/pizziportrait1.png",
-        "pizzi-shock": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
+        "pizzi-stare": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
         "pizzi-scream": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228022796615720/pizziportrait3.png",
         "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
         "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
@@ -594,3 +597,5 @@ def listgen(directory):
     list =  os.listdir(directory)
     string = ', '.join(list)
     return string
+
+# REVOLT ONLY FUNCTIONS

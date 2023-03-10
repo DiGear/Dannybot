@@ -2,6 +2,8 @@
 #fill in all of these values appropriately, and then rename this file to ".env"
 TOKEN=
 
+REVOLT_TOKEN=
+
 OPENAI_API_KEY=
 
 REMOVEBG_KEY=
