@@ -18,6 +18,7 @@ class Client(commands.CommandsClient):
             command_name = message.content.split(dannybot_prefixes[0])
             await message.channel.send(f"command {command_name[1]} invoked")
 
+#this code is basically the same as the discord bot
     @commands.command()
     async def ping(self, ctx: commands.Context):
         before = time.monotonic()
