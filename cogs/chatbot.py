@@ -23,17 +23,19 @@ class sentience(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         
-        if "." in input.content and not "dannybot" in input.content.lower() and not self.conversing and not any(input.content.startswith(prefix) for prefix in dannybot_prefixes): # if the message contains a period and is not a command or a message to dannybot or the bot is conversing with someone
+        sanitized = input.content.replace(',','')
+        
+        if "." in sanitized and not "dannybot" in sanitized.lower() and not self.conversing and not any(sanitized.startswith(prefix) for prefix in dannybot_prefixes): # if the message contains a period and is not a command or a message to dannybot or the bot is conversing with someone
             return
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
-        if not input.author.bot and input.content.lower().startswith("dannybot") or input.content.lower().endswith("dannybot") or self.conversing: # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot or the bot is conversing with someone
+        if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot") or self.conversing: # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot or the bot is conversing with someone
         
             # declare the response as a variable and set it to the openai api
             if self.conversing: # if the bot is conversing with someone
-                gpt_prompt = str(f"Respond to the following chat message. {self.conversing_user}: {input.content} Dannybot::")
+                gpt_prompt = str(f"Respond to the following chat message. {self.conversing_user}: {sanitized} Dannybot::")
             else: # if the bot is not conversing with someone
-                gpt_prompt = str(f"Respond to the following chat message. {input.author.name}: {input.content} Dannybot::")
+                gpt_prompt = str(f"Respond to the following chat message. {input.author.name}: {sanitized} Dannybot::")
             response = openai.Completion.create( # get the response from the openai api
             engine="text-davinci-003",
             prompt=gpt_prompt,
