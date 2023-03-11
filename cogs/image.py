@@ -369,9 +369,9 @@ class image(commands.Cog):
         else:  # still
             with magick(filename=f'{dannybot}\\cache\\impin.png') as img:
                 try:
-                    img.implode(amount=-float(Effect_Value))
+                    img.implode(amount=float(Effect_Value))
                 except:
-                    img.implode(amount=-float(0.5))  # default value
+                    img.implode(amount=float(0.5))  # default value
 
                 img.save(filename=f'{dannybot}\\cache\\imploded.png')
             with open(f'{dannybot}\\cache\\imploded.png', 'rb') as f:
