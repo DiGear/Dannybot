@@ -10,13 +10,16 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 class Client(commands.CommandsClient):
     async def get_prefix(self, message: revolt.Message):
+        # im probably writing my own function for this later
         return dannybot_prefixes[0]
 
 #revolt.py is still primative feeling
     async def on_message(self, message: revolt.Message):
         if message.content.startswith(dannybot_prefixes[0]):
             command_name = message.content.split(dannybot_prefixes[0])
-            await message.channel.send(f"command {command_name[1]} invoked")
+            # await message.channel.send(f"command {command_name[1]} invoked")
+            # this line is gonna be used for logging later on, the majority of this code most likely gets moved to a cog like in the discord variatn
+            await self.process_commands(message)
 
 #this code is basically the same as the discord bot
     @commands.command()
