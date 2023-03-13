@@ -32,9 +32,9 @@ class ai(commands.Cog):
         model="code-davinci-002",
         prompt= f"\"\"\"\n{prompt}\n\"\"\"\n",
         temperature=0.2,
-        max_tokens=700,
+        max_tokens=2048,
         top_p=1,
-        frequency_penalty=0.2,
+        frequency_penalty=2.0,
         presence_penalty=0
         )
         
