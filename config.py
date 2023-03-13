@@ -30,14 +30,14 @@ import numpy
 import openai
 import PIL
 import requests
-import revolt
+#import revolt
 from discord import File, app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
 from petpetgif import petpet
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
                  ImageFilter, ImageFont, ImageOps, ImageSequence)
-from revolt.ext import commands
+#from revolt.ext import commands
 from wand.image import Image as magick
 
 from fifteen import FifteenAPI
