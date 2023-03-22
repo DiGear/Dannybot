@@ -26,6 +26,8 @@ class audio(commands.Cog):
             i.close
             v.close
 
+#skull emoji
+
     # i need to find a nice way to implement a viewable list of soundfonts
     @commands.command(alisases=['nathans'], description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
     async def midislap(self, ctx, *args):
