@@ -18,8 +18,8 @@ class ai(commands.Cog):
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=gpt_prompt,
-            temperature=random.uniform(0.3, 1.0),
-            max_tokens=256
+            temperature=random.uniform(0., 1.0),
+            max_tokens=256,
             top_p=1.0,
             frequency_penalty=0.0,
             presence_penalty=0.0
