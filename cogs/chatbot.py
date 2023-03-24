@@ -39,7 +39,7 @@ class sentience(commands.Cog):
             response = openai.Completion.create( # get the response from the openai api
             engine="text-davinci-003",
             prompt=gpt_prompt,
-            temperature=random.choice([1.0,1.1,1.2,1.3,0.9,0.8,0.7,0.6]),
+            temperature=random.uniform(0.5, 2),
             max_tokens=128,
             top_p=1.0,
             frequency_penalty=0.0,

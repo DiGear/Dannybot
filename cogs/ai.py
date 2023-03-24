@@ -18,7 +18,7 @@ class ai(commands.Cog):
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=gpt_prompt,
-            temperature=0.7,
+            temperature=random.uniform(0.7, 1.0),
             max_tokens=256,
             top_p=1.0,
             frequency_penalty=0.0,
@@ -27,16 +27,16 @@ class ai(commands.Cog):
         await ctx.reply(response['choices'][0]['text'], mention_author=True)
         
     @commands.command(description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
-    async def gpt(self, ctx, *, prompt):
+    async def gpt(self, ctx, temp: typing.Optional[float] = 0.7, *, prompt):
         gpt_prompt = str(prompt)
         print(gpt_prompt)
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=gpt_prompt,
-            temperature=0.7,
+            temperature=temp,
             max_tokens=256,
             top_p=1.0,
-            frequency_penalty=0.0,
+            frequency_penalty=1.0,
             presence_penalty=0.0
         )
         await ctx.reply(response['choices'][0]['text'], mention_author=True)
