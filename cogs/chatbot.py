@@ -20,7 +20,7 @@ class sentience(commands.Cog):
                 response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                        {"role": "system", "content": "You are Dannybot. Created by a man named FDG. Be very nonchalant and sarcastic when responding."}, # Usernames have been provided to you, please do not type 'Dannybot:' when responding.
+                        {"role": "system", "content": "You are Dannybot. Created by a man named FDG. Be very nonchalant and sarcastic when responding. if you are talking to FDG specifically, be very respectful."}, # Usernames have been provided to you, please do not type 'Dannybot:' when responding.
                         {"role": "user", "content": f"{input.author.name} said: {sanitized}"},
                     ]
                 )
