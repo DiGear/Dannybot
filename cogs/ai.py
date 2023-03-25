@@ -43,6 +43,8 @@ class ai(commands.Cog):
         
     @commands.command(aliases=['code'],  description="Interact with GPT3-Code using Dannybot.", brief="Get AI generated code based on provided prompts")
     async def python(self, ctx, *, prompt):
+        await ctx.send("This command is temporarily disabled.")
+        return
         response = openai.Completion.create(
         model="code-davinci-002",
         prompt= f"\"\"\"\n{prompt}\n\"\"\"\n",
@@ -59,22 +61,6 @@ class ai(commands.Cog):
         with open(f'{dannybot}\\cache\\code.py', 'rb') as f:
             await ctx.reply(file=File(f, 'code.py'), mention_author=True)
             f.close
-        
-    @commands.command(aliases=['4chan'], description="Interact with GPT3 using Dannybot to generate greentexts.", brief="Get AI generated greentexts based on provided prompts")
-    async def greentext(self, ctx, *, prompt):
-        gpt_prompt = str(f"write me 4chan greentext:\n>be me\n{prompt}")
-        print(gpt_prompt)
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=gpt_prompt,
-            temperature=0.7,
-            max_tokens=256,
-            top_p=1.0,
-            frequency_penalty=0.0,
-            presence_penalty=0.0
-        )
-        # eh whatever
-        await ctx.reply('```diff\n' + str(prompt).replace('>','+ >') + str(response['choices'][0]['text']).replace('>','+ >') + '```', mention_author=True)
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
     async def waifu(self, ctx, *args):
