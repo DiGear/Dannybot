@@ -33,8 +33,8 @@ class audio(commands.Cog):
         with open(f'{dannybot}\\cache\\midiflip.mid', 'wb') as f:
             f.write(requests.get(file_url).content)
             f.close
-        os.system(f"python NegativeHarmonizer.py midiflip.mid --tonic 60 --ignore 9 --adjust-octaves")
-        with open(f'midiflip_negative.mid', 'rb') as i:
+        os.system(f"python NegativeHarmonizer.py {dannybot}\\cache\\midiflip.mid --tonic 60 --ignore 9 --adjust-octaves")
+        with open(f'{dannybot}\\cache\\midiflip_negative.mid', 'rb') as i:
             await ctx.reply(file=File(i, 'flipped.mid'))
             i.close
 
