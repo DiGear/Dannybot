@@ -35,6 +35,7 @@ class audio(commands.Cog):
             f.close
         os.system(f"python NegativeHarmonizer.py {dannybot}\\cache\\midiflip.mid --tonic 60 --ignore 9 --adjust-octaves")
         os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\general.sf2 {dannybot}\\cache\\midiflip_negative.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.oga -r 44100")
+        os.system(f"ffmpeg-normalize -y {dannybot}\\cache\\midislap_{ctx.message.id}.oga -o {dannybot}\\cache\\midislap_{ctx.message.id}.oga -c:a aac -b:a 192k")
         with open(f'{dannybot}\\cache\\midiflip_negative.mid', 'rb') as i, open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.oga', 'rb') as f:
             await ctx.reply(file=File(i, 'flipped.mid'))
             await ctx.reply(f"Audio preview:", file=File(f, 'midislap.ogg'))
@@ -62,6 +63,7 @@ class audio(commands.Cog):
         else:
             await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
             os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.oga -r 44100")
+            os.system(f"ffmpeg-normalize -y {dannybot}\\cache\\midislap_{ctx.message.id}.oga -o {dannybot}\\cache\\midislap_{ctx.message.id}.oga -c:a aac -b:a 192k")
             with open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.oga', 'rb') as f:
                 await ctx.reply(f"Midislapped with {SF2}:", file=File(f, 'midislap.ogg'))
                 f.close
