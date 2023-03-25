@@ -17,6 +17,7 @@ This bot has historically (and probably still does to some extent) take code fro
 Also, I would like to thank my friends for helping me get the bot to the point it is now.
 
 Shoutouts to [WaffleComposite](https://github.com/wafflecomposite) for the 15.ai functions!
+Powered by [NegativeHarmonizer](https://github.com/lukemcraig/NegativeHarmonizer)
 
 ---
 # Usage

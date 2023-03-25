@@ -25,8 +25,18 @@ class audio(commands.Cog):
             await ctx.reply(file=File(v, 'Vocal.mp3'))
             i.close
             v.close
-
-#skull emoji
+            
+    @commands.command(alisases=['nathans'], description="Flips a midi file upside down, relative to middle C (C5).", brief="Flips a midi file upside down")
+    async def midiflip(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        file_url = cmd_info[0]
+        with open(f'{dannybot}\\cache\\midiflip.mid', 'wb') as f:
+            f.write(requests.get(file_url).content)
+            f.close
+        os.system(f"python NegativeHarmonizer.py midiflip.mid --tonic 60 --ignore 9 --adjust-octaves")
+        with open(f'midiflip_negative.mid', 'rb') as i:
+            await ctx.reply(file=File(i, 'flipped.mid'))
+            i.close
 
     # i need to find a nice way to implement a viewable list of soundfonts
     @commands.command(alisases=['nathans'], description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
