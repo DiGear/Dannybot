@@ -34,8 +34,11 @@ class audio(commands.Cog):
             f.write(requests.get(file_url).content)
             f.close
         os.system(f"python NegativeHarmonizer.py {dannybot}\\cache\\midiflip.mid --tonic 60 --ignore 9 --adjust-octaves")
-        with open(f'{dannybot}\\cache\\midiflip_negative.mid', 'rb') as i:
+        os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\general.sf2 {dannybot}\\cache\\midiflip_negative.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.oga -r 44100")
+        with open(f'{dannybot}\\cache\\midiflip_negative.mid', 'rb') as i, open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.oga', 'rb') as f:
             await ctx.reply(file=File(i, 'flipped.mid'))
+            await ctx.reply(f"Audio preview:", file=File(f, 'midislap.ogg'))
+            f.close
             i.close
 
     # i need to find a nice way to implement a viewable list of soundfonts
