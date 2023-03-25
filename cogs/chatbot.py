@@ -25,7 +25,7 @@ class sentience(commands.Cog):
                     ]
                 )
                
-        print(f"{input.author.name} said: {sanitized}") 
+                print(f"{input.author.name} said: {sanitized}") 
         await input.channel.send(response['choices'][0]['message']['content'], reference=input)
         return
 
