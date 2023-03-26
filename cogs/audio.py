@@ -35,13 +35,12 @@ class audio(commands.Cog):
             f.close
         os.system(f"python NegativeHarmonizer.py {dannybot}\\cache\\midiflip.mid --tonic 60 --ignore 9 --adjust-octaves")
         os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\general.sf2 {dannybot}\\cache\\midiflip_negative.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.wav -r 44100")
-        os.system(f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {dannybot}\\cache\\midislap_{ctx.message.id}.ogg -c:a libopus -b:a 64k -f")
+        os.system(f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {dannybot}\\cache\\midislap_{ctx.message.id}.ogg -c:a libopus -b:a 64k --keep-loudness-range-target -f")
         with open(f'{dannybot}\\cache\\midiflip_negative.mid', 'rb') as i, open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.ogg', 'rb') as f:
             await ctx.reply(file=File(i, 'flipped.mid'))
             await ctx.reply(f"Audio preview:", file=File(f, 'midislap.ogg'))
             f.close
             i.close
-        os.remove(f'{dannybot}\\cache\\midislap_{ctx.message.id}.wav')
 
     # i need to find a nice way to implement a viewable list of soundfonts
     @commands.command(alisases=['nathans'], description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
@@ -64,11 +63,10 @@ class audio(commands.Cog):
         else:
             await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
             os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.wav -r 44100")
-            os.system(f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {dannybot}\\cache\\midislap_{ctx.message.id}.ogg -c:a libopus -b:a 64k -f")
+            os.system(f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {dannybot}\\cache\\midislap_{ctx.message.id}.ogg -c:a libopus -b:a 64k --keep-loudness-range-target -f")
             with open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.ogg', 'rb') as f:
                 await ctx.reply(f"Midislapped with {SF2}:", file=File(f, 'midislap.ogg'))
                 f.close
-            os.remove(f'{dannybot}\\cache\\midislap_{ctx.message.id}.wav')
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(audio(bot))
