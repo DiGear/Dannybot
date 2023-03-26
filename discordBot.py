@@ -83,9 +83,19 @@ async def reload(ctx, module):
 @bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
 @commands.is_owner()
 async def cache(ctx):
-    for file in [f for f in os.listdir(f'{dannybot}\\cache') if 'git' not in file and '.' in file]:
-        os.remove(f'{dannybot}\\cache\\{file}')
-    await ctx.send(f"Cleared cache!")
+    for file in os.listdir(f'{dannybot}\\cache'):
+        if 'git' not in file and '.' in file:
+            os.remove(f'{dannybot}\\cache\\{file}')
+            print(f"deleted {dannybot}\\cache\\{file}")
+    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
+        if '.png' in file:
+            os.remove(f'{dannybot}\\cache\\ffmpeg\\{file}')
+            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
+    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
+        if '.png' in file:
+            os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
+            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
+    await ctx.send("Cache cleared!")
 
 # stage all of our cogs
 async def load_extensions():
