@@ -98,11 +98,19 @@ class server(commands.Cog):
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, 'burger.png'), mention_author=True)
             
+    @commands.command(description="Send a picture of Danny.", brief="Send a picture of Danny")
+    async def danny(self, ctx):
+        dir = f"I:\\Danny Infinitum"
+        file_name = random.choice(os.listdir(dir))
+        with open(f'{dir}\\{file_name}', 'rb') as f:
+            await ctx.reply(file=File(f, 'danny.png'), mention_author=True)
+            
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
 
         embed = discord.Embed(title="Dannybot File Totals", color=0xf77e9a)
         embed.add_field(name="Pooter Files:", value=str(str(fileCount(f"{dannybot}\\database\\Pooter")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Pooter"))), inline=True)
+        embed.add_field(name="Danny Files:", value=str(str(fileCount(f"I:\\Danny Infinitum")) + " files \n" + str(fileSize(f"I:\\Danny Infinitum"))), inline=True)
         embed.add_field(name="Leffrey Files:", value=str(str(fileCount(f"{dannybot}\\database\\Leffrey")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Leffrey"))), inline=True)
         embed.add_field(name="Femboy Files:", value=str(str(fileCount(f"{dannybot}\\database\\Femboy")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Femboy"))), inline=True)
         embed.add_field(name="Fanboy Files:", value=str(str(fileCount(f"{dannybot}\\database\\Fanboy")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Fanboy"))), inline=True)
