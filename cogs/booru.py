@@ -9,7 +9,7 @@ class booru(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
-        if any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
+        if any(input.content.startswith(prefix + "poo") for prefix in dannybot_prefixes):
             poopoo = -1
             for i in input.content.split("poo"):
                     poopoo += 1
@@ -22,7 +22,7 @@ class booru(commands.Cog):
                         f.close
                     poo - 1
 
-    @commands.command(aliases=["poo"], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
+    @commands.command(aliases=["poo", "poop"], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         downloads = 1 #downloads counter
         reaction = '✅' #reaction to add to message
