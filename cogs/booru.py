@@ -21,6 +21,43 @@ class booru(commands.Cog):
                         await input.channel.send(file=picture, reference=input)
                         f.close
                     poo - 1
+    
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        if str(payload.emoji)[0] =='💩': #poop check
+            MessageChannel=self.bot.get_channel(payload.channel_id) #set channel to message's channel
+            input=await MessageChannel.fetch_message(payload.message_id) #get ACTUAL message from channel as we only have a reaction adding payload right now
+            downloads = 1 #downloads counter
+            reaction = '✅' #reaction to add to message
+            f_name = randhex(128) #random hex name for file
+            if input.attachments: #if there are attachments
+                for i in input.attachments: #for each attachment
+                    if not any(ext in i.url for ext in database_acceptedFiles):
+                        await MessageChannel.send(f'This file is not a valid image or video file!')
+                        return
+                    Link_To_File = i.url #get the url
+                    await MessageChannel.send(f'Downloading... {downloads} of {len(input.attachments)}', delete_after=1) #send a message saying how many downloads there are
+                    downloads += 1 #add 1 to the downloads counter
+                    sanitized_link = Link_To_File.replace("/", '')
+                    with open(f'{dannybot}\\database\\Pooter\\{f_name}{sanitized_link[-6:]}', 'wb') as f: #open a file with the random hex name and the file extension
+                        f.write(requests.get(Link_To_File).content) #write the file to the file
+                        f.close #close the file
+                    await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {Link_To_File}') #send a message to the logs channel
+                await input.add_reaction(reaction) #add a reaction to the message
+            else: #if there is a url
+                    if not any(ext in i.url for ext in database_acceptedFiles):
+                        await MessageChannel.send(f'This file is not a valid image or video file!')
+                        return
+                    await MessageChannel.send("Downloading... (1 of 1)", delete_after=1) #send a message saying how many downloads there are
+                    sanitized_link = Link_To_File.replace("/", '')
+                    with open(f'{dannybot}\\database\\Pooter\\{f_name}{sanitized_link[-6:]}', 'wb') as f: #open a file with the random hex name and the file extension
+                        f.write(requests.get(Link_To_File).content) #write the file to the file
+                        f.close #close the file
+                    await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {Link_To_File}') #send a message to the logs channel
+                    await input.add_reaction(reaction) #add a reaction to the message
+            
+            
+            
 
     @commands.command(aliases=["poo", "poop"], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
