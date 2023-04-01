@@ -45,8 +45,7 @@ class booru(commands.Cog):
                     await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {Link_To_File}') #send a message to the logs channel
                 await input.add_reaction(reaction) #add a reaction to the message
             else: #if there is a url
-                    Link_To_File = File_Url #get the url
-                    if not any(ext in File_Url for ext in database_acceptedFiles):
+                    if not any(ext in i.url for ext in database_acceptedFiles):
                         await MessageChannel.send(f'This file is not a valid image or video file!')
                         return
                     await MessageChannel.send("Downloading... (1 of 1)", delete_after=1) #send a message saying how many downloads there are
