@@ -26,9 +26,9 @@ class audio(commands.Cog):
             i.close
             v.close
             
-    @commands.command(alisases=['nathans'], description="Flips a midi file upside down, relative to middle C (C5).", brief="Flips a midi file upside down")
+    @commands.command(description="Flips a midi file upside down, relative to middle C (C5).", brief="Flips a midi file upside down")
     async def midiflip(self, ctx, *args):
-        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments, "midi")
         file_url = cmd_info[0]
         with open(f'{dannybot}\\cache\\midiflip.mid', 'wb') as f:
             f.write(requests.get(file_url).content)
@@ -46,7 +46,7 @@ class audio(commands.Cog):
     @commands.command(alisases=['nathans'], description="Renders a midi file with a random soundfont, and sends the resulting audio. You can also choose a specific soundfont from a list of available ones.", brief="Applies a selectable soundfont to a midi file")
     async def midislap(self, ctx, *args):
         sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
-        context = await resolve_args(ctx, args, ctx.message.attachments)
+        context = await resolve_args(ctx, args, ctx.message.attachments, "midi")
         if not args and not ctx.message.attachments:
             await ctx.reply("The list of selectable soundfonts is as follows:\n" + str(listgen(f"{dannybot}\\assets\\SF2\\")).replace(".sf2", ""))
             return
@@ -63,7 +63,7 @@ class audio(commands.Cog):
         else:
             await ctx.send("Generating... Use 'd.midislap' on it's own to see a list of selectable soundfonts...", delete_after=10)
             os.system(f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {dannybot}\\cache\\midislap_{ctx.message.id}.wav -r 44100")
-            os.system(f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {dannybot}\\cache\\midislap_{ctx.message.id}.ogg -c:a libopus -b:a 64k --keep-loudness-range-target -f")
+            os.system(f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {dannybot}\\cache\\midislap_{ctx.message.id}.ogg -c:a libopus -b:a 64k -f")
             with open(f'{dannybot}\\cache\\midislap_{ctx.message.id}.ogg', 'rb') as f:
                 await ctx.reply(f"Midislapped with {SF2}:", file=File(f, 'midislap.ogg'))
                 f.close
