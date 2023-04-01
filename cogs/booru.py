@@ -22,6 +22,7 @@ class booru(commands.Cog):
                         f.close
                     poo - 1
     
+    #Merge from EzoGaming PR: add reaction support to pooter
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if str(payload.emoji)[0] =='💩': #poop check
