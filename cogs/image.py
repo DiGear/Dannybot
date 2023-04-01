@@ -411,7 +411,7 @@ class image(commands.Cog):
                         # honesly i don't know what the fuck its doing here
                         meme_text = meme_text_Fallback_Value
                     print(meme_text)
-                    context = await message_history_img_handler(ctx)
+                    context = await message_history_handler(ctx, "image")
                     f.write(requests.get(context).content)
                     f.close
         if '.gif' in context:
