@@ -25,7 +25,7 @@ class booru(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         if str(payload.emoji)[0] =='💩': #poop check
-            MessageChannel=bot.get_channel(payload.channel_id) #set channel to message's channel
+            MessageChannel=self.bot.get_channel(payload.channel_id) #set channel to message's channel
             input=await MessageChannel.fetch_message(payload.message_id) #get ACTUAL message from channel as we only have a reaction adding payload right now
             downloads = 1 #downloads counter
             reaction = '✅' #reaction to add to message
