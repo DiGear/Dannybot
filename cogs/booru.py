@@ -55,9 +55,6 @@ class booru(commands.Cog):
                         f.close #close the file
                     await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {Link_To_File}') #send a message to the logs channel
                     await input.add_reaction(reaction) #add a reaction to the message
-            
-            
-            
 
     @commands.command(aliases=["poo", "poop"], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
