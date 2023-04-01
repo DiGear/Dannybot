@@ -333,64 +333,50 @@ def gettenor(gifid=None):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
-# go through the last 500 messages sent in the channel a command is ran in and check for images
-async def message_history_img_handler(ctx):
+# go through the last 500 messages sent in the channel a command is ran in and check for correpsonding files
+async def message_history_handler(ctx, type):
     channel = ctx.message.channel
-    extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
+    #determine required extensions
+    match type:
+        case "image":
+            extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
+        case "audio":
+            extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga']
+        case "midi":
+            extensions = ['mid', 'midi']
+        case "video":
+            extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']          
     async for msg in channel.history(limit=500):
-        # if the message contains an attachment, check if it's an image and return the url
-        if msg.attachments:
-            ext = msg.attachments[0].url.split('.')[-1].lower()
-            if ext in extensions:
-                return msg.attachments[0].url
-        else:
-                # if the message contains a tenor link, get the tenor id and return the gif
-                if 'https://tenor.com/view/' in msg.content:
-                    for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
-                        tenorid = x.group(1)
-                    return (str(gettenor(tenorid)))
-                ext = str(msg.content).split('.')[-1].lower()
+        if type == "images":
+            # if the message contains an attachment, check if it's an image and return the url
+            if msg.attachments:
+                ext = msg.attachments[0].url.split('.')[-1].lower()
                 if ext in extensions:
-                    return re.findall("(?=http).*?(?= |\n|$)", msg.content)[0].split('?')[0]
-
-# go through the last 500 messages sent in the channel a command is ran in and check for audio
-# this isn't commented its just the same shit as the above function just with less optimizations due to most usage being image related
-async def message_history_audio_handler(ctx):
-    channel = ctx.message.channel
-    extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga']
-    async for msg in channel.history(limit=500):
-        if msg.attachments:
-            ext = msg.attachments[0].url.split('.')[-1].lower()
-            if ext in extensions:
-                return msg.attachments[0].url
-        if 'http' in msg.content:
-            aa = str(msg.content)
-            ext = aa.split('.')[-1]
-            if ext in extensions:
-                a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
-                a = a.split('?')[0]
-                return a
-
-# go through the last 500 messages sent in the channel a command is ran in and check for videos
-# this isn't commented its just the same shit as the above function(s) just with less optimizations due to most usage being image related
-async def message_history_video_handler(ctx):
-    channel = ctx.message.channel
-    extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']
-    async for msg in channel.history(limit=500):
-        if msg.attachments:
-            ext = msg.attachments[0].url.split('.')[-1].lower()
-            if ext in extensions:
-                return msg.attachments[0].url
-        if 'http' in msg.content:
-            aa = str(msg.content)
-            ext = aa.split('.')[-1]
-            if ext in extensions:
-                a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
-                a = a.split('?')[0]
-                return a
+                    return msg.attachments[0].url
+            else:
+                    # if the message contains a tenor link, get the tenor id and return the gif
+                    if 'https://tenor.com/view/' in msg.content:
+                        for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
+                            tenorid = x.group(1)
+                        return (str(gettenor(tenorid)))
+                    ext = str(msg.content).split('.')[-1].lower()
+                    if ext in extensions:
+                        return re.findall("(?=http).*?(?= |\n|$)", msg.content)[0].split('?')[0]
+        else:
+            if msg.attachments:
+                ext = msg.attachments[0].url.split('.')[-1].lower()
+                if ext in extensions:
+                    return msg.attachments[0].url
+            if 'http' in msg.content:
+                aa = str(msg.content)
+                ext = aa.split('.')[-1]
+                if ext in extensions:
+                    a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
+                    a = a.split('?')[0]
+                    return a
 
 # extracts url/arguments from a command
-async def resolve_args(ctx, args, attachments):
+async def resolve_args(ctx, args, attachments, type = "image"):
     try:
         if 'http' in args[0]: #see if first in the list of "args" is a URL
             #Case of "d.meme http://balls.com/balls.png balls|balls"
@@ -400,14 +386,14 @@ async def resolve_args(ctx, args, attachments):
             return [attachments[0].url.split('?')[0], ' '.join(args)] #the command text is everything in the args since there is no url as the first arg
         else: #if there are no attachments or a link, run the context handler
             #Case of "d.meme balls|balls" with no attachment
-            return [await message_history_img_handler(ctx), ' '.join(args)]
+            return [await message_history_handler(ctx, type), ' '.join(args)]
     except IndexError: #this happens whem there is no args[0] because the command was simply, say, "d.explode" with no arguments.
         if attachments: #check if there are attachments
             #Case of "d.meme balls|balls" with attached file
             return [attachments[0].url.split('?')[0], ' '.join(args)] #get everything leading up to "?width=500"-type shenenigans
         else: #if there are no attachments or a link, run the context handler
             #Case of "d.meme balls|balls" with no attachment
-            return [await message_history_img_handler(ctx), ' '.join(args)]
+            return [await message_history_handler(ctx, type), ' '.join(args)]
 
 # deepfry an image
 def deepfry(inputpath, outputpath):
