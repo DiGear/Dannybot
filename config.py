@@ -236,7 +236,7 @@ def fileSize(folder):
     return total_size
 
 # overcomplicated function for parsing and matching data with a list of aliases
-# NEVER TRY TO COMMENT EZOGAMING CODE - FDGs
+# NEVER TRY TO COMMENT EZOGAMING CODE - FDG
 def ezogaming_regex(datalist, dataentry):
     # open the file with the list of entries
     with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f: entry = [x.rstrip() for x in f.readlines()]
