@@ -62,8 +62,8 @@ imageLower = 250 # the smallest image width image commands will use. if the imag
 imageUpper = 1500 # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
 
 #channel configs (WHY WERE THESE NEVER PUT INTO THE .ENV UNTIL 2023/4/5)
-bookmarks_channel = os.getenv("BOOKMARKS") #channel to send personal bookmarks to
-logs_channel = os.getenv("LOGS") # channel to log commands
+bookmarks_channel = int(os.getenv("BOOKMARKS")) #channel to send personal bookmarks to
+logs_channel = int(os.getenv("LOGS")) # channel to log commands
 
 # .env
 openai.api_key = os.getenv("OPENAI_API_KEY")
