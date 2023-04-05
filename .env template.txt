@@ -1,11 +1,16 @@
 #your bot will need tokens/keys for all of the following in order to work
 #fill in all of these values appropriately, and then rename this file to ".env"
-TOKEN=
 
-REVOLT_TOKEN=
+#tokens
+TOKEN=
 
 OPENAI_API_KEY=
 
 REMOVEBG_KEY=
 
 TENOR_KEY=
+
+#channels
+LOGS=
+
+BOOKMARKS=
