@@ -8,6 +8,20 @@ class secret(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    #bookmark feature
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        if payload.member.id == 343224184110841856:
+            str(payload.emoji)[0] =='🔖'
+            reaction = '✅' #reaction to add to message
+            MessageChannel=self.bot.get_channel(payload.channel_id) #set channel to message's channel
+            input=await MessageChannel.fetch_message(payload.message_id) #get ACTUAL message from channel as we only have a reaction adding payload right now
+            message_link = input.jump_url
+            await self.bot.get_channel(bookmarks_channel).send(f'{message_link}') #send a message to the logs channel
+            await input.add_reaction(reaction) #add a reaction to the message
+        else:
+            return
+        
     @commands.command(hidden=True)
     async def taur_add(self, ctx, file_url: typing.Optional[str] = "File_Is_Attachment"):
         if not ctx.author.id in [206392667351941121, 343224184110841856]: # hardcoded whitelist lol lmao
