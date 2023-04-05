@@ -347,11 +347,10 @@ async def message_history_handler(ctx, type = "image"):
             extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']          
     async for msg in channel.history(limit=500):
         if type == "images":
-            #check for discord embeds
-            embeds = msg.embeds
-            if embeds:
-                print("embed")
-                return embeds[0].image.url
+            
+            # PUT FUNCTIONAL EMBED CODE HERE
+            # embed code
+            
             # if the message contains an attachment, check if it's an image and return the url
             if msg.attachments:
                 ext = msg.attachments[0].url.split('.')[-1].lower()
