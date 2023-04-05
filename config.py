@@ -333,7 +333,7 @@ def gettenor(gifid=None):
     return gifs['results'][0]['media'][0]['gif']['url']
 
 # go through the last 500 messages sent in the channel a command is ran in and check for correpsonding files
-async def message_history_handler(ctx, type):
+async def message_history_handler(ctx, type = "image"):
     channel = ctx.message.channel
     #determine required extensions
     match type:
@@ -348,10 +348,10 @@ async def message_history_handler(ctx, type):
     async for msg in channel.history(limit=500):
         if type == "images":
             #check for discord embeds
-            if msg.embeds:
-                embed = msg.embeds[0]
-                if embed.type == 'image':
-                    return embed.url
+            embeds = msg.embeds
+            if embeds:
+                print("embed")
+                return embeds[0].image.url
             # if the message contains an attachment, check if it's an image and return the url
             if msg.attachments:
                 ext = msg.attachments[0].url.split('.')[-1].lower()
