@@ -10,9 +10,7 @@ class booru(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
         if any(input.content.startswith(prefix + "poo") for prefix in dannybot_prefixes):
-            poopoo = -1
-            for i in input.content.split("poo"):
-                    poopoo += 1
+            poopoo = input.content.count("poo")
             if poopoo > 1:
                 for poo in range(0, poopoo):
                     pooter_file = random.choice(os.listdir(f'{dannybot}\\database\\Pooter\\'))
@@ -55,6 +53,7 @@ class booru(commands.Cog):
                         f.write(requests.get(Link_To_File).content) #write the file to the file
                         f.close #close the file
                     await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {Link_To_File}') #send a message to the logs channel
+                    await input.clear_reactions()
                     await input.add_reaction(reaction) #add a reaction to the message
 
     @commands.command(aliases=["poo", "poop"], description="Send or recieve a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Recieve files from a public archive.") #command description
