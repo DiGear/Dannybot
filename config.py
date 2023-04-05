@@ -62,6 +62,9 @@ database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'm
 imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
 imageUpper = 1500 # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
 
+#self-use configs
+bookmarks_channel = 1093312622696349837 #channel to send personal bookmarks to
+
 # .env
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
