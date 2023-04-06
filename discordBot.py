@@ -33,7 +33,7 @@ async def on_ready():
 @bot.event
 async def on_message(input):
     # teehee funny chance for the bot to just say no
-    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
+    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(input.content.startswith(prefix) for prefix in dannybot_prefixes) or input.guild.id == 796606820348723230 and random.randint(0, 4) == 4 and any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
         await input.channel.send(random.choice(dannybot_denialResponses), reference=input)
     else:
         os.chdir(f"{dannybot}") # always make sure we're in dannybots directory
