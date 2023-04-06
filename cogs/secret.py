@@ -13,12 +13,10 @@ class secret(commands.Cog):
     async def on_raw_reaction_add(self, bookmark):
         if bookmark.member.id == 343224184110841856:
                 if str(bookmark.emoji)[0] =='🔖':
-                    reaction = '✅' #reaction to add to message
                     MessageChannel=self.bot.get_channel(bookmark.channel_id) #set channel to message's channel
                     input=await MessageChannel.fetch_message(bookmark.message_id)
                     message_link = input.jump_url
                     await self.bot.get_channel(bookmarks_channel).send(f'{message_link}') #send a message to the logs channel
-                    await input.add_reaction(reaction) #add a reaction to the message
         else:
             return
         
