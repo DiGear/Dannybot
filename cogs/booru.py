@@ -23,6 +23,16 @@ class booru(commands.Cog):
     #Merge from EzoGaming PR: add reaction support to pooter
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
+        
+        #bookmark code
+        if payload.member.id == 343224184110841856:
+                if str(payload.emoji)[0] =='🔖':
+                    MessageChannel=self.bot.get_channel(payload.channel_id) #set channel to message's channel
+                    input=await MessageChannel.fetch_message(payload.message_id)
+                    message_link = input.jump_url
+                    await self.bot.get_channel(bookmarks_channel).send(f'{message_link}') #send a message to the logs channel
+        
+        #pooter code
         if str(payload.emoji)[0] =='💩': #poop check
             MessageChannel=self.bot.get_channel(payload.channel_id) #set channel to message's channel
             input=await MessageChannel.fetch_message(payload.message_id) #get ACTUAL message from channel as we only have a reaction adding payload right now
