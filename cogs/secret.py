@@ -3,22 +3,9 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-
 class secret(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
-    #bookmark feature
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, bookmark):
-        if bookmark.member.id == 343224184110841856:
-                if str(bookmark.emoji)[0] =='🔖':
-                    MessageChannel=self.bot.get_channel(bookmark.channel_id) #set channel to message's channel
-                    input=await MessageChannel.fetch_message(bookmark.message_id)
-                    message_link = input.jump_url
-                    await self.bot.get_channel(bookmarks_channel).send(f'{message_link}') #send a message to the logs channel
-        else:
-            return
         
     @commands.command(hidden=True)
     async def taur_add(self, ctx, file_url: typing.Optional[str] = "File_Is_Attachment"):
