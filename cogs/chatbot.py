@@ -3,6 +3,10 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+class CustomGPT(commands.FlagConverter):
+    instructions: str
+    prompt: str
+
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):       
         self.bot = bot
@@ -16,7 +20,11 @@ class sentience(commands.Cog):
             return
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
+                
         if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot"): # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot
+                    
+                sanitized = sanitized.replace('dannybot','')
+                
                 response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
