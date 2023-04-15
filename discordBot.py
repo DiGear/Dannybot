@@ -16,7 +16,7 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
-    activity=discord.Activity(name="Muse Dash", type=1),
+    activity=discord.Activity(name="Pokemon Sword", type=1),
     intents=discord.Intents.all(),
 )
 
