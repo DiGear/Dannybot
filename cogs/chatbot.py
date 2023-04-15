@@ -36,6 +36,18 @@ class sentience(commands.Cog):
                 print(f"{input.author.name} said: {sanitized}") 
         await input.channel.send(response['choices'][0]['message']['content'], reference=input)
         return
+    
+    @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI generated text based on provided prompts")
+    async def chatgpt(self, ctx, *,  flags: CustomGPT):
+        response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {"role": "system", "content": f"{flags.instructions}"},
+                {"role": "user", "content": f"{flags.prompt}"},
+            ]
+        )
+        await ctx.reply(response['choices'][0]['message']['content'], mention_author=True)
+        return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))
