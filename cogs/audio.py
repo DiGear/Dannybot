@@ -6,6 +6,22 @@ from config import *
 class audio(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        
+    #32 bit only lmao
+    '''
+    @commands.command(description="Touhou Yukkuri text-to-speech.", brief="Touhou TTS")
+    async def yukkuri(self, ctx, *args):
+        aq = aquestalk.load('f2')
+        wav = aq.synthe(str(args))
+        with wave.open("yukkuri.wav", "wb") as wav_file:
+            wav_file.setnchannels(1)  # Mono
+            wav_file.setsampwidth(2)  # 16-bit
+            wav_file.setframerate(44100)  # 44.1 kHz
+            wav_file.writeframesraw(wav)
+            with open(f'yukkuri.wav', 'rb') as i:
+                await ctx.reply(file=File(i, 'tts.wav'))
+                i.close
+        '''
 
     @commands.command(description="Use UVR to separate the vocals and instrumental from a provided file, and sends the results as mp3 files.", brief="Splits audio into vocals and instrumental using AI")
     async def acapella(self, ctx, *args):
