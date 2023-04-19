@@ -38,7 +38,7 @@ class sentience(commands.Cog):
         return
     
     @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI generated text based on provided prompts")
-    async def chatgpt(self, ctx, *,  flags: CustomGPT):
+    async def gptinstruct(self, ctx, *,  flags: CustomGPT):
         response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[

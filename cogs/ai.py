@@ -11,7 +11,7 @@ class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
+    @commands.command(aliases=['gpt'], description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
     async def write(self, ctx, *, prompt):
         gpt_prompt = str(f"write me {prompt}")
         print(gpt_prompt)
@@ -27,7 +27,7 @@ class ai(commands.Cog):
         await ctx.reply(response['choices'][0]['text'], mention_author=True)
         
     @commands.command(description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
-    async def gpt(self, ctx, temp: typing.Optional[float] = 0.7, *, prompt):
+    async def gpttemp(self, ctx, temp: typing.Optional[float] = 0.7, *, prompt):
         gpt_prompt = str(prompt)
         print(gpt_prompt)
         response = openai.Completion.create(
