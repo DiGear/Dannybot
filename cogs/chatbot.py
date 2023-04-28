@@ -45,7 +45,9 @@ class sentience(commands.Cog):
                 {"role": "user", "content": f"{flags.prompt}"},
             ]
         )
+        responsearray = response['choices'][0]['message']['content']
         await ctx.reply(response['choices'][0]['message']['content'], mention_author=True)
+        messagearray.append({"role": "assistant", "content": f"{responsearray}"})  
         return
     
     @commands.command(hidden=True)
