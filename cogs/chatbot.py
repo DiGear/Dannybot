@@ -52,9 +52,7 @@ class sentience(commands.Cog):
     
     @commands.command(hidden=True)
     async def braindump(self, ctx):
-        print(str(messagearray))
-        await ctx.reply(str(messagearray))
-        
+        print(str(messagearray))       
 
 async def setup(bot: commands.Bot):
     #import system instructions
