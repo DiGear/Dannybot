@@ -47,6 +47,11 @@ class sentience(commands.Cog):
         )
         await ctx.reply(response['choices'][0]['message']['content'], mention_author=True)
         return
+    
+    @commands.command(hidden=True)
+    async def braindump(self, ctx):
+        await ctx.reply(str(messagearray))
+        
 
 async def setup(bot: commands.Bot):
     #import system instructions
