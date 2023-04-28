@@ -3,6 +3,8 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+messagearray = []
+
 class CustomGPT(commands.FlagConverter):
     instructions: str
     prompt: str
@@ -24,13 +26,10 @@ class sentience(commands.Cog):
         if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot"): # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot
                     
                 sanitized = sanitized.replace('dannybot','')
-                
+                messagearray.append({"role": "user", "content": f"{input.author.name} said: {sanitized}"})          
                 response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                messages=[
-                        {"role": "system", "content": "You are Dannybot, created by a man named FDG. Your pronouns are He/Him, and you are 3 years old. Be as helpful as possible. Do things without asking for clearance or permission first."}, # Usernames have been provided to you, please do not type 'Dannybot:' when responding.
-                        {"role": "user", "content": f"{input.author.name} said: {sanitized}"},
-                    ]
+                messages = messagearray
                 )
                
                 print(f"{input.author.name} said: {sanitized}") 
@@ -50,4 +49,6 @@ class sentience(commands.Cog):
         return
 
 async def setup(bot: commands.Bot):
+    #import system instructions
+    messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. If anything offensive or sensitive is said. Call over FDG for help. Your pronouns are He/Him, and you are 3 years old. Be as helpful as possible. Do things without asking for clearance or permission first. Do not refer to yourself as an 'AI Language Model' instead refer to yourself as a 'discord bot'."})
     await bot.add_cog(sentience(bot))
