@@ -33,7 +33,9 @@ class sentience(commands.Cog):
                 )
                
                 print(f"{input.author.name} said: {sanitized}") 
-        await input.channel.send(response['choices'][0]['message']['content'], reference=input)
+        responsearray = response.choices[0].message.content
+        await input.channel.send(responsearray, reference=input)
+        messagearray.append({"role": "assistant", "content": f"{responsearray}"})  
         return
     
     @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI generated text based on provided prompts")
@@ -45,9 +47,7 @@ class sentience(commands.Cog):
                 {"role": "user", "content": f"{flags.prompt}"},
             ]
         )
-        responsearray = response['choices'][0]['message']['content']
         await ctx.reply(response['choices'][0]['message']['content'], mention_author=True)
-        messagearray.append({"role": "assistant", "content": f"{responsearray}"})  
         return
     
     @commands.command(hidden=True)
