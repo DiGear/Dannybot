@@ -47,7 +47,7 @@ class sentience(commands.Cog):
                 {"role": "user", "content": f"{flags.prompt}"},
             ]
         )
-        await ctx.reply(response['choices'][0]['message']['content'], mention_author=True)
+        await ctx.reply(response.choices[0].message.content, mention_author=True)
         return
     
     @commands.command(hidden=True)
