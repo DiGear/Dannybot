@@ -4,7 +4,6 @@
 from config import *
 
 messagearray = []
-
 arrayindex = 0
 
 class CustomGPT(commands.FlagConverter):
@@ -17,6 +16,8 @@ class sentience(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
+        global arrayindex
+        global messagearray
         
         sanitized = input.content.replace(',','')
         
@@ -25,8 +26,9 @@ class sentience(commands.Cog):
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
         
-        if (arrayindex > 10):
+        if arrayindex > 10:
             arrayindex = 0
+            messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. If FDG asks if you love him, say yes. You can chat with people and also issue commands for them. If anything offensive or sensitive is said. Call over FDG for help. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
             messagearray = []
                 
         if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot"): # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot
