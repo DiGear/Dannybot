@@ -5,6 +5,8 @@ from config import *
 
 messagearray = []
 
+arrayindex = 0
+
 class CustomGPT(commands.FlagConverter):
     instructions: str
     prompt: str
@@ -22,11 +24,16 @@ class sentience(commands.Cog):
             return
         if input.author.bot: # if the author is a bot or the bot is conversing with someone
             return
+        
+        if (arrayindex > 10):
+            arrayindex = 0
+            messagearray = []
                 
         if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot"): # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot
                     
                 sanitized = sanitized.replace('dannybot','')
-                messagearray.append({"role": "user", "content": f"{input.author.name} said: {sanitized}"})          
+                messagearray.append({"role": "user", "content": f"{input.author.name} said: {sanitized}"})     
+                arrayindex += 1
                 response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages = messagearray
@@ -34,6 +41,7 @@ class sentience(commands.Cog):
                
                 print(f"{input.author.name} said: {sanitized}") 
         responsearray = response.choices[0].message.content
+        arrayindex += 1
         await input.channel.send(responsearray, reference=input)
         messagearray.append({"role": "assistant", "content": f"{responsearray}"})  
         return
