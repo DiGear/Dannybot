@@ -15,6 +15,7 @@ import random
 import re
 import string
 import sys
+import textwrap
 import time
 import traceback
 import typing
@@ -433,52 +434,63 @@ def imagebounds(path):
         image.resize((imageUpper, int(height * (imageUpper/float(width)))), Image.Resampling.LANCZOS).save(path)
 
 # primary function of the meme command
-# take an image and put centered and outlined impact font text with a black outline over the top and bottom of the image
-# this is stolen from a, like, decade old repo
 def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
 
     imagebounds(path)
-    img = PIL.Image.open(path) # reopen the image
-        
-    # scale and position the text
-    fontSize = int(img.size[0])
-    font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-    topTextSize = font.getsize(Top_Text)
-    bottomTextSize = font.getsize(Bottom_Text)
+    img = PIL.Image.open(path)
+    img = img.convert("RGBA")
     
-    # find the biggest font size that works, and then make sure its at least 1
-    while topTextSize[0] > img.size[0]-20 or bottomTextSize[0] > img.size[0]-20:
-        fontSize = fontSize - 1
-        font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-        topTextSize = font.getsize(Top_Text)
-        bottomTextSize = font.getsize(Bottom_Text)
-    if fontSize  <= 0:
-        fontSize = 1
+    font_path = f"{dannybot}\\assets\\impactjpn.otf"
+
+    padding = 20
+
+    top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
+    bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
+
+    text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
+    text_draw = PIL.ImageDraw.Draw(text_image)
+
+    max_top_font_size = int(img.width / 10)
+    top_font_size = max_top_font_size
+
+    while True:
+        top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line in top_text_lines]
+        if max(top_line_widths) <= img.width - padding * 2:
+            break
+        top_font_size -= 1
+
+    max_bottom_font_size = int(img.width / 10)
+    bottom_font_size = max_bottom_font_size
+
+    while True:
+        bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in bottom_text_lines]
+        if max(bottom_line_widths) <= img.width - padding * 2:
+            break
+        bottom_font_size -= 1
+
+    top_text_height = 0
+    for line, font_size in zip(top_text_lines, [top_font_size, top_font_size]):
+        font = PIL.ImageFont.truetype(font_path, font_size)
+        text_width, text_height = text_draw.textsize(line, font=font)
+        x = (img.width - text_width) // 2
+        y = padding + top_text_height
+        text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
+        top_text_height += text_height
+
+    bottom_text_height = 0
+    for line, font_size in zip(bottom_text_lines, [bottom_font_size, bottom_font_size]):
+        font = PIL.ImageFont.truetype(font_path, font_size)
+        text_width, text_height = text_draw.textsize(line, font=font)
+        x = (img.width - text_width) // 2
+        y = img.height - padding - text_height - bottom_text_height
+        text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
+        bottom_text_height += text_height
+
+    composite_image = PIL.Image.alpha_composite(img, text_image)
     
-    # center and position the text
-    topTextPositionX = (img.size[0]/2) - (topTextSize[0]/2)
-    topTextPosition = (topTextPositionX, 0)
-    bottomTextPositionX = (img.size[0]/2) - (bottomTextSize[0]/2)
-    bottomTextPositionY = img.size[1] - bottomTextSize[1]
-    bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
-
-    # FIXED THE FUCKING STROKE SIZE - FDG
-    # it divides the size of top text by 75 and uses that as the stroke size
-    # also we make sure the stroke size is AT LEAST 1
-    outline = int((topTextSize[0]//110) + bottomTextSize[0]//110)
-    if outline <= 0:
-        outline = 1
-
-    # draw the text
-    draw = ImageDraw.Draw(img)
-    draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font,
-              stroke_width=outline, stroke_fill=(0, 0, 0))
-    draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
-              font=font, stroke_width=outline, stroke_fill=(0, 0, 0))
-
-    # save the resulting image
-    img.save(f"{dannybot}\\cache\\meme_out.png")
+    output_path = f"{dannybot}\\cache\\meme_out.png"
+    composite_image.save(output_path)
     return
 
 # gif version
@@ -493,46 +505,60 @@ def make_meme_gif(Top_Text, Bottom_Text):
             path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
 
             imagebounds(path)
-            img = PIL.Image.open(path) # reopen the image
-                
-            # scale and position the text
-            fontSize = int(img.size[0])
-            font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-            topTextSize = font.getsize(Top_Text)
-            bottomTextSize = font.getsize(Bottom_Text)
+            img = PIL.Image.open(path)
+            img = img.convert("RGBA")
             
-            # find the biggest font size that works, and then make sure its at least 1
-            while topTextSize[0] > img.size[0]-20 or bottomTextSize[0] > img.size[0]-20:
-                fontSize = fontSize - 1
-                font = ImageFont.truetype(f"{dannybot}\\assets\\impactjpn.otf", fontSize)
-                topTextSize = font.getsize(Top_Text)
-                bottomTextSize = font.getsize(Bottom_Text)
-            if fontSize  <= 0:
-                fontSize = 1
-            
-            # center and position the text
-            topTextPositionX = (img.size[0]/2) - (topTextSize[0]/2)
-            topTextPosition = (topTextPositionX, 0)
-            bottomTextPositionX = (img.size[0]/2) - (bottomTextSize[0]/2)
-            bottomTextPositionY = img.size[1] - bottomTextSize[1]
-            bottomTextPosition = (bottomTextPositionX, bottomTextPositionY - 10)
+            font_path = f"{dannybot}\\assets\\impactjpn.otf"
 
-            # FIXED THE FUCKING STROKE SIZE - FDG
-            # it divides the size of top text by 75 and uses that as the stroke size
-            # also we make sure the stroke size is AT LEAST 1
-            outline = int((topTextSize[0]//110) + bottomTextSize[0]//110)
-            if outline <= 0:
-                outline = 1
+            padding = 20
 
-            # draw the text
-            draw = ImageDraw.Draw(img)
-            draw.text(topTextPosition, Top_Text, (255, 255, 255), font=font,
-                    stroke_width=outline, stroke_fill=(0, 0, 0))
-            draw.text(bottomTextPosition, Bottom_Text, (255, 255, 255),
-                    font=font, stroke_width=outline, stroke_fill=(0, 0, 0))
+            top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
+            bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
+
+            text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
+            text_draw = PIL.ImageDraw.Draw(text_image)
+
+            max_top_font_size = int(img.width / 10)
+            top_font_size = max_top_font_size
+
+            while True:
+                top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line in top_text_lines]
+                if max(top_line_widths) <= img.width - padding * 2:
+                    break
+                top_font_size -= 1
+
+            max_bottom_font_size = int(img.width / 10)
+            bottom_font_size = max_bottom_font_size
+
+            while True:
+                bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in bottom_text_lines]
+                if max(bottom_line_widths) <= img.width - padding * 2:
+                    break
+                bottom_font_size -= 1
+
+            top_text_height = 0
+            for line, font_size in zip(top_text_lines, [top_font_size, top_font_size]):
+                font = PIL.ImageFont.truetype(font_path, font_size)
+                text_width, text_height = text_draw.textsize(line, font=font)
+                x = (img.width - text_width) // 2
+                y = padding + top_text_height
+                text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
+                top_text_height += text_height
+
+            bottom_text_height = 0
+            for line, font_size in zip(bottom_text_lines, [bottom_font_size, bottom_font_size]):
+                font = PIL.ImageFont.truetype(font_path, font_size)
+                text_width, text_height = text_draw.textsize(line, font=font)
+                x = (img.width - text_width) // 2
+                y = img.height - padding - text_height - bottom_text_height
+                text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
+                bottom_text_height += text_height
+
+            composite_image = PIL.Image.alpha_composite(img, text_image)
 
             # save the resulting image
-            img.save(f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
+            output_path = f"{dannybot}\\cache\\ffmpeg\\output\\{frame}"
+            composite_image.save(output_path)
     repack_gif()
 
     return
