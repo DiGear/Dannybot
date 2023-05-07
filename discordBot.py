@@ -12,12 +12,16 @@ print("-----------------------------------------")
 # asyncio bad btw
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+# intents shit
+intents=discord.Intents.all()
+intents.voice_states = True
+
 # define our prefix(es) and status
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
     activity=discord.Activity(name="Pokemon Sword", type=1),
-    intents=discord.Intents.all(),
+    intents=intents,
 )
 
 # do this when everything else is done
