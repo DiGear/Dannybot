@@ -3,10 +3,12 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+# Custom converter class for GPT commands
 class CustomGPT(commands.FlagConverter):
     instructions: str
     prompt: str
 
+# Class that stores every global variable and initializes them
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):       
         self.bot = bot
