@@ -445,8 +445,12 @@ def make_meme(Top_Text, Bottom_Text, path):
 
     padding = 20
 
-    top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
-    bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
+    top_text_lines = [Top_Text]
+    bottom_text_lines = [Bottom_Text]
+    if (len(Top_Text) > 40):
+        top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
+    if (len(Bottom_Text) > 40):
+        bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
 
     text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
     text_draw = PIL.ImageDraw.Draw(text_image)
@@ -512,9 +516,13 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
             padding = 20
 
-            top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
-            bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
-
+            top_text_lines = [Top_Text]
+            bottom_text_lines = [Bottom_Text]
+            if (len(Top_Text) > 40):
+                top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
+            if (len(Bottom_Text) > 40):
+                bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
+        
             text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
             text_draw = PIL.ImageDraw.Draw(text_image)
 
