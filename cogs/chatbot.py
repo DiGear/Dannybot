@@ -3,9 +3,6 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
-messagearray = []
-arrayindex = 0
-
 class CustomGPT(commands.FlagConverter):
     instructions: str
     prompt: str
@@ -13,40 +10,69 @@ class CustomGPT(commands.FlagConverter):
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):       
         self.bot = bot
+        self.arrayindex = 0
+        self.messagearray = []
+        self.messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
+        self.allowedInVC = True
 
     @commands.Cog.listener()
-    async def on_message(self, input: discord.Message):
-        global arrayindex
-        global messagearray
-        
-        sanitized = input.content.replace(',','')
-        
-        if "." in sanitized and not "dannybot" in sanitized.lower() and not any(sanitized.startswith(prefix) for prefix in dannybot_prefixes): # if the message contains a period and is not a command or a message to dannybot
+    async def on_message(self, message):
+        if message.author.bot:
             return
-        if input.author.bot: # if the author is a bot or the bot is conversing with someone
+
+        content = message.content.replace(',', '')
+        is_command = any(content.startswith(prefix) for prefix in dannybot_prefixes)
+
+        if "." in content and not "dannybot" in content.lower() and not is_command:
             return
-        
-        if arrayindex > 10:
-            arrayindex = 0
-            messagearray = []
-            messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
-                
-        if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot"): # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot
-                    
-                sanitized = sanitized.replace('dannybot','')
-                sanitized = sanitized.replace("The Final Kneecap", "Geoffrey Gonzales the Third")
-                messagearray.append({"role": "user", "content": f"{input.author.name} said: {sanitized}"})     
-                arrayindex += 1
-                response = openai.ChatCompletion.create(
+
+        if not message.author.bot and ("dannybot" in content.lower() or content.lower().endswith("dannybot")):
+            content = content.replace('dannybot', '')
+
+            self.messagearray.append({"role": "user", "content": f"{message.author.name} said: {content}"})
+            self.arrayindex += 1
+
+            if self.arrayindex > 10:
+                self.arrayindex = 0
+                self.messagearray = []
+                self.messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
+
+            response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                messages = messagearray
-                )
-               
-                print(f"{input.author.name} said: {sanitized}") 
-        responsearray = response.choices[0].message.content
-        arrayindex += 1
-        await input.channel.send(responsearray, reference=input)
-        messagearray.append({"role": "assistant", "content": f"{responsearray}"})  
+                messages=self.messagearray
+            )
+
+            print(f"{message.author.name} said: {content}")
+            responsearray = response.choices[0].message.content
+            self.arrayindex += 1
+
+            if message.author.voice and message.author.voice.channel:
+                voice_state = message.guild.voice_client
+                voice_channel = message.author.voice.channel
+
+                if voice_state and voice_state.is_playing():
+                    pass
+                else:
+                    if self.allowedInVC:
+                        voice_client = voice_state or await voice_channel.connect()
+
+                engine = pyttsx3.init()
+                engine.setProperty('rate', 150)
+                engine.setProperty('volume', 0.8)
+                output_file = 'ChatGPT.wav'
+                text = responsearray
+                engine.save_to_file(text, output_file)
+                engine.runAndWait()
+
+                await message.channel.send(responsearray, reference=message)
+
+                audio_source = discord.FFmpegPCMAudio('ChatGPT.wav')
+                voice_client.play(audio_source)
+            else:
+                await message.channel.send(responsearray, reference=message)
+
+            self.messagearray.append({"role": "assistant", "content": responsearray})
+
         return
     
     @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI generated text based on provided prompts")
@@ -63,29 +89,7 @@ class sentience(commands.Cog):
     
     @commands.command(hidden=True)
     async def braindump(self, ctx):
-        print(str(messagearray))
-        
-    @commands.command()
-    async def saytts(self, ctx, *args):
-        engine = pyttsx3.init()
-
-        # Set properties (optional)
-        engine.setProperty('rate', 150)  # Speed of speech
-        engine.setProperty('volume', 0.8)  # Volume (0.0 to 1.0)
-
-        # Set the desired output file path
-        output_file = 'output.wav'
-
-        # Text to be converted to speech
-        text = f"{args}"
-
-        # Save the speech to the output file
-        engine.save_to_file(text, output_file)
-
-        # Run the engine and wait until the speech is saved
-        engine.runAndWait()
-
-        print(f'Saved speech to {output_file}')
+        print(str(self.messagearray))
         
     @commands.command()
     async def join(self, ctx):
@@ -100,6 +104,4 @@ class sentience(commands.Cog):
         await ctx.voice_client.disconnect()
 
 async def setup(bot: commands.Bot):
-    #import system instructions
-    messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
     await bot.add_cog(sentience(bot))
