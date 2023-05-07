@@ -66,6 +66,28 @@ class sentience(commands.Cog):
         print(str(messagearray))
         
     @commands.command()
+    async def saytts(self, ctx, *args):
+        engine = pyttsx3.init()
+
+        # Set properties (optional)
+        engine.setProperty('rate', 150)  # Speed of speech
+        engine.setProperty('volume', 0.8)  # Volume (0.0 to 1.0)
+
+        # Set the desired output file path
+        output_file = 'output.wav'
+
+        # Text to be converted to speech
+        text = f"{args}"
+
+        # Save the speech to the output file
+        engine.save_to_file(text, output_file)
+
+        # Run the engine and wait until the speech is saved
+        engine.runAndWait()
+
+        print(f'Saved speech to {output_file}')
+        
+    @commands.command()
     async def join(self, ctx):
         channel = ctx.author.voice.channel
         if ctx.voice_client is not None:
