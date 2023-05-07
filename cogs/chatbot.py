@@ -12,10 +12,11 @@ class CustomGPT(commands.FlagConverter):
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):       
         self.bot = bot
+        self.sysmsg = "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."
         self.arrayindex = 0
         self.memorylength = 15
         self.messagearray = []
-        self.messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
+        self.messagearray.append({"role": "system", "content": f"{self.sysmsg}"})
         self.allowedInVC = True
 
     @commands.Cog.listener()
@@ -38,7 +39,7 @@ class sentience(commands.Cog):
             if self.arrayindex > self.memorylength:
                 self.arrayindex = 0
                 self.messagearray = []
-                self.messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
+                self.messagearray.append({"role": "system", "content": f"{self.sysmsg}"})
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
