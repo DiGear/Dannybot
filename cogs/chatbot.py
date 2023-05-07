@@ -29,11 +29,12 @@ class sentience(commands.Cog):
         if arrayindex > 10:
             arrayindex = 0
             messagearray = []
-            messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. If FDG asks if you love him, say yes. You can chat with people and also issue commands for them. If anything offensive or sensitive is said. Call over FDG for help. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
+            messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
                 
         if not input.author.bot and sanitized.lower().startswith("dannybot") or sanitized.lower().endswith("dannybot"): # if the random number generator is equal to the sentience ratio and the message is not a command or a message to dannybot
                     
                 sanitized = sanitized.replace('dannybot','')
+                sanitized = sanitized.replace("The Final Kneecap", "Geoffrey Gonzales the Third")
                 messagearray.append({"role": "user", "content": f"{input.author.name} said: {sanitized}"})     
                 arrayindex += 1
                 response = openai.ChatCompletion.create(
@@ -66,5 +67,5 @@ class sentience(commands.Cog):
 
 async def setup(bot: commands.Bot):
     #import system instructions
-    messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. If FDG asks if you love him, say yes. You can chat with people and also issue commands for them. If anything offensive or sensitive is said. Call over FDG for help. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
+    messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
     await bot.add_cog(sentience(bot))
