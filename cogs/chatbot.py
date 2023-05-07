@@ -88,22 +88,6 @@ class sentience(commands.Cog):
         )
         await ctx.reply(response.choices[0].message.content, mention_author=True)
         return
-    
-    @commands.command(hidden=True)
-    async def braindump(self, ctx):
-        print(str(self.messagearray))
-        
-    @commands.command()
-    async def join(self, ctx):
-        channel = ctx.author.voice.channel
-        if ctx.voice_client is not None:
-            return await ctx.voice_client.move_to(channel)
-        await channel.connect()
-        
-    @commands.command()
-    async def leave(self, ctx):
-      if ctx.voice_client is not None:
-        await ctx.voice_client.disconnect()
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))

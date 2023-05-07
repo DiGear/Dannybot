@@ -22,6 +22,18 @@ class audio(commands.Cog):
                 await ctx.reply(file=File(i, 'tts.wav'))
                 i.close
         '''
+        
+    @commands.command()
+    async def join(self, ctx):
+        channel = ctx.author.voice.channel
+        if ctx.voice_client is not None:
+            return await ctx.voice_client.move_to(channel)
+        await channel.connect()
+        
+    @commands.command()
+    async def leave(self, ctx):
+      if ctx.voice_client is not None:
+        await ctx.voice_client.disconnect()
 
     @commands.command(description="Use UVR to separate the vocals and instrumental from a provided file, and sends the results as mp3 files.", brief="Splits audio into vocals and instrumental using AI")
     async def acapella(self, ctx, *args):
