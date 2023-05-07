@@ -61,8 +61,8 @@ class sentience(commands.Cog):
                         voice_client = voice_state or await voice_channel.connect()
 
                 engine = pyttsx3.init()
-                engine.setProperty('rate', 150)
-                engine.setProperty('volume', 0.8)
+                engine.setProperty('rate', random.randint(125, 175))
+                engine.setProperty('volume', 0.75)
                 output_file = 'ChatGPT.wav'
                 text = responsearray
                 engine.save_to_file(text, output_file)
