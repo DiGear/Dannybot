@@ -13,6 +13,7 @@ class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):       
         self.bot = bot
         self.arrayindex = 0
+        self.memorylength = 15
         self.messagearray = []
         self.messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
         self.allowedInVC = True
@@ -34,7 +35,7 @@ class sentience(commands.Cog):
             self.messagearray.append({"role": "user", "content": f"{message.author.name} said: {content}"})
             self.arrayindex += 1
 
-            if self.arrayindex > 10:
+            if self.arrayindex > self.memorylength:
                 self.arrayindex = 0
                 self.messagearray = []
                 self.messagearray.append({"role": "system", "content": "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."})
