@@ -335,51 +335,62 @@ def gettenor(gifid=None):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
-# go through the last 500 messages sent in the channel a command is ran in and check for correpsonding files
-async def message_history_handler(ctx, type = "image"):
+# Go through the last 500 messages sent in the channel a command is run in and check for corresponding files
+async def message_history_handler(ctx, type="image"):
     channel = ctx.message.channel
-    #determine required extensions
-    match type:
-        case "image":
-            extensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
-        case "audio":
-            extensions = ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a','oga']
-        case "midi":
-            extensions = ['mid', 'midi']
-        case "video":
-            extensions = ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov','mkv']          
+
+    # Define the file extensions for different types
+    extensions = {
+        "image": ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'],
+        "audio": ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga'],
+        "midi": ['mid', 'midi'],
+        "video": ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv'],
+        "3d": ['obj', 'fbx', 'stl', 'dae'],
+        "office": ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'],
+        "text": ['txt', 'rtf',  'json'],
+        "code": ['py', 'java', 'cpp', 'c', 'h', 'html', 'css', 'js', 'php', 'cs', 'rb']
+    }
+
+    # Check if the specified type is valid
+    if type not in extensions:
+        return None
+
+    # Get the list of extensions for the specified type
+    extension_list = extensions[type]
+
+    # Iterate through the channel's message history
     async for msg in channel.history(limit=500):
-        if type == "images":
-            
-            # PUT FUNCTIONAL EMBED CODE HERE
-            # embed code
-            
-            # if the message contains an attachment, check if it's an image and return the url
-            if msg.attachments:
-                ext = msg.attachments[0].url.split('.')[-1].lower()
-                if ext in extensions:
-                    return msg.attachments[0].url
-            else:
-                    # if the message contains a tenor link, get the tenor id and return the gif
-                    if 'https://tenor.com/view/' in msg.content:
-                        for x in re.finditer(r"tenor\.com/view/.*-(\d+)", str(msg.content)):
-                            tenorid = x.group(1)
-                        return (str(gettenor(tenorid)))
-                    ext = str(msg.content).split('.')[-1].lower()
-                    if ext in extensions:
-                        return re.findall("(?=http).*?(?= |\n|$)", msg.content)[0].split('?')[0]
+        if msg.attachments:
+            # Check if the message has attachments and if their file extensions match
+            ext = msg.attachments[0].url.split('.')[-1].lower()
+            if ext in extension_list:
+                return msg.attachments[0].url
+
+        if type == "image":
+            if 'https://tenor.com/view/' in msg.content:
+                # Check if the message contains a Tenor link and extract the Tenor ID
+                match = re.search(r"tenor\.com/view/.*-(\d+)", msg.content)
+                if match:
+                    tenor_id = match.group(1)
+                    return str(gettenor(tenor_id))
+
+            ext = str(msg.content).split('.')[-1].lower()
+            if ext in extension_list:
+                # Check if the message contains a URL with a matching extension and return the URL
+                urls = re.findall("(?=http).*?(?= |\n|$)", msg.content)
+                if urls:
+                    return urls[0].split('?')[0]
         else:
-            if msg.attachments:
-                ext = msg.attachments[0].url.split('.')[-1].lower()
-                if ext in extensions:
-                    return msg.attachments[0].url
             if 'http' in msg.content:
-                aa = str(msg.content)
-                ext = aa.split('.')[-1]
-                if ext in extensions:
-                    a = re.findall("(?=http).*?(?= |\n|$)", msg.content)[0]
-                    a = a.split('?')[0]
-                    return a
+                ext = str(msg.content).split('.')[-1]
+                if ext in extension_list:
+                    # Check if the message contains a URL with a matching extension and return the URL
+                    urls = re.findall("(?=http).*?(?= |\n|$)", msg.content)
+                    if urls:
+                        return urls[0].split('?')[0]
+
+    # No matching file found
+    return None
 
 # extracts url/arguments from a command
 async def resolve_args(ctx, args, attachments, type = "image"):
