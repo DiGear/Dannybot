@@ -613,32 +613,30 @@ def make_collage_sync(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO:
         image.seek(0)
     
     # Arrange the images into a 3x3 grid
-    collage_horizontal_arrays = [
+    collage_rows = [
         numpy.hstack(image_arrays[i: i + wrap])
         for i in range(0, len(image_arrays), wrap)
     ]
-    collage_array = numpy.vstack(collage_horizontal_arrays)
+    collage_array = numpy.vstack(collage_rows)
     
     # Create a PIL image from the collage array
     collage_image = Image.fromarray(collage_array)
     
     # Save the collage as a BytesIO object
-    collage = io.BytesIO()
-    collage_image.save(collage, format=DALLE_FORMAT)
+    collage_bytes = io.BytesIO()
+    collage_image.save(collage_bytes, format=DALLE_FORMAT)
     
     print("Attempting to generate 3x3 collage")
-    collage.seek(0)
-    return collage
+    collage_bytes.seek(0)
+    return collage_bytes
 
-
-# Assemble and save the image grid asynchronously
 async def make_collage(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO:
     # Use asyncio's run_in_executor to run the synchronous collage generation in a separate thread or process
-    images = await asyncio.get_running_loop().run_in_executor(
+    collage_bytes = await asyncio.get_running_loop().run_in_executor(
         None, make_collage_sync, images, wrap
     )
     print("3x3 collage generated")
-    return images
+    return collage_bytes
 
 # generate list from directory of files
 def listgen(directory):
