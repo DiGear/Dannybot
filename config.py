@@ -393,24 +393,26 @@ async def message_history_handler(ctx, type="image"):
     return None
 
 # extracts url/arguments from a command
-async def resolve_args(ctx, args, attachments, type = "image"):
+async def resolve_args(ctx, args, attachments, type="image"):
     try:
-        if 'http' in args[0]: #see if first in the list of "args" is a URL
-            #Case of "d.meme http://balls.com/balls.png balls|balls"
-            return [args[0].split('?')[0], ' '.join(args[1:])] #everything after that is set as the text and combined to a string
-        elif attachments: #otherwise check if there are attachments
-            #Case of "d.meme balls|balls" with attached file
-            return [attachments[0].url.split('?')[0], ' '.join(args)] #the command text is everything in the args since there is no url as the first arg
-        else: #if there are no attachments or a link, run the context handler
-            #Case of "d.meme balls|balls" with no attachment
-            return [await message_history_handler(ctx, type), ' '.join(args)]
-    except IndexError: #this happens whem there is no args[0] because the command was simply, say, "d.explode" with no arguments.
-        if attachments: #check if there are attachments
-            #Case of "d.meme balls|balls" with attached file
-            return [attachments[0].url.split('?')[0], ' '.join(args)] #get everything leading up to "?width=500"-type shenenigans
-        else: #if there are no attachments or a link, run the context handler
-            #Case of "d.meme balls|balls" with no attachment
-            return [await message_history_handler(ctx, type), ' '.join(args)]
+        if args and args[0].startswith('http'):  # Check if the first argument is a URL
+            url = args[0].split('?')[0]  # Extract the URL
+            text = ' '.join(args[1:])  # Combine the remaining arguments as text
+        elif attachments:  # Check if there are attachments
+            url = attachments[0].url.split('?')[0]  # Extract the URL from the attachment
+            text = ' '.join(args)  # Combine all arguments as text
+        else:  # If there are no attachments or a URL, run the context handler
+            url = await message_history_handler(ctx, type)  # Get URL using the context handler
+            text = ' '.join(args)  # Combine all arguments as text
+        return [url, text]
+    except IndexError:  # Handle the case when there are no arguments
+        if attachments:  # Check if there are attachments
+            url = attachments[0].url.split('?')[0]  # Extract the URL from the attachment
+            text = ' '.join(args)  # Combine all arguments as text
+        else:  # If there are no attachments or a URL, run the context handler
+            url = await message_history_handler(ctx, type)  # Get URL using the context handler
+            text = ' '.join(args)  # Combine all arguments as text
+        return [url, text]
 
 # deepfry an image
 def deepfry(inputpath, outputpath):
