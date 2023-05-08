@@ -446,16 +446,23 @@ def imagebounds(path):
 
 # primary function of the meme command
 def make_meme(Top_Text, Bottom_Text, path):
+    # Open the image
     img = PIL.Image.open(path)
 
+    # Calculate the image bounds
     imagebounds(path)
+    
+    # Open the image and convert it to RGBA format
     img = PIL.Image.open(path)
     img = img.convert("RGBA")
     
+    # Set the path to the font file
     font_path = f"{dannybot}\\assets\\impactjpn.otf"
 
+    # Set the padding size
     padding = 20
 
+    # Split the top and bottom text into lines if their lengths exceed 40 characters
     top_text_lines = [Top_Text]
     bottom_text_lines = [Bottom_Text]
     if (len(Top_Text) > 40):
@@ -463,28 +470,36 @@ def make_meme(Top_Text, Bottom_Text, path):
     if (len(Bottom_Text) > 40):
         bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
 
+    # Create a new image with transparent background for text overlay
     text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
     text_draw = PIL.ImageDraw.Draw(text_image)
 
+    # Calculate the font size for the top text
     max_top_font_size = int(img.width / 10)
     top_font_size = max_top_font_size
 
+    # Adjust the font size until the top text fits within the image width
     while True:
         top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line in top_text_lines]
         if max(top_line_widths) <= img.width - padding * 2:
             break
         top_font_size -= 1
 
+    # Calculate the font size for the bottom text
     max_bottom_font_size = int(img.width / 10)
     bottom_font_size = max_bottom_font_size
 
+    # Adjust the font size until the bottom text fits within the image width
     while True:
         bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in bottom_text_lines]
         if max(bottom_line_widths) <= img.width - padding * 2:
             break
         bottom_font_size -= 1
 
+    # Set the initial height for the top text
     top_text_height = 0
+
+    # Draw each line of the top text on the image
     for line, font_size in zip(top_text_lines, [top_font_size, top_font_size]):
         font = PIL.ImageFont.truetype(font_path, font_size)
         text_width, text_height = text_draw.textsize(line, font=font)
@@ -493,7 +508,10 @@ def make_meme(Top_Text, Bottom_Text, path):
         text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
         top_text_height += text_height
 
+    # Set the initial height for the bottom text
     bottom_text_height = 0
+
+    # Draw each line of the bottom text on the image
     for line, font_size in zip(bottom_text_lines, [bottom_font_size, bottom_font_size]):
         font = PIL.ImageFont.truetype(font_path, font_size)
         text_width, text_height = text_draw.textsize(line, font=font)
@@ -502,9 +520,13 @@ def make_meme(Top_Text, Bottom_Text, path):
         text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
         bottom_text_height += text_height
 
+    # Combine the original image with the text overlay
     composite_image = PIL.Image.alpha_composite(img, text_image)
     
+    # Set the output path for the final meme image
     output_path = f"{dannybot}\\cache\\meme_out.png"
+    
+    # Save the composite image as the final meme image
     composite_image.save(output_path)
     return
 
@@ -519,43 +541,57 @@ def make_meme_gif(Top_Text, Bottom_Text):
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
             path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
 
+            # Calculate the image bounds
             imagebounds(path)
+            
+            # Open the image and convert it to RGBA format
             img = PIL.Image.open(path)
             img = img.convert("RGBA")
             
+            # Set the path to the font file
             font_path = f"{dannybot}\\assets\\impactjpn.otf"
 
+            # Set the padding size
             padding = 20
 
+            # Split the top and bottom text into lines if their lengths exceed 40 characters
             top_text_lines = [Top_Text]
             bottom_text_lines = [Bottom_Text]
             if (len(Top_Text) > 40):
                 top_text_lines = [Top_Text[:len(Top_Text) // 2], Top_Text[len(Top_Text) // 2:]]
             if (len(Bottom_Text) > 40):
                 bottom_text_lines = [Bottom_Text[len(Bottom_Text) // 2:], Bottom_Text[:len(Bottom_Text) // 2]]
-        
+
+            # Create a new image with transparent background for text overlay
             text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
             text_draw = PIL.ImageDraw.Draw(text_image)
 
+            # Calculate the font size for the top text
             max_top_font_size = int(img.width / 10)
             top_font_size = max_top_font_size
 
+            # Adjust the font size until the top text fits within the image width
             while True:
                 top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line in top_text_lines]
                 if max(top_line_widths) <= img.width - padding * 2:
                     break
                 top_font_size -= 1
 
+            # Calculate the font size for the bottom text
             max_bottom_font_size = int(img.width / 10)
             bottom_font_size = max_bottom_font_size
 
+            # Adjust the font size until the bottom text fits within the image width
             while True:
                 bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in bottom_text_lines]
                 if max(bottom_line_widths) <= img.width - padding * 2:
                     break
                 bottom_font_size -= 1
 
+            # Set the initial height for the top text
             top_text_height = 0
+
+            # Draw each line of the top text on the image
             for line, font_size in zip(top_text_lines, [top_font_size, top_font_size]):
                 font = PIL.ImageFont.truetype(font_path, font_size)
                 text_width, text_height = text_draw.textsize(line, font=font)
@@ -564,7 +600,10 @@ def make_meme_gif(Top_Text, Bottom_Text):
                 text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
                 top_text_height += text_height
 
+            # Set the initial height for the bottom text
             bottom_text_height = 0
+
+            # Draw each line of the bottom text on the image
             for line, font_size in zip(bottom_text_lines, [bottom_font_size, bottom_font_size]):
                 font = PIL.ImageFont.truetype(font_path, font_size)
                 text_width, text_height = text_draw.textsize(line, font=font)
@@ -573,8 +612,9 @@ def make_meme_gif(Top_Text, Bottom_Text):
                 text_draw.text((x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black")
                 bottom_text_height += text_height
 
+            # Combine the original image with the text overlay
             composite_image = PIL.Image.alpha_composite(img, text_image)
-
+            
             # save the resulting image
             output_path = f"{dannybot}\\cache\\ffmpeg\\output\\{frame}"
             composite_image.save(output_path)
