@@ -430,19 +430,28 @@ def deepfry(inputpath, outputpath):
 
 # resize image to fit within bounds
 def imagebounds(path):
-    # open image and get size
+    # Open image and get size
     image = PIL.Image.open(path)
     width, height = image.size
 
-    # if image is smaller than lower cap
-    if width < imageLower:
-        # resize image and save
-        image.resize((imageLower, int(height * (imageLower/float(width)))), Image.Resampling.LANCZOS).save(path)
+    # Calculate the aspect ratio
+    aspect_ratio = height / width
 
-    # if image is larger than upper cap
+    # Check if image width is smaller than the lower bound
+    if width < imageLower:
+        new_width = imageLower
+        new_height = int(new_width * aspect_ratio)
+    # Check if image width is larger than the upper bound
     elif width > imageUpper:
-        # resize image and save
-        image.resize((imageUpper, int(height * (imageUpper/float(width)))), Image.Resampling.LANCZOS).save(path)
+        new_width = imageUpper
+        new_height = int(new_width * aspect_ratio)
+    else:
+        # No need to resize the image
+        return
+
+    # Resize the image and save it
+    resized_image = image.resize((new_width, new_height), PIL.Image.Resampling.LANCZOS)
+    resized_image.save(path)
 
 # primary function of the meme command
 def make_meme(Top_Text, Bottom_Text, path):
