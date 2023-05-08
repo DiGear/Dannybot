@@ -10,13 +10,12 @@ class CustomGPT(commands.FlagConverter):
 
 # Class that stores every global variable and initializes them
 class sentience(commands.Cog):
-    def __init__(self, bot: commands.Bot):       
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.sysmsg = "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."
-        self.arrayindex = 0
         self.memorylength = 15
-        self.messagearray = []
-        self.messagearray.append({"role": "system", "content": f"{self.sysmsg}"})
+        self.messagearray = [{"role": "system", "content": self.sysmsg}]
+        self.arrayindex = 0
         self.allowedInVC = True
 
     @commands.Cog.listener()
@@ -32,14 +31,12 @@ class sentience(commands.Cog):
 
         if not message.author.bot and ("dannybot" in content.lower() or content.lower().endswith("dannybot")):
             content = content.replace('dannybot', '')
-
             self.messagearray.append({"role": "user", "content": f"{message.author.name} said: {content}"})
             self.arrayindex += 1
 
             if self.arrayindex > self.memorylength:
                 self.arrayindex = 0
-                self.messagearray = []
-                self.messagearray.append({"role": "system", "content": f"{self.sysmsg}"})
+                self.messagearray = [{"role": "system", "content": self.sysmsg}]
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
@@ -77,19 +74,16 @@ class sentience(commands.Cog):
 
             self.messagearray.append({"role": "assistant", "content": responsearray})
 
-        return
-    
-    @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI generated text based on provided prompts")
-    async def gptinstruct(self, ctx, *,  flags: CustomGPT):
+    @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI-generated text based on provided prompts")
+    async def gptinstruct(self, ctx, *, flags: CustomGPT):
         response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
+            model="gpt-3.5-turbo",
+            messages=[
                 {"role": "system", "content": f"{flags.instructions}"},
                 {"role": "user", "content": f"{flags.prompt}"},
             ]
         )
         await ctx.reply(response.choices[0].message.content, mention_author=True)
-        return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))
