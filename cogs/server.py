@@ -10,11 +10,18 @@ class server(commands.Cog):
 
     @commands.command(aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
     async def neko(self, ctx):
-        with requests.Session() as s:
-            api_output = s.get("https://nekos.life/api/v2/img/neko")
-        output = api_output.text
-        x = json.loads(output, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
-        await ctx.reply(x.url, mention_author=True)
+        try:
+            api_response = requests.get("https://nekos.life/api/v2/img/neko")
+            api_response.raise_for_status()  # Raise an exception if the API request was not successful
+            data = api_response.json()
+            image_url = data.get("url")
+
+            if image_url:
+                await ctx.reply(image_url, mention_author=True)
+            else:
+                await ctx.send("Failed to retrieve catgirl image.")
+        except requests.exceptions.RequestException:
+            return
         
     @commands.command(description="Send a picture of an animal girl.", brief="Send a picture of an animal girl")
     async def mimi(self, ctx):
@@ -47,6 +54,7 @@ class server(commands.Cog):
         with open(f'{dir}\\{file_name}', 'rb') as f:
             await ctx.reply(file=File(f, file_name), mention_author=True)
             f.close
+            
     @commands.command(description="Send a picture of Leffrey.", brief="Send a picture of Leffrey")          
     async def leffrey(self, ctx):
         dir = f"{dannybot}\\database\\Leffrey"
@@ -107,23 +115,41 @@ class server(commands.Cog):
             
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
+        # Define directory paths
+        pooter_path = f"{dannybot}\\database\\Pooter"
+        danny_path = "I:\\Danny Infinitum"
+        leffrey_path = f"{dannybot}\\database\\Leffrey"
+        femboy_path = f"{dannybot}\\database\\Femboy"
+        fanboy_path = f"{dannybot}\\database\\Fanboy"
+        glasscup_path = f"{dannybot}\\database\\Glasscup"
+        plasticcup_path = f"{dannybot}\\database\\Plasticcup"
+        burger_path = f"{dannybot}\\database\\Burger"
+        nekopara_path = NekoparaPath
+        animalgirl_path = f"{dannybot}\\database\\Mimi"
+        video_path = VideosPath
+        image_path = PicturesPath
+        gif_path = GifsPath
 
+        # Create the embed
         embed = discord.Embed(title="Dannybot File Totals", color=0xf77e9a)
-        embed.add_field(name="Pooter Files:", value=str(str(fileCount(f"{dannybot}\\database\\Pooter")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Pooter"))), inline=True)
-        embed.add_field(name="Danny Files:", value=str(str(fileCount(f"I:\\Danny Infinitum")) + " files \n" + str(fileSize(f"I:\\Danny Infinitum"))), inline=True)
-        embed.add_field(name="Leffrey Files:", value=str(str(fileCount(f"{dannybot}\\database\\Leffrey")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Leffrey"))), inline=True)
-        embed.add_field(name="Femboy Files:", value=str(str(fileCount(f"{dannybot}\\database\\Femboy")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Femboy"))), inline=True)
-        embed.add_field(name="Fanboy Files:", value=str(str(fileCount(f"{dannybot}\\database\\Fanboy")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Fanboy"))), inline=True)
-        embed.add_field(name="Glass Cup Images:", value=str(str(fileCount(f"{dannybot}\\database\\Glasscup")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Glasscup"))), inline=True)
-        embed.add_field(name="Plastic Cup Images:", value=str(str(fileCount(f"{dannybot}\\database\\Plasticcup")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Plasticcup"))), inline=True)
-        embed.add_field(name="Burger Files:", value=str(str(fileCount(f"{dannybot}\\database\\Burger")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Burger"))), inline=True)
-        embed.add_field(name="Nekopara Files:", value=str(str(fileCount(NekoparaPath)) + " files \n" + str(fileSize(NekoparaPath))), inline=True)
-        embed.add_field(name="Animal Girl Images:", value=str(str(fileCount(f"{dannybot}\\database\\Mimi")) + " files \n" + str(fileSize(f"{dannybot}\\database\\Mimi"))), inline=True)
-        embed.add_field(name="Video Files:", value=str(str(fileCount(VideosPath)) + " files \n" + str(fileSize(VideosPath))), inline=True)
-        embed.add_field(name="Image Files:", value=str(str(fileCount(PicturesPath)) + " files \n" + str(fileSize(PicturesPath))), inline=True)
-        embed.add_field(name="GIF Files:", value=str(str(fileCount(GifsPath)) + " files \n" + str(fileSize(GifsPath))), inline=True)
+
+        # Add fields to the embed
+        embed.add_field(name="Pooter Files:", value=f"{fileCount(pooter_path)} files\n{fileSize(pooter_path)}")
+        embed.add_field(name="Danny Files:", value=f"{fileCount(danny_path)} files\n{fileSize(danny_path)}")
+        embed.add_field(name="Leffrey Files:", value=f"{fileCount(leffrey_path)} files\n{fileSize(leffrey_path)}")
+        embed.add_field(name="Femboy Files:", value=f"{fileCount(femboy_path)} files\n{fileSize(femboy_path)}")
+        embed.add_field(name="Fanboy Files:", value=f"{fileCount(fanboy_path)} files\n{fileSize(fanboy_path)}")
+        embed.add_field(name="Glass Cup Images:", value=f"{fileCount(glasscup_path)} files\n{fileSize(glasscup_path)}")
+        embed.add_field(name="Plastic Cup Images:", value=f"{fileCount(plasticcup_path)} files\n{fileSize(plasticcup_path)}")
+        embed.add_field(name="Burger Files:", value=f"{fileCount(burger_path)} files\n{fileSize(burger_path)}")
+        embed.add_field(name="Nekopara Files:", value=f"{fileCount(nekopara_path)} files\n{fileSize(nekopara_path)}")
+        embed.add_field(name="Animal Girl Images:", value=f"{fileCount(animalgirl_path)} files\n{fileSize(animalgirl_path)}")
+        embed.add_field(name="Video Files:", value=f"{fileCount(video_path)} files\n{fileSize(video_path)}")
+        embed.add_field(name="Image Files:", value=f"{fileCount(image_path)} files\n{fileSize(image_path)}")
+        embed.add_field(name="GIF Files:", value=f"{fileCount(gif_path)} files\n{fileSize(gif_path)}")
 
         await ctx.reply(embed=embed, mention_author=True)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(server(bot))
