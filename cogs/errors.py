@@ -40,7 +40,7 @@ class errors(commands.Cog):
 
         else:
             # Handle other types of errors
-            error_message = f"An undefined error has occurred.\n```py\n{type(error).__name__}: {error}\n```"
+            error_message = f"An undefined error has occurred.\n```\n{type(error).__name__}: {error}\n```"
             await ctx.reply(error_message)
             print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
