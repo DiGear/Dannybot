@@ -26,6 +26,7 @@ from collections import namedtuple
 from datetime import datetime
 from textwrap import wrap
 
+import aiofiles
 import aiohttp
 import discord
 import furl
