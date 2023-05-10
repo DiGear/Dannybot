@@ -40,27 +40,6 @@ class ai(commands.Cog):
             presence_penalty=0.0
         )
         await ctx.reply(response['choices'][0]['text'], mention_author=True)
-        
-    @commands.command(aliases=['code'],  description="Interact with GPT3-Code using Dannybot.", brief="Get AI generated code based on provided prompts")
-    async def python(self, ctx, *, prompt):
-        await ctx.send("This command is temporarily disabled.")
-        return
-        response = openai.Completion.create(
-        model="code-davinci-002",
-        prompt= f"\"\"\"\n{prompt}\n\"\"\"\n",
-        temperature=0.2,
-        max_tokens=2048,
-        top_p=1,
-        frequency_penalty=2.0,
-        presence_penalty=0
-        )
-        
-        with open(f'{dannybot}\\cache\\code.py', 'w', encoding="utf-8") as f:
-            f.write(response['choices'][0]['text'])
-            f.close
-        with open(f'{dannybot}\\cache\\code.py', 'rb') as f:
-            await ctx.reply(file=File(f, 'code.py'), mention_author=True)
-            f.close
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
     async def waifu(self, ctx, *args):
@@ -142,38 +121,50 @@ class ai(commands.Cog):
 
     @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
     async def dalle(self, ctx, *, prompt):
-        # rotty shit, this is the main function that runs when the command is called
-        images = None
+        max_attempts = 3
         attempt = 0
         print("-------------------------------------")
         print(f'Dalle command ran with prompt "{prompt}"')
-        # this while loop is to make sure that the image generation request is successful
-        while not images:
-            if attempt > 0:
-                print(
-                    f'Image generate request failed on attempt {attempt} for prompt "{prompt}"'
-                )
+        
+        while attempt < max_attempts:
             attempt += 1
-            # this is the function that sends the request to the craiyon API
-            images = await generate_images(prompt)
-            print(
-                f'Successfully started image generation with prompt "{prompt}" on attempt {attempt}'
-            )
+            print(f'Attempt {attempt} for prompt "{prompt}"')
+            
+            try:
+                images = await generate_images(prompt)
+                
+                if images:
+                    break  # Successful generation, exit the loop
+                
+                print(f'Image generation failed on attempt {attempt} for prompt "{prompt}"')
+            
+            except Exception as e:
+                print(f'Error during image generation on attempt {attempt} for prompt "{prompt}": {e}')
+        
+        if images:
             prompt_hyphenated = prompt.replace(" ", "-")
-            # this is the function that makes the collage
             collage = await make_collage(images, 3)
             b = collage
-            collage = discord.File(
-                collage, filename=f"{prompt_hyphenated}.{DALLE_FORMAT}")
-            print("Sending image...")
-            await ctx.reply(file=collage, mention_author=True)
-            print("Caching image...")
-            with open(f"{dannybot}\\cache\\dalle.png", "wb") as f:
-                b.seek(0)
-                f.write(b.read())
-                f.close
-                print("Image Cache successful")
-                print("-------------------------------------")
+            
+            try:
+                print("Sending image...")
+                collage_file = discord.File(collage, filename=f"{prompt_hyphenated}.{DALLE_FORMAT}")
+                await ctx.reply(file=collage_file, mention_author=True)
+                
+                print("Caching image...")
+                async with aiofiles.open(f"{dannybot}\\cache\\dalle.png", "wb") as f:
+                    b.seek(0)
+                    await f.write(b.read())
+                
+                print("Image caching successful")
+            
+            except Exception as e:
+                print(f'Error during image handling: {e}')
+        
+        else:
+            print(f'Image generation failed after {max_attempts} attempts for prompt "{prompt}"')
+        
+        print("-------------------------------------")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ai(bot))
