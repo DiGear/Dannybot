@@ -7,14 +7,14 @@ class audio(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         
-    @commands.command()
+    @commands.command(hidden=True)
     async def join(self, ctx):
         channel = ctx.author.voice.channel
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
         await channel.connect()
         
-    @commands.command()
+    @commands.command(hidden=True)
     async def leave(self, ctx):
       if ctx.voice_client is not None:
         await ctx.voice_client.disconnect()
