@@ -7,6 +7,7 @@
 
 import asyncio
 import base64
+import glob
 import hashlib
 import io
 import json
@@ -192,83 +193,109 @@ def repack_gif_JPG():
 
 # clear the ffmpeg and ffmpeg/output folders of any residual files
 def cleanup_ffmpeg():
-    print("cleaning up...")
-    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
-        if '.png' in file:
-            os.remove(f'{dannybot}\\cache\\ffmpeg\\{file}')
-    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
-        if '.png' in file:
-            os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
-            
+    ffmpeg_folder = f"{dannybot}\\cache\\ffmpeg"
+    output_folder = f"{ffmpeg_folder}\\output"
+
+    print("Cleaning up...")
+
+    # Remove residual .png files in ffmpeg folder
+    for file_path in glob.glob(f"{ffmpeg_folder}/*.png"):
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
+
+    # Remove residual .png files in ffmpeg/output folder
+    for file_path in glob.glob(f"{output_folder}/*.png"):
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
+
 # generate a random hexadecimal string
 def randhex(bits):
-    return hashlib.sha256(str(random.getrandbits(bits)).encode('utf-8')).hexdigest()
+    random_number = random.getrandbits(bits)
+    random_bytes = random_number.to_bytes((bits + 7) // 8, 'big')
+    random_hex = random_bytes.hex()
+    return random_hex
 
 # clear the cache folder of all files
 def clear_cache():
-    for file in os.listdir(f'{dannybot}\\cache'):
-        if 'git' not in file and '.' in file:
-            os.remove(f'{dannybot}\\cache\\{file}')
-            print(f"deleted {dannybot}\\cache\\{file}")
-    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
-        if '.png' in file:
-            os.remove(f'{dannybot}\\cache\\ffmpeg\\{file}')
-            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
-    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
-        if '.png' in file:
-            os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
-            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
+    cache_folder = f'{dannybot}\\cache'
+    ffmpeg_cache_folder = f'{cache_folder}\\ffmpeg'
+    output_folder = f'{ffmpeg_cache_folder}\\output'
+
+    for file_path in glob.glob(f'{cache_folder}/*'):
+        if os.path.isfile(file_path) and 'git' not in file_path and '.' in file_path:
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
+
+    for file_path in glob.glob(f'{ffmpeg_cache_folder}/*.png'):
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
+
+    for file_path in glob.glob(f'{output_folder}/*.png'):
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
     return
 
 # get the amount of files in a folder
-def fileCount(folder):
-    return sum(len(filenames) for dirpath, dirnames, filenames in os.walk(folder))
+def file_count(folder):
+    return sum(len(filenames) for _, _, filenames in os.walk(folder))
 
 # get the total size of all files in a folder
 def fileSize(folder):   
-    # get the file size
-    total_size = sum(os.path.getsize(os.path.join(dirpath, f)) for dirpath, dirnames, filenames in os.walk(folder) for f in filenames) 
-    # for loop to convert file size to bytes, KB, MB, GB, TB
-    for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
-        # if file size is less than 1024 bytess
-        if total_size < 1024.0:
-            # return file size and type
-            return "%3.1f %s" % ( total_size, x)
-        # divide file size by 1024
-        total_size /= 1024.0
-    return total_size
+    total_size = 0
 
-# overcomplicated function for parsing and matching data with a list of aliases
-# NEVER TRY TO COMMENT EZOGAMING CODE - FDG
+    # Iterate through the directory structure recursively
+    for dirpath, _, filenames in os.walk(folder):
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            total_size += os.path.getsize(file_path)  # Add the size of each file to the total
+
+    units = ['bytes', 'KB', 'MB', 'GB', 'TB']
+    unit_index = 0
+
+    # Convert the total size to the appropriate unit
+    while total_size >= 1024 and unit_index < len(units) - 1:
+        total_size /= 1024.0
+        unit_index += 1
+
+    # Format the result with two decimal places and the corresponding unit label
+    return f"{total_size:.2f} {units[unit_index]}"
+
+# i think this code is finally good now
 def ezogaming_regex(datalist, dataentry):
-    # open the file with the list of entries
-    with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f: entry = [x.rstrip() for x in f.readlines()]
-    # open the file with the list of aliases
-    with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f: entryalias = [x.rstrip() for x in f.readlines()]
-    # remove all non-alphabetic characters from the input
-    inp = re.sub("[^a-z]", "", " ".join(dataentry[:]).lower())
-    # create a list of the same length as the list of entries
-    sort = [0] * len(entry)
-    # fill the list with the index of the entry
-    for i in range(0, len(entry)):
-        sort[i] = i
-    # shuffle the list
-    random.shuffle(sort)
-    # for each entry in the list
-    for i2 in range(0, len(entry)):
-        # remove all non-alphabetic characters from the input, entry, and aliases
-        inputStripped = inp.strip()
-        aliasStripped = re.sub("[^a-z]", "", entryalias[sort[i2]].lower().strip())
-        entrystripped = re.sub("[^a-z]", "", entry[sort[i2]].lower().strip())
-        # if a match is found between the input with the entry OR alias
-        if (inputStripped in entrystripped) or inputStripped in aliasStripped:
-            # stop the loop
-            break
-    # get the index of the entry
-    sort[i2]
-    # get the entry
-    results = entry[sort[i2]]
-    return results
+    # Read the file with the list of entries
+    with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f:
+        entries = [x.rstrip() for x in f.readlines()]
+
+    # Read the file with the list of aliases
+    with open(f"{dannybot}\\ezogaming\\{datalist}_checker") as f:
+        aliases = [x.rstrip() for x in f.readlines()]
+
+    # Remove all non-alphabetic characters from the input
+    input_text = re.sub("[^a-z]", "", " ".join(dataentry[:]).lower())
+
+    # Create a list of indices for the entries
+    indices = list(range(len(entries)))
+
+    # Shuffle the indices
+    random.shuffle(indices)
+
+    # Iterate through the shuffled indices
+    for i in indices:
+        # Remove non-alphabetic characters from the entry and its alias
+        entry = re.sub("[^a-z]", "", entries[i].lower().strip())
+        alias = re.sub("[^a-z]", "", aliases[i].lower().strip())
+
+        # If a match is found between the input and the entry or alias
+        if input_text in entry or input_text in alias:
+            # Return the matching entry
+            return entries[i]
+
+    # If no match is found, return a random entry
+    return random.choice(entries)
 
 def undertext(name, text, isAnimated):
     
@@ -285,28 +312,30 @@ def undertext(name, text, isAnimated):
         name = f"{name}&box=deltarune&mode=darkworld"
     
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
-    name = (lambda name: {
-        "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
-        "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
-        "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
-        "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
-        "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
-        "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228005256044575/pizziportrait1.png",
-        "pizzi-stare": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
-        "pizzi-scream": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228022796615720/pizziportrait3.png",
-        "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
-        "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-        "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-        "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-        "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
-        "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
-        "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
-        "seki-eyes": "https://cdn.discordapp.com/attachments/560608550850789377/1075684786489798696/sekiportrait2.png",
-        "seki-evil": "https://cdn.discordapp.com/attachments/1063552619110477844/1075687740793946122/sekiportrait3.png",
-        "leffrey" : "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
-        "reimu-fumo" : "https://cdn.discordapp.com/attachments/1063552619110477844/1082233613040504892/image.png",
-        "suggagugga" : "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
-    }.get(name, name))(name)
+    character_links = {
+            "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
+            "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
+            "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
+            "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
+            "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
+            "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228005256044575/pizziportrait1.png",
+            "pizzi-stare": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
+            "pizzi-scream": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228022796615720/pizziportrait3.png",
+            "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
+            "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
+            "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
+            "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
+            "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
+            "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
+            "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
+            "seki-eyes": "https://cdn.discordapp.com/attachments/560608550850789377/1075684786489798696/sekiportrait2.png",
+            "seki-evil": "https://cdn.discordapp.com/attachments/1063552619110477844/1075687740793946122/sekiportrait3.png",
+            "leffrey": "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
+            "reimu-fumo": "https://cdn.discordapp.com/attachments/1063552619110477844/1082233613040504892/image.png",
+            "suggagugga": "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
+        }
+
+    name = character_links.get(name, name)
 
     # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
     if name.startswith("http"):
@@ -395,22 +424,28 @@ async def message_history_handler(ctx, type="image"):
 # extracts url/arguments from a command
 async def resolve_args(ctx, args, attachments, type="image"):
     try:
-        if args and args[0].startswith('http'):  # Check if the first argument is a URL
+        # Check if the first argument is a URL
+        if args and args[0].startswith('http'):
             url = args[0].split('?')[0]  # Extract the URL
-            text = ' '.join(args[1:])  # Combine the remaining arguments as text
+            # Combine the remaining arguments as text
+            text = ' '.join(args[1:])
         elif attachments:  # Check if there are attachments
-            url = attachments[0].url.split('?')[0]  # Extract the URL from the attachment
+            # Extract the URL from the attachment
+            url = attachments[0].url.split('?')[0]
             text = ' '.join(args)  # Combine all arguments as text
         else:  # If there are no attachments or a URL, run the context handler
-            url = await message_history_handler(ctx, type)  # Get URL using the context handler
+            # Get URL using the context handler
+            url = await message_history_handler(ctx, type)
             text = ' '.join(args)  # Combine all arguments as text
         return [url, text]
     except IndexError:  # Handle the case when there are no arguments
         if attachments:  # Check if there are attachments
-            url = attachments[0].url.split('?')[0]  # Extract the URL from the attachment
+            # Extract the URL from the attachment
+            url = attachments[0].url.split('?')[0]
             text = ' '.join(args)  # Combine all arguments as text
         else:  # If there are no attachments or a URL, run the context handler
-            url = await message_history_handler(ctx, type)  # Get URL using the context handler
+            # Get URL using the context handler
+            url = await message_history_handler(ctx, type)
             text = ' '.join(args)  # Combine all arguments as text
         return [url, text]
 
