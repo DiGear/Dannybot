@@ -20,7 +20,7 @@ intents.voice_states = True
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
-    activity=discord.Activity(name="Pokemon Sword", type=1),
+    activity=discord.Activity(name="d.help", type=1),
     intents=intents,
 )
 
@@ -36,11 +36,15 @@ async def on_ready():
 # this is our message handler
 @bot.event
 async def on_message(input):
-    # teehee funny chance for the bot to just say no
-    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(input.content.startswith(prefix) for prefix in dannybot_prefixes) or input.guild.id == 796606820348723230 and random.randint(0, 4) == 4 and any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
+    is_denial = (
+        random.randint(0, dannybot_denialRatio) == dannybot_denialRatio
+        and any(input.content.startswith(prefix) for prefix in dannybot_prefixes)
+    )
+
+    if is_denial:
         await input.channel.send(random.choice(dannybot_denialResponses), reference=input)
     else:
-        os.chdir(f"{dannybot}") # always make sure we're in dannybots directory
+        os.chdir(dannybot)  # Ensure we're in Dannybot's directory
         await bot.process_commands(input)
 
 # this is a ping command and it's pretty self-explanatory
@@ -63,9 +67,8 @@ async def say(ctx, *, args):
 # theres definitely a better way to do this
 @bot.command(description="Delete the most recent command output in the current channel. This only affects Dannybot.", brief="Undo the last command output")
 async def undo(ctx):
-    channel = ctx.message.channel
-    async for msg in channel.history(limit=500):
-        if msg.author.id == 847276836172988426:
+    async for msg in ctx.channel.history(limit=500):
+        if msg.author.id == bot.user.id:
             await msg.delete()
             return
 
@@ -74,47 +77,35 @@ async def undo(ctx):
 @commands.is_owner()
 async def reload(ctx, module):
     if module == "all":
-        for filename in [f for f in os.listdir("./cogs") if f.endswith(".py")]:
-            await bot.unload_extension(f"cogs.{filename[:-3]}")
-            await bot.load_extension(f"cogs.{filename[:-3]}")
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                cog_name = filename[:-3]
+                cog_path = f"cogs.{cog_name}"
+                await bot.unload_extension(cog_path)
+                await bot.load_extension(cog_path)
         await ctx.send("Reloaded all modules!")
     else:
-        await bot.unload_extension(f"cogs.{module}")
-        await bot.load_extension(f"cogs.{module}")
+        cog_path = f"cogs.{module}"
+        await bot.unload_extension(cog_path)
+        await bot.load_extension(cog_path)
         await ctx.send(f"Reloaded {module} module!")
-
-# this clears the cache manually in case you need to do it with the bot still up
-@bot.command(description="This is an owner only command. It clears Dannybots cache of all temporary files.", brief="Clears Dannybots cache")
-@commands.is_owner()
-async def cache(ctx):
-    for file in os.listdir(f'{dannybot}\\cache'):
-        if 'git' not in file and '.' in file:
-            os.remove(f'{dannybot}\\cache\\{file}')
-            print(f"deleted {dannybot}\\cache\\{file}")
-    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg'):
-        if '.png' in file:
-            os.remove(f'{dannybot}\\cache\\ffmpeg\\{file}')
-            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
-    for file in os.listdir(f'{dannybot}\\cache\\ffmpeg\\output'):
-        if '.png' in file:
-            os.remove(f'{dannybot}\\cache\\ffmpeg\\output\\{file}')
-            print(f'deleted{dannybot}\\cache\\ffmpeg\\{file}')
-    await ctx.send("Cache cleared!")
 
 # stage all of our cogs
 async def load_extensions():
-    for filename in [f for f in os.listdir("./cogs") if f.endswith(".py")]:
-        await bot.load_extension(f"cogs.{filename[:-3]}")
-        print("imported module: " + f"{filename[:-3]}")
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            cog_name = filename[:-3]
+            cog_path = f"cogs.{cog_name}"
+            await bot.load_extension(cog_path)
+            print(f"Imported module: {cog_name}")
 
-# run all of our startup tasks including loading all cogs, and clearing the cache if enabled
 async def main():
-    async with bot:
-        if cache_clear_onLaunch:
-            print("clearing cache from previous session...")
-            clear_cache()
-            print("-----------------------------------------")
-        await load_extensions()
-        await bot.start(dannybot_token)
+    if cache_clear_onLaunch:
+        print("Clearing cache from previous session...")
+        clear_cache()
+        print("-----------------------------------------")
+    
+    await load_extensions()
+    await bot.start(dannybot_token)
 
 asyncio.run(main())
