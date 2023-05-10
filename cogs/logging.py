@@ -9,12 +9,14 @@ class logging(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_message(self, input: discord.Message):
-        # make sure that we're only logging commands, rather than every message
-        if any(input.content.startswith(prefix) for prefix in dannybot_prefixes):
-            # send all relevant information relating to command usage to our logs channel
-            await self.bot.get_channel(logs_channel).send(f"{input.author.name} {input.author.id} issued {input.content}")
-            return
+    async def on_message(self, message: discord.Message):
+        # Check if the message starts with any of the bot's prefixes
+        for prefix in dannybot_prefixes:
+            if message.content.startswith(prefix):
+                # Send command usage information to the logs channel
+                log_message = f"{message.author.name} ({message.author.id}) issued: {message.content}"
+                await self.bot.get_channel(logs_channel).send(log_message)
+            break
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(logging(bot))
