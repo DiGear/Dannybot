@@ -240,7 +240,7 @@ def clear_cache():
     return
 
 # get the amount of files in a folder
-def file_count(folder):
+def fileCount(folder):
     return sum(len(filenames) for _, _, filenames in os.walk(folder))
 
 # get the total size of all files in a folder
