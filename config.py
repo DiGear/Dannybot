@@ -432,31 +432,35 @@ async def message_history_handler(ctx, type="image"):
 
 # extracts url/arguments from a command
 async def resolve_args(ctx, args, attachments, type="image"):
-    try:
+    url = None
+    text = ' '.join(args)  # Combine all arguments as text
+
+    if ctx.message.reference:
+        referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
+        if referenced_message.attachments:
+            for attachment in referenced_message.attachments:
+                if attachment.content_type.startswith(type):
+                    url = attachment.url.split('?')[0]
+                    break
+
+    if not url and attachments:
+        # Check if there are attachments
+        for attachment in attachments:
+            if attachment.content_type.startswith(type):
+                url = attachment.url.split('?')[0]
+                break
+
+    if not url:
         # Check if the first argument is a URL
         if args and args[0].startswith('http'):
             url = args[0].split('?')[0]  # Extract the URL
-            # Combine the remaining arguments as text
             text = ' '.join(args[1:])
-        elif attachments:  # Check if there are attachments
-            # Extract the URL from the attachment
-            url = attachments[0].url.split('?')[0]
-            text = ' '.join(args)  # Combine all arguments as text
-        else:  # If there are no attachments or a URL, run the context handler
-            # Get URL using the context handler
-            url = await message_history_handler(ctx, type)
-            text = ' '.join(args)  # Combine all arguments as text
-        return [url, text]
-    except IndexError:  # Handle the case when there are no arguments
-        if attachments:  # Check if there are attachments
-            # Extract the URL from the attachment
-            url = attachments[0].url.split('?')[0]
-            text = ' '.join(args)  # Combine all arguments as text
-        else:  # If there are no attachments or a URL, run the context handler
-            # Get URL using the context handler
-            url = await message_history_handler(ctx, type)
-            text = ' '.join(args)  # Combine all arguments as text
-        return [url, text]
+
+    if not url:
+        # Get URL using the context handler
+        url = await message_history_handler(ctx, type)
+
+    return [url, text]
 
 # deepfry an image
 def deepfry(inputpath, outputpath):
