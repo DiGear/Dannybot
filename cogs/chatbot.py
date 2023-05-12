@@ -83,6 +83,10 @@ class sentience(commands.Cog):
             ]
         )
         await ctx.reply(response.choices[0].message.content, mention_author=True)
-
+        
+    @commands.command(hidden=True)
+    async def alzheimers(self, ctx):
+        self.message_array = [{"role": "system", "content": self.sysmsg}]
+        
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))
