@@ -16,7 +16,7 @@ class sentience(commands.Cog):
         self.memory_length = 15
         self.message_array = [{"role": "system", "content": self.sysmsg}]
         self.array_index = 0
-        self.allowed_in_voice_channel = True
+        self.allowed_in_voice_channel = False
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -35,8 +35,7 @@ class sentience(commands.Cog):
             self.array_index += 1
 
             if self.array_index > self.memory_length:
-                self.array_index = 0
-                self.message_array = [{"role": "system", "content": self.sysmsg}]
+                self.message_array.pop(1)
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
