@@ -245,6 +245,13 @@ def clear_cache():
 def fileCount(folder):
     return sum(len(filenames) for _, _, filenames in os.walk(folder))
 
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 # get the total size of all files in a folder
 def fileSize(folder):   
     total_size = 0

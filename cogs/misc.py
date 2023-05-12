@@ -40,6 +40,7 @@ class misc(commands.Cog):
 
         video_formats = ['mp4', 'webm']
         audio_formats = ['mp3', 'ogg', 'flac', 'wav']
+        os.chdir(f"{dannybot}\\cache")
 
         try:
             if format in video_formats:

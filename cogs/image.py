@@ -24,7 +24,7 @@ class image(commands.Cog):
 
             for frame in os.listdir(f'{cache_dir}\\ffmpeg'):
                 if '.png' in frame:
-                    im = Image.open(f"{cache_dir}\\ffmpeg\\{frame}")
+                    im = PIL.Image.open(f"{cache_dir}\\ffmpeg\\{frame}")
                     im_flip = ImageOps.flip(im)
                     im_flip.save(f"{cache_dir}\\ffmpeg\\output\\{frame}")
 
@@ -38,7 +38,7 @@ class image(commands.Cog):
             with open(image_file, 'wb') as f:
                 f.write(requests.get(file_url).content)
 
-            im = Image.open(image_file)
+            im = PIL.Image.open(image_file)
             im_flip = ImageOps.flip(im)
             flipped_file = f'{cache_dir}\\flipped.png'
             im_flip.save(flipped_file)
@@ -63,7 +63,7 @@ class image(commands.Cog):
 
             for frame in os.listdir(f'{cache_dir}\\ffmpeg'):
                 if '.png' in frame:
-                    im = Image.open(f"{cache_dir}\\ffmpeg\\{frame}")
+                    im = PIL.Image.open(f"{cache_dir}\\ffmpeg\\{frame}")
                     im_mirror = ImageOps.mirror(im)
                     im_mirror.save(f"{cache_dir}\\ffmpeg\\output\\{frame}")
 
@@ -77,7 +77,7 @@ class image(commands.Cog):
             with open(image_file, 'wb') as f:
                 f.write(requests.get(file_url).content)
 
-            im = Image.open(image_file)
+            im = PIL.Image.open(image_file)
             im_mirror = ImageOps.mirror(im)
             mirrored_file = f'{cache_dir}\\mirrored.png'
             im_mirror.save(mirrored_file)
@@ -123,7 +123,7 @@ class image(commands.Cog):
             for frame in os.listdir(f'{cache_dir}\\ffmpeg'):
                 if '.png' in frame:
                     imagebounds(f"{cache_dir}\\ffmpeg\\{frame}")
-                    with Image(filename=f"{cache_dir}\\ffmpeg\\{frame}") as img:
+                    with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
                         img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=1, rigidity=0)
                         img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=2, rigidity=0)
                         img.save(filename=f"{output_dir}\\{frame}")
@@ -139,7 +139,7 @@ class image(commands.Cog):
                 f.write(requests.get(file_url).content)
 
             imagebounds(image_file)
-            with Image(filename=image_file) as img:
+            with magick(filename=f'{dannybot}\\cache\\magik_in.png') as img:
                 img.liquid_rescale(width=int(img.width * 0.5), height=int(img.height * 0.5), delta_x=1, rigidity=0)
                 img.liquid_rescale(width=int(img.width * 2), height=int(img.height * 2), delta_x=2, rigidity=0)
                 img.save(filename=f'{cache_dir}\\magik_out.png')
@@ -166,6 +166,10 @@ class image(commands.Cog):
                 await ctx.reply(file=File(f, 'deepfried.gif'), mention_author=True)
                 cleanup_ffmpeg()
         else:
+            
+            with open(f'{dannybot}\\cache\\deepfry_in.png', 'wb') as f:
+                f.write(requests.get(file_url).content)
+            
             deepfry(f'{dannybot}\\cache\\deepfry_in.png', f'{dannybot}\\cache\\deepfry_out.png')
             file_name = f'{dannybot}\\cache\\deepfry_out.png'
 
@@ -281,7 +285,7 @@ class image(commands.Cog):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         File_Url = cmd_info[0]
         cmd_args = cmd_info[1].split(' ')
-        Effect_Value = float(cmd_args[0]) if cmd_args else 0.5
+        Effect_Value = cmd_args[0] if is_float(cmd_args[0]) else 0.5
 
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
 
@@ -295,7 +299,7 @@ class image(commands.Cog):
             for frame in frames:
                 if '.png' in frame:
                     with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
-                        img.implode(amount=-Effect_Value)
+                        img.implode(amount=-float(Effect_Value))
                         img.save(filename=f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
 
             repack_gif()
@@ -308,7 +312,7 @@ class image(commands.Cog):
                 f.write(requests.get(File_Url).content)
 
             with magick(filename=f'{dannybot}\\cache\\explodein.png') as img:
-                img.implode(amount=-Effect_Value)
+                img.implode(amount=-float(Effect_Value))
                 img.save(filename=f'{dannybot}\\cache\\exploded.png')
 
             with open(f'{dannybot}\\cache\\exploded.png', 'rb') as f:
@@ -319,7 +323,7 @@ class image(commands.Cog):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         File_Url = cmd_info[0]
         cmd_args = cmd_info[1].split(' ')
-        Effect_Value = float(cmd_args[0]) if cmd_args else 0.5
+        Effect_Value = cmd_args[0] if is_float(cmd_args[0]) else 0.5
 
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
 
@@ -333,7 +337,7 @@ class image(commands.Cog):
             for frame in frames:
                 if '.png' in frame:
                     with magick(filename=f"{dannybot}\\cache\\ffmpeg\\{frame}") as img:
-                        img.implode(amount=Effect_Value)
+                        img.implode(amount=float(Effect_Value))
                         img.save(filename=f"{dannybot}\\cache\\ffmpeg\\output\\{frame}")
 
             repack_gif()
@@ -346,44 +350,45 @@ class image(commands.Cog):
                 f.write(requests.get(File_Url).content)
 
             with magick(filename=f'{dannybot}\\cache\\impin.png') as img:
-                img.implode(amount=Effect_Value)
+                img.implode(amount=float(Effect_Value))
                 img.save(filename=f'{dannybot}\\cache\\imploded.png')
 
             with open(f'{dannybot}\\cache\\imploded.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'imploded.png'), mention_author=True)
     
-    @commands.command(description="Command to caption memes in the same way websites like ifunny do, where it puts a white box at the top of the image with black caption text.", brief="White box; black text caption an image")          
-    async def caption(self, ctx, context, *, meme_text: typing.Optional[str] = "ValueError"):
+    @commands.command(description="Command to caption memes in the same way websites like ifunny do, where it puts a white box at the top of the image with black caption text.", brief="White box; black text caption an image")
+    async def caption(self, ctx, *args):
+        # Resolve command arguments and uploaded file
+        image_url, meme_text = await resolve_args(ctx, args, ctx.message.attachments)
+        response = requests.get(image_url)
+        response.raise_for_status()  # Raise an exception if the request was unsuccessful
+        image_content = response.content
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
-        
-        if ctx.message.attachments:
-            context = ctx.message.attachments[0].url
-        
-        if '.gif' in context:
-            with open(f'{dannybot}\\cache\\gif.gif', 'wb') as f:
-                f.write(requests.get(context).content)
-            
-            unpack_gif(f'{dannybot}\\cache\\gif.gif')
-            frames = os.listdir(f'{dannybot}\\cache\\ffmpeg')
 
-            for frame in frames:
+        with open(f'{dannybot}/cache/memein.png', 'wb') as f:
+            f.write(image_content)
+
+        if '.gif' in image_url:
+            with open(f'{dannybot}/cache/gif.gif', 'wb') as f:
+                f.write(image_content)
+            unpack_gif(f'{dannybot}/cache/gif.gif')
+
+            for frame in os.listdir(f'{dannybot}/cache/ffmpeg'):
                 if '.png' in frame:
-                    os.system(f'python -m dankcli "{dannybot}\\cache\\ffmpeg\\{frame}" "{meme_text}" --filename "{dannybot}\\cache\\ffmpeg\\output\\{frame.replace(".png", "")}"')
+                    os.system(f'python -m dankcli "{dannybot}/cache/ffmpeg/{frame}" "{meme_text}" --filename "{dannybot}/cache/ffmpeg/output/{frame.replace(".png", "")}')
 
             repack_gif()
-            with open(f'{dannybot}\\cache\\ffmpeg_out.gif', 'rb') as f:
+
+            with open(f'{dannybot}/cache/ffmpeg_out.gif', 'rb') as f:
                 await ctx.reply(file=File(f, 'caption.gif'), mention_author=True)
-                cleanup_ffmpeg()
-
+                cleanup_ffmpeg()  # delete the temporary files made from the unpacking and repacking of gifs
+                f.close()
         else:
-            with open(f'{dannybot}\\cache\\memein.png', 'wb') as f:
-                f.write(requests.get(context).content)
-
-            os.system(f'python -m dankcli "{dannybot}\\cache\\memein.png" "{meme_text}" --filename "{dannybot}\\cache\\memeout"')
-
-            with open(f'{dannybot}\\cache\\memeout.png', 'rb') as f:
+            os.system(f'python -m dankcli "{dannybot}/cache/memein.png" "{meme_text}" --filename "{dannybot}/cache/memeout"')
+            with open(f'{dannybot}/cache/memeout.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'caption.png'), mention_author=True)
-                
+                f.close()
+
     @commands.command(description="Applies a set amount of radial blur to a provided image.", brief="Applies radial blur to an image")
     async def radial(self, ctx, *args):
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
@@ -399,7 +404,7 @@ class image(commands.Cog):
 
             for frame in frames:
                 if '.png' in frame:
-                    with Image(filename=f'{dannybot}\\cache\\ffmpeg\\{frame}') as img:
+                    with magick(filename=f'{dannybot}\\cache\\ffmpeg\\{frame}') as img:
                         img.rotational_blur(angle=6)
                         img.save(filename=f'{dannybot}\\cache\\ffmpeg\\output\\{frame}')
 
@@ -412,7 +417,7 @@ class image(commands.Cog):
             with open(f'{dannybot}\\cache\\radin.png', 'wb') as f:
                 f.write(requests.get(Link_To_File).content)
 
-            with Image(filename=f'{dannybot}\\cache\\radin.png') as img:
+            with magick(filename=f'{dannybot}\\cache\\radin.png') as img:
                 img.rotational_blur(angle=6)
                 img.save(filename=f"{dannybot}\\cache\\radial_blur.png")
 

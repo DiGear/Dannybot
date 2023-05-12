@@ -59,14 +59,14 @@ class sentience(commands.Cog):
                 engine = pyttsx3.init()
                 engine.setProperty('rate', random.randint(125, 175))
                 engine.setProperty('volume', 0.75)
-                output_file = 'ChatGPT.wav'
+                output_file = f"{dannybot}\\cache\\ChatGPT.wav"
                 text = response_array
                 engine.save_to_file(text, output_file)
                 engine.runAndWait()
 
                 await message.channel.send(response_array, reference=message)
 
-                audio_source = discord.FFmpegPCMAudio('ChatGPT.wav')
+                audio_source = discord.FFmpegPCMAudio(f"{dannybot}\\cache\\ChatGPT.wav")
                 voice_client.play(audio_source)
             else:
                 await message.channel.send(response_array, reference=message)
