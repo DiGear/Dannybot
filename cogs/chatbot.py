@@ -87,6 +87,12 @@ class sentience(commands.Cog):
     @commands.command(hidden=True)
     async def alzheimers(self, ctx):
         self.message_array = [{"role": "system", "content": self.sysmsg}]
+        self.array_index = 0
+        
+    @commands.command(hidden=True)
+    async def braindump(self, ctx):
+        print(str(self.messagearray))
+        await ctx.send(str(self.messagearray))
         
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))
