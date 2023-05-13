@@ -34,7 +34,7 @@ class misc(commands.Cog):
             f.write(image_bytes)
         await ctx.reply(file=discord.File(f"{dannybot}/cache/{filename}"), mention_author=True)
 
-    @commands.command(description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
+    @commands.command(aliases=["dl", "ytdl", "down"],description="Download from a multitude of sites in mp3, flac, wav, or ogg audio; or download as an mp4 file. The supported sites are listed at https://ytdl-org.github.io/youtube-dl/supportedsites.html", brief="Download from a list of sites as mp3 or mp4")
     async def download(self, ctx, file_download: str, format: str = 'mp3'):
         await ctx.send('Ok. Downloading...')
 
