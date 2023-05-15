@@ -2,7 +2,7 @@
 
 # if you can't find a variable used in this file its probably imported from here
 from config import *
-
+logger = logging.getLogger(__name__)
 
 class errors(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -17,6 +17,7 @@ class errors(commands.Cog):
         # Set specific errors to be ignored, such as commands.CommandNotFound
         ignored = (commands.CommandNotFound,)
 
+        # Get the original error if available
         error = getattr(error, "original", error)
 
         # Ignore errors in the ignore list
@@ -29,7 +30,7 @@ class errors(commands.Cog):
 
         # Command requires developer permissions
         elif isinstance(error, commands.errors.NotOwner):
-            await ctx.reply(f"{ctx.command} is reserved for Dannybot developers. <:trollface:855665633509507092>")  # Replace or remove the trollface emote
+            await ctx.reply(f"{ctx.command} is reserved for Dannybot developers. <:trollface:855665633509507092>")
 
         # Command was sent in a DM
         elif isinstance(error, commands.NoPrivateMessage):
@@ -42,8 +43,7 @@ class errors(commands.Cog):
             # Handle other types of errors
             error_message = f"An undefined error has occurred.\n```\n{type(error).__name__}: {error}\n```"
             await ctx.reply(error_message)
-            print("Ignoring exception in command {}:".format(ctx.command), file=sys.stderr)
-            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            logger.error("An exception occurred in command {}: {}".format(ctx.command, error))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(errors(bot))

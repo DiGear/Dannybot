@@ -6,6 +6,7 @@ from config import *
 # this shit is kind of dumb i wanna find a better way to do this - FDG
 global request_is_processing
 request_is_processing = False
+logger = logging.getLogger(__name__)
 
 class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):

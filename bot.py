@@ -16,6 +16,10 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 intents=discord.Intents.all()
 intents.voice_states = True
 
+# We set up logger here
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # define our prefix(es) and status
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
@@ -54,7 +58,7 @@ async def ping(ctx):
     message = await ctx.send("Ping is...")
     ping = (time.monotonic() - before) * 1000
     await message.edit(content=f"Ping is {int(ping)}ms")
-    print(f'Dannybot was pinged at {int(ping)}ms')
+    logger.info(f'Dannybot was pinged at {int(ping)}ms')
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.command(hidden=True)
@@ -97,14 +101,13 @@ async def load_extensions():
             cog_name = filename[:-3]
             cog_path = f"cogs.{cog_name}"
             await bot.load_extension(cog_path)
-            print(f"Imported module: {cog_name}")
+            logger.info(f"Imported module: {cog_name}")
 
 async def main():
     if cache_clear_onLaunch:
-        print("Clearing cache from previous session...")
+        logger.info("Clearing cache from previous session...")
         clear_cache()
-        print("-----------------------------------------")
-    
+
     await load_extensions()
     await bot.start(dannybot_token)
 

@@ -47,6 +47,7 @@ from wand.image import Image as magick
 from fifteen import FifteenAPI
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 # ----------
 # Variables
