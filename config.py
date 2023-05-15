@@ -376,6 +376,7 @@ def gettenor(gifid=None):
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     text = ' '.join(args)  # Combine all arguments as text
+    logger.info("Resolving URL and arguments...")
 
     extensions = {
         "image": ('png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'),
@@ -395,6 +396,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
                     url = attachment.url.split('?')[0]
+                    logger.info("URL from reply: %s", url)
                     break
 
     if not url and attachments:
@@ -402,6 +404,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         for attachment in attachments:
             if attachment.content_type.startswith(type):
                 url = attachment.url.split('?')[0]
+                logger.info("URL from attachment: %s", url)
                 break
 
     if not url:
@@ -409,6 +412,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         if args and args[0].startswith('http'):
             url = args[0].split('?')[0]  # Extract the URL
             text = ' '.join(args[1:])
+            logger.info("URL from argument: %s", url)
 
     if not url:
         # Get URL using the message history
@@ -419,6 +423,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 ext = msg.attachments[0].url.split('.')[-1].lower()
                 if ext in extension_list:
                     url = msg.attachments[0].url
+                    logger.info("URL from message attachment: %s", url)
                     break
 
             if type == "image":
@@ -427,6 +432,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     if match:
                         tenor_id = match.group(1)
                         url = str(gettenor(tenor_id))
+                        logger.info("URL from Tenor: %s", url)
                         break
 
                 ext = str(msg.content).split('.')[-1].lower()
@@ -434,6 +440,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     urls = re.findall(r"http\S+", msg.content)
                     if urls:
                         url = urls[0].split('?')[0]
+                        logger.info("URL from message content: %s", url)
                         break
             else:
                 if 'http' in msg.content:
@@ -443,6 +450,8 @@ async def resolve_args(ctx, args, attachments, type="image"):
                         if urls:
                             url = urls[0].split('?')[0]
                             break
+
+    logger.info(f"Arguments: {text}")
 
     return [url, text]
 
