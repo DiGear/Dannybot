@@ -1,6 +1,5 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
-import discord
 
 class reactions(commands.Cog):
     def __init__(self, bot: commands.Bot):
