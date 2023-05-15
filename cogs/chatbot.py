@@ -66,9 +66,9 @@ class sentience(commands.Cog):
                 engine.runAndWait()
 
                 await message.channel.send(response_array, reference=message)
-
-                audio_source = discord.FFmpegPCMAudio(f"{dannybot}\\cache\\ChatGPT.wav")
-                voice_client.play(audio_source)
+                if self.allowed_in_voice_channel:
+                    audio_source = discord.FFmpegPCMAudio(f"{dannybot}\\cache\\ChatGPT.wav")
+                    voice_client.play(audio_source)
             else:
                 await message.channel.send(response_array, reference=message)
 
