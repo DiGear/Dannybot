@@ -373,67 +373,21 @@ def gettenor(gifid=None):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
-# Go through the last 500 messages sent in the channel a command is run in and check for corresponding files
-async def message_history_handler(ctx, type="image"):
-    channel = ctx.message.channel
-
-    # Define the file extensions for different types
-    extensions = {
-        "image": ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'],
-        "audio": ['wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga'],
-        "midi": ['mid', 'midi'],
-        "video": ['mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv'],
-        "3d": ['obj', 'fbx', 'stl', 'dae'],
-        "office": ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'],
-        "text": ['txt', 'rtf',  'json'],
-        "code": ['py', 'java', 'cpp', 'c', 'h', 'html', 'css', 'js', 'php', 'cs', 'rb']
-    }
-
-    # Check if the specified type is valid
-    if type not in extensions:
-        return None
-
-    # Get the list of extensions for the specified type
-    extension_list = extensions[type]
-
-    # Iterate through the channel's message history
-    async for msg in channel.history(limit=500):
-        if msg.attachments:
-            # Check if the message has attachments and if their file extensions match
-            ext = msg.attachments[0].url.split('.')[-1].lower()
-            if ext in extension_list:
-                return msg.attachments[0].url
-
-        if type == "image":
-            if 'https://tenor.com/view/' in msg.content:
-                # Check if the message contains a Tenor link and extract the Tenor ID
-                match = re.search(r"tenor\.com/view/.*-(\d+)", msg.content)
-                if match:
-                    tenor_id = match.group(1)
-                    return str(gettenor(tenor_id))
-
-            ext = str(msg.content).split('.')[-1].lower()
-            if ext in extension_list:
-                # Check if the message contains a URL with a matching extension and return the URL
-                urls = re.findall("(?=http).*?(?= |\n|$)", msg.content)
-                if urls:
-                    return urls[0].split('?')[0]
-        else:
-            if 'http' in msg.content:
-                ext = str(msg.content).split('.')[-1]
-                if ext in extension_list:
-                    # Check if the message contains a URL with a matching extension and return the URL
-                    urls = re.findall("(?=http).*?(?= |\n|$)", msg.content)
-                    if urls:
-                        return urls[0].split('?')[0]
-
-    # No matching file found
-    return None
-
-# extracts url/arguments from a command
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     text = ' '.join(args)  # Combine all arguments as text
+
+    extensions = {
+        "image": ('png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'),
+        "audio": ('wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga'),
+        "midi": ('mid', 'midi'),
+        "video": ('mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv'),
+        "3d": ('obj', 'fbx', 'stl', 'dae'),
+        "office": ('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'),
+        "text": ('txt', 'rtf', 'json'),
+        "code": ('py', 'java', 'cpp', 'c', 'h', 'html', 'css', 'js', 'php', 'cs', 'rb')
+    }
+    extension_list = extensions.get(type, ())
 
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
@@ -457,8 +411,38 @@ async def resolve_args(ctx, args, attachments, type="image"):
             text = ' '.join(args[1:])
 
     if not url:
-        # Get URL using the context handler
-        url = await message_history_handler(ctx, type)
+        # Get URL using the message history
+        channel = ctx.message.channel
+
+        async for msg in channel.history(limit=500):
+            if msg.attachments:
+                ext = msg.attachments[0].url.split('.')[-1].lower()
+                if ext in extension_list:
+                    url = msg.attachments[0].url
+                    break
+
+            if type == "image":
+                if 'https://tenor.com/view/' in msg.content:
+                    match = re.search(r"tenor\.com/view/.*-(\d+)", msg.content)
+                    if match:
+                        tenor_id = match.group(1)
+                        url = str(gettenor(tenor_id))
+                        break
+
+                ext = str(msg.content).split('.')[-1].lower()
+                if ext in extension_list:
+                    urls = re.findall(r"http\S+", msg.content)
+                    if urls:
+                        url = urls[0].split('?')[0]
+                        break
+            else:
+                if 'http' in msg.content:
+                    ext = str(msg.content).split('.')[-1]
+                    if ext in extension_list:
+                        urls = re.findall(r"http\S+", msg.content)
+                        if urls:
+                            url = urls[0].split('?')[0]
+                            break
 
     return [url, text]
 
