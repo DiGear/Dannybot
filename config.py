@@ -44,8 +44,6 @@ from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
                  ImageFilter, ImageFont, ImageOps, ImageSequence)
 from wand.image import Image as magick
 
-from fifteen import FifteenAPI
-
 load_dotenv()
 logger = logging.getLogger(__name__)
 
