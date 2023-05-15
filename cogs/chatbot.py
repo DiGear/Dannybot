@@ -43,7 +43,7 @@ class sentience(commands.Cog):
                 messages=self.message_array
             )
 
-            print(f"{message.author.name} said: {content}")
+            logger.info(f"{message.author.name} said: {content}")
             response_array = response.choices[0].message.content
             self.array_index += 1
 
@@ -94,7 +94,7 @@ class sentience(commands.Cog):
     @commands.command(hidden=True)
     @commands.is_owner()
     async def braindump(self, ctx):
-        print(str(self.message_array))
+        logger.debug(str(self.message_array))
         await ctx.send(str(self.message_array))
         
 async def setup(bot: commands.Bot):

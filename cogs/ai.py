@@ -154,18 +154,18 @@ class ai(commands.Cog):
                     
                     else:
                         await ctx.reply("Processing of the image failed. This is most likely because no background was detected.", mention_author=True)
-                        print(await response.text())
+                        logger.info(await response.text())
 
     @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
     async def dalle(self, ctx, *, prompt):
         max_attempts = 3
         attempt = 0
         print("-------------------------------------")
-        print(f'Dalle command ran with prompt "{prompt}"')
+        logger.info(f'Dalle command ran with prompt "{prompt}"')
         
         while attempt < max_attempts:
             attempt += 1
-            print(f'Attempt {attempt} for prompt "{prompt}"')
+            logger.info(f'Attempt {attempt} for prompt "{prompt}"')
             
             try:
                 images = await generate_images(prompt)
@@ -173,10 +173,10 @@ class ai(commands.Cog):
                 if images:
                     break  # Successful generation, exit the loop
                 
-                print(f'Image generation failed on attempt {attempt} for prompt "{prompt}"')
+                logger.info(f'Image generation failed on attempt {attempt} for prompt "{prompt}"')
             
             except Exception as e:
-                print(f'Error during image generation on attempt {attempt} for prompt "{prompt}": {e}')
+                logger.info(f'Error during image generation on attempt {attempt} for prompt "{prompt}": {e}')
         
         if images:
             prompt_hyphenated = prompt.replace(" ", "-")
@@ -184,22 +184,22 @@ class ai(commands.Cog):
             b = collage
             
             try:
-                print("Sending image...")
+                logger.info("Sending image...")
                 collage_file = discord.File(collage, filename=f"{prompt_hyphenated}.{DALLE_FORMAT}")
                 await ctx.reply(file=collage_file, mention_author=True)
                 
-                print("Caching image...")
+                logger.info("Caching image...")
                 async with aiofiles.open(f"{dannybot}\\cache\\dalle.png", "wb") as f:
                     b.seek(0)
                     await f.write(b.read())
                 
-                print("Image caching successful")
+                logger.info("Image caching successful")
             
             except Exception as e:
-                print(f'Error during image handling: {e}')
+                logger.info(f'Error during image handling: {e}')
         
         else:
-            print(f'Image generation failed after {max_attempts} attempts for prompt "{prompt}"')
+            logger.info(f'Image generation failed after {max_attempts} attempts for prompt "{prompt}"')
         
         print("-------------------------------------")
 

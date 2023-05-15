@@ -175,22 +175,22 @@ DALLE_FORMAT = "png"
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
 def unpack_gif(file):
-    print("unpacking gif...")
+    logger.info("unpacking gif...")
     os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y')
     return
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
-    print("generating palette...")
+    logger.info("generating palette...")
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
-    print("repacking gif...")
+    logger.info("repacking gif...")
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
 def repack_gif_JPG():
-    print("generating palette...")
-    print("repacking gif (jpg)...")
+    logger.info("generating palette...")
+    logger.info("repacking gif (jpg)...")
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
     os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 8M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
@@ -200,19 +200,19 @@ def cleanup_ffmpeg():
     ffmpeg_folder = f"{dannybot}\\cache\\ffmpeg"
     output_folder = f"{ffmpeg_folder}\\output"
 
-    print("Cleaning up...")
+    logger.info("Cleaning up...")
 
     # Remove residual .png files in ffmpeg folder
     for file_path in glob.glob(f"{ffmpeg_folder}/*.png"):
         if os.path.isfile(file_path):
             os.remove(file_path)
-            print(f"Deleted: {file_path}")
+            logger.info(f"Deleted: {file_path}")
 
     # Remove residual .png files in ffmpeg/output folder
     for file_path in glob.glob(f"{output_folder}/*.png"):
         if os.path.isfile(file_path):
             os.remove(file_path)
-            print(f"Deleted: {file_path}")
+            logger.info(f"Deleted: {file_path}")
 
 # generate a random hexadecimal string
 def randhex(bits):
@@ -230,17 +230,17 @@ def clear_cache():
     for file_path in glob.glob(f'{cache_folder}/*'):
         if os.path.isfile(file_path) and 'git' not in file_path and '.' in file_path:
             os.remove(file_path)
-            print(f"Deleted: {file_path}")
+            logger.info(f"Deleted: {file_path}")
 
     for file_path in glob.glob(f'{ffmpeg_cache_folder}/*.png'):
         if os.path.isfile(file_path):
             os.remove(file_path)
-            print(f"Deleted: {file_path}")
+            logger.info(f"Deleted: {file_path}")
 
     for file_path in glob.glob(f'{output_folder}/*.png'):
         if os.path.isfile(file_path):
             os.remove(file_path)
-            print(f"Deleted: {file_path}")
+            logger.info(f"Deleted: {file_path}")
     return
 
 # get the amount of files in a folder
@@ -689,7 +689,7 @@ async def generate_images(prompt: str) -> typing.List[io.BytesIO]:
     async with aiohttp.ClientSession() as session:
         async with session.post(DALLE_API, json={"prompt": prompt}) as response:
             if response.status == 200:
-                print("DALL-E server is OK")
+                logger.info("DALL-E server is OK")
                 response_data = await response.json()
                 
                 # Convert the base64-encoded image strings to BytesIO objects
@@ -709,7 +709,7 @@ def make_collage_sync(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO:
     
     image_count = 1
     for image in images:
-        print(f"{image_count} image(s) generated out of 9")
+        logger.info(f"{image_count} image(s) generated out of 9")
         image_count += 1
         image.seek(0)
     
@@ -727,7 +727,7 @@ def make_collage_sync(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO:
     collage_bytes = io.BytesIO()
     collage_image.save(collage_bytes, format=DALLE_FORMAT)
     
-    print("Attempting to generate 3x3 collage")
+    logger.info("Attempting to generate 3x3 collage")
     collage_bytes.seek(0)
     return collage_bytes
 
@@ -736,7 +736,7 @@ async def make_collage(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO
     collage_bytes = await asyncio.get_running_loop().run_in_executor(
         None, make_collage_sync, images, wrap
     )
-    print("3x3 collage generated")
+    logger.info("3x3 collage generated")
     return collage_bytes
 
 # generate list from directory of files

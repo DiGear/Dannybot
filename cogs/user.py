@@ -17,7 +17,6 @@ class user(commands.Cog):
             embed = discord.Embed()
             embed.set_image(url=str(member.avatar.url))
             await ctx.send(f"Avatar of {member.display_name}.", mention_author=True, embed=embed)
-            print(f"Grabbed avatar of {member.display_name}")
         else:
             await ctx.send("The user does not have an avatar.")
         
