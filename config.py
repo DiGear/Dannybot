@@ -75,8 +75,7 @@ removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey =  os.getenv("TENOR_KEY")
 
 # external paths
-KemonoFriendsPath = "I:\\Anime\\Kemono Friends" # put your kemono friends regex files into here
-NekoparaPath = "I:\\Anime\\Nekopara" # put your nekopara regex files into here
+NekoparaPath = "I:\\Anime\\Nekopara" # put your nekopara files into here
 MimiPath = "I:\\Anime\\Kemono girls" # put your animal girl files here
 PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
 VideosPath = "C:\\Users\\weebm\\Videos\\epic" # set this to your videos folder
@@ -274,7 +273,7 @@ def fileSize(folder):
     # Format the result with two decimal places and the corresponding unit label
     return f"{total_size:.2f} {units[unit_index]}"
 
-# i think this code is finally good now
+'''
 def ezogaming_regex(datalist, dataentry):
     # Read the file with the list of entries
     with open(f"{dannybot}\\ezogaming\\{datalist}_char") as f:
@@ -306,6 +305,7 @@ def ezogaming_regex(datalist, dataentry):
 
     # If no match is found, return a random entry
     return random.choice(entries)
+'''
 
 def undertext(name, text, isAnimated):
     

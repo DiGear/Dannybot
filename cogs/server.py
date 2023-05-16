@@ -23,96 +23,35 @@ class server(commands.Cog):
         except requests.exceptions.RequestException:
             return
         
-    @commands.command(description="Send a picture of an animal girl.", brief="Send a picture of an animal girl")
-    async def mimi(self, ctx):
-        file_name = random.choice(os.listdir(MimiPath))
-        with open(f'{MimiPath}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-
-    @commands.command(description="Send a Nekopara character from my personal collection.", brief="Send a picture of a chosen character from Nekopara")
-    async def nekopara(self, ctx, *frien):
-        aru2 = ezogaming_regex("Nekopara", frien)
-        dir = f'{NekoparaPath}\\' + aru2
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-            
-    @commands.command(description="Send a video from my personal collection.", brief="Send a video from my camera roll")
-    async def vid(self, ctx):
-        dir = VideosPath
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-            
-    @commands.command(description="Send a picture from my personal collection.", brief="Send a picture from my camera roll")
-    async def img(self, ctx):
-        dir = PicturesPath
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-            
-    @commands.command(description="Send a picture of Leffrey.", brief="Send a picture of Leffrey")          
-    async def leffrey(self, ctx):
-        dir = f"{dannybot}\\database\\Leffrey"
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-            
-    @commands.command(description="Send a GIF file.", brief="Send a GIF file")
-    async def gif(self, ctx):
-        dir = GifsPath
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, file_name), mention_author=True)
-            f.close
-            
-    @commands.command(description="Send a picture of a femboy (anime).", brief="Send a picture of an anime femboy")
-    async def femboy(self, ctx):
-        dir = f"{dannybot}\\database\\Femboy"
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, 'fem.png'), mention_author=True)
-            
-    @commands.command(description="Send a Fanboy and Chum Chum picture.", brief="Send a Fanboy and Chum Chum picture")
-    async def fanboy(self, ctx):
-        dir = f"{dannybot}\\database\\Fanboy"
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, 'fan.png'), mention_author=True)
-            
-    @commands.command(description="Send a picture of a glass cup.", brief="Send a picture of a glass cup")
-    async def glasscup(self, ctx):
-        dir = f"{dannybot}\\database\\Glasscup"
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, 'glass.png'), mention_author=True)
+    @commands.command(description="Send a random picture or file from a category.", brief="Send a random picture or file from a category")
+    async def img(self, ctx, category='img'):
+        file_name = random.choice(os.listdir(category))
+        file_types = {
+            "Mimi": f'{MimiPath}\\{file_name}',
+            "nekopara": NekoparaPath,
+            "vid": VideosPath,
+            "img": PicturesPath,
+            "leffrey": f"{dannybot}\\database\\Leffrey",
+            "gif": GifsPath,
+            "femboy": f"{dannybot}\\database\\Femboy",
+            "fanboy": f"{dannybot}\\database\\Fanboy",
+            "glasscup": f"{dannybot}\\database\\Glasscup",
+            "plasticcup": f"{dannybot}\\database\\Plasticcup",
+            "burger": f"{dannybot}\\database\\Burger",
+            "danny": f"I:\\Danny Infinitum"
+        }
         
-    @commands.command(description="Send a picture of a plastic cup.", brief="Send a picture of a plastic cup")
-    async def plasticcup(self, ctx):
-        dir = f"{dannybot}\\database\\Plasticcup"
+        category = category.lower()
+
+        if category not in file_types:
+            await ctx.reply("Invalid category. Please choose from: " + ", ".join(file_types.keys()))
+            return
+
+        dir = file_types[category]
         file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, 'plastic.png'), mention_author=True)
-            
-    @commands.command(description="Send a picture of a burger.", brief="Send a picture of a burger")
-    async def burger(self, ctx):
-        dir = f"{dannybot}\\database\\Burger"
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, 'burger.png'), mention_author=True)
-            
-    @commands.command(description="Send a picture of Danny.", brief="Send a picture of Danny")
-    async def danny(self, ctx):
-        dir = f"I:\\Danny Infinitum"
-        file_name = random.choice(os.listdir(dir))
-        with open(f'{dir}\\{file_name}', 'rb') as f:
-            await ctx.reply(file=File(f, 'danny.png'), mention_author=True)
-            
+        with open(f"{dir}\\{file_name}", "rb") as f:
+            await ctx.reply(file=File(f, f"{category.replace(' ', '_')}.png"), mention_author=True)
+        
     @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
         # Define directory paths
