@@ -26,7 +26,7 @@ class server(commands.Cog):
     @commands.command(description="Send a random picture or file from a category.", brief="Send a random picture or file from a category")
     async def img(self, ctx, category='img'):
         file_types = {
-            "Mimi": MimiPath,
+            "mimi": MimiPath,
             "nekopara": NekoparaPath,
             "vid": VideosPath,
             "img": PicturesPath,

@@ -23,15 +23,9 @@ class sentience(commands.Cog):
     async def on_message(self, message):
         if message.author.bot:
             return
-
-        content = message.content.replace(',', '')
-        is_command = any(content.startswith(prefix) for prefix in dannybot_prefixes)
-
-        if "." in content and not "dannybot" in content.lower() and not is_command:
-            return
-
-        if not message.author.bot and ("dannybot" in content.lower() or content.lower().endswith("dannybot")):
-            content = content.replace('dannybot', '')
+        
+        if self.bot.user.mentioned_in(message):
+            content = message.content.replace(self.bot.user.mention, '')
             self.message_array.append({"role": "user", "content": f"{message.author.name} said: {content}"})
             self.array_index += 1
 
