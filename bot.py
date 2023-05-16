@@ -31,6 +31,13 @@ bot = commands.Bot(
 # do this when everything else is done
 @bot.event
 async def on_ready():
+    # name corrector
+    for guild in bot.guilds:
+        try:
+            await guild.me.edit(nick=bot.user.name)
+            logger.info(f'Corrected name in {guild.name}')
+        except discord.Forbidden:
+            logger.error(f'Unable to correct name in {guild.name}')
     # print a success message upon boot
     print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
@@ -76,8 +83,7 @@ async def undo(ctx):
             await msg.delete()
             return
 
-# this command reloads a specified cog. used for testing, you can call this command to update code on a cog without restarting the whole bot
-@bot.command(description="This is an owner only command. It allows for any module to be reloaded on the fly.", brief="Debug tool for modules")
+@bot.command(hidden=True)
 @commands.is_owner()
 async def reload(ctx, module):
     if module == "all":
@@ -93,6 +99,36 @@ async def reload(ctx, module):
         await bot.unload_extension(cog_path)
         await bot.load_extension(cog_path)
         await ctx.send(f"Reloaded {module} module!")
+        
+@bot.command(hidden=True)
+@commands.is_owner()
+async def unload(ctx, module):
+    if module == "all":
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                cog_name = filename[:-3]
+                cog_path = f"cogs.{cog_name}"
+                await bot.unload_extension(cog_path)
+        await ctx.send("Unloaded all modules!")
+    else:
+        cog_path = f"cogs.{module}"
+        await bot.unload_extension(cog_path)
+        await ctx.send(f"Unloaded {module} module!")
+
+@bot.command(hidden=True)
+@commands.is_owner()
+async def load(ctx, module):
+    if module == "all":
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                cog_name = filename[:-3]
+                cog_path = f"cogs.{cog_name}"
+                await bot.load_extension(cog_path)
+        await ctx.send("Loaded all modules!")
+    else:
+        cog_path = f"cogs.{module}"
+        await bot.load_extension(cog_path)
+        await ctx.send(f"Loaded {module} module!")
 
 # stage all of our cogs
 async def load_extensions():
