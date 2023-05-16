@@ -71,8 +71,15 @@ async def ping(ctx):
 @bot.command(hidden=True)
 @commands.is_owner()
 async def say(ctx, *, args):
+    args = args.replace('@', '@\u200b')  # Prevent accidental mentions
+
+    for guild in bot.guilds:
+        for member_id in args.split():
+            if member_id.isdigit():
+                member = get(guild.members, id=int(member_id))
+                if member:
+                    args = args.replace(member_id, member.mention)
     await ctx.send(args)
-    # delete the command message, leaving only what Dannybot sends
     await ctx.message.delete()
 
 # theres definitely a better way to do this

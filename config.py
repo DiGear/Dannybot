@@ -38,6 +38,7 @@ import pyttsx3
 import requests
 from discord import File, app_commands
 from discord.ext import commands
+from discord.utils import get
 from dotenv import load_dotenv
 from petpetgif import petpet
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
