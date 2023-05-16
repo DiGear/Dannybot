@@ -38,7 +38,7 @@ class sentience(commands.Cog):
             )
 
             logger.info(f"{message.author.name} said: {content}")
-            response_array = response.choices[0].message.content
+            response_array = response.choices[0].message.content.replace("Dannybot:", "")
             self.array_index += 1
 
             if message.author.voice and message.author.voice.channel:
