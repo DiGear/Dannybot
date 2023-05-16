@@ -14,9 +14,7 @@ This bot has been in the works for three years. It has been ported to cogs, refa
 
 This bot has historically (and probably still does to some extent) take code from sources such as stack overflow. I do not mind if you take code from this bot in order to learn or improve, but please don't claim to have written the code yourself.
 
-Also, I would like to thank my friends for helping me get the bot to the point it is now.
-
-Shoutouts to [WaffleComposite](https://github.com/wafflecomposite) for the 15.ai functions!
+Additionally, I would like to thank my friends for helping me get the bot to the point it is now.
 
 Powered by [NegativeHarmonizer](https://github.com/lukemcraig/NegativeHarmonizer)
 
