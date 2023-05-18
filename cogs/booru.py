@@ -38,7 +38,8 @@ class booru(commands.Cog):
     @commands.command(aliases=["dan"], description="Browse images on danbooru.donmai.us. Limited to 2 tags per search.", brief="Browse images from Danbooru")
     async def danbooru(self, ctx, tag1: str, tag2: str = ""):
         tags = f"{tag1}+{tag2}" if tag2 else tag1
-        url = f"https://danbooru.donmai.us/posts.json?&tags={tags}"
+        url = f"https://danbooru.donmai.us/posts.json?&limit=1000000&tags={tags}"
+        print(url)
         response = requests.get(url)
         data = response.json()
 
