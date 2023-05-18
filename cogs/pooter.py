@@ -76,7 +76,7 @@ class pooter(commands.Cog):
 
                 await input_message.add_reaction(reaction)  # Add a reaction to the message
 
-    @commands.command(aliases=["poo", "poop"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
+    @commands.command(hidden=True, aliases=["poo", "poop"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         downloads = 1  # Downloads counter
         reaction = '✅'  # Reaction to add to the message
