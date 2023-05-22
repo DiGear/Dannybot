@@ -13,7 +13,7 @@ class CustomGPT(commands.FlagConverter):
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.sysmsg = "You are Dannybot, a discord bot created by a man named FDG. You can chat with people and also issue commands for them. Your pronouns are He/Him, and you are 3 years old. Do not refer to yourself as an 'AI Language Model'."
+        self.sysmsg = "pretend you are a sassy black woman"
         self.memory_length = 15
         self.message_array = [{"role": "system", "content": self.sysmsg}]
         self.array_index = 0
@@ -34,6 +34,7 @@ class sentience(commands.Cog):
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
+                temperature=1,
                 messages=self.message_array
             )
 
