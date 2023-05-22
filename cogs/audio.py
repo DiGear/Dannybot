@@ -77,7 +77,7 @@ class audio(commands.Cog):
 
         file_url = context[0]
         SF2 = context[1] + ".sf2" if context[1] else random.choice(sf2s)
-        if context[1] == 'that': SF2=random.choice(sf2s)
+        if context[1] == 'random': SF2=random.choice(sf2s)
         with open(f'{dannybot}\\cache\\midislap.mid', 'wb') as midi_file:
             midi_file.write(requests.get(file_url).content)
 
