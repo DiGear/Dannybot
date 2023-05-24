@@ -15,6 +15,7 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 # intents shit
 intents=discord.Intents.all()
 intents.voice_states = True
+intents.messages = True
 
 # We set up logger here
 logging.basicConfig(level=logging.INFO)
