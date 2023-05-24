@@ -73,6 +73,7 @@ logs_channel = int(os.getenv("LOGS")) # channel to log commands
 
 # .env
 openai.api_key = os.getenv("OPENAI_API_KEY")
+characterAI_key = os.getenv("CHARAI_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey =  os.getenv("TENOR_KEY")
 
