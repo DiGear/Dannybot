@@ -10,8 +10,6 @@ REMOVEBG_KEY=
 
 TENOR_KEY=
 
-CHARAI_KEY=
-
 #channels
 LOGS=
 
