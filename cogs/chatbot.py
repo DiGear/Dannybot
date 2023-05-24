@@ -24,7 +24,7 @@ class sentience(commands.Cog):
         if message.author.bot:
             return
         
-        if (self.bot.user.mentioned_in(message) and not message.reference or self.bot.user.mentioned_in(message) and (message.reference and any(msg['content'].startswith(message.reference.resolved.content) for msg in self.message_array))):
+        if (self.bot.user.mentioned_in(message) and not message.reference):
             content = message.content.replace(self.bot.user.mention, '')
             self.message_array.append({"role": "user", "content": f"{message.author.name} said: {content}"})
             self.array_index += 1
