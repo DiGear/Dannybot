@@ -13,7 +13,7 @@ class CustomGPT(commands.FlagConverter):
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.sysmsg = "pretend you are a sassy black woman"
+        self.sysmsg = ""
         self.memory_length = 15
         self.message_array = [{"role": "system", "content": self.sysmsg}]
         self.array_index = 0
