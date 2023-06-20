@@ -73,10 +73,9 @@ async def ping(ctx):
     message = await ctx.send("Ping is...")
     ping = (time.monotonic() - before) * 1000
     await message.edit(content=f"Ping is {int(ping)}ms")
-    logger.info(f'Dannybot was pinged at {int(ping)}ms')
-    
+    logger.info(f'Dannybot was pinged at {int(ping)}ms')    
 @bot.tree.command(name='ping', description='Calculate bot latency, and send the results.')
-async def slashping(interaction: discord.Interaction):
+async def ping_slash(interaction: discord.Interaction):
     await interaction.response.send_message(content=f"Ping is {int(round(bot.latency*1000))}ms")
     logger.info(f'Dannybot was pinged at {int(round(bot.latency*1000))}ms')
 
@@ -94,14 +93,6 @@ async def say(ctx, *, args):
                     args = args.replace(member_id, member.mention)
     await ctx.send(args)
     await ctx.message.delete()
-
-# theres definitely a better way to do this
-@bot.command(description="Delete the most recent command output in the current channel. This only affects Dannybot.", brief="Undo the last command output")
-async def undo(ctx):
-    async for msg in ctx.channel.history(limit=500):
-        if msg.author.id == bot.user.id:
-            await msg.delete()
-            return
 
 @bot.command(hidden=True)
 @commands.is_owner()
