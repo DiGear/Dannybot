@@ -36,9 +36,16 @@ async def on_ready():
     for guild in bot.guilds:
         try:
             await guild.me.edit(nick=bot.user.name)
-            logger.info(f'Corrected name in {guild.name}')
+            print(f'Corrected name in {guild.name}')
         except discord.Forbidden:
             logger.error(f'Unable to correct name in {guild.name}')
+    print("---------------------------------------------------------------------")        
+    # slash commands test
+    try: # try except bad btw
+        command_sync = await bot.tree.sync()
+        print(f"Synced {len(command_sync)} slashes")
+    except:
+        logger.error(f'Unable to register new slash commands')
     # print a success message upon boot
     print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
@@ -67,6 +74,11 @@ async def ping(ctx):
     ping = (time.monotonic() - before) * 1000
     await message.edit(content=f"Ping is {int(ping)}ms")
     logger.info(f'Dannybot was pinged at {int(ping)}ms')
+    
+@bot.tree.command(name='ping', description='Calculate bot latency, and send the results.')
+async def slashping(interaction: discord.Interaction):
+    await interaction.response.send_message(content=f"Ping is {int(round(bot.latency*1000))}ms")
+    logger.info(f'Dannybot was pinged at {int(round(bot.latency*1000))}ms')
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.command(hidden=True)
