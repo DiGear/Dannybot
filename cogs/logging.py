@@ -15,7 +15,7 @@ class logging(commands.Cog):
         for prefix in dannybot_prefixes:
             if message.content.startswith(prefix):
                 # Send command usage information to the logs channel
-                log_message = f"{message.author.name} ({message.author.id}) issued: {message.content}"
+                log_message = f"{message.author.global_name} ({message.author.id}) issued: {message.content}"
                 await self.bot.get_channel(logs_channel).send(log_message)
             break
 

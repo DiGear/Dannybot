@@ -56,7 +56,7 @@ class pooter(commands.Cog):
                         file.write(requests.get(link_to_file).content)  # Write the file content to the file
                         file.close()  # Close the file
 
-                    await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {link_to_file}')  # Send a message to the logs channel
+                    await self.bot.get_channel(logs_channel).send(f'{payload.member.global_name} ({payload.member.id}) has pootered: {link_to_file}')  # Send a message to the logs channel
 
                 await input_message.add_reaction(reaction)  # Add a reaction to the message
             else:  # If there is a URL in the message
@@ -72,7 +72,7 @@ class pooter(commands.Cog):
                     file.write(requests.get(link_to_file).content)  # Write the file content to the file
                     file.close()  # Close the file
 
-                await self.bot.get_channel(logs_channel).send(f'{payload.member.name}: {payload.member.id} has pootered {link_to_file}')  # Send a message to the logs channel
+                await self.bot.get_channel(logs_channel).send(f'{payload.member.global_name} ({payload.member.id}) has pootered: {link_to_file}')  # Send a message to the logs channel
 
                 await input_message.add_reaction(reaction)  # Add a reaction to the message
 
@@ -94,7 +94,7 @@ class pooter(commands.Cog):
                 with open(f'{dannybot}/database/Pooter/{f_name}{sanitized_link[-6:]}', 'wb') as f:
                     f.write(requests.get(attachment.url).content)
 
-                await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {attachment.url}')
+                await self.bot.get_channel(logs_channel).send(f'{ctx.author.global_name} ({ctx.author.id}) has pootered: {attachment.url}')
 
             await ctx.message.add_reaction(reaction)
         elif not File_Url:
@@ -112,7 +112,7 @@ class pooter(commands.Cog):
             with open(f'{dannybot}/database/Pooter/{f_name}{sanitized_link[-6:]}', 'wb') as f:
                 f.write(requests.get(File_Url).content)
 
-            await self.bot.get_channel(logs_channel).send(f'{ctx.author.name}: {ctx.author.id} has pootered {File_Url}')
+            await self.bot.get_channel(logs_channel).send(f'{ctx.author.global_name} ({ctx.author.id}) has pootered: {File_Url}')
             await ctx.message.add_reaction(reaction)
 
 async def setup(bot: commands.Bot):

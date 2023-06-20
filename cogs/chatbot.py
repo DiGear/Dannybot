@@ -26,7 +26,7 @@ class sentience(commands.Cog):
         
         if (self.bot.user.mentioned_in(message) and not message.reference):
             content = message.content.replace(self.bot.user.mention, '')
-            self.message_array.append({"role": "user", "content": f"{message.author.name} said: {content}"})
+            self.message_array.append({"role": "user", "content": f"{message.author.global_name} said: {content}"})
             self.array_index += 1
 
             if self.array_index > self.memory_length:
@@ -38,7 +38,7 @@ class sentience(commands.Cog):
                 messages=self.message_array
             )
 
-            logger.info(f"{message.author.name} said: {content}")
+            logger.info(f"{message.author.global_name} said: {content}")
             response_array = response.choices[0].message.content.replace("Dannybot:", "")
             self.array_index += 1
 
