@@ -110,36 +110,21 @@ async def reload(ctx, module):
         await bot.unload_extension(cog_path)
         await bot.load_extension(cog_path)
         await ctx.send(f"Reloaded {module} module!")
-        
-@bot.command(hidden=True)
-@commands.is_owner()
-async def unload(ctx, module):
-    if module == "all":
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                cog_name = filename[:-3]
-                cog_path = f"cogs.{cog_name}"
-                await bot.unload_extension(cog_path)
-        await ctx.send("Unloaded all modules!")
-    else:
-        cog_path = f"cogs.{module}"
-        await bot.unload_extension(cog_path)
-        await ctx.send(f"Unloaded {module} module!")
-
-@bot.command(hidden=True)
-@commands.is_owner()
-async def load(ctx, module):
-    if module == "all":
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                cog_name = filename[:-3]
-                cog_path = f"cogs.{cog_name}"
-                await bot.load_extension(cog_path)
-        await ctx.send("Loaded all modules!")
-    else:
-        cog_path = f"cogs.{module}"
-        await bot.load_extension(cog_path)
-        await ctx.send(f"Loaded {module} module!")
+@bot.tree.command(name='reload', description='DEV COMMAND | Reload specified cogs on the bot')
+async def reload(interaction: discord.Interaction, module:str, member:discord.Member=None):
+        if module == "all":
+            for filename in os.listdir("./cogs"):
+                if filename.endswith(".py"):
+                    cog_name = filename[:-3]
+                    cog_path = f"cogs.{cog_name}"
+                    await bot.unload_extension(cog_path)
+                    await bot.load_extension(cog_path)
+            await interaction.response.send_message("Reloaded all modules!", ephemeral=True)
+        else:
+            cog_path = f"cogs.{module}"
+            await bot.unload_extension(cog_path)
+            await bot.load_extension(cog_path)
+            await interaction.response.send_message(f"Reloaded {module} module!", ephemeral=True)
 
 # stage all of our cogs
 async def load_extensions():
