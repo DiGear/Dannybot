@@ -10,8 +10,8 @@ class user(commands.Cog):
         self.bot = bot
         super().__init__()
     
-    @commands.command(description="Grab the command author's avatar, and send it. If a User ID or @Mention is provided. Send their avatar(s) instead.", brief="Display provided users avatar(s)")
-    async def avatar(self, ctx, member: discord.Member = None):
+    @commands.hybrid_command(name='avatar', description="Grab the command users avatar, and send it.", brief="Display provided users avatar(s)")
+    async def avatar(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
         
         if member.guild_avatar:
@@ -26,8 +26,8 @@ class user(commands.Cog):
             embed.set_image(url=str(member.avatar.url))
             await ctx.send(f"Avatar of {member.display_name}.", mention_author=True, embed=embed)
 
-    @commands.command(description="Grab the command author's account information, and then send it in an embed. If a User ID or @Mention is provided. Send their account information instead.", brief="Display provided users information")
-    async def info(self, ctx, member: discord.Member = None):
+    @commands.hybrid_command(name='info', description="Grab the users account information, and then send it in an embed.", brief="Display provided users information")
+    async def info(self, ctx: commands.Context, member: discord.Member = None):
         member = member or ctx.author
         embed = discord.Embed(title="User Information", color=member.color)
         embed.set_thumbnail(url=member.avatar.url)

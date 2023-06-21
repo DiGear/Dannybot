@@ -40,12 +40,8 @@ async def on_ready():
         except discord.Forbidden:
             logger.error(f'Unable to correct name in {guild.name}')
     print("---------------------------------------------------------------------")        
-    # slash commands test
-    try: # try except bad btw
-        command_sync = await bot.tree.sync()
-        print(f"Synced {len(command_sync)} slashes")
-    except:
-        logger.error(f'Unable to register new slash commands')
+    command_sync = await bot.tree.sync()
+    print(f"Synced {len(command_sync)} slashes")
     # print a success message upon boot
     print("---------------------------------------------------------------------")
     print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
@@ -84,7 +80,7 @@ async def say(ctx: commands.Context, *, text):
         except:
             return
 
-@bot.command(name='reload', description='DEV COMMAND | Reload specified cogs on the bot', hidden=True)
+@bot.hybird_command(name='reload', description='DEV COMMAND | Reload specified cogs on the bot', hidden=True)
 @commands.is_owner()
 async def reload(ctx: commands.Context, module: str):
     if not ctx.author.id in dannybot_team_ids:
