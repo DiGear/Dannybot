@@ -56,6 +56,7 @@ logger = logging.getLogger(__name__)
 # dannybot config
 dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
+dannybot_team_ids = [343224184110841856, 158418656861093888, 249411048518451200]
 dannybot_denialRatio = 250 # chance for dannybot to deny your command input
 dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks'] # what dannybot says upon denial
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
