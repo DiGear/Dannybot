@@ -8,10 +8,11 @@ class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(aliases=['gpt'], description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
-    async def write(self, ctx, *, prompt):
+    @commands.hybrid_command(name='write', aliases=['davinci', 'gpt'], description="Interact with GPT with ONLY prompts.", brief="Get AI generated text based on provided prompts")
+    async def write(self, ctx: commands.Context, *, prompt: str):
+        await ctx.defer()
         try:        
-            gpt_prompt = str(f"write me {prompt}")
+            gpt_prompt = str(prompt)
             response = openai.Completion.create(
                 engine="text-davinci-003",
                 prompt=gpt_prompt,
@@ -19,23 +20,6 @@ class ai(commands.Cog):
                 max_tokens=256,
                 top_p=1.0,
                 frequency_penalty=0.0,
-                presence_penalty=0.0
-            )
-            await ctx.reply(response['choices'][0]['text'], mention_author=True)
-        except Exception as e:
-            await ctx.send(f"An error occurred while generating the text: {str(e)}")
-        
-    @commands.command(description="Interact with GPT3 using Dannybot.", brief="Get AI generated text based on provided prompts")
-    async def gpttemp(self, ctx, temp: typing.Optional[float] = 0.7, *, prompt):
-        try:
-            gpt_prompt = str(prompt)
-            response = openai.Completion.create(
-                engine="text-davinci-003",
-                prompt=gpt_prompt,
-                temperature=temp,
-                max_tokens=256,
-                top_p=1.0,
-                frequency_penalty=1.0,
                 presence_penalty=0.0
             )
             await ctx.reply(response['choices'][0]['text'], mention_author=True)
@@ -56,8 +40,8 @@ class ai(commands.Cog):
         except Exception as e:
             await ctx.send(f"An error occurred while upscaling the image: {str(e)}")
 
-    @commands.command(aliases=['quote'], description="Sends AI generated quotes using the inspirobot API.", brief="Get AI generated inspirational posters")
-    async def inspire(self, ctx):
+    @commands.hybrid_command(name="inspire", aliases=['quote'], description="Sends AI generated quotes using the inspirobot API.", brief="Get AI generated inspirational posters")
+    async def inspire(self, ctx: commands.Context):
         link = "http://inspirobot.me/api?generate=true"
 
         try:
@@ -120,8 +104,9 @@ class ai(commands.Cog):
                         await ctx.reply("Processing of the image failed. This is most likely because no background was detected.", mention_author=True)
                         logger.info(await response.text())
 
-    @commands.command(description="Uses the craiyon API to send user prompts and return AI generated output.", brief="Use craiyon to create AI generated images")
-    async def dalle(self, ctx, *, prompt):
+    @commands.hybrid_command(name="dalle", description="Generate AI Image uses Dall-E", brief="Use craiyon to create AI generated images")
+    async def dalle(self, ctx: commands.Context, *, prompt: str):
+        await ctx.defer()
         max_attempts = 3
         attempt = 0
         print("-------------------------------------")

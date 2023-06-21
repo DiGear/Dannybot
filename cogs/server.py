@@ -25,6 +25,7 @@ class server(commands.Cog):
         
     @commands.hybrid_command(name="img", description="Send a random picture or file from a category.", brief="Send a random picture or file from a category")
     async def imgcmd(self, ctx: commands.Context, category: Literal['mimi', 'nekopara', 'vid', 'img', 'leffrey', 'gif', 'femboy', 'fanboy', 'glasscup', 'plasticcup', 'burger', 'danny'] = 'img'):
+        await ctx.defer()
         file_types = {
             "mimi": MimiPath,
             "nekopara": NekoparaPath,

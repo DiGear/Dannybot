@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 # Custom converter class for GPT commands
 class CustomGPT(commands.FlagConverter):
-    instructions: str
+    instructions: typing.Optional[str] = "Follow the prompt"
     prompt: str
 
 # Class that stores every global variable and initializes them
@@ -68,9 +68,10 @@ class sentience(commands.Cog):
                 await message.channel.send(response_array, reference=message)
 
             self.message_array.append({"role": "assistant", "content": response_array})
-
-    @commands.command(description="Interact with GPT3.5 using Dannybot.", brief="Get AI-generated text based on provided prompts")
-    async def gptinstruct(self, ctx, *, flags: CustomGPT):
+        
+    @commands.hybrid_command(name="gpt3", aliases=['gptinstruct'], description="Interact with GPT3.5 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
+    async def gpt3(self, ctx: commands.Context, *, flags: CustomGPT):
+        await ctx.defer()
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
