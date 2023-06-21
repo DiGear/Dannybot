@@ -39,15 +39,13 @@ class server(commands.Cog):
             "burger": f"{dannybot}\\database\\Burger",
             "danny": f"I:\\Danny Infinitum"
         }
-
         if category not in file_types:
             await ctx.reply("Invalid category. Please choose from: " + ", ".join(file_types.keys()))
             return
-
         dir = file_types[category]
         file_name = random.choice(os.listdir(dir))
         with open(f"{dir}\\{file_name}", "rb") as f:
-            await ctx.reply(file=File(f, f"{category.replace(' ', '_')}.png"), mention_author=True)
+            await ctx.reply(file=File(f, "img.png"), mention_author=True)
         
     @commands.hybrid_command(name="database", aliases=['db', 'databases', 'dbs'], description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
