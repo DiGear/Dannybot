@@ -8,8 +8,8 @@ class server(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
-    async def neko(self, ctx):
+    @commands.hybrid_command(name='neko', aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
+    async def neko(self, ctx: commands.Context):
         try:
             api_response = requests.get("https://nekos.life/api/v2/img/neko")
             api_response.raise_for_status()  # Raise an exception if the API request was not successful
@@ -23,8 +23,8 @@ class server(commands.Cog):
         except requests.exceptions.RequestException:
             return
         
-    @commands.command(description="Send a random picture or file from a category.", brief="Send a random picture or file from a category")
-    async def img(self, ctx, category='img'):
+    @commands.hybrid_command(name="img", description="Send a random picture or file from a category.", brief="Send a random picture or file from a category")
+    async def imgcmd(self, ctx: commands.Context, category: Literal['mimi', 'nekopara', 'vid', 'img', 'leffrey', 'gif', 'femboy', 'fanboy', 'glasscup', 'plasticcup', 'burger', 'danny']):
         file_types = {
             "mimi": MimiPath,
             "nekopara": NekoparaPath,
@@ -39,8 +39,6 @@ class server(commands.Cog):
             "burger": f"{dannybot}\\database\\Burger",
             "danny": f"I:\\Danny Infinitum"
         }
-        
-        category = category.lower()
 
         if category not in file_types:
             await ctx.reply("Invalid category. Please choose from: " + ", ".join(file_types.keys()))
@@ -51,7 +49,7 @@ class server(commands.Cog):
         with open(f"{dir}\\{file_name}", "rb") as f:
             await ctx.reply(file=File(f, f"{category.replace(' ', '_')}.png"), mention_author=True)
         
-    @commands.command(description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
+    @commands.hybrid_command(name="database", aliases=['db', 'databases', 'dbs'], description="Display file counts for key directories in Dannybot", brief="Display file counts for key directories in Dannybot")
     async def db(self, ctx):
         # Define directory paths
         pooter_path = f"{dannybot}\\database\\Pooter"

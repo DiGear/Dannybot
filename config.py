@@ -27,6 +27,7 @@ import urllib.request
 from collections import namedtuple
 from datetime import datetime
 from textwrap import wrap
+from typing import Literal
 
 import aiofiles
 import aiohttp
@@ -71,7 +72,7 @@ imageUpper = 1500 # the largest image width image commands will use. if the imag
 bookmarks_channel = int(os.getenv("BOOKMARKS")) #channel to send personal bookmarks to
 logs_channel = int(os.getenv("LOGS")) # channel to log commands
 
-# .env
+# more .env keys being assigned here
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey =  os.getenv("TENOR_KEY")

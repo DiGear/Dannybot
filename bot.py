@@ -32,13 +32,6 @@ bot = commands.Bot(
 # do this when everything else is done
 @bot.event
 async def on_ready():
-    # name corrector
-    for guild in bot.guilds:
-        try:
-            await guild.me.edit(nick=bot.user.name)
-            print(f'Corrected name in {guild.name}')
-        except discord.Forbidden:
-            logger.error(f'Unable to correct name in {guild.name}')
     print("---------------------------------------------------------------------")        
     command_sync = await bot.tree.sync()
     print(f"Synced {len(command_sync)} slashes")
@@ -80,7 +73,7 @@ async def say(ctx: commands.Context, *, text):
         except:
             return
 
-@bot.hybird_command(name='reload', description='DEV COMMAND | Reload specified cogs on the bot', hidden=True)
+@bot.hybrid_command(name='reload', description='DEV COMMAND | Reload specified cogs on the bot', hidden=True)
 @commands.is_owner()
 async def reload(ctx: commands.Context, module: str):
     if not ctx.author.id in dannybot_team_ids:
