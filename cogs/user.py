@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class user(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        super().__init__()
     
     @commands.command(description="Grab the command author's avatar, and send it. If a User ID or @Mention is provided. Send their avatar(s) instead.", brief="Display provided users avatar(s)")
     async def avatar(self, ctx, member: discord.Member = None):
