@@ -313,8 +313,8 @@ def ezogaming_regex(datalist, dataentry):
 def undertext(name, text, isAnimated):
     
     # animated override: if the name contains "animated-", remove it and set isAnimated to True
-    if "animated-" in name:
-        name = name.replace("animated-","")
+    if text.endswith("True"):
+        text = text[:-4]
         isAnimated = True
     
     # AU style overrides: if the name contains a valid AU, add the AU style to the name and text
