@@ -20,6 +20,8 @@ class audio(commands.Cog):
       if ctx.voice_client is not None:
         await ctx.voice_client.disconnect()
 
+# this entire fucking thing is broken lol
+    '''
     @commands.command(description="Use UVR to separate the vocals and instrumental from a provided file, and sends the results as mp3 files.", brief="Splits audio into vocals and instrumental using AI")
     async def acapella(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
@@ -42,6 +44,7 @@ class audio(commands.Cog):
         with open(instruments_path, 'rb') as i, open(vocals_path, 'rb') as v:
             await ctx.reply(file=File(i, 'Inst.mp3'))
             await ctx.reply(file=File(v, 'Vocal.mp3'))
+        '''
                 
     @commands.command(description="Flips a MIDI file upside down, relative to middle C (C5).", brief="Flips a MIDI file upside down")
     async def midiflip(self, ctx, *args):

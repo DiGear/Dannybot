@@ -35,9 +35,11 @@ class booru(commands.Cog):
         self.embed.set_footer(text=f"Score: {post['score']}")
         self.embed.set_image(url=post['image_url'])
     
-    @commands.command(aliases=["dan"], description="Browse images on danbooru.donmai.us. Limited to 2 tags per search.", brief="Browse images from Danbooru")
-    async def danbooru(self, ctx, tag1: str, tag2: str = ""):
-        tags = f"{tag1}+{tag2}" if tag2 else tag1
+    @commands.hybrid_command(name='danbooru', aliases=["dan"], description="Browse images on danbooru.donmai.us. Limited to 2 tags per search.", brief="Browse images from Danbooru")
+    async def danbooru(self, ctx: commands.Context, *, tags):
+        await ctx.defer()
+        tags = tags.replace(", ", "+")
+        tags = tags.replace(" ", "+")
         url = f"https://danbooru.donmai.us/posts.json?&limit=1000000&tags={tags}"
         print(url)
         response = requests.get(url)
