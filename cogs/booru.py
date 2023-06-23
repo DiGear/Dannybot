@@ -57,7 +57,10 @@ class booru(commands.Cog):
 
         sfw_posts = [post for post in data if post.get('rating') == 'g']
         nsfw = ctx.channel.is_nsfw()
-        sfw_posts = sfw_posts if not nsfw else data
+        try:
+            sfw_posts = sfw_posts if not nsfw else data
+        except:
+            sfw_posts = sfw_posts
         total_posts = len(sfw_posts)
 
         self.current_index = 0

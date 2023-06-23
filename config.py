@@ -51,7 +51,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # ----------
-# Variables
+# VariablesZ
 # ----------
 
 # dannybot config
@@ -59,7 +59,7 @@ dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
 dannybot_team_ids = [343224184110841856, 158418656861093888, 249411048518451200]
 dannybot_denialRatio = 250 # chance for dannybot to deny your command input
-dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks'] # what dannybot says upon denial
+dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks', 'use slashes lol'] # what dannybot says upon denial
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'mov'] # list of accepted files for the bots public database
