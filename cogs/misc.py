@@ -25,6 +25,7 @@ class misc(commands.Cog):
         
     @commands.hybrid_command(name='undertext', description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.", brief="Generate a custom Undertale-Styled textbox", hidden=True)
     async def undertext(self, ctx: commands.Context, character: str, *, text: str, animated: typing.Optional[bool] = False):
+        await ctx.defer()
         charname, chartext, animated = undertext(character, text, animated)
         url = furl.furl(f"https://www.demirramon.com/gen/undertale_text_box.{'gif' if animated else 'png'}?text={chartext}&character={charname}{'&animate=true' if animated else ''}").url
         with urllib.request.urlopen(url) as response:
@@ -40,7 +41,7 @@ class misc(commands.Cog):
             await ctx.reply(file=File(f, "dumbass.png"), mention_author=True)
 
     @commands.hybrid_command(name="download", aliases=["dl", "ytdl", "down"],description="Download from a multitude of sites in audio or video format.", brief="Download from a list of sites as mp3 or mp4")
-    async def download(self, ctx: commands.Context, link: str, format: typing.Optional[Literal['mp3', 'ogg', 'mp4', 'webm']] = 'mp3'):
+    async def download(self, ctx: commands.Context, file_download: str, format: typing.Optional[Literal['mp3', 'ogg', 'mp4', 'webm']] = 'mp3'):
         await ctx.send('Ok. Downloading...')
 
         video_formats = ['mp4', 'webm']
@@ -49,9 +50,9 @@ class misc(commands.Cog):
 
         try:
             if format in video_formats:
-                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist -f {format} "{link}"')
+                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist -f {format} "{file_download}"')
             elif format in audio_formats:
-                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist --audio-format {format} -x "{link}"')
+                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist --audio-format {format} -x "{file_download}"')
             else:
                 await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
                 return
