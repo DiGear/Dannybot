@@ -50,14 +50,16 @@ class misc(commands.Cog):
 
         try:
             if format in video_formats:
-                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist -f {format} "{file_download}"')
+                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist -f {format} "{file_download}" --write-info-json -o infojson:ytdl')
             elif format in audio_formats:
-                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist --audio-format {format} -x "{file_download}"')
+                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist --audio-format {format} -x "{file_download}" --write-info-json -o infojson:ytdl')
             else:
                 await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
                 return
-
-            await ctx.reply(file=discord.File('ytdl.' + format))
+            with open('ytdl.info.json', 'r',encoding='utf-8') as infojson:
+                nameFromJson=json.load(infojson)["title"] #get title from infojson
+                nameSanitized=nameFromJson.replace(' ','_').replace('"','_') #should be sanitized more
+            await ctx.reply(file=discord.File('ytdl.' + format, f'{nameSanitized[:48]}.{format}')))
         except:
             await ctx.reply("An error occurred during the download process.")
         finally:
