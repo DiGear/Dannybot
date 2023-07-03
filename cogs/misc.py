@@ -40,7 +40,7 @@ class misc(commands.Cog):
         with open(f"{dannybot}\\assets\\bugle.png", "rb") as f:
             await ctx.reply(file=File(f, "dumbass.png"), mention_author=True)
 
-    @commands.hybrid_command(name="download", aliases=["dl", "ytdl", "down"],description="Download from a multitude of sites in audio or video format.", brief="Download from a list of sites as mp3 or mp4")
+    @commands.hybrid_command(name="download", aliases=["dl", "ytdl", "down"], description="Download from a multitude of sites in audio or video format.", brief="Download from a list of sites as mp3 or mp4")
     async def download(self, ctx: commands.Context, file_download: str, format: typing.Optional[Literal['mp3', 'ogg', 'mp4', 'webm']] = 'mp3'):
         await ctx.send('Ok. Downloading...')
 
@@ -49,17 +49,37 @@ class misc(commands.Cog):
         os.chdir(f"{dannybot}\\cache")
 
         try:
+            ydl_opts = {
+                'outtmpl': '%(title)s.%(ext)s',
+                'force_overwrites': True,
+                'no_check_certificate': True,
+                'no_playlist': True
+            }
+
             if format in video_formats:
-                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist -f {format} "{file_download}"')
+                ydl_opts['format'] = format
             elif format in audio_formats:
-                os.system(f'yt-dlp -o "ytdl.%(ext)s" --force-overwrites --no-check-certificate --no-playlist --audio-format {format} -x "{file_download}"')
+                ydl_opts['format'] = 'bestaudio/best'
+                ydl_opts['postprocessors'] = [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': format,
+                    'preferredquality': '192',
+                }]
             else:
                 await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
                 return
 
-            await ctx.reply(file=discord.File('ytdl.' + format))
-        except:
-            await ctx.reply("An error occurred during the download process.")
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(file_download, download=True)
+                file_path = ydl.prepare_filename(info_dict)
+
+            # Modify the file extension based on the specified format
+            file_path_with_format = file_path.rsplit('.', maxsplit=1)[0] + f".{format}"
+
+            await ctx.reply(file=discord.File(file_path_with_format))
+        except Exception as e:
+            logging.exception("An error occurred during the download process:")
+            await ctx.reply(f"An error occurred during the download process: {e}")
         finally:
             os.chdir(f"{dannybot}")
 
