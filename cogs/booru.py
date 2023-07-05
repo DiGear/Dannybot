@@ -59,6 +59,11 @@ class booru(commands.Cog):
         nsfw = ctx.channel.is_nsfw()
         try:
             sfw_posts = sfw_posts if not nsfw else data
+            if nsfw:
+                    words = ['loli', 'fetus', 'baby', 'toddler']
+                    if any(word in tags for word in words):
+                        await ctx.reply('fuck no')
+                        return
         except:
             sfw_posts = sfw_posts
         total_posts = len(sfw_posts)
