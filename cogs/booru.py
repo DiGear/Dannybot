@@ -60,7 +60,7 @@ class booru(commands.Cog):
         try:
             sfw_posts = sfw_posts if not nsfw else data
             if nsfw:
-                    words = ['loli', 'fetus', 'baby', 'toddler', 'rape', 'guro']
+                    words = ['loli', 'fetus', 'baby', 'toddler', 'rape', 'guro', 'sleep_molestation', 'molestation', 'compensated_molestation']
                     if any(word in tags for word in words):
                         await ctx.reply('fuck no')
                         return
