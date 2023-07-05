@@ -70,11 +70,13 @@ class misc(commands.Cog):
                 return
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info_dict = ydl.extract_info(file_download, download=True)
-                file_path = ydl.prepare_filename(info_dict)
-
-            # Modify the file extension based on the specified format
-            file_path_with_format = file_path.rsplit('.', maxsplit=1)[0] + f".{format}"
+                try:        
+                    info_dict = ydl.extract_info(file_download, download=True)
+                    file_path = ydl.prepare_filename(info_dict)
+                    # Modify the file extension based on the specified format
+                    file_path_with_format = file_path.rsplit('.', maxsplit=1)[0] + f".{format}"
+                except:
+                    file_path_with_format = (f"non-ytdl.{format}")
 
             await ctx.reply(file=discord.File(file_path_with_format))
         except Exception as e:
