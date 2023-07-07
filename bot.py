@@ -13,7 +13,7 @@ print("-----------------------------------------")
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 # intents shit
-intents=discord.Intents.all()
+intents = discord.Intents.all()
 intents.voice_states = True
 intents.messages = True
 
