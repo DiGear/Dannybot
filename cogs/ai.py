@@ -22,7 +22,7 @@ class ai(commands.Cog):
                 frequency_penalty=0.0,
                 presence_penalty=0.0
             )
-            await ctx.reply(response['choices'][0]['text'], mention_author=True)
+            await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
         except Exception as e:
             await ctx.send(f"An error occurred while generating the text: {str(e)}")
 

@@ -109,7 +109,7 @@ class image(commands.Cog):
         file_url = context[0]
         is_gif = '.gif' in file_url
         cache_dir = f'{dannybot}\\cache'
-        output_dir = f'{cache_dir}\\output'
+        output_dir = f'{cache_dir}\\ffmpeg\\output'
         output_file = 'magik.gif' if is_gif else 'magik.png'
 
         await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)

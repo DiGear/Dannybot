@@ -36,6 +36,7 @@ class booru(commands.Cog):
         self.embed.set_image(url=post['image_url'])
     
     @commands.hybrid_command(name='danbooru', aliases=["dan"], description="Browse images on danbooru.donmai.us. Limited to 2 tags per search.", brief="Browse images from Danbooru")
+    @commands.cooldown(1, 25, commands.BucketType.user)
     async def danbooru(self, ctx: commands.Context, *, tags):
         await ctx.defer()
         tags = tags.replace(", ", "+")
@@ -59,11 +60,10 @@ class booru(commands.Cog):
         nsfw = ctx.channel.is_nsfw()
         try:
             sfw_posts = sfw_posts if not nsfw else data
-            if nsfw:
-                    words = ['loli', 'fetus', 'baby', 'toddler', 'rape', 'guro', 'sleep_molestation', 'molestation', 'compensated_molestation', 'beastiality', 'scat']
-                    if any(word in tags for word in words):
-                        await ctx.reply('fuck no')
-                        return
+            words = ['loli', 'fetus', 'baby', 'toddler', 'rape', 'guro', 'sleep_molestation', 'molestation', 'compensated_molestation', 'beastiality', 'scat', 'gore']
+            if any(word in tags for word in words):
+                await ctx.reply('fuck no')
+                return
         except:
             sfw_posts = sfw_posts
         total_posts = len(sfw_posts)
@@ -102,6 +102,7 @@ class booru(commands.Cog):
             self.embed = self.create_embed(post_data)
             self.message = await ctx.send(embed=self.embed)
             await self.message.add_reaction('⬅️')
+            await asyncio.sleep(1)
             await self.message.add_reaction('➡️')
 
         def check(reaction, user):
@@ -112,7 +113,7 @@ class booru(commands.Cog):
             )
 
         try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=20.0, check=check)
 
             if str(reaction.emoji) == '⬅️':
                 self.current_index = max(0, self.current_index - 1)
