@@ -10,6 +10,8 @@ class pooter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, input: discord.Message):
+        if input.guild.id == 1089076875999072296:
+            return
         if any(input.content.startswith(prefix + "poo") for prefix in dannybot_prefixes):
             poopoo = input.content.count("poo")
             if poopoo > 1:
@@ -78,6 +80,8 @@ class pooter(commands.Cog):
 
     @commands.command(hidden=True, aliases=["poo", "poop"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
+        if ctx.guild.id == 1089076875999072296:
+            return
         downloads = 1  # Downloads counter
         reaction = '✅'  # Reaction to add to the message
         f_name = randhex(128)  # Random hex name for the file
