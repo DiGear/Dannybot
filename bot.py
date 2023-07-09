@@ -65,9 +65,10 @@ async def ping(ctx: commands.Context):
 @bot.hybrid_command(name='say', description="DEV COMMAND | No description given", hidden=True)
 async def say(ctx: commands.Context, *, text):
     if not ctx.author.id in dannybot_team_ids:
-            await ctx.send("This command is restricted.", ephemeral=True, delete_after=3)
+            await ctx.reply("This command is restricted.", ephemeral=True, delete_after=3)
     else:
-        await ctx.send(text)
+        await ctx.reply("say command issued.", ephemeral=True, delete_after=1)
+        await ctx.channel.send(text)
         try:
             await ctx.message.delete() #this only works for the text based
         except:
