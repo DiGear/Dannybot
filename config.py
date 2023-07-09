@@ -65,6 +65,7 @@ dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks', 'use slashes lol'
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'mov'] # list of accepted files for the bots public database
+cmd_blacklist = ["0"] # Users who cant use the bot lol
 
 #configs for the image manipulation commands
 imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
