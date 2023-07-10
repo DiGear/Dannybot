@@ -316,7 +316,6 @@ def ezogaming_regex(datalist, dataentry):
 '''
 
 def undertext(name, text, isAnimated):
-    
     # animated override: if the name contains "animated-", remove it and set isAnimated to True
     if text.endswith("True"):
         text = text[:-4]
@@ -744,3 +743,39 @@ def listgen(directory):
     list =  os.listdir(directory)
     string = ', '.join(list)
     return string
+
+# i hate this - FDG
+def uwuify(input_text):
+    # Replacement for 'l' -> 'w'
+    modified_text = input_text.replace('l', 'w')
+
+    # Replacement for 'r' -> 'w'
+    modified_text = modified_text.replace('r', 'w')
+
+    # Replacement for 'the' -> 'de'
+    modified_text = modified_text.replace('the', 'de')
+
+    # Replacement for 'to' -> 'tu'
+    modified_text = modified_text.replace('to', 'tu')
+
+    # List of emoticons
+    emoticons = ['^_^', 'uwu', 'OwO', '>w<', 'x3', '^.^', '^-^', '(・`ω´・)', 'x3', ';;w;;', 'nya~!']
+
+    # Split the input text into individual words
+    words = modified_text.split()
+
+    # Iterate over the words and randomly insert an emoticon between them
+    output_text = []
+    for i, word in enumerate(words):
+        output_text.append(word)
+        if i < len(words) - 1 and random.random() < 0.033:  # Adjust the chance as desired (e.g., 0.2 for 20% chance)
+            output_text.append(random.choice(emoticons))
+
+    # Join the modified words back into a single string
+    modified_text = ' '.join(output_text)
+
+    # Perform additional replacements using .replace statements
+    modified_text = modified_text.replace('~', '')
+    modified_text = modified_text.replace('!', ' !~ ')
+
+    return modified_text

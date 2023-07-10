@@ -13,7 +13,11 @@ class CustomGPT(commands.FlagConverter):
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.sysmsg = ""
+        self.catboy_mode = True
+        if self.catboy_mode:
+            self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified. Also you must speak like a UWU X3 nyan catboy nya!"
+        else:
+            self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."  
         self.memory_length = 15
         self.message_array = [{"role": "system", "content": self.sysmsg}]
         self.array_index = 0
@@ -24,8 +28,9 @@ class sentience(commands.Cog):
         if message.author.bot:
             return
         
-        if self.bot.user.mentioned_in(message) and not any(prefix in message.content for prefix in dannybot_prefixes):
+        if (self.bot.user.mentioned_in(message) and not message.reference):
             content = message.content.replace(self.bot.user.mention, '')
+            content = content.replace("Dannybot said:", '')
             self.message_array.append({"role": "user", "content": f"{message.author.global_name} said: {content}"})
             self.array_index += 1
 
@@ -39,7 +44,9 @@ class sentience(commands.Cog):
             )
 
             logger.info(f"{message.author.global_name} said: {content}")
-            response_array = response.choices[0].message.content.replace("Dannybot:", "")
+            response_array = response.choices[0].message.content.replace("Dannybot:", "")[:2000]
+            if self.catboy_mode:
+                response_array = uwuify(response_array)
             self.array_index += 1
 
             if message.author.voice and message.author.voice.channel:
