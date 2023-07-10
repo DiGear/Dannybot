@@ -24,7 +24,7 @@ class sentience(commands.Cog):
         if message.author.bot:
             return
         
-        if (self.bot.user.mentioned_in(message) and not message.reference):
+        if self.bot.user.mentioned_in(message) and not any(prefix in message.content for prefix in dannybot_prefixes):
             content = message.content.replace(self.bot.user.mention, '')
             self.message_array.append({"role": "user", "content": f"{message.author.global_name} said: {content}"})
             self.array_index += 1
