@@ -13,7 +13,7 @@ class CustomGPT(commands.FlagConverter):
 class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.catboy_mode = True
+        self.catboy_mode = False
         if self.catboy_mode:
             self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified. Also you must speak like a UWU X3 nyan catboy nya!"
         else:
@@ -72,9 +72,9 @@ class sentience(commands.Cog):
                     audio_source = discord.FFmpegPCMAudio(f"{dannybot}\\cache\\ChatGPT.wav")
                     voice_client.play(audio_source)
             else:
-                await message.channel.send(response_array, reference=message)
+                await message.channel.send(response_array[:2000], reference=message)
 
-            self.message_array.append({"role": "assistant", "content": response_array})
+            self.message_array.append({"role": "assistant", "content": response_array[:2000]})
         
     @commands.hybrid_command(name="gpt3", aliases=['gptinstruct'], description="Interact with GPT3.5 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
     async def gpt3(self, ctx: commands.Context, *, flags: CustomGPT):

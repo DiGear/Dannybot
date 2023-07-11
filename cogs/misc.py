@@ -44,8 +44,8 @@ class misc(commands.Cog):
     async def download(self, ctx: commands.Context, file_download: str, format: typing.Optional[Literal['mp3', 'ogg', 'mp4', 'webm']] = 'mp3'):
         await ctx.send('Ok. Downloading...')
 
-        video_formats = ['mp4', 'webm']
-        audio_formats = ['mp3', 'ogg']
+        video_formats = ['mp4']
+        audio_formats = ['mp3']
         os.chdir(f"{dannybot}\\cache")
 
         try:

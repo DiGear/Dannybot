@@ -747,35 +747,38 @@ def listgen(directory):
 # i hate this - FDG
 def uwuify(input_text):
     # Replacement for 'l' -> 'w'
-    modified_text = input_text.replace('l', 'w')
+    modified_text1 = input_text.replace('l', 'w')
+    
+     # Replacement for 'u' -> 'uu'
+    modified_text2 = modified_text1.replace('u', 'uu')
 
     # Replacement for 'r' -> 'w'
-    modified_text = modified_text.replace('r', 'w')
+    modified_text3 = modified_text2.replace('r', 'w')
 
     # Replacement for 'the' -> 'de'
-    modified_text = modified_text.replace('the', 'de')
+    modified_text4 = modified_text3.replace('the', 'de')
 
     # Replacement for 'to' -> 'tu'
-    modified_text = modified_text.replace('to', 'tu')
+    modified_text5 = modified_text4.replace('to', 'tu')
 
     # List of emoticons
-    emoticons = ['^_^', 'uwu', 'OwO', '>w<', 'x3', '^.^', '^-^', '(・`ω´・)', 'x3', ';;w;;', 'nya~!']
+    emoticons = ['^_^', '>w<', 'x3', '^.^', '^-^', '(・`ω´・)', 'x3', ';;w;;']
 
     # Split the input text into individual words
-    words = modified_text.split()
+    words = modified_text5.split()
 
     # Iterate over the words and randomly insert an emoticon between them
     output_text = []
     for i, word in enumerate(words):
         output_text.append(word)
-        if i < len(words) - 1 and random.random() < 0.033:  # Adjust the chance as desired (e.g., 0.2 for 20% chance)
+        if i < len(words) - 1 and random.random() < 0.1:  # Adjust the chance as desired (e.g., 0.2 for 20% chance)
             output_text.append(random.choice(emoticons))
 
     # Join the modified words back into a single string
-    modified_text = ' '.join(output_text)
+    modified_text6 = ' '.join(output_text)
 
     # Perform additional replacements using .replace statements
-    modified_text = modified_text.replace('~', '')
-    modified_text = modified_text.replace('!', ' !~ ')
+    modified_text7 = modified_text6.replace('~', '')
+    modified_text = modified_text7.replace('!', ' !~ ')
 
     return modified_text
