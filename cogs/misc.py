@@ -41,7 +41,7 @@ class misc(commands.Cog):
             await ctx.reply(file=File(f, "dumbass.png"), mention_author=True)
 
     @commands.hybrid_command(name="download", aliases=["dl", "ytdl", "down"], description="Download from a multitude of sites in audio or video format.", brief="Download from a list of sites as mp3 or mp4")
-    async def download(self, ctx: commands.Context, file_download: str, format: typing.Optional[Literal['mp3', 'ogg', 'mp4', 'webm']] = 'mp3'):
+    async def download(self, ctx: commands.Context, file_download: str, format: typing.Optional[Literal['mp3', 'mp4']] = 'mp3'):
         await ctx.send('Ok. Downloading...')
 
         video_formats = ['mp4']
