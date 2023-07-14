@@ -36,7 +36,6 @@ import furl
 import numpy
 import openai
 import PIL
-import pyttsx3
 import requests
 import yt_dlp
 from discord import File, app_commands
@@ -762,9 +761,9 @@ def uwuify(input_text):
     modified_text5 = modified_text4.replace('to', 'tu')
 
     # List of emoticons
-    emoticons = ['^_^', '>w<', 'x3', '^.^', '^-^', '(・`ω´・)', 'x3', ';;w;;']
+    emoticons = ['^_^', '>w<', 'x3', '^.^', '^-^', '(・ˋω´・)', 'x3', ';;w;;']
 
-    # Split the input text into individual words
+    # Split the input text into individual wordss
     words = modified_text5.split()
 
     # Iterate over the words and randomly insert an emoticon between them

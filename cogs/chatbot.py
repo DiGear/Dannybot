@@ -21,7 +21,6 @@ class sentience(commands.Cog):
         self.memory_length = 15
         self.message_array = [{"role": "system", "content": self.sysmsg}]
         self.array_index = 0
-        self.allowed_in_voice_channel = False
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -48,31 +47,8 @@ class sentience(commands.Cog):
             if self.catboy_mode:
                 response_array = uwuify(response_array)
             self.array_index += 1
-
-            if message.author.voice and message.author.voice.channel:
-                voice_state = message.guild.voice_client
-                voice_channel = message.author.voice.channel
-
-                if voice_state and voice_state.is_playing():
-                    pass
-                else:
-                    if self.allowed_in_voice_channel:
-                        voice_client = voice_state or await voice_channel.connect()
-
-                engine = pyttsx3.init()
-                engine.setProperty('rate', random.randint(125, 175))
-                engine.setProperty('volume', 0.75)
-                output_file = f"{dannybot}\\cache\\ChatGPT.wav"
-                text = response_array
-                engine.save_to_file(text, output_file)
-                engine.runAndWait()
-
-                await message.channel.send(response_array, reference=message)
-                if self.allowed_in_voice_channel:
-                    audio_source = discord.FFmpegPCMAudio(f"{dannybot}\\cache\\ChatGPT.wav")
-                    voice_client.play(audio_source)
-            else:
-                await message.channel.send(response_array[:2000], reference=message)
+            
+            await message.channel.send(response_array[:2000], reference=message)
 
             self.message_array.append({"role": "assistant", "content": response_array[:2000]})
         
