@@ -48,7 +48,7 @@ class sentience(commands.Cog):
                 response_array = uwuify(response_array)
             self.array_index += 1
             
-            await message.channel.send(response_array[:2000], reference=message)
+            await message.channel.send(response_array[:2000].replace('FDG', 'Master'), reference=message)
 
             self.message_array.append({"role": "assistant", "content": response_array[:2000]})
         
