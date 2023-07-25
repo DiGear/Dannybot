@@ -25,5 +25,11 @@ Powered by [NegativeHarmonizer](https://github.com/lukemcraig/NegativeHarmonizer
 This bot needs way more python modules than is worth mentioning here, so just make sure you have everything in `requirements.txt`.
 
 This bot requires a bit of setting up in order to host.
+
 Make sure that everything in `config.py` is configured for your own computer, including token and directories located outside of Dannybots working directory.
-The bot has text files to help you set up the `.env` file, as well as the `database` folder.
+
+The bot has text files to help you set up the `.env` file.
+
+The database folder is not preloaded with files, you will need to either disable this command, add the appropriate files, or change the database folders out entirely. There is a text file in the folder that tells you what to put where.
+
+The same applies to the tools folder, it needs some things but it will tell you what they are and what to do with them.

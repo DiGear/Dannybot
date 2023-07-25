@@ -1,20 +1,23 @@
-#your bot will need tokens/keys for all of the following in order to work
-#fill in all of these values appropriately, and then rename this file to ".env"
-
-#tokens
+# Bot Token
 TOKEN=
 
+# OpenAI API Key
 OPENAI_API_KEY=
 
+# RemoveBG API Key
 REMOVEBG_KEY=
 
+# Tenor API Key
 TENOR_KEY=
 
-GOOGLE_API=
-
-GOOGLE_CX=
-
-#channels
+# Channel for bot logging
 LOGS=
 
+# Channel for self-bookmarking
 BOOKMARKS=
+
+# Google Search API Key
+GOOGLE_API=
+
+# Google Search CX Key
+GOOGLE_CX=
