@@ -71,7 +71,7 @@ class sentience(commands.Cog):
             ]
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
-        
+  
     @commands.hybrid_command(name="gpt4",  description="Interact with GPT4 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
     async def gpt4(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
