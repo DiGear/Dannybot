@@ -91,7 +91,7 @@ class Google(commands.Cog):
                     await self.message.clear_reactions()
                 except Exception as e:
                     # Log any other exceptions that occurred during image search
-                    logger.error(f"An error occurred during image search: {str(e)}")
+                    logger.error(f"An error occurred during image search: **{str(e)}**")
 
         # Create an instance of ImagePaginator and display the image results
         paginator = ImagePaginator(ctx, gis, query)
@@ -99,7 +99,7 @@ class Google(commands.Cog):
             await paginator.show_image()
         except Exception as e:
             # Log any exceptions that occurred during image search command
-            logger.error(f"An error occurred in the 'image' command: {str(e)}")
+            logger.error(f"An error occurred in the 'image' command: **{str(e)}**")
 
 
 async def setup(bot: commands.Bot):

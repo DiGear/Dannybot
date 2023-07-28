@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 # Custom converter class for GPT commands
 class CustomWrite(commands.FlagConverter):
     temperature: typing.Optional[float] = 1.00
+    prompt: str
     top_p: typing.Optional[float] = 1.00
     frequency_penalty: typing.Optional[float] = 0.00
     presence_penalty: typing.Optional[float] = 0.00
@@ -32,12 +33,12 @@ class ai(commands.Cog):
             )
             await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
         except Exception as e:
-            await ctx.send(f"An error occurred while generating the text: {str(e)}")
+            await ctx.send(f"An error occurred while generating the text: **{str(e)}**")
             
     @commands.hybrid_command(name='writecustom', description="Interact with GPT with all the funny settings.", brief="Get AI generated text based on provided prompts")
     async def writecustom(self, ctx: commands.Context, *, flags: CustomWrite):
         await ctx.defer()
-        try:  
+        try:
             response = openai.Completion.create(
                 max_tokens=3072,
                 engine=flags.engine,
@@ -49,7 +50,7 @@ class ai(commands.Cog):
             )
             await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
         except Exception as e:
-            await ctx.send(f"An error occurred while generating the text: {str(e)}")
+            await ctx.send(f"An error occurred while generating the text: **{str(e)}**")
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
     async def waifu(self, ctx, *args):
@@ -63,7 +64,7 @@ class ai(commands.Cog):
             with open(f'{dannybot}\\cache\\w2x_out.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'waifu2x.png'))
         except Exception as e:
-            await ctx.send(f"An error occurred while upscaling the image: {str(e)}")
+            await ctx.send(f"An error occurred while upscaling the image: **{str(e)}**")
 
     @commands.hybrid_command(name="inspire", aliases=['quote'], description="Sends AI generated quotes using the inspirobot API.", brief="Get AI generated inspirational posters")
     async def inspire(self, ctx: commands.Context):
