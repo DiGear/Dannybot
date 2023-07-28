@@ -6,7 +6,11 @@ logger = logging.getLogger(__name__)
 
 # Custom converter class for GPT commands
 class CustomGPT(commands.FlagConverter):
-    instructions: typing.Optional[str] = "Follow the prompt"
+    instructions: typing.Optional[str] = ""
+    temperature: typing.Optional[float] = 1.00
+    top_p: typing.Optional[float] = 1.00
+    frequency_penalty: typing.Optional[float] = 0.00
+    presence_penalty: typing.Optional[float] = 0.00
     prompt: str
 
 # Class that stores every global variable and initializes them
@@ -52,11 +56,31 @@ class sentience(commands.Cog):
 
             self.message_array.append({"role": "assistant", "content": response_array[:2000]})
         
-    @commands.hybrid_command(name="gpt3", aliases=['gptinstruct'], description="Interact with GPT3.5 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
+    @commands.hybrid_command(name="gpt3", description="Interact with GPT3 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
     async def gpt3(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
+            max_tokens=4096,
+            top_p=flags.top_p,
+            frequency_penalty=flags.frequency_penalty,
+            presence_penalty=flags.presence_penalty,
+            messages=[
+                {"role": "system", "content": f"{flags.instructions}"},
+                {"role": "user", "content": f"{flags.prompt}"},
+            ]
+        )
+        await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
+        
+    @commands.hybrid_command(name="gpt4",  description="Interact with GPT4 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
+    async def gpt4(self, ctx: commands.Context, *, flags: CustomGPT):
+        await ctx.defer()
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            max_tokens=2048,
+            top_p=flags.top_p,
+            frequency_penalty=flags.frequency_penalty,
+            presence_penalty=flags.presence_penalty,
             messages=[
                 {"role": "system", "content": f"{flags.instructions}"},
                 {"role": "user", "content": f"{flags.prompt}"},
