@@ -72,23 +72,6 @@ class sentience(commands.Cog):
             ]
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
-  
-    @commands.hybrid_command(name="gpt4",  description="Interact with GPT4 using instructions and prompts.", brief="Get AI-generated text based on provided prompts")
-    async def gpt4(self, ctx: commands.Context, *, flags: CustomGPT):
-        await ctx.defer()
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            max_tokens=2048,
-            top_p=flags.top_p,
-            temperature=flags.temperature,
-            frequency_penalty=flags.frequency_penalty,
-            presence_penalty=flags.presence_penalty,
-            messages=[
-                {"role": "system", "content": f"{flags.instructions}"},
-                {"role": "user", "content": f"{flags.prompt}"},
-            ]
-        )
-        await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
         
     @commands.command(hidden=True)
     @commands.is_owner()
