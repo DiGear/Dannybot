@@ -63,6 +63,7 @@ class sentience(commands.Cog):
             model="gpt-3.5-turbo",
             max_tokens=3072,
             top_p=flags.top_p,
+            temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,
             presence_penalty=flags.presence_penalty,
             messages=[
@@ -79,6 +80,7 @@ class sentience(commands.Cog):
             model="gpt-4",
             max_tokens=2048,
             top_p=flags.top_p,
+            temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,
             presence_penalty=flags.presence_penalty,
             messages=[

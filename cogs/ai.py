@@ -4,6 +4,14 @@
 from config import *
 logger = logging.getLogger(__name__)
 
+# Custom converter class for GPT commands
+class CustomWrite(commands.FlagConverter):
+    temperature: typing.Optional[float] = 1.00
+    top_p: typing.Optional[float] = 1.00
+    frequency_penalty: typing.Optional[float] = 0.00
+    presence_penalty: typing.Optional[float] = 0.00
+    engine: Literal["text-davinci-003", "text-davinci-002", "text-babbage-001", "text-ada-001"]
+
 class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -21,6 +29,23 @@ class ai(commands.Cog):
                 top_p=1.0,
                 frequency_penalty=0.0,
                 presence_penalty=0.0
+            )
+            await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
+        except Exception as e:
+            await ctx.send(f"An error occurred while generating the text: {str(e)}")
+            
+    @commands.hybrid_command(name='writecustom', description="Interact with GPT with all the funny settings.", brief="Get AI generated text based on provided prompts")
+    async def writecustom(self, ctx: commands.Context, *, flags: CustomWrite):
+        await ctx.defer()
+        try:  
+            response = openai.Completion.create(
+                max_tokens=3072,
+                engine=flags.engine,
+                prompt=flags.prompt,
+                top_p=flags.top_p,
+                temperature=flags.temperature,
+                frequency_penalty=flags.frequency_penalty,
+                presence_penalty=flags.presence_penalty,
             )
             await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
         except Exception as e:
