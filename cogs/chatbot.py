@@ -61,7 +61,7 @@ class sentience(commands.Cog):
         await ctx.defer()
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            max_tokens=4096,
+            max_tokens=3072,
             top_p=flags.top_p,
             frequency_penalty=flags.frequency_penalty,
             presence_penalty=flags.presence_penalty,
