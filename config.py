@@ -52,7 +52,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # ----------
-# VariablesZ
+# Variables
 # ----------
 
 # dannybot config
