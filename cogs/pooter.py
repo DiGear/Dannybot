@@ -45,7 +45,7 @@ class pooter(commands.Cog):
 
             if input_message.attachments:  # If there are attachments
                 for attachment in input_message.attachments:  # Iterate over each attachment
-                    if not any(ext in attachment.url for ext in database_acceptedFiles):
+                    if not any(ext in attachment.url.lower() for ext in database_acceptedFiles):
                         await message_channel.send('This file is not a valid image or video file!')
                         return
 
@@ -63,7 +63,7 @@ class pooter(commands.Cog):
                 await input_message.add_reaction(reaction)  # Add a reaction to the message
             else:  # If there is a URL in the message
                 link_to_file = input_message.content.strip()
-                if not any(ext in link_to_file for ext in database_acceptedFiles):
+                if not any(ext in link_to_file.lower() for ext in database_acceptedFiles):
                     await message_channel.send('This file is not a valid image or video file!')
                     return
 
@@ -78,7 +78,7 @@ class pooter(commands.Cog):
 
                 await input_message.add_reaction(reaction)  # Add a reaction to the message
 
-    @commands.command(hidden=True, aliases=["poo", "poop"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
+    @commands.command(hidden=True, aliases=["poo", "poop", ":spoon:", "🥄"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         if ctx.guild.id == 1089076875999072296:
             return
