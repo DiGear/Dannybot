@@ -62,7 +62,7 @@ dannybot_denialRatio = 250  # chance for dannybot to deny your command input
 dannybot_denialResponses = ['no', 'nah', 'nope', 'no thanks']  # what dannybot says upon denial
 dannybot = os.getcwd()  # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
-clean_pooter_onLaunch = True  # dannybot will clear his cache on launch if set to true
+clean_pooter_onLaunch = True  # dannybot will clean up pooter on launch if set to true
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm',
                           'mov']  # list of accepted files for the bots public database
 cmd_blacklist = ["0"]  # Users who cant use the bot lol
