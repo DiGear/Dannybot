@@ -686,49 +686,32 @@ def uwuify(input_text):
     return modified_text
 
 # clean up the pooter folder
-def clean_pooter(directory_path=None):
+def clean_pooter():
+    # Directory path
     directory_path = f"{dannybot}\\database\\Pooter"
 
-    if not os.path.exists(directory_path):
+    # Calculate file hash with hashlib.md5
+    calculate_file_hash = lambda fp, block_size=65536: hashlib.md5(open(fp, 'rb').read(block_size)).hexdigest() 
+
+    if os.path.exists(directory_path): 
+        # Initialize empty dict
+        file_hashes = {}
+        # Filter files without extensions while creating the list
+        files_without_extension = {file for file in os.listdir(directory_path) if '.' not in file}
+
+        # Go through all files in directory including subdirectories
+        for path, _, files in os.walk(directory_path):
+            for file in files:
+                file_path = os.path.join(path, file)  # Create full file path
+                file_hash = calculate_file_hash(file_path)  # Calculate file hash
+
+                # Delete the duplicate file and files with no extensions 
+                if file_hash in file_hashes or file in files_without_extension:
+                    os.remove(file_path)  
+                    logger.info(f"Deleted: {file}")
+                else: 
+                    file_hashes[file_hash] = file_path  # Add to dict
+
+        logger.info("No more files to clean.")
+    else:
         logger.error(f"Pooter folder not found. Aborting.")
-        return
-
-    def calculate_file_hash(file_path, block_size=65536):
-        """Calculate a hash for a file."""
-        hasher = hashlib.md5()
-        with open(file_path, 'rb') as file:
-            while True:
-                data = file.read(block_size)
-                if not data:
-                    break
-                hasher.update(data)
-        return hasher.hexdigest()
-
-    # Create a dictionary to store file hashes
-    file_hashes = {}
-
-    # List all files in the directory
-    files = os.listdir(directory_path)
-
-    # Filter files without extensions
-    files_without_extension = [file for file in files if '.' not in file]
-
-    # Iterate through all files in the current directory and subdirectories
-    for root, _, files in os.walk(directory_path):
-        for file_name in files:
-            file_path = os.path.join(root, file_name)
-
-            # Calculate the hash for the file
-            file_hash = calculate_file_hash(file_path)
-
-            # Check if the hash already exists (duplicate)
-            if file_hash in file_hashes:
-                logger.info(f"Duplicate found: {file_path}")
-                os.remove(file_path)  # Delete the duplicate file
-            elif file_name in files_without_extension:
-                logger.info(f"File without extension found: {file_path}")
-                os.remove(file_path)  # Delete files without extensions
-            else:
-                # Add the hash to the dictionary
-                file_hashes[file_hash] = file_path
-    logger.info("No more files to clean.")
