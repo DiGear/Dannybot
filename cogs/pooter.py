@@ -10,8 +10,7 @@ class pooter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
-        if (msg.guild.id == 1089076875999072296 or 
-            not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes)):
+        if (not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes)):
             return
         
         poo_count = msg.content.count("poo")
@@ -68,10 +67,7 @@ class pooter(commands.Cog):
             await input_message.add_reaction(reaction)
 
     @commands.command(hidden=True, aliases=["poo", "poop", ":spoon:", "🥄"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
-    async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
-        if ctx.guild.id == 1089076875999072296:
-            return
-
+    async def pooter(self, ctx, File_Url: typing.Optional[str] = None):   
         async def download_file(url):
             nonlocal downloads
             nonlocal reaction
