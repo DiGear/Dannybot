@@ -87,7 +87,6 @@ GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
 
 # internal paths
 Cookies = f"{dannybot}\\assets" # set this to your YT-DL cookies folder
-UltimateVocalRemover = f"{dannybot}\\tools\\UltimateVocalRemover" # set this to the path of your install of UltimateVocalRemover
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 
 # 8ball responses for the 8ball command

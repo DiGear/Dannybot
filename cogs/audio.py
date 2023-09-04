@@ -19,32 +19,6 @@ class audio(commands.Cog):
     async def leave(self, ctx):
       if ctx.voice_client is not None:
         await ctx.voice_client.disconnect()
-
-# this entire fucking thing is broken lol
-    '''
-    @commands.command(description="Use UVR to separate the vocals and instrumental from a provided file, and sends the results as mp3 files.", brief="Splits audio into vocals and instrumental using AI")
-    async def acapella(self, ctx, *args):
-        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
-        file_url = cmd_info[0]
-
-        audio_path = f'{UltimateVocalRemover}\\audio.mp3'
-        instruments_path = f'{UltimateVocalRemover}\\audio_Instruments.mp3'
-        vocals_path = f'{UltimateVocalRemover}\\audio_Vocals.mp3'
-
-        with open(audio_path, 'wb') as f:
-            f.write(requests.get(file_url).content)
-
-        await ctx.send("Splitting. Please wait...")
-
-        os.chdir(UltimateVocalRemover)
-        os.system(f'python inference.py --input {audio_path} --tta --gpu 0')
-        os.system(f'ffmpeg -i audio_Instruments.wav -vn -ar 44100 -ac 2 -b:a 192k {instruments_path} -y')
-        os.system(f'ffmpeg -i audio_Vocals.wav -vn -ar 44100 -ac 2 -b:a 192k {vocals_path} -y')
-
-        with open(instruments_path, 'rb') as i, open(vocals_path, 'rb') as v:
-            await ctx.reply(file=File(i, 'Inst.mp3'))
-            await ctx.reply(file=File(v, 'Vocal.mp3'))
-        '''
                 
     @commands.command(description="Flips a MIDI file upside down, relative to middle C (C5).", brief="Flips a MIDI file upside down")
     async def midiflip(self, ctx, *args):

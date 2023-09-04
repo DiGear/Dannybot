@@ -1,6 +1,5 @@
 Dannybot has various tools to power his commands. These tools are not included. You will need to manually add them.
 
 waifu2x-caffe (in its own folder) EXAMPLE: Dannybot\tools\waifu2x-caffe\waifu2x-caffe.exe
-UltimateVocalRemover (the original CLI version, in its own folder)
 FluidSynth 2.0.0 or higher (put in your PATH)
 FFMpeg (put in your PATH)
