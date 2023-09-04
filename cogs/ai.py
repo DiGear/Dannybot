@@ -25,11 +25,11 @@ class ai(commands.Cog):
             response = openai.Completion.create(
                 engine="text-davinci-003",
                 prompt=gpt_prompt,
-                temperature=random.uniform(0., 1.0),
-                max_tokens=256,
+                temperature=random.uniform(0.1, 1.0),
+                max_tokens=512,
                 top_p=1.0,
-                frequency_penalty=0.0,
-                presence_penalty=0.0
+                frequency_penalty=0.3,
+                presence_penalty=0.1
             )
             await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
         except Exception as e:
