@@ -18,7 +18,7 @@ class pooter(commands.Cog):
         poo_count = msg.content.count("poo")
 
         # Define the path to the Pooter database folder
-        pooter_db_path = os.path.join(dannybot, "database", "Pooter")
+        pooter_db_path = os.path.join(dannybot, "database", "Pooter") # this is literally pointless i just thought it was neat you could do it this way
 
         # If there is only one occurrence of "poo", do nothing
         if poo_count == 1:
