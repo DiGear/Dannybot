@@ -40,13 +40,8 @@ class ai(commands.Cog):
         await ctx.defer()
         try:
             response = openai.Completion.create(
-                max_tokens=3072,
-                engine=flags.engine,
-                prompt=flags.prompt,
-                top_p=flags.top_p,
-                temperature=flags.temperature,
-                frequency_penalty=flags.frequency_penalty,
-                presence_penalty=flags.presence_penalty,
+                max_tokens=1024,
+                **flags.__dict__
             )
             await ctx.reply(response['choices'][0]['text'][:2000], mention_author=True)
         except Exception as e:
@@ -54,13 +49,13 @@ class ai(commands.Cog):
 
     @commands.command(aliases=['upscale'], description="Locally run waifu2x using speed-optimized settings and send the results.", brief="Upscale images using waifu2x")
     async def waifu(self, ctx, *args):
-        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
-        Link_To_File = cmd_info[0]
-        await ctx.send("Upscaling. Please wait...")
         try:
+            Link_To_File = (await resolve_args(ctx, args, ctx.message.attachments))[0]
             with open(f'{dannybot}\\cache\\w2x_in.png', 'wb') as f:
                 f.write(requests.get(Link_To_File).content)
+
             os.system(f"{Waifu2x} -i {dannybot}\\cache\\w2x_in.png -o {dannybot}\\cache\\w2x_out.png -m noise_scale --scale_ratio 2 --noise_level 2 -x")
+
             with open(f'{dannybot}\\cache\\w2x_out.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'waifu2x.png'))
         except Exception as e:
@@ -69,31 +64,30 @@ class ai(commands.Cog):
     @commands.hybrid_command(name="inspire", aliases=['quote'], description="Sends AI generated quotes using the inspirobot API.", brief="Get AI generated inspirational posters")
     async def inspire(self, ctx: commands.Context):
         link = "http://inspirobot.me/api?generate=true"
-
+        
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(link) as response:
-                    if response.status == 200:
-                        File_Url = await response.text()
-                        async with session.get(File_Url) as image_response:
-                            if image_response.status == 200:
-                                image_data = await image_response.read()
-                                with open(f"{dannybot}\\cache\\quote.jpg", "wb") as f:
-                                    f.write(image_data)
+            async with aiohttp.ClientSession() as session, session.get(link) as response:
+                if response.status != 200:
+                    raise aiohttp.ClientError("Failed to generate an inspirational quote from InspiroBot.")
+                
+                file_url = await response.text()
+                async with session.get(file_url) as image_response:
+                    if image_response.status != 200:
+                        raise aiohttp.ClientError("Failed to retrieve the image from InspiroBot.")
+                    
+                    image_data = await image_response.read()
+                    
+            with open(f"{dannybot}\\cache\\quote.jpg", "wb") as f:
+                f.write(image_data)
+        except (aiohttp.ClientError, OSError) as e:
+            await ctx.reply(f"An error occurred: {str(e)}", mention_author=True)
+            return
 
-                                f = discord.File(f"{dannybot}\\cache\\quote.jpg", filename="quote.jpg")
-                                embed = discord.Embed(color=0xffc7ed)
-                                embed.set_image(url="attachment://quote.jpg")
-                                embed.set_footer(text="Powered by https://inspirobot.me/")
-                                await ctx.reply(file=f, embed=embed, mention_author=True)
-                            else:
-                                await ctx.reply("Failed to retrieve the image from InspiroBot.", mention_author=True)
-                    else:
-                        await ctx.reply("Failed to generate an inspirational quote from InspiroBot.", mention_author=True)
-        except aiohttp.ClientError:
-            await ctx.reply("An error occurred while making the request to InspiroBot.", mention_author=True)
-        except OSError:
-            await ctx.reply("An error occurred while saving the image.", mention_author=True)
+        f = discord.File(f"{dannybot}\\cache\\quote.jpg", filename="quote.jpg")
+        embed = discord.Embed(color=0xffc7ed)
+        embed.set_image(url="attachment://quote.jpg")
+        embed.set_footer(text="Powered by https://inspirobot.me/")
+        await ctx.reply(file=f, embed=embed, mention_author=True)
 
     @commands.command(aliases=['pngify', 'transparent'], description="Runs the provided image through a (free) API call to remove.bg, to make the image transparent.", brief="Remove the background from an image using AI")
     async def removebg(self, ctx, *args):
@@ -104,9 +98,6 @@ class ai(commands.Cog):
         async with aiohttp.ClientSession() as session:
             async with session.get(Link_To_File) as response:
                 image_data = await response.read()
-                
-                with open(f'{dannybot}\\cache\\removebgtemp.png', 'wb') as f:
-                    f.write(image_data)
                 
                 headers = {
                     "X-Api-Key": os.getenv("REMOVEBG_KEY"),
@@ -122,9 +113,8 @@ class ai(commands.Cog):
                         
                         with open(f'{dannybot}\\cache\\removebg.png', 'wb') as f:
                             f.write(result_data)
-                        
-                        with open(f'{dannybot}\\cache\\removebg.png', 'rb') as f:
-                            await ctx.reply(file=File(f, 'removed.png'), mention_author=True)
+
+                        await ctx.reply(file=discord.File(io.BytesIO(result_data), 'removed.png'), mention_author=True)
                     
                     else:
                         await ctx.reply("Processing of the image failed. This is most likely because no background was detected.", mention_author=True)
