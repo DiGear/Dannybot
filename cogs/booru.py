@@ -31,7 +31,10 @@ class booru(commands.Cog):
                 try:
                     await self.last_msg.add_reaction(emoji)
                 except AttributeError:
-                    return await ctx.send('_ _', delete_after=1)
+                    await ctx.send('No valid posts found')
+                    async for msg in ctx.channel.history(limit=1):
+                        return await msg.clear_reactions()
+                
         while True:
             try:
                 react, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=self.reaction_check(ctx, self.last_msg))
@@ -55,11 +58,13 @@ class booru(commands.Cog):
     async def send_valid_post(self, ctx, posts, idx, return_embed=False):
         while idx < len(posts):
             rating = posts[idx].find('rating').text
-            if rating in ('explicit', 'questionable', 'sensitive') and not (ctx.channel.is_nsfw() or isinstance(ctx.channel, discord.DMChannel)):
+            if rating in ('explicit') and not (ctx.channel.is_nsfw() or isinstance(ctx.channel, discord.DMChannel)):
                 idx += 1
             else:
                 return await self.send_embed(ctx, posts[idx], return_embed)
-            return await ctx.send('_ _', delete_after=1)
+            await ctx.send('No valid posts found')
+            async for msg in ctx.channel.history(limit=1):
+                return await msg.clear_reactions()
 
     async def send_embed(self, ctx, post, return_embed=False):
         id_ = post.find('id').text
