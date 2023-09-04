@@ -10,18 +10,26 @@ class pooter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
-        if (not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes)):
+        # Check if the message starts with any of the bot prefixes
+        if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
             return
-        
+
+        # Count the occurrences of "poo" in the message
         poo_count = msg.content.count("poo")
-        pooter_db_path = os.path.join(dannybot, "database", "Pooter")\
-        
+
+        # Define the path to the Pooter database folder
+        pooter_db_path = os.path.join(dannybot, "database", "Pooter")
+
+        # If there is only one occurrence of "poo", do nothing
         if poo_count == 1:
             return
 
+        # Send multiple random images from the Pooter database based on poo_count
         for _ in range(poo_count):
+            # Select a random image file from the Pooter database folder
             img_file = random.choice(os.listdir(pooter_db_path))
             with open(os.path.join(pooter_db_path, img_file), 'rb') as img:
+                # Send the image as a file in the same channel as the original message
                 await msg.channel.send(file=discord.File(img), reference=msg)
 
     @commands.Cog.listener()
