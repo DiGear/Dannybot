@@ -105,7 +105,7 @@ async def load_extensions():
 
 async def main():
     if clean_pooter_onLaunch:
-        logger.info("Cleaning up pooter folder...")
+        logger.info("Cleaning up pooter folder... This may clog up the terminal if there are a lot of files...")
         print("---------------------------------------------------------------------")
         clean_pooter()
         print("---------------------------------------------------------------------")
