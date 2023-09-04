@@ -41,11 +41,14 @@ import yt_dlp
 from discord import File, app_commands
 from discord.ext import commands
 from discord.utils import get
+from io import BytesIO
 from dotenv import load_dotenv
 from petpetgif import petpet
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps,
                  ImageSequence)
 from wand.image import Image as magick
+from xml.etree import ElementTree
+from aiohttp import ClientSession
 
 load_dotenv()
 logger = logging.getLogger(__name__)
