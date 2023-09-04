@@ -5,9 +5,9 @@
 from config import *
 
 # make it look nice in the console
-print("-----------------------------------------")
+print("---------------------------------------------------------------------")
 print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
-print("-----------------------------------------")
+print("---------------------------------------------------------------------")
 
 # asyncio bad btw
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -104,9 +104,16 @@ async def load_extensions():
             logger.info(f"Imported module: {cog_name}")
 
 async def main():
+    if clean_pooter_onLaunch:
+        logger.info("Cleaning up pooter folder...")
+        print("---------------------------------------------------------------------")
+        clean_pooter()
+        print("---------------------------------------------------------------------")
     if cache_clear_onLaunch:
         logger.info("Clearing cache from previous session...")
+        print("---------------------------------------------------------------------")    
         clear_cache()
+        print("---------------------------------------------------------------------")    
 
     await load_extensions()
     await bot.start(dannybot_token)

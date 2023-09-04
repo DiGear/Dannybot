@@ -62,6 +62,7 @@ dannybot_denialRatio = 250  # chance for dannybot to deny your command input
 dannybot_denialResponses = ['no', 'nah', 'nope', 'no thanks']  # what dannybot says upon denial
 dannybot = os.getcwd()  # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
+clean_pooter_onLaunch = True  # dannybot will clear his cache on launch if set to true
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm',
                           'mov']  # list of accepted files for the bots public database
 cmd_blacklist = ["0"]  # Users who cant use the bot lol
@@ -188,6 +189,7 @@ def clear_cache():
         if os.path.isfile(file_path):
             os.remove(file_path)
             logger.info(f"Deleted: {file_path}")
+    logger.info("No more files to clean.")
     return
 
 
@@ -195,7 +197,7 @@ def clear_cache():
 def fileCount(folder):
     return sum(len(filenames) for _, _, filenames in os.walk(folder))
 
-
+# checks if a value is a float, why the fuck is this an external function
 def is_float(value):
     try:
         float(value)
@@ -679,3 +681,51 @@ def uwuify(input_text):
     modified_text = modified_text7.replace('!', ' !~ ')
 
     return modified_text
+
+# clean up the pooter folder
+def clean_pooter(directory_path=None):
+    directory_path = f"{dannybot}\\database\\Pooter"
+
+    if not os.path.exists(directory_path):
+        logger.error(f"Pooter folder not found. Aborting.")
+        return
+
+    def calculate_file_hash(file_path, block_size=65536):
+        """Calculate a hash for a file."""
+        hasher = hashlib.md5()
+        with open(file_path, 'rb') as file:
+            while True:
+                data = file.read(block_size)
+                if not data:
+                    break
+                hasher.update(data)
+        return hasher.hexdigest()
+
+    # Create a dictionary to store file hashes
+    file_hashes = {}
+
+    # List all files in the directory
+    files = os.listdir(directory_path)
+
+    # Filter files without extensions
+    files_without_extension = [file for file in files if '.' not in file]
+
+    # Iterate through all files in the current directory and subdirectories
+    for root, _, files in os.walk(directory_path):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+
+            # Calculate the hash for the file
+            file_hash = calculate_file_hash(file_path)
+
+            # Check if the hash already exists (duplicate)
+            if file_hash in file_hashes:
+                logger.info(f"Duplicate found: {file_path}")
+                os.remove(file_path)  # Delete the duplicate file
+            elif file_name in files_without_extension:
+                logger.info(f"File without extension found: {file_path}")
+                os.remove(file_path)  # Delete files without extensions
+            else:
+                # Add the hash to the dictionary
+                file_hashes[file_hash] = file_path
+    logger.info("No more files to clean.")
