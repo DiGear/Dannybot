@@ -44,10 +44,10 @@ async def on_ready():
 # this is our message handler
 @bot.event
 async def on_message(input):
-    is_denial = (
-        random.randint(0, dannybot_denialRatio) == dannybot_denialRatio
-        and any(input.content.startswith(prefix) for prefix in dannybot_prefixes)
-    )
+    if input.author.bot:
+        return
+    is_denial = random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and \
+    any(input.content.startswith(prefix) for prefix in dannybot_prefixes)
 
     if is_denial:
         await input.channel.send(random.choice(dannybot_denialResponses), reference=input)
@@ -58,8 +58,9 @@ async def on_message(input):
 # this is a ping command and it's pretty self-explanatory
 @bot.hybrid_command(name='ping', description="Calculate bot latency and send the results.", brief="Sends the current bot latency")
 async def ping(ctx: commands.Context):
-    await ctx.send(content=f"Ping is {int(round(bot.latency*1000))}ms")
-    logger.info(f'Dannybot was pinged at {int(round(bot.latency*1000))}ms')
+    ping_time = int(round(bot.latency * 1000)) 
+    await ctx.send(content=f"Ping is {ping_time}ms")
+    logger.info(f'Dannybot was pinged at {ping_time}ms')
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.hybrid_command(name='say', description="DEV COMMAND | No description given", hidden=True)
@@ -77,22 +78,15 @@ async def say(ctx: commands.Context, *, text):
 @bot.hybrid_command(name='reload', description='DEV COMMAND | Reload specified cogs on the bot', hidden=True)
 @commands.is_owner()
 async def reload(ctx: commands.Context, module: str):
-    if not ctx.author.id in dannybot_team_ids:
-        await ctx.send("This command is restricted.", ephemeral=True, delete_after=3)
+    if module == "all":
+        cogs = [f"cogs.{filename[:-3]}" for filename in os.listdir("./cogs") if filename.endswith(".py")]
     else:
-        if module == "all":
-            for filename in os.listdir("./cogs"):
-                if filename.endswith(".py"):
-                    cog_name = filename[:-3]
-                    cog_path = f"cogs.{cog_name}"
-                    await bot.unload_extension(cog_path)
-                    await bot.load_extension(cog_path)
-            await ctx.send("Reloaded all modules!")
-        else:
-            cog_path = f"cogs.{module}"
-            await bot.unload_extension(cog_path)
-            await bot.load_extension(cog_path)
-            await ctx.send(f"Reloaded {module} module!")
+        cogs = [f"cogs.{module}"]
+    for cog in cogs:
+        await bot.unload_extension(cog)
+        await bot.load_extension(cog)
+    await ctx.send(f"Reloaded {module} module(s)!")
+
 
 # stage all of our cogs
 async def load_extensions():
