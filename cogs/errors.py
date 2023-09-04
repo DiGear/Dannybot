@@ -42,7 +42,6 @@ class errors(commands.Cog):
         else:
             # Handle other types of errors
             error_message = f"An undefined error has occurred.\n```\n{type(error).__name__}: {error}\n```"
-            await ctx.reply(error_message)
             logger.error("An exception occurred in command {}: {}".format(ctx.command, error))
 
 async def setup(bot: commands.Bot):
