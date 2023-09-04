@@ -1,134 +1,76 @@
-# if you can't find a variable used in this file its probably imported from here
 from config import *
+import logging
+import random
+
 logger = logging.getLogger(__name__)
+arrow_emojis = ["⬅️", "➡️"]
 
 class booru(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot):
         self.bot = bot
-        self.current_index = 0
-        self.message = None
-        self.embed = None
-        self.reaction_task = None
+        self.last_msg = None
+
+    #gelbooru
+    @commands.hybrid_command(name="gelbooru", aliases=["gel"], description="Browse gelbooru posts using the bot.", brief="Browse gelbooru posts using the bot.")
+    async def gelbooru(self, ctx: commands.Context, *, tag: str):
+        payload = {'tags': tag, 'limit': 10000, 'pid': 0}
+
+        async with ClientSession() as session:
+            async with session.get('https://gelbooru.com/index.php?page=dapi&s=post&q=index', params=payload) as response:
+                tree = ElementTree.parse(BytesIO(await response.read()))
+
+        posts = list(tree.iterfind('.//post'))
+        if not posts: return await ctx.send(f'No results found for {tag}.')
+
+        random.shuffle(posts)
+        if self.last_msg: await self.last_msg.clear_reactions()
+        current_index = 0
+        self.last_msg = await self.send_valid_post(ctx, posts, current_index) or self.last_msg
+        if self.last_msg:
+            for emoji in arrow_emojis:
+                try:
+                    await self.last_msg.add_reaction(emoji)
+                except AttributeError:
+                    return await ctx.send('_ _', delete_after=1)
+        while True:
+            try:
+                react, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=self.reaction_check(ctx, self.last_msg))
+                current_index += self.reaction_index(react)
+                current_index = max(0, min(len(posts) - 1, current_index))                
+                await self.last_msg.remove_reaction(react.emoji, user)
+                if 0 <= current_index < len(posts):
+                    new_embed = await self.send_valid_post(ctx, posts, current_index, True)
+                    await self.last_msg.edit(embed=new_embed)                
+            except asyncio.TimeoutError:
+                try: await self.last_msg.clear_reactions()
+                except: pass
+                break
+
+    def reaction_check(self, ctx, msg):
+        return lambda react, user: user == ctx.author and str(react.emoji) in arrow_emojis and react.message.id == msg.id
+
+    def reaction_index(self, react):
+        return 1 if str(react) == arrow_emojis[1] else -1 
     
-    @staticmethod
-    def get_image_url(post):
-        if post:
-            image_url = post.get('file_url')
-            if not image_url:
-                return None
-            return image_url
-        
-    @staticmethod
-    def create_embed(post):
-        embed = discord.Embed()
-        embed.add_field(name='Artist:', value=post['artist'], inline=False)
-        embed.add_field(name='Tags:', value=post['all_tags'], inline=False)
-        embed.set_footer(text=f"Score: {post['score']}")
-        embed.set_image(url=post['image_url'])
-        return embed
-    
-    def update_embed(self, post):
-        self.embed.remove_field(0)
-        self.embed.remove_field(0)
-        self.embed.add_field(name='Artist:', value=post['artist'], inline=False)
-        self.embed.add_field(name='Tags:', value=post['all_tags'], inline=False)
-        self.embed.set_footer(text=f"Score: {post['score']}")
-        self.embed.set_image(url=post['image_url'])
-    
-    @commands.hybrid_command(name='danbooru', aliases=["dan"], description="Browse images on danbooru.donmai.us. Limited to 2 tags per search.", brief="Browse images from Danbooru")
-    @commands.cooldown(1, 25, commands.BucketType.user)
-    async def danbooru(self, ctx: commands.Context, *, tags):
-        await ctx.defer()
-        tags = tags.replace(", ", "+")
-        tags = tags.replace(" ", "+")
-        url = f"https://danbooru.donmai.us/posts.json?&limit=1000000&tags={tags}"
-        print(url)
-        response = requests.get(url)
-        data = response.json()
+    async def send_valid_post(self, ctx, posts, idx, return_embed=False):
+        while idx < len(posts):
+            rating = posts[idx].find('rating').text
+            if rating in ('explicit', 'questionable', 'sensitive') and not (ctx.channel.is_nsfw() or isinstance(ctx.channel, discord.DMChannel)):
+                idx += 1
+            else:
+                return await self.send_embed(ctx, posts[idx], return_embed)
+            return await ctx.send('_ _', delete_after=1)
 
-        if 'error' in data and data['error'] == 'PostQuery::TagLimitError':
-            await ctx.send("Danbooru only allows free users to search for a maximum of 2 tags.")
-            return
+    async def send_embed(self, ctx, post, return_embed=False):
+        id_ = post.find('id').text
+        file_url = post.find('file_url').text
+        tags = ', '.join(post.find('tags').text.split())[:2000]
 
-        if not data:
-            await ctx.send("No results found.")
-            return
+        embed = discord.Embed(title=f"Gelbooru",url=f"https://gelbooru.com/index.php?page=post&s=view&id={id_}")
+        embed.set_image(url=file_url)
+        embed.add_field(name='Tags', value=tags, inline=False)
 
-        random.shuffle(data)
-
-        sfw_posts = [post for post in data if post.get('rating') == 'g']
-        nsfw = ctx.channel.is_nsfw()
-        try:
-            sfw_posts = sfw_posts if not nsfw else data
-            words = ['loli', 'fetus', 'baby', 'toddler', 'rape', 'guro', 'sleep_molestation', 'molestation', 'compensated_molestation', 'beastiality', 'scat', 'gore']
-            if any(word in tags for word in words):
-                await ctx.reply('fuck no')
-                return
-        except:
-            sfw_posts = sfw_posts
-        total_posts = len(sfw_posts)
-
-        self.current_index = 0
-        self.message = None
-        self.embed = None
-
-        await self.show_image(ctx, sfw_posts, total_posts)
-
-    async def show_image(self, ctx, sfw_posts, total_posts):
-        if self.current_index >= total_posts:
-            return
-
-        post = sfw_posts[self.current_index]
-        image_url = self.get_image_url(post)
-        if not image_url:
-            self.current_index += 1
-            await self.show_image(ctx, sfw_posts, total_posts)
-            return
-
-        all_tags = post.get('tag_string').replace('_', '\_')[:1023]
-        score = post.get('score')
-        artist = post.get('tag_string_artist').replace('_', '\_')
-        post_data = {
-            'image_url': image_url,
-            'all_tags': all_tags,
-            'score': score,
-            'artist': artist
-        }
-
-        if self.message:
-            self.update_embed(post_data)
-            await self.message.edit(embed=self.embed)
-        else:
-            self.embed = self.create_embed(post_data)
-            self.message = await ctx.send(embed=self.embed)
-            await self.message.add_reaction('⬅️')
-            await asyncio.sleep(1)
-            await self.message.add_reaction('➡️')
-
-        def check(reaction, user):
-            return (
-                user == ctx.author
-                and str(reaction.emoji) in ['⬅️', '➡️']
-                and reaction.message.id == self.message.id
-            )
-
-        try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=20.0, check=check)
-
-            if str(reaction.emoji) == '⬅️':
-                self.current_index = max(0, self.current_index - 1)
-            elif str(reaction.emoji) == '➡️':
-                self.current_index = min(self.current_index + 1, total_posts - 1)
-
-            await self.message.remove_reaction(reaction, user)
-
-            if self.reaction_task:
-                self.reaction_task.cancel()
-
-            self.reaction_task = asyncio.create_task(self.show_image(ctx, sfw_posts, total_posts))
-
-        except asyncio.TimeoutError:
-            await self.message.clear_reactions()
+        return embed if return_embed else await ctx.send(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(booru(bot))
