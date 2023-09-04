@@ -43,8 +43,8 @@ from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv
 from petpetgif import petpet
-from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
-                 ImageFilter, ImageFont, ImageOps, ImageSequence)
+from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps,
+                 ImageSequence)
 from wand.image import Image as magick
 
 load_dotenv()
@@ -55,115 +55,57 @@ logger = logging.getLogger(__name__)
 # ----------
 
 # dannybot config
-dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
-dannybot_token = os.getenv("TOKEN") #token
+dannybot_prefixes = ["d.", "#", "D.", "ratio + "]  # bot prefix(es)
+dannybot_token = os.getenv("TOKEN")  # token
 dannybot_team_ids = [343224184110841856, 158418656861093888, 249411048518451200]
-dannybot_denialRatio = 250 # chance for dannybot to deny your command input
-dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks'] # what dannybot says upon denial
-dannybot = os.getcwd() # easy to call variable that stores our current working directory
-cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
-database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'mov'] # list of accepted files for the bots public database
-cmd_blacklist = ["0"] # Users who cant use the bot lol
+dannybot_denialRatio = 250  # chance for dannybot to deny your command input
+dannybot_denialResponses = ['no', 'nah', 'nope', 'no thanks']  # what dannybot says upon denial
+dannybot = os.getcwd()  # easy to call variable that stores our current working directory
+cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
+database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm',
+                          'mov']  # list of accepted files for the bots public database
+cmd_blacklist = ["0"]  # Users who cant use the bot lol
 
-#configs for the image manipulation commands
-imageLower = 250 # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
-imageUpper = 1500 # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
+# configs for the image manipulation commands
+imageLower = 250  # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
+imageUpper = 1500  # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
 
-#channel configs (WHY WERE THESE NEVER PUT INTO THE .ENV UNTIL 2023/4/5)
-bookmarks_channel = int(os.getenv("BOOKMARKS")) #channel to send personal bookmarks to
-logs_channel = int(os.getenv("LOGS")) # channel to log commands
+# channel configs (WHY WERE THESE NEVER PUT INTO THE .ENV UNTIL 2023/4/5)
+bookmarks_channel = int(os.getenv("BOOKMARKS"))  # channel to send personal bookmarks to
+logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 
 # more .env keys being assigned here
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
-tenor_apikey =  os.getenv("TENOR_KEY")
+tenor_apikey = os.getenv("TENOR_KEY")
 
 # external paths
-NekoparaPath = "I:\\Anime\\Nekopara" # put your nekopara files into here
-MimiPath = "I:\\Anime\\Kemono girls" # put your animal girl files here
-PicturesPath = "C:\\Users\\weebm\\Pictures" # set this to your pictures folder
-VideosPath = "C:\\Users\\weebm\\Videos\\epic" # set this to your videos folder
-GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS" # set this to your gifs folder
+NekoparaPath = "I:\\Anime\\Nekopara"  # put your nekopara files into here
+MimiPath = "I:\\Anime\\Kemono girls"  # put your animal girl files here
+PicturesPath = "C:\\Users\\weebm\\Pictures"  # set this to your pictures folder
+VideosPath = "C:\\Users\\weebm\\Videos\\epic"  # set this to your videos folder
+GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS"  # set this to your gifs folder
 
 # internal paths
-Cookies = f"{dannybot}\\assets" # set this to your YT-DL cookies folder
-Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe" # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
+Cookies = f"{dannybot}\\assets"  # set this to your YT-DL cookies folder
+Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe"  # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 
 # 8ball responses for the 8ball command
-ball_responses = [
-    "It is certain.",
-    "It is decidedly so.",
-    "Without a doubt.",
-    "Yes - definitely.",
-    "You may rely on it.",
-    "As I see it, yes.",
-    "Most likely.",
-    "Outlook good.",
-    "Yes.",
-    "Signs point to yes.",
-    "Reply hazy, try again.",
-    "Ask again later.",
-    "Better not tell you now.",
-    "Cannot predict now.",
-    "Concentrate and ask again.",
-    "Don't count on it.",
-    "My reply is no.",
-    "My sources say no.",
-    "Outlook not so good.",
-    "Very doubtful."
-]
+ball_responses = ["It is certain.", "It is decidedly so.", "Without a doubt.", "Yes - definitely.",
+                  "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.",
+                  "Signs point to yes.", "Reply hazy, try again.", "Ask again later.", "Better not tell you now.",
+                  "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "My reply is no.",
+                  "My sources say no.", "Outlook not so good.", "Very doubtful."]
 
 # logo list for the logo command
-logolist = [
-    "clan",
-    "neon",
-    "fluffy",
-    "water",
-    "smurfs",
-    "style",
-    "runner",
-    "blackbird",
-    "fabulous",
-    "glow",
-    "chrominium",
-    "amped",
-    "supermarket",
-    "crafts",
-    "fire",
-    "steel",
-    "glossy",
-    "fifties",
-    "retro",
-    "beauty",
-    "birdy",
-    "inferno",
-    "winner",
-    "uprise",
-    "global",
-    "silver",
-    "minions",
-    "magic",
-    "fancy",
-    "orlando",
-    "fortune",
-    "swordfire",
-    "roman",
-    "golden",
-    "outline",
-    "funtime",
-]
+logolist = ["clan", "neon", "fluffy", "water", "smurfs", "style", "runner", "blackbird", "fabulous", "glow",
+            "chrominium", "amped", "supermarket", "crafts", "fire", "steel", "glossy", "fifties", "retro", "beauty",
+            "birdy", "inferno", "winner", "uprise", "global", "silver", "minions", "magic", "fancy", "orlando",
+            "fortune", "swordfire", "roman", "golden", "outline", "funtime", ]
 
 # this is for the undertext command
-deltarune_dw = [
-    'ralsei',
-    'lancer',
-    'king', 'jevil',
-    'queen',
-    'spamton',
-    "clyde",
-    "lori",
-    "rhombo"
-]
+deltarune_dw = ['ralsei', 'lancer', 'king', 'jevil', 'queen', 'spamton', "clyde", "lori", "rhombo"]
+
 
 # ----------
 # Functions
@@ -175,21 +117,28 @@ def unpack_gif(file):
     os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y')
     return
 
+
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
     logger.info("generating palette...")
-    os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
+    os.system(
+        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
     logger.info("repacking gif...")
-    os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
+    os.system(
+        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
+
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
 def repack_gif_JPG():
     logger.info("generating palette...")
     logger.info("repacking gif (jpg)...")
-    os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
-    os.system(f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
+    os.system(
+        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y')
+    os.system(
+        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y')
     return
+
 
 # clear the ffmpeg and ffmpeg/output folders of any residual files
 def cleanup_ffmpeg():
@@ -210,12 +159,14 @@ def cleanup_ffmpeg():
             os.remove(file_path)
             logger.info(f"Deleted: {file_path}")
 
+
 # generate a random hexadecimal string
 def randhex(bits):
     random_number = random.getrandbits(bits)
     random_bytes = random_number.to_bytes((bits + 7) // 8, 'big')
     random_hex = random_bytes.hex()
     return random_hex
+
 
 # clear the cache folder of all files
 def clear_cache():
@@ -239,9 +190,11 @@ def clear_cache():
             logger.info(f"Deleted: {file_path}")
     return
 
+
 # get the amount of files in a folder
 def fileCount(folder):
     return sum(len(filenames) for _, _, filenames in os.walk(folder))
+
 
 def is_float(value):
     try:
@@ -250,8 +203,10 @@ def is_float(value):
     except ValueError:
         return False
 
+
 # get the total size of all files in a folder
-def fileSize(folder):   
+# noinspection PyTypeChecker
+def fileSize(folder):
     total_size = 0
 
     # Iterate through the directory structure recursively
@@ -270,6 +225,7 @@ def fileSize(folder):
 
     # Format the result with two decimal places and the corresponding unit label
     return f"{total_size:.2f} {units[unit_index]}"
+
 
 '''
 def ezogaming_regex(datalist, dataentry):
@@ -305,65 +261,65 @@ def ezogaming_regex(datalist, dataentry):
     return random.choice(entries)
 '''
 
+
 def undertext(name, text, isAnimated):
     # animated override: if the name contains "animated-", remove it and set isAnimated to True
     if text.endswith("True"):
         text = text[:-4]
         isAnimated = True
-    
+
     # AU style overrides: if the name contains a valid AU, add the AU style to the name and text
-    if "uf" in name: # underfell
+    if "uf" in name:  # underfell
         name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
         text = f"color=%23b93b3c%20{text}"
-    if name in deltarune_dw: # deltarune
+    if name in deltarune_dw:  # deltarune
         name = f"{name}&box=deltarune&mode=darkworld"
-    
+
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
     character_links = {
-            "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
-            "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
-            "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
-            "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
-            "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
-            "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228005256044575/pizziportrait1.png",
-            "pizzi-stare": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
-            "pizzi-scream": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228022796615720/pizziportrait3.png",
-            "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
-            "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-            "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-            "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-            "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
-            "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
-            "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
-            "seki-eyes": "https://cdn.discordapp.com/attachments/560608550850789377/1075684786489798696/sekiportrait2.png",
-            "seki-evil": "https://cdn.discordapp.com/attachments/1063552619110477844/1075687740793946122/sekiportrait3.png",
-            "leffrey": "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
-            "reimu-fumo": "https://cdn.discordapp.com/attachments/1063552619110477844/1082233613040504892/image.png",
-            "suggagugga": "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"
-        }
+        "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
+        "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
+        "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
+        "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
+        "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
+        "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228005256044575/pizziportrait1.png",
+        "pizzi-stare": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
+        "pizzi-scream": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228022796615720/pizziportrait3.png",
+        "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
+        "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
+        "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
+        "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
+        "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
+        "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
+        "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
+        "seki-eyes": "https://cdn.discordapp.com/attachments/560608550850789377/1075684786489798696/sekiportrait2.png",
+        "seki-evil": "https://cdn.discordapp.com/attachments/1063552619110477844/1075687740793946122/sekiportrait3.png",
+        "leffrey": "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
+        "reimu-fumo": "https://cdn.discordapp.com/attachments/1063552619110477844/1082233613040504892/image.png",
+        "suggagugga": "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png"}
 
     name = character_links.get(name, name)
 
     # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
     if name.startswith("http"):
         name = f"custom&url={name}"
-    
+
     # text overrides: modify the box and text display based on passed parameters
     if "font=wingdings" in text:
         name = f"{name}&asterisk=null"
-    
+
     # finalizing: set the name and text to the name and text, then return the name, text, and isAnimated
     name = name
-    #replacing the discord double underscore shit with spaces
+    # replacing the discord double underscore shit with spaces
     text = text.replace("_ _", "%20")
     return name, text, isAnimated
+
 
 # grab the gif url of a tenor id using the tenor api
 def gettenor(gifid=None):
     # get the api key from the config file
     apikey = tenor_apikey
-    r = requests.get(
-        "https://api.tenor.com/v1/gifs?ids=%s&key=%s&media_filter=minimal" % (gifid, apikey))
+    r = requests.get("https://api.tenor.com/v1/gifs?ids=%s&key=%s&media_filter=minimal" % (gifid, apikey))
 
     if r.status_code == 200:
         gifs = json.loads(r.content)
@@ -371,21 +327,18 @@ def gettenor(gifid=None):
         gifs = None
     return gifs['results'][0]['media'][0]['gif']['url']
 
+
+# noinspection PyTypeChecker
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     text = ' '.join(args)  # Combine all arguments as text
     logger.info("Resolving URL and arguments...")
 
-    extensions = {
-        "image": ('png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'),
-        "audio": ('wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga'),
-        "midi": ('mid', 'midi'),
-        "video": ('mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv'),
-        "3d": ('obj', 'fbx', 'stl', 'dae'),
-        "office": ('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'),
-        "text": ('txt', 'rtf', 'json'),
-        "code": ('py', 'java', 'cpp', 'c', 'h', 'html', 'css', 'js', 'php', 'cs', 'rb')
-    }
+    extensions = {"image": ('png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'),
+                  "audio": ('wav', 'ogg', 'mp3', 'flac', 'aiff', 'opus', 'm4a', 'oga'), "midi": ('mid', 'midi'),
+                  "video": ('mp4', 'avi', 'mpeg', 'mpg', 'webm', 'mov', 'mkv'), "3d": ('obj', 'fbx', 'stl', 'dae'),
+                  "office": ('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'), "text": ('txt', 'rtf', 'json'),
+                  "code": ('py', 'java', 'cpp', 'c', 'h', 'html', 'css', 'js', 'php', 'cs', 'rb')}
     extension_list = extensions.get(type, ())
 
     if ctx.message.reference:
@@ -453,6 +406,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
     return [url, text]
 
+
 # deepfry an image
 def deepfry(inputpath, outputpath):
     # open image
@@ -468,6 +422,7 @@ def deepfry(inputpath, outputpath):
         img.sharpen(radius=8, sigma=4)
         img.save(filename=f'{outputpath}')
     return
+
 
 # resize image to fit within bounds
 def imagebounds(path):
@@ -494,6 +449,7 @@ def imagebounds(path):
     resized_image = image.resize((new_width, new_height), PIL.Image.Resampling.LANCZOS)
     resized_image.save(path)
 
+
 # primary function of the meme command
 def make_meme(Top_Text, Bottom_Text, path):
     # Open the image
@@ -501,11 +457,11 @@ def make_meme(Top_Text, Bottom_Text, path):
 
     # Calculate the image bounds
     imagebounds(path)
-    
+
     # Open the image and convert it to RGBA format
     img = PIL.Image.open(path)
     img = img.convert("RGBA")
-    
+
     # Set the path to the font file
     font_path = f"{dannybot}\\assets\\impactjpn.otf"
 
@@ -530,7 +486,8 @@ def make_meme(Top_Text, Bottom_Text, path):
 
     # Adjust the font size until the top text fits within the image width
     while True:
-        top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line in top_text_lines]
+        top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line
+                           in top_text_lines]
         if max(top_line_widths) <= img.width - padding * 2:
             break
         top_font_size -= 1
@@ -541,7 +498,8 @@ def make_meme(Top_Text, Bottom_Text, path):
 
     # Adjust the font size until the bottom text fits within the image width
     while True:
-        bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in bottom_text_lines]
+        bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for
+                              line in bottom_text_lines]
         if max(bottom_line_widths) <= img.width - padding * 2:
             break
         bottom_font_size -= 1
@@ -572,17 +530,17 @@ def make_meme(Top_Text, Bottom_Text, path):
 
     # Combine the original image with the text overlay
     composite_image = PIL.Image.alpha_composite(img, text_image)
-    
+
     # Set the output path for the final meme image
     output_path = f"{dannybot}\\cache\\meme_out.png"
-    
+
     # Save the composite image as the final meme image
     composite_image.save(output_path)
     return
 
+
 # gif version
 def make_meme_gif(Top_Text, Bottom_Text):
-
     # iterate through every frame in the ffmpeg folder and edit them
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
         if '.png' in frame:
@@ -593,11 +551,11 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
             # Calculate the image bounds
             imagebounds(path)
-            
+
             # Open the image and convert it to RGBA format
             img = PIL.Image.open(path)
             img = img.convert("RGBA")
-            
+
             # Set the path to the font file
             font_path = f"{dannybot}\\assets\\impactjpn.otf"
 
@@ -622,7 +580,8 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
             # Adjust the font size until the top text fits within the image width
             while True:
-                top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0] for line in top_text_lines]
+                top_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, top_font_size))[0]
+                                   for line in top_text_lines]
                 if max(top_line_widths) <= img.width - padding * 2:
                     break
                 top_font_size -= 1
@@ -633,7 +592,9 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
             # Adjust the font size until the bottom text fits within the image width
             while True:
-                bottom_line_widths = [text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in bottom_text_lines]
+                bottom_line_widths = [
+                    text_draw.textsize(line, font=PIL.ImageFont.truetype(font_path, bottom_font_size))[0] for line in
+                    bottom_text_lines]
                 if max(bottom_line_widths) <= img.width - padding * 2:
                     break
                 bottom_font_size -= 1
@@ -664,7 +625,7 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
             # Combine the original image with the text overlay
             composite_image = PIL.Image.alpha_composite(img, text_image)
-            
+
             # save the resulting image
             output_path = f"{dannybot}\\cache\\ffmpeg\\output\\{frame}"
             composite_image.save(output_path)
@@ -672,18 +633,20 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
     return
 
+
 # generate list from directory of files
 def listgen(directory):
-    list =  os.listdir(directory)
+    list = os.listdir(directory)
     string = ', '.join(list)
     return string
+
 
 # i hate this - FDG
 def uwuify(input_text):
     # Replacement for 'l' -> 'w'
     modified_text1 = input_text.replace('l', 'w')
-    
-     # Replacement for 'u' -> 'uu'
+
+    # Replacement for 'u' -> 'uu'
     modified_text2 = modified_text1.replace('u', 'uu')
 
     # Replacement for 'r' -> 'w'
