@@ -69,7 +69,7 @@ class booru(commands.Cog):
     async def send_embed(self, ctx, post, return_embed=False):
         id_ = post.find('id').text
         file_url = post.find('file_url').text
-        tags = ', '.join(post.find('tags').text.split())[:2000]
+        tags = ', '.join(post.find('tags').text.split())[:500] + "..."
 
         embed = discord.Embed(title=f"Gelbooru",url=f"https://gelbooru.com/index.php?page=post&s=view&id={id_}")
         embed.set_image(url=file_url)
