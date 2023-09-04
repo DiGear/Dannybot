@@ -59,7 +59,7 @@ dannybot_prefixes = ["d.", "#", "D.", "ratio + "] #bot prefix(es)
 dannybot_token = os.getenv("TOKEN") #token
 dannybot_team_ids = [343224184110841856, 158418656861093888, 249411048518451200]
 dannybot_denialRatio = 250 # chance for dannybot to deny your command input
-dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks', 'use slashes lol'] # what dannybot says upon denial
+dannybot_denialResponses = ['no' , 'nah', 'nope', 'no thanks'] # what dannybot says upon denial
 dannybot = os.getcwd() # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True # dannybot will clear his cache on launch if set to true
 database_acceptedFiles = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'mov'] # list of accepted files for the bots public database
@@ -165,11 +165,6 @@ deltarune_dw = [
     "lori",
     "rhombo"
 ]
-
-
-# dalle shit
-DALLE_API = "https://api.craiyon.com/v3"
-DALLE_FORMAT = "png"
 
 # ----------
 # Functions
@@ -677,62 +672,6 @@ def make_meme_gif(Top_Text, Bottom_Text):
     repack_gif()
 
     return
-
-# dalle shit
-# Communicate with the DALL-E API and ask it to generate images based on the prompt
-async def generate_images(prompt: str) -> typing.List[io.BytesIO]:
-    async with aiohttp.ClientSession() as session:
-        async with session.post(DALLE_API, json={"prompt": prompt}) as response:
-            if response.status == 200:
-                logger.info("DALL-E server is OK")
-                response_data = await response.json()
-                
-                # Convert the base64-encoded image strings to BytesIO objects
-                images = [
-                    io.BytesIO(base64.decodebytes(bytes(image, "utf-8")))
-                    for image in response_data["images"]
-                ]
-                return images
-            else:
-                return None
-
-
-# Generate the images for a DALL-E 3x3 grid collage
-def make_collage_sync(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO:
-    # Convert the images to numpy arrays
-    image_arrays = [numpy.array(Image.open(image)) for image in images]
-    
-    image_count = 1
-    for image in images:
-        logger.info(f"{image_count} image(s) generated out of 9")
-        image_count += 1
-        image.seek(0)
-    
-    # Arrange the images into a 3x3 grid
-    collage_rows = [
-        numpy.hstack(image_arrays[i: i + wrap])
-        for i in range(0, len(image_arrays), wrap)
-    ]
-    collage_array = numpy.vstack(collage_rows)
-    
-    # Create a PIL image from the collage array
-    collage_image = Image.fromarray(collage_array)
-    
-    # Save the collage as a BytesIO object
-    collage_bytes = io.BytesIO()
-    collage_image.save(collage_bytes, format=DALLE_FORMAT)
-    
-    logger.info("Attempting to generate 3x3 collage")
-    collage_bytes.seek(0)
-    return collage_bytes
-
-async def make_collage(images: typing.List[io.BytesIO], wrap: int) -> io.BytesIO:
-    # Use asyncio's run_in_executor to run the synchronous collage generation in a separate thread or process
-    collage_bytes = await asyncio.get_running_loop().run_in_executor(
-        None, make_collage_sync, images, wrap
-    )
-    logger.info("3x3 collage generated")
-    return collage_bytes
 
 # generate list from directory of files
 def listgen(directory):
