@@ -42,7 +42,6 @@ from discord import File, app_commands
 from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv
-from google_images_search import GoogleImagesSearch
 from petpetgif import petpet
 from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
                  ImageFilter, ImageFont, ImageOps, ImageSequence)
@@ -78,8 +77,6 @@ logs_channel = int(os.getenv("LOGS")) # channel to log commands
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey =  os.getenv("TENOR_KEY")
-google_api_key = os.getenv("GOOGLE_API")
-google_cx_key = os.getenv("GOOGLE_CX")
 
 # external paths
 NekoparaPath = "I:\\Anime\\Nekopara" # put your nekopara files into here
@@ -171,7 +168,7 @@ deltarune_dw = [
 
 
 # dalle shit
-DALLE_API = "https://backend.craiyon.com/generate"
+DALLE_API = "https://api.craiyon.com/v3"
 DALLE_FORMAT = "png"
 
 # ----------

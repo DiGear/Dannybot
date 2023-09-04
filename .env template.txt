@@ -15,9 +15,3 @@ LOGS=
 
 # Channel for self-bookmarking
 BOOKMARKS=
-
-# Google Search API Key
-GOOGLE_API=
-
-# Google Search CX Key
-GOOGLE_CX=
