@@ -356,39 +356,6 @@ class image(commands.Cog):
 
             with open(f'{dannybot}\\cache\\imploded.png', 'rb') as f:
                 await ctx.reply(file=File(f, 'imploded.png'), mention_author=True)
-    
-    @commands.command(description="Command to caption memes in the same way websites like ifunny do, where it puts a white box at the top of the image with black caption text.", brief="White box; black text caption an image")
-    async def caption(self, ctx, *args):
-        # Resolve command arguments and uploaded file
-        image_url, meme_text = await resolve_args(ctx, args, ctx.message.attachments)
-        response = requests.get(image_url)
-        response.raise_for_status()  # Raise an exception if the request was unsuccessful
-        image_content = response.content
-        await ctx.send("Processing. Please wait... This can take a while for GIF files.", delete_after=5)
-
-        with open(f'{dannybot}/cache/memein.png', 'wb') as f:
-            f.write(image_content)
-
-        if '.gif' in image_url:
-            with open(f'{dannybot}/cache/gif.gif', 'wb') as f:
-                f.write(image_content)
-            unpack_gif(f'{dannybot}/cache/gif.gif')
-
-            for frame in os.listdir(f'{dannybot}/cache/ffmpeg'):
-                if '.png' in frame:
-                    os.system(f'python -m dankcli "{dannybot}/cache/ffmpeg/{frame}" "{meme_text}" --filename "{dannybot}/cache/ffmpeg/output/{frame.replace(".png", "")}')
-
-            repack_gif()
-
-            with open(f'{dannybot}/cache/ffmpeg_out.gif', 'rb') as f:
-                await ctx.reply(file=File(f, 'caption.gif'), mention_author=True)
-                cleanup_ffmpeg()  # delete the temporary files made from the unpacking and repacking of gifs
-                f.close()
-        else:
-            os.system(f'python -m dankcli "{dannybot}/cache/memein.png" "{meme_text}" --filename "{dannybot}/cache/memeout"')
-            with open(f'{dannybot}/cache/memeout.png', 'rb') as f:
-                await ctx.reply(file=File(f, 'caption.png'), mention_author=True)
-                f.close()
 
     @commands.command(description="Applies a set amount of radial blur to a provided image.", brief="Applies radial blur to an image")
     async def radial(self, ctx, *args):
