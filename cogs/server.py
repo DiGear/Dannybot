@@ -10,18 +10,16 @@ class server(commands.Cog):
 
     @commands.hybrid_command(name='neko', aliases=['catgirl'], description="Send a picture of an catgirl using the nekos.life API.", brief="Send a picture of an catgirl")
     async def neko(self, ctx: commands.Context):
-        try:
-            api_response = requests.get("https://nekos.life/api/v2/img/neko")
-            api_response.raise_for_status()  # Raise an exception if the API request was not successful
-            data = api_response.json()
-            image_url = data.get("url")
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://nekos.life/api/v2/img/neko") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    image_url = data.get("url")
 
-            if image_url:
-                await ctx.reply(image_url, mention_author=True)
-            else:
-                await ctx.send("Failed to retrieve catgirl image.")
-        except requests.exceptions.RequestException:
-            return
+                    if image_url:
+                        await ctx.reply(image_url, mention_author=True)
+                    else:
+                        await ctx.send("Failed to retrieve catgirl image.")
         
     @commands.hybrid_command(name="img", description="Send a random picture or file from a category.", brief="Send a random picture or file from a category")
     async def imgcmd(self, ctx: commands.Context, category: Literal['mimi', 'nekopara', 'vid', 'img', 'leffrey', 'gif', 'femboy', 'fanboy', 'glasscup', 'plasticcup', 'burger', 'danny'] = 'img'):
