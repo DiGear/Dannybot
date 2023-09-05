@@ -41,6 +41,8 @@ import yt_dlp
 from discord import File, app_commands
 from discord.ext import commands
 from discord.utils import get
+from pathlib import Path
+from functools import partial
 from io import BytesIO
 from dotenv import load_dotenv
 from petpetgif import petpet
@@ -146,22 +148,15 @@ def repack_gif_JPG():
 
 # clear the ffmpeg and ffmpeg/output folders of any residual files
 def cleanup_ffmpeg():
-    ffmpeg_folder = f"{dannybot}\\cache\\ffmpeg"
-    output_folder = f"{ffmpeg_folder}\\output"
-
+    ffmpeg_folder = os.path.join("dannybot", "cache", "ffmpeg")
+    output_folder = os.path.join(ffmpeg_folder, "output")
     logger.info("Cleaning up...")
-
-    # Remove residual .png files in ffmpeg folder
-    for file_path in glob.glob(f"{ffmpeg_folder}/*.png"):
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-            logger.info(f"Deleted: {file_path}")
-
-    # Remove residual .png files in ffmpeg/output folder
-    for file_path in glob.glob(f"{output_folder}/*.png"):
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-            logger.info(f"Deleted: {file_path}")
+    # Remove residual .png files in ffmpeg and output folders
+    for folder in [ffmpeg_folder, output_folder]:
+        for file_path in glob.glob(os.path.join(folder, "*.png")):
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                logger.info(f"Deleted: {file_path}")
 
 
 # generate a random hexadecimal string
@@ -174,26 +169,15 @@ def randhex(bits):
 
 # clear the cache folder of all files
 def clear_cache():
-    cache_folder = f'{dannybot}\\cache'
-    ffmpeg_cache_folder = f'{cache_folder}\\ffmpeg'
-    output_folder = f'{ffmpeg_cache_folder}\\output'
+    cache_folder = Path(f'{dannybot}/cache')
+    ffmpeg_cache_folder = cache_folder / 'ffmpeg'
+    output_folder = ffmpeg_cache_folder / 'output'
 
-    for file_path in glob.glob(f'{cache_folder}/*'):
-        if os.path.isfile(file_path) and 'git' not in file_path and '.' in file_path:
-            os.remove(file_path)
-            logger.info(f"Deleted: {file_path}")
-
-    for file_path in glob.glob(f'{ffmpeg_cache_folder}/*.png'):
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-            logger.info(f"Deleted: {file_path}")
-
-    for file_path in glob.glob(f'{output_folder}/*.png'):
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-            logger.info(f"Deleted: {file_path}")
-    logger.info("No more files to clean.")
-    return
+    for folder in [cache_folder, ffmpeg_cache_folder, output_folder]:
+        for file_path in folder.glob('*'):
+            if file_path.is_file() and 'git' not in str(file_path):
+                file_path.unlink()
+                logger.info(f"Deleted: {file_path}")
 
 
 # get the amount of files in a folder
@@ -210,25 +194,18 @@ def is_float(value):
 
 
 # get the total size of all files in a folder
-# noinspection PyTypeChecker
 def fileSize(folder):
-    total_size = 0
-
-    # Iterate through the directory structure recursively
-    for dirpath, _, filenames in os.walk(folder):
-        for filename in filenames:
-            file_path = os.path.join(dirpath, filename)
-            total_size += os.path.getsize(file_path)  # Add the size of each file to the total
-
+    walk = partial(os.walk, top=folder, topdown=False)
+    total_size = sum(
+        os.path.getsize(os.path.join(dp, f))
+        for dp, dn, filenames in walk()
+        for f in filenames
+    )
     units = ['bytes', 'KB', 'MB', 'GB', 'TB']
     unit_index = 0
-
-    # Convert the total size to the appropriate unit
     while total_size >= 1024 and unit_index < len(units) - 1:
-        total_size /= 1024.0
+        total_size /= 1024
         unit_index += 1
-
-    # Format the result with two decimal places and the corresponding unit label
     return f"{total_size:.2f} {units[unit_index]}"
 
 
@@ -333,7 +310,6 @@ def gettenor(gifid=None):
     return gifs['results'][0]['media'][0]['gif']['url']
 
 
-# noinspection PyTypeChecker
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     text = ' '.join(args)  # Combine all arguments as text
@@ -360,7 +336,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         for attachment in attachments:
             if attachment.content_type.startswith(type):
                 url = attachment.url.split('?')[0]
-                logger.info("URL from attachment: %s", url)
+                logger.info(f"URL from attachment: {url}")
                 break
 
     if not url:
@@ -368,44 +344,34 @@ async def resolve_args(ctx, args, attachments, type="image"):
         if args and args[0].startswith('http'):
             url = args[0].split('?')[0]  # Extract the URL
             text = ' '.join(args[1:])
-            logger.info("URL from argument: %s", url)
+            logger.info(f"URL from argument: {url}")
 
     if not url:
-        # Get URL using the message history
         channel = ctx.message.channel
-
         async for msg in channel.history(limit=500):
-            if msg.attachments:
-                ext = msg.attachments[0].url.split('.')[-1].lower()
-                if ext in extension_list:
-                    url = msg.attachments[0].url
-                    logger.info("URL from message attachment: %s", url)
-                    break
+            content = str(msg.content).lower()
 
+            attachment_url = next((a.url for a in msg.attachments if a.url.split('.')[-1] in extension_list), None)
+            if attachment_url:
+                logger.info(f"URL from message attachment: {attachment_url}")
+                url = attachment_url
+                break
+
+            if type == "image" and 'https://tenor.com/view/' in content:
+                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
+                url = gettenor(tenor_id)
+                logger.info(f"URL from Tenor: {url}")
+                break
+            
             if type == "image":
-                if 'https://tenor.com/view/' in msg.content:
-                    match = re.search(r"tenor\.com/view/.*-(\d+)", msg.content)
-                    if match:
-                        tenor_id = match.group(1)
-                        url = str(gettenor(tenor_id))
-                        logger.info("URL from Tenor: %s", url)
-                        break
-
-                ext = str(msg.content).split('.')[-1].lower()
-                if ext in extension_list:
-                    urls = re.findall(r"http\S+", msg.content)
-                    if urls:
-                        url = urls[0].split('?')[0]
-                        logger.info("URL from message content: %s", url)
-                        break
-            else:
-                if 'http' in msg.content:
-                    ext = str(msg.content).split('.')[-1]
+                http_urls = re.findall(r"http\S+", content)
+                if http_urls:
+                    http_url = http_urls[0].split('?')[0]
+                    ext = http_url.split('.')[-1]
                     if ext in extension_list:
-                        urls = re.findall(r"http\S+", msg.content)
-                        if urls:
-                            url = urls[0].split('?')[0]
-                            break
+                        logger.info(f"URL from message content: {http_url}")
+                        url = http_url
+                        break
 
     logger.info(f"Arguments: {text}")
 
@@ -418,14 +384,11 @@ def deepfry(inputpath, outputpath):
     image = PIL.Image.open(f'{inputpath}').convert('RGB')
     image.save(f'{dannybot}\\cache\\deepfry_in.jpg', quality=15)
     with magick(filename=f'{dannybot}\\cache\\deepfry_in.jpg') as img:
-        # apply deepfry
-        img.level(0.2, 0.9, gamma=1.1)
-        img.level(0.2, 0.9, gamma=1.1)
-        img.sharpen(radius=8, sigma=4)
-        img.noise("laplacian", attenuate=1.0)
-        img.level(0.2, 0.9, gamma=1.1)
-        img.sharpen(radius=8, sigma=4)
-        img.save(filename=f'{outputpath}')
+        for _ in range(2):
+            img.level(0.2, 0.9, gamma=1.1)
+            img.sharpen(radius=8, sigma=4)
+        img.noise("laplacian")
+        img.save(filename=outputpath)
     return
 
 
