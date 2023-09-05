@@ -43,9 +43,6 @@ class server(commands.Cog):
         if category not in file_types:
             await ctx.reply("Invalid category. Please choose from: " + ", ".join(file_types.keys()))
             return
-        if category == "leffrey" and ctx.guild.id == 1089076875999072296:
-            await ctx.reply("This category is restricted", mention_author=True)
-            return 
         dir = file_types[category]
         file_name = random.choice(os.listdir(dir))
         with open(f"{dir}\\{file_name}", "rb") as f:
