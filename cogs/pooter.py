@@ -37,8 +37,15 @@ class pooter(commands.Cog):
         # Function to download a file from a URL
         async def download_file(url, count, message):
             if any(ext in url.lower() for ext in database_acceptedFiles):
+                if 'https://tenor.com/view/' in url:
+                    tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
+                    url = gettenor(tenor_id)
+                if input_message.attachments:
+                    total_files = len(input_message.attachments)
+                else:
+                    total_files = 1
                 # Display download progress
-                await message.send(f'Downloading... {count} of {len(input_message.attachments)}', delete_after=1)
+                await message.send(f'Downloading... {count} of {total_files}', delete_after=1)
                 # Save the file with a unique name
                 with open(f'{dannybot}/database/Pooter/{randhex(128)}{url.replace("/", "")[-6:]}', 'wb') as file:
                     file.write(requests.get(url).content)
@@ -85,6 +92,10 @@ class pooter(commands.Cog):
                 await ctx.send('Invalid image or video file!', delete_after=3)
                 await ctx.message.add_reaction("⚠️")
                 return
+            
+            if 'https://tenor.com/view/' in url:
+                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
+                url = gettenor(tenor_id)
 
             # Display download progress
             await ctx.send(f'Downloading... {current_download} of {total_downloads}', delete_after=1)
