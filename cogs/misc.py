@@ -41,43 +41,44 @@ class misc(commands.Cog):
             await ctx.reply(file=File(f, "dumbass.png"), mention_author=True)
 
     @commands.hybrid_command(name="download", aliases=["dl", "ytdl", "down"], description="Download from a multitude of sites in audio or video format.", brief="Download from a list of sites as mp3 or mp4")
-    async def download(self, ctx: commands.Context, file_download: str, format: typing.Optional[Literal['mp3', 'mp4']] = 'mp3'):
+    async def download(self, ctx: commands.Context, file_download: str, format: str = 'mp3'):
         await ctx.send('Ok. Downloading...')
-
-        video_formats = ['mp4']
-        audio_formats = ['mp3']
         os.chdir(f"{dannybot}\\cache")
 
-        try:
-            ydl_opts = {
-                'outtmpl': '%(title)s.%(ext)s',
-                'force_overwrites': True,
-                'no_check_certificate': True,
-                'no_playlist': True
-            }
-
-            if format in video_formats:
-                ydl_opts['format'] = format
-            elif format in audio_formats:
-                ydl_opts['format'] = 'bestaudio/best'
-                ydl_opts['postprocessors'] = [{
+        format_opts = {
+            'mp4': {'format': 'mp4'},
+            'mp3': {
+                'format': 'bestaudio/best',
+                'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': format,
+                    'preferredcodec': 'mp3',
                     'preferredquality': '192',
                 }]
-            else:
-                await ctx.reply("The format specified is invalid. Please use `mp4, webm` for video, or `mp3, flac, wav, ogg` for audio.")
-                return
+            }
+        }
 
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                try:        
-                    info_dict = ydl.extract_info(file_download, download=True)
-                    file_path = ydl.prepare_filename(info_dict)
-                    # Modify the file extension based on the specified format
-                    file_path_with_format = file_path.rsplit('.', maxsplit=1)[0] + f".{format}"
-                except:
-                    file_path_with_format = (f"non-ytdl.{format}")
+        ydl_opts = {
+            'outtmpl': '%(title)s.%(ext)s',
+            'force_overwrites': True,
+            'no_check_certificate': True,
+            'no_playlist': True
+        }
 
+        if format not in format_opts:
+            await ctx.reply("The format specified is invalid. Please use `mp4` for video or `mp3` for audio.")
+            return
+
+        ydl_opts.update(format_opts[format])
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            try:        
+                info_dict = ydl.extract_info(file_download, download=True)
+                file_path = ydl.prepare_filename(info_dict)
+                file_path_with_format = file_path.rsplit('.', maxsplit=1)[0] + f".{format}"
+            except:
+                file_path_with_format = (f"non-ytdl.{format}")
+
+        try:
             await ctx.reply(file=discord.File(file_path_with_format))
         except Exception as e:
             logging.exception("An error occurred during the download process:")
