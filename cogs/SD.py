@@ -54,11 +54,13 @@ class sd(commands.Cog):
         scheduler: Literal[
             "normal", "karras", "exponential", "simple", "ddim_uniform"
         ] = "ddim_uniform",
-        seed: int = None,
+        seed: int = 11223344556677889900112233, #idk how else to do this
         steps: int = 20,
     ):
         await ctx.defer()
-        seed = random.randint(0, 999999999) if seed is None else seed
+        await ctx.send("Added to queue.")
+        if seed == 11223344556677889900112233:
+           seed = random.randint(0, 999999999) 
         steps = 50 if steps >= 50 else steps
         height = 1024 if height >= 1024 else height
         width = 1024 if width >= 1024 else width
@@ -116,8 +118,6 @@ class sd(commands.Cog):
         }
 
         prompt = generator_values.copy()
-        prompt["6"]["inputs"]["text"] = f"{positive_prompt}"
-        prompt["3"]["inputs"]["seed"] = random.randint(0, 9999999999)
         images = self.get_images(self.ws, prompt)
         cfg = prompt["3"]["inputs"]["cfg"]
         denoise = prompt["3"]["inputs"]["denoise"]
