@@ -14,6 +14,9 @@ import json
 import logging
 import math
 import os
+import websocket
+import uuid
+import io
 import random
 import re
 import string
@@ -39,6 +42,7 @@ import PIL
 import requests
 import yt_dlp
 from discord import File, app_commands
+from functools import lru_cache
 from discord.ext import commands
 from discord.utils import get
 from urllib import request
