@@ -61,13 +61,21 @@ class sd(commands.Cog):
                 "inputs": {"filename_prefix": "ComfyUI", "images": ["8", 0]},
             },
         }
+
         prompt = generator_values.copy()
-
         prompt["6"]["inputs"]["text"] = f"{positive_prompt}"
-
         prompt["3"]["inputs"]["seed"] = random.randint(0, 9999999999)
-
         images = self.get_images(self.ws, prompt)
+        cfg = prompt["3"]["inputs"]["cfg"]
+        denoise = prompt["3"]["inputs"]["denoise"]
+        latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
+        model = prompt["4"]["inputs"]["ckpt_name"]
+        negative = prompt["7"]["inputs"]["text"]
+        positive = prompt["6"]["inputs"]["text"]
+        sampler_name = prompt["3"]["inputs"]["sampler_name"]
+        scheduler = prompt["3"]["inputs"]["scheduler"]
+        seed = prompt["3"]["inputs"]["seed"]
+        steps = prompt["3"]["inputs"]["steps"]
 
         for node_id in images:
             for image_data in images[node_id]:
@@ -75,7 +83,25 @@ class sd(commands.Cog):
                 out = io.BytesIO()
                 image.save(out, format="png")
                 out.seek(0)
-                await ctx.send(file=discord.File(out, "image.png"))
+                file = discord.File(out, "image.png")
+                embed = discord.Embed(title="Stable Diffusion Output")
+                embed.set_image(url="attachment://image.png")
+                embed.add_field(name="Positive Prompt", value=positive, inline=False)
+                embed.add_field(name="Negative Prompt", value=negative, inline=False)
+                embed.add_field(name="CFG Scale", value=cfg, inline=True)
+                embed.add_field(name="Denoise", value=denoise, inline=True)
+                embed.add_field(
+                    name="Resolution",
+                    value=f"{latent_image[0]}x{latent_image[1]}",
+                    inline=True,
+                )
+                embed.add_field(name="Checkpoint", value=model, inline=True)
+                embed.add_field(name="Sampler", value=sampler_name, inline=True)
+                embed.add_field(name="Scheduler", value=scheduler, inline=True)
+                embed.add_field(name="Seed", value=seed, inline=True)
+                embed.add_field(name="Steps", value=steps, inline=True)
+
+                await ctx.send(embed=embed, file=file)
 
     def queue_prompt(self, prompt):
         p = {"prompt": prompt, "client_id": self.client_id}
