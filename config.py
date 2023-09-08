@@ -41,6 +41,7 @@ import yt_dlp
 from discord import File, app_commands
 from discord.ext import commands
 from discord.utils import get
+from urllib import request
 from pathlib import Path
 from functools import partial
 from io import BytesIO
