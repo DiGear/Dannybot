@@ -14,8 +14,8 @@ class sd(commands.Cog):
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
 
     @commands.hybrid_command(
-        name="stablediffusion",
-        aliases=["grok", "diffuse", "sd"],
+        name="sd",
+        aliases=["grok", "diffuse", "stablediffusion"],
         description="Create AI generated images via Stable-Diffusion.",
         brief="Create AI generated images with Dannybot.",
     )
@@ -50,15 +50,14 @@ class sd(commands.Cog):
             "ddim",
             "uni_pc",
             "uni_pc_bh2",
-        ] = "euler_ancestral",
+        ] = "uni_pc",
         scheduler: Literal[
             "normal", "karras", "exponential", "simple", "ddim_uniform"
-        ] = "ddim_uniform",
+        ] = "normal",
         seed: int = 11223344556677889900112233, #idk how else to do this
-        steps: int = 20,
+        steps: int = 15,
     ):
         await ctx.defer()
-        await ctx.send("Added to queue.")
         if seed == 11223344556677889900112233:
            seed = random.randint(0, 999999999) 
         steps = 50 if steps >= 50 else steps
@@ -137,7 +136,7 @@ class sd(commands.Cog):
                 image.save(out, format="png")
                 out.seek(0)
                 file = discord.File(out, "image.png")
-                embed = discord.Embed(title="Stable Diffusion Output")
+                embed = discord.Embed()
                 embed.set_image(url="attachment://image.png")
                 embed.add_field(name="Positive Prompt", value=positive, inline=False)
                 embed.add_field(name="Negative Prompt", value=negative, inline=False)
