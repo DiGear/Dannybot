@@ -23,8 +23,8 @@ class sd(commands.Cog):
         self,
         ctx: commands.Context,
         *,
-        cfg: float = 7.0,
-        denoise: float = 1.0,
+        cfg: float = 7.000,
+        denoise: float = 1.000,
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
@@ -62,6 +62,8 @@ class sd(commands.Cog):
         steps = 50 if steps >= 50 else steps
         height = 1024 if height >= 1024 else height
         width = 1024 if width >= 1024 else width
+        denoise = 1.000 if denoise >= 1.000 else denoise
+        denoise = 0.001 if denoise <= 0 else denoise
         checkpoints = {
             "Anything": "anythingV3_fp16.ckpt",
             "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
