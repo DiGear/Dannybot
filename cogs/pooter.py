@@ -2,7 +2,9 @@
 
 # if you can't find a variable used in this file its probably imported from here
 from config import *
+
 logger = logging.getLogger(__name__)
+
 
 class pooter(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -18,7 +20,9 @@ class pooter(commands.Cog):
         poo_count = msg.content.count("poo")
 
         # Define the path to the Pooter database folder
-        pooter_db_path = os.path.join(dannybot, "database", "Pooter") # this is literally pointless i just thought it was neat you could do it this way
+        pooter_db_path = os.path.join(
+            dannybot, "database", "Pooter"
+        )  # this is literally pointless i just thought it was neat you could do it this way
 
         # If there is only one occurrence of "poo", do nothing
         if poo_count == 1:
@@ -28,7 +32,7 @@ class pooter(commands.Cog):
         for _ in range(poo_count):
             # Select a random image file from the Pooter database folder
             img_file = random.choice(os.listdir(pooter_db_path))
-            with open(os.path.join(pooter_db_path, img_file), 'rb') as img:
+            with open(os.path.join(pooter_db_path, img_file), "rb") as img:
                 # Send the image as a file in the same channel as the original message
                 await msg.channel.send(file=discord.File(img), reference=msg)
 
@@ -37,7 +41,7 @@ class pooter(commands.Cog):
         # Function to download a file from a URL
         async def download_file(url, count, message):
             if any(ext in url.lower() for ext in database_acceptedFiles):
-                if 'https://tenor.com/view/' in url:
+                if "https://tenor.com/view/" in url:
                     tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                     url = gettenor(tenor_id)
                 if input_message.attachments:
@@ -45,71 +49,98 @@ class pooter(commands.Cog):
                 else:
                     total_files = 1
                 # Display download progress
-                await message.send(f'Downloading... {count} of {total_files}', delete_after=1)
+                await message.send(
+                    f"Downloading... {count} of {total_files}", delete_after=1
+                )
                 # Save the file with a unique name
-                with open(f'{dannybot}/database/Pooter/{randhex(128)}{url.replace("/", "")[-6:]}', 'wb') as file:
+                with open(
+                    f'{dannybot}/database/Pooter/{randhex(128)}{url.replace("/", "")[-6:]}',
+                    "wb",
+                ) as file:
                     file.write(requests.get(url).content)
                 # Log the download
-                await self.bot.get_channel(logs_channel).send(f'{payload.member.global_name} ({payload.member.id}) has pootered: {url}')
+                await self.bot.get_channel(logs_channel).send(
+                    f"{payload.member.global_name} ({payload.member.id}) has pootered: {url}"
+                )
                 return True
             # If the file is not valid, notify and add a reaction
-            await message.send('This file is not a valid image or video file!', delete_after=3)
+            await message.send(
+                "This file is not a valid image or video file!", delete_after=3
+            )
             await input_message.add_reaction("⚠️")
             return False
 
         # Get the message channel and input message
         message_channel = self.bot.get_channel(payload.channel_id)
         input_message = await message_channel.fetch_message(payload.message_id)
-        
+
         # Check if the reaction is from a specific user and emoji
-        if payload.member.id == 343224184110841856 and str(payload.emoji)[0] == '🔖':
+        if payload.member.id == 343224184110841856 and str(payload.emoji)[0] == "🔖":
             # Send the message URL to bookmarks_channel and remove the reaction
             await self.bot.get_channel(bookmarks_channel).send(input_message.jump_url)
-            await input_message.remove_reaction('🔖', payload.member)
-        elif str(payload.emoji)[0] == '💩':
+            await input_message.remove_reaction("🔖", payload.member)
+        elif str(payload.emoji)[0] == "💩":
             # Get a list of files to download (attachments or message content)
             files = input_message.attachments or [input_message.content.strip()]
-            
+
             # Create tasks to download each file concurrently
-            tasks = [download_file(file.url if hasattr(file, 'url') else file, idx + 1, message_channel) for idx, file in enumerate(files)]
-            
+            tasks = [
+                download_file(
+                    file.url if hasattr(file, "url") else file, idx + 1, message_channel
+                )
+                for idx, file in enumerate(files)
+            ]
+
             # Gather the results of the download tasks
             results = await asyncio.gather(*tasks)
-            
+
             # If all downloads are successful, add a checkmark reaction
             if all(results):
                 await input_message.add_reaction("✅")
-            
-            # Remove the poop emoji reaction from the user
-            await input_message.remove_reaction('💩', payload.member)
 
-                
-    @commands.command(hidden=True, aliases=["poo", "poop", ":spoon:", "🥄"], description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.", brief="Send/Receive files from a public archive.")
+            # Remove the poop emoji reaction from the user
+            await input_message.remove_reaction("💩", payload.member)
+
+    @commands.command(
+        hidden=True,
+        aliases=["poo", "poop", ":spoon:", "🥄"],
+        description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.",
+        brief="Send/Receive files from a public archive.",
+    )
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         async def download_file(url, current_download):
             # Check if the file format is valid
             if not any(ext in url for ext in database_acceptedFiles):
-                await ctx.send('Invalid image or video file!', delete_after=3)
+                await ctx.send("Invalid image or video file!", delete_after=3)
                 await ctx.message.add_reaction("⚠️")
                 return
-            
-            if 'https://tenor.com/view/' in url:
+
+            if "https://tenor.com/view/" in url:
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                 url = gettenor(tenor_id)
 
             # Display download progress
-            await ctx.send(f'Downloading... {current_download} of {total_downloads}', delete_after=1)
-            sanitized_link = url.replace("/", '')
-            with open(f'{dannybot}/database/Pooter/{f_name}{sanitized_link[-6:]}', 'wb') as f:
+            await ctx.send(
+                f"Downloading... {current_download} of {total_downloads}",
+                delete_after=1,
+            )
+            sanitized_link = url.replace("/", "")
+            with open(
+                f"{dannybot}/database/Pooter/{f_name}{sanitized_link[-6:]}", "wb"
+            ) as f:
                 f.write(requests.get(url).content)
 
             # Track downloaded files and check if all downloads are complete
             downloaded_files.add(url)
             if len(downloaded_files) == total_downloads:
-                await ctx.message.add_reaction("✅")  # React with a checkpoint when all files download successfully
+                await ctx.message.add_reaction(
+                    "✅"
+                )  # React with a checkpoint when all files download successfully
 
             # Log the download action
-            await self.bot.get_channel(logs_channel).send(f'{ctx.author.global_name} ({ctx.author.id}) has pootered: {url}')
+            await self.bot.get_channel(logs_channel).send(
+                f"{ctx.author.global_name} ({ctx.author.id}) has pootered: {url}"
+            )
 
         downloads = 1
         f_name = randhex(128)
@@ -120,18 +151,24 @@ class pooter(commands.Cog):
         if ctx.message.attachments:
             total_downloads = len(ctx.message.attachments)
             # Create download tasks for each attachment
-            tasks = [download_file(attachment.url, i + 1) for i, attachment in enumerate(ctx.message.attachments)]
-            await asyncio.gather(*tasks)  # Use asyncio.gather to download files concurrently
+            tasks = [
+                download_file(attachment.url, i + 1)
+                for i, attachment in enumerate(ctx.message.attachments)
+            ]
+            await asyncio.gather(
+                *tasks
+            )  # Use asyncio.gather to download files concurrently
         elif not File_Url:
             # If no attachment or File_Url provided, select a random file from the archive
-            pooter_files = os.listdir(f'{dannybot}/database/Pooter/')
+            pooter_files = os.listdir(f"{dannybot}/database/Pooter/")
             pooter_file = random.choice(pooter_files)
-            with open(f'{dannybot}/database/Pooter/{pooter_file}', 'rb') as f:
+            with open(f"{dannybot}/database/Pooter/{pooter_file}", "rb") as f:
                 await ctx.reply(file=discord.File(f, pooter_file))
         else:
             total_downloads = 1  # Initialize total_downloads to 1 for links
             # Download the file specified in File_Url
             await download_file(File_Url, 1)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(pooter(bot))
