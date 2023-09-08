@@ -14,12 +14,12 @@ class sd(commands.Cog):
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
 
     @commands.hybrid_command(
-        name="sd",
-        aliases=["grok", "diffuse"],
+        name="stablediffusion",
+        aliases=["grok", "diffuse",  "sd"],
         description="Create AI generated images via Stable-Diffusion.",
         brief="Create AI generated images with Dannybot.",
     )
-    async def sd(
+    async def stablediffusion(
         self,
         ctx: commands.Context,
         *,
@@ -59,6 +59,9 @@ class sd(commands.Cog):
     ):
         await ctx.defer()
         seed = random.randint(0, 999999999) if seed is None else seed
+        steps = 50 if steps >= 50 else steps
+        height = 1024 if height >= 1024 else height
+        width = 1024 if width >= 1024 else width
         checkpoints = {
             "Anything": "anythingV3_fp16.ckpt",
             "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
@@ -143,7 +146,7 @@ class sd(commands.Cog):
                     value=f"{latent_image[0]}x{latent_image[1]}",
                     inline=True,
                 )
-                embed.add_field(name="Checkpoint", value=model, inline=True)
+                embed.add_field(name="Checkpoint", value=checkpoint, inline=True)
                 embed.add_field(name="Sampler", value=sampler_name, inline=True)
                 embed.add_field(name="Scheduler", value=scheduler, inline=True)
                 embed.add_field(name="Seed", value=seed, inline=True)
