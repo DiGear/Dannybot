@@ -13,13 +13,52 @@ class sd(commands.Cog):
         self.ws = websocket.WebSocket()
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
 
-    @commands.command(
+    @commands.hybrid_command(
         name="sd",
         aliases=["grok", "diffuse"],
         description="Create AI generated images via Stable-Diffusion.",
         brief="Create AI generated images with Dannybot.",
     )
-    async def sd(self, ctx, *, positive_prompt: str):
+    async def sd(
+        self,
+        ctx: commands.Context,
+        *,
+        cfg: float = 7.0,
+        denoise: float = 1.0,
+        width: int = 512,
+        height: int = 512,
+        checkpoint: Literal[
+            "anythingV3_fp16.ckpt", "SD_1.5_Base.safetensors"
+        ] = "anythingV3_fp16.ckpt",
+        positive_prompt: str,
+        negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
+        sampler: Literal[
+            "euler",
+            "euler_ancestral",
+            "heun",
+            "dpm_2",
+            "dpm_2_ancestral",
+            "Ims",
+            "dpm_fast",
+            "dpm_adaptive",
+            "dpmpp_2s_ancestral",
+            "dpmpp_sde",
+            "dpmpp_sde_gpu",
+            "dpmpp_2m",
+            "dpmpp_2m_sde",
+            "dpmpp_2m_sde_gpu",
+            "ddim",
+            "uni_pc",
+            "uni_pc_bh2",
+        ] = "euler_ancestral",
+        scheduler: Literal[
+            "normal", "karras", "exponential", "simple", "ddim_uniform"
+        ] = "ddim_uniform",
+        seed: int = None,
+        steps: int = 20,
+    ):
+        await ctx.defer()
+        seed = random.randint(0, 999999999) if seed is None else seed
         generator_values = {
             "3": {
                 "class_type": "KSampler",
@@ -30,10 +69,10 @@ class sd(commands.Cog):
                     "model": ["4", 0],
                     "negative": ["7", 0],
                     "positive": ["6", 0],
-                    "sampler_name": "euler_ancestral",
-                    "scheduler": "ddim_uniform",
-                    "seed": 8566257,
-                    "steps": 20,
+                    "sampler_name": sampler,
+                    "scheduler": scheduler,
+                    "seed": seed,
+                    "steps": steps,
                 },
             },
             "4": {
@@ -42,15 +81,15 @@ class sd(commands.Cog):
             },
             "5": {
                 "class_type": "EmptyLatentImage",
-                "inputs": {"batch_size": 1, "height": 512, "width": 512},
+                "inputs": {"batch_size": 1, "height": height, "width": width},
             },
             "6": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["4", 1], "text": "masterpiece best quality girl"},
+                "inputs": {"clip": ["4", 1], "text": positive_prompt},
             },
             "7": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["4", 1], "text": "bad hands"},
+                "inputs": {"clip": ["4", 1], "text": negative_prompt},
             },
             "8": {
                 "class_type": "VAEDecode",
