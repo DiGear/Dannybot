@@ -28,8 +28,8 @@ class sd(commands.Cog):
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
-            "anythingV3_fp16.ckpt", "SD_1.5_Base.safetensors"
-        ] = "anythingV3_fp16.ckpt",
+            "Default", "Anything", "Sayori (Nekopara) Artstyle", "Sonic Artstyle"
+        ] = "Anything",
         positive_prompt: str,
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         sampler: Literal[
@@ -59,6 +59,15 @@ class sd(commands.Cog):
     ):
         await ctx.defer()
         seed = random.randint(0, 999999999) if seed is None else seed
+        checkpoints = {
+            "Anything": "anythingV3_fp16.ckpt",
+            "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
+            "Default": "SD_1.5_Base.safetensors",
+            "Sonic Artstyle": "sonicdiffusion_v3Beta4.safetensors",
+        }
+        checkpoint_alias = checkpoint
+        if checkpoint_alias in checkpoints:
+            checkpoint_alias = checkpoints[checkpoint_alias]
         generator_values = {
             "3": {
                 "class_type": "KSampler",
@@ -77,7 +86,7 @@ class sd(commands.Cog):
             },
             "4": {
                 "class_type": "CheckpointLoaderSimple",
-                "inputs": {"ckpt_name": "anythingV3_fp16.ckpt"},
+                "inputs": {"ckpt_name": checkpoint_alias},
             },
             "5": {
                 "class_type": "EmptyLatentImage",
