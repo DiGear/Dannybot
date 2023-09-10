@@ -167,7 +167,7 @@ class sd(commands.Cog):
             "10": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": activeloras[-1],
+                    "lora_name": activeloras[0],
                     "strength_model": 0.75,
                     "strength_clip": 1,
                     "model": ["4", 0],
@@ -192,7 +192,7 @@ class sd(commands.Cog):
             ("Positive Prompt", positive, False),
             ("Negative Prompt", negative, False),
             ("Checkpoint", checkpoint, False),
-            ("Active LORA(s)", activeloras[-1].split(".")[0], False),
+            ("Active LORA(s)", activeloras[0].split(".")[0], False),
             ("CFG Scale", cfg, True),
             ("Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
             ("Sampler", sampler_name, True),
@@ -200,6 +200,8 @@ class sd(commands.Cog):
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
+        #debugging stuff
+        print(activeloras)
         print(embed_fields)
         # fetch and prepare the generated image for embed
         for node_id in images:
