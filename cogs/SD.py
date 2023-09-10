@@ -64,6 +64,8 @@ class sd(commands.Cog):
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
+        # trimming CFG value in range of 0.001 to 1.000
+        cfg = min(max(cfg, 0.001), 100.000)
         # trimming steps value in range of 1 to 50
         steps = max(1, min(steps, 50))
         # trimming width and height value in range of 64 to 1024
