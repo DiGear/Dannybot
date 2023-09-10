@@ -89,11 +89,31 @@ class sd(commands.Cog):
         # LORA translator (part of LORA-test branch)
         lora = {
             "senko": "Senko-San.safetensors",
+            "astolfo": "Astolfo.safetensors",
+            "kiryu": "Kiryu Kazuma.safetensors",
+            "megumin": "megumin.safetensors",
+            "izuna": "izuna.safetensors",
+            "fumo": "Fumo.pt",
+            "shitty": "jaggy_lines_noise_taged-000012.safetensors",
+            "the cat": "Karyl.safetensors",
+            "karyl": "Karyl.safetensors",
+            "remilia": "Remilia Scarlet.safetensors",
+            "sans": "Sans.safetensors",
+            "slime": "slimegirls.safetensors",
+            "sylph": "Sylph.safetensors",
+            "yuno": "Yuno Gasai.safetensors",
+            "touhou": "Zun Style.safetensors",
+            "neptunia": "TSNeptunia-000045.safetensors",
+            "neptune": "Neptune.safetensors",
+            "kanade": "Kanade Tachibana.safetensors",
+            "tenshi": "Kanade Tachibana.safetensors",
+            "hu tao": "hu tao.safetensors",
+            "hand": "GoodHands-beta2.safetensors",
         }
         # lora matching logic
         activeloras = []
         for key in lora.keys():
-            if key in positive_prompt:
+            if key in positive_prompt.lower():
                 activeloras.append(lora[key])
         if not activeloras:
             activeloras = ["GoodHands-beta2.safetensors"]
@@ -141,7 +161,7 @@ class sd(commands.Cog):
             "10": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": activeloras[0],
+                    "lora_name": activeloras[-1],
                     "strength_model": 0.75,
                     "strength_clip": 1,
                     "model": ["4", 0],
@@ -165,10 +185,11 @@ class sd(commands.Cog):
         embed_fields = [
             ("Positive Prompt", positive, False),
             ("Negative Prompt", negative, False),
+            ("Checkpoint", checkpoint, False),
+            ("Active LORA(s)", activeloras[-1].split(".")[0], False),
             ("CFG Scale", cfg, True),
             ("Denoise", denoise, True),
             ("Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
-            ("Checkpoint", checkpoint, True),
             ("Sampler", sampler_name, True),
             ("Scheduler", scheduler, True),
             ("Seed", seed, True),
