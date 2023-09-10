@@ -131,7 +131,7 @@ class sd(commands.Cog):
                     "cfg": cfg,
                     "denoise": 1,
                     "latent_image": ["5", 0],
-                    "model": ["10", 0],
+                    "model": ["11", 0],
                     "negative": ["7", 0],
                     "positive": ["6", 0],
                     "sampler_name": sampler,
@@ -150,11 +150,11 @@ class sd(commands.Cog):
             },
             "6": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["10", 1], "text": positive_prompt},
+                "inputs": {"clip": ["11", 1], "text": positive_prompt},
             },
             "7": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["10", 1], "text": negative_prompt},
+                "inputs": {"clip": ["11", 1], "text": negative_prompt},
             },
             "8": {
                 "class_type": "VAEDecode",
@@ -174,6 +174,16 @@ class sd(commands.Cog):
                     "clip": ["4", 1],
                 },
             },
+            "11": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": activeloras[1] if activeloras[1] else "GoodHands-beta2.safetensors",
+                    "strength_model": 0.75,
+                    "strength_clip": 1,
+                    "model": ["10", 0],
+                    "clip": ["10", 1],
+                },
+            },
         }
 
         # extracts values from the dict and assigns them to variables so we can use them in the embed
@@ -183,6 +193,8 @@ class sd(commands.Cog):
         negative = prompt["7"]["inputs"]["text"]
         positive = prompt["6"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
+        lora_list_for_embed = str(activeloras).replace(".safetensors","").replace(".pt", "")
+        lora_list_for_embed = re.sub(r'[^\w\s,]', '', lora_list_for_embed)
         cfg, denoise, sampler_name, scheduler, seed, steps = [
             inputs_values[key]
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
@@ -192,7 +204,7 @@ class sd(commands.Cog):
             ("Positive Prompt", positive, False),
             ("Negative Prompt", negative, False),
             ("Checkpoint", checkpoint, False),
-            ("Active LORA(s)", activeloras[0].split(".")[0], False),
+            ("Active LORA(s)", lora_list_for_embed, False),
             ("CFG Scale", cfg, True),
             ("Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
             ("Sampler", sampler_name, True),
