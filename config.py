@@ -43,6 +43,7 @@ import numpy
 import openai
 import PIL
 import requests
+import ujson
 import websocket
 import yt_dlp
 from aiohttp import ClientSession
@@ -359,7 +360,7 @@ def gettenor(gifid=None):
     )
 
     if r.status_code == 200:
-        gifs = json.loads(r.content)
+        gifs = ujson.loads(r.content)
     else:
         gifs = None
     return gifs["results"][0]["media"][0]["gif"]["url"]
