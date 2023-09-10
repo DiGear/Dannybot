@@ -64,6 +64,11 @@ class sd(commands.Cog):
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
+
+        """
+        anti cris measures
+        """
+
         # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
         # trimming steps value in range of 1 to 50
@@ -73,6 +78,11 @@ class sd(commands.Cog):
         width = min(max(width, 64), 1024)
         # trimming denoise value in range of 0.001 to 1.000
         denoise = min(max(denoise, 0.001), 1.000)
+
+        """
+        end anti cris measures
+        """
+
         # translator for simplified checkpoint names to the actual filenames
         checkpoints = {
             "Anything": "anythingV3_fp16.ckpt",
