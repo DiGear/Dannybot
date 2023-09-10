@@ -1,5 +1,3 @@
-# LORA-test
-
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
@@ -86,7 +84,7 @@ class sd(commands.Cog):
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
             checkpoint_alias = checkpoints[checkpoint_alias]
-        # LORA translator (part of LORA-test branch)
+        # LORA translator
         lora = {
             "senko": "Senko-San.safetensors",
             "astolfo": "Astolfo.safetensors",
