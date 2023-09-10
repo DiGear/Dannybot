@@ -5,7 +5,9 @@ logger = logging.getLogger(__name__)
 
 
 class sd(commands.Cog):
+    # the address of the server to connect to
     server_address = "127.0.0.1:8188"
+    # UUID to use when hooking up to the server
     client_id = str(uuid.uuid4())
 
     def __init__(self, bot: commands.Bot):
@@ -54,26 +56,34 @@ class sd(commands.Cog):
         scheduler: Literal[
             "normal", "karras", "exponential", "simple", "ddim_uniform"
         ] = "normal",
-        seed: int = 11223344556677889900112233,  # idk how else to do this
+        seed: int = 11223344556677889900112233,  # fuck
         steps: int = 15,
     ):
         await ctx.defer()
+        # if the seed is that bullshit default value, it will generate a random seed
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
+        # trimming steps value in range of 1 to 50
         steps = max(1, min(steps, 50))
+        # trimming width and height value in range of 64 to 1024
         height = min(max(height, 64), 1024)
         width = min(max(width, 64), 1024)
+        # trimming denoise value in range of 0.001 to 1.000
         denoise = min(max(denoise, 0.001), 1.000)
+        # translator for simplified checkpoint names to the actual filenames
         checkpoints = {
             "Anything": "anythingV3_fp16.ckpt",
             "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
             "Default": "SD_1.5_Base.safetensors",
             "Sonic Artstyle": "sonicdiffusion_v3Beta4.safetensors",
         }
+        # getting the checkpoint value from the above dictionary
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
             checkpoint_alias = checkpoints[checkpoint_alias]
+
+        # a dictionary which acts as the configuration for the image generation
         generator_values = {
             "3": {
                 "class_type": "KSampler",
@@ -116,6 +126,7 @@ class sd(commands.Cog):
             },
         }
 
+        # extracts values from the dict and assigns them to variables so we can use them in the embed
         prompt = generator_values.copy()
         images = self.get_images(self.ws, prompt)
         latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
@@ -126,6 +137,7 @@ class sd(commands.Cog):
             inputs_values[key]
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
         ]
+        # setting up the embed fields
         embed_fields = [
             ("Positive Prompt", positive, False),
             ("Negative Prompt", negative, False),
@@ -138,59 +150,77 @@ class sd(commands.Cog):
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
+        # fetch and prepare the generated image for embed
         for node_id in images:
             for image_data in images[node_id]:
                 image = Image.open(io.BytesIO(image_data))
                 with io.BytesIO() as out:
                     image.save(out, format="png")
                     out.seek(0)
+                    # preparing the data to be send on discord
                     file = discord.File(fp=out, filename="image.png")
                     embed = discord.Embed()
+                    # looping over the embed fields and adding them one by one to the embed object
                     for name, value, inline in embed_fields:
                         embed.add_field(name=name, value=value, inline=inline)
                     embed.set_image(url="attachment://image.png")
                     await ctx.send(embed=embed, file=file)
 
     def queue_prompt(self, prompt):
+        # making a request to the server for a new prompt. it contains the new prompt and client id, encoded in UTF-8 (THIS IS IMPORTANT)
         req = urllib.request.Request(
             f"http://{self.server_address}/prompt",
             data=ujson.dumps({"prompt": prompt, "client_id": self.client_id}).encode(
                 "utf-8"
             ),
         )
+        # send the request to the server and get the response
         return ujson.loads(urllib.request.urlopen(req).read())
 
-    def get_image(self, filename, subfolder, folder_type):
+    def get_filename(self, filename, subfolder, folder_type):
+        # open a connection to the server with the provided parameters (filename, subfolder, type) to retrieve the requested file
         with urllib.request.urlopen(
             f"http://{self.server_address}/view?{urllib.parse.urlencode({'filename': filename, 'subfolder': subfolder, 'type': folder_type})}"
         ) as response:
             return response.read()
 
     def get_history(self, prompt_id):
+        # open a connection to the server using the ID of the prompt to retrieve its history
         with urllib.request.urlopen(
             f"http://{self.server_address}/history/{prompt_id}"
         ) as response:
             return ujson.loads(response.read())
 
     def get_images(self, ws, prompt):
+        # queue a new prompt for execution
         prompt_id = self.queue_prompt(prompt)["prompt_id"]
         output_images = {}
+        # enter an infinite loop until we receive the target data from WebSocket.
         while True:
             out = ws.recv()
             if isinstance(out, str):
                 message = ujson.loads(out)
                 if message.get("type") == "executing":
                     data = message.get("data")
+                    # check if the node is None and prompt_id matches with our prompt_id; if it does, break the loop.
                     if data.get("node") is None and data.get("prompt_id") == prompt_id:
                         break
+        # return a dictionary holding the history of the prompt execution including outputs.
         history = self.get_history(prompt_id)[prompt_id]
+        # extract the outputs from the history.
         outputs = history.get("outputs", {})
+        # go through each output entry in the outputs.
         for node_id, node_output in outputs.items():
+            # check if there are any images in the node_output.
             if "images" in node_output:
+                # gets images from server for each image in the node_output.
                 images_output = [
-                    self.get_image(image["filename"], image["subfolder"], image["type"])
+                    self.get_filename(
+                        image["filename"], image["subfolder"], image["type"]
+                    )
                     for image in node_output["images"]
                 ]
+                # add the received images to the output_images dictionary using node_id as the key.
                 output_images[node_id] = images_output
         return output_images
 
