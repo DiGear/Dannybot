@@ -82,15 +82,21 @@ class sd(commands.Cog):
             "Default": "SD_1.5_Base.safetensors",
             "Sonic Artstyle": "sonicdiffusion_v3Beta4.safetensors",
         }
-        # LORA translator (part of LORA-test branch)
-        loras = {
-            "alias": "filename",
-        }
         # getting the checkpoint value from the above dictionary
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
             checkpoint_alias = checkpoints[checkpoint_alias]
-
+        # LORA translator (part of LORA-test branch)
+        lora = {
+            "senko": "Senko-San.safetensors",
+        }
+        # lora matching logic
+        activeloras = []
+        for key in lora.keys():
+            if key in positive_prompt:
+                activeloras.append(lora[key])
+        if not activeloras:
+            activeloras = ["GoodHands-beta2.safetensors"]
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
             "3": {
@@ -99,7 +105,7 @@ class sd(commands.Cog):
                     "cfg": cfg,
                     "denoise": denoise,
                     "latent_image": ["5", 0],
-                    "model": ["4", 0],
+                    "model": ["10", 0],
                     "negative": ["7", 0],
                     "positive": ["6", 0],
                     "sampler_name": sampler,
@@ -118,11 +124,11 @@ class sd(commands.Cog):
             },
             "6": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["4", 1], "text": positive_prompt},
+                "inputs": {"clip": ["10", 1], "text": positive_prompt},
             },
             "7": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["4", 1], "text": negative_prompt},
+                "inputs": {"clip": ["10", 1], "text": negative_prompt},
             },
             "8": {
                 "class_type": "VAEDecode",
@@ -131,6 +137,16 @@ class sd(commands.Cog):
             "9": {
                 "class_type": "SaveImage",
                 "inputs": {"filename_prefix": "ComfyUI", "images": ["8", 0]},
+            },
+            "10": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": activeloras[0],
+                    "strength_model": 0.75,
+                    "strength_clip": 1,
+                    "model": ["4", 0],
+                    "clip": ["4", 1],
+                },
             },
         }
 
