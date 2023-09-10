@@ -1,3 +1,5 @@
+# LORA-test
+
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
@@ -79,6 +81,10 @@ class sd(commands.Cog):
             "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
             "Default": "SD_1.5_Base.safetensors",
             "Sonic Artstyle": "sonicdiffusion_v3Beta4.safetensors",
+        }
+        # LORA translator (part of LORA-test branch)
+        loras = {
+            "alias": "filename",
         }
         # getting the checkpoint value from the above dictionary
         checkpoint_alias = checkpoint
