@@ -114,11 +114,9 @@ class pooter(commands.Cog):
                 await ctx.send("Invalid image or video file!", delete_after=3)
                 await ctx.message.add_reaction("⚠️")
                 return
-
             if "https://tenor.com/view/" in url:
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                 url = gettenor(tenor_id)
-
             # Display download progress
             await ctx.send(
                 f"Downloading... {current_download} of {total_downloads}",
@@ -129,14 +127,11 @@ class pooter(commands.Cog):
                 f"{dannybot}/database/Pooter/{f_name}{sanitized_link[-6:]}", "wb"
             ) as f:
                 f.write(requests.get(url).content)
-
             # Track downloaded files and check if all downloads are complete
             downloaded_files.add(url)
+            # React with a checkpoint when all files download successfully
             if len(downloaded_files) == total_downloads:
-                await ctx.message.add_reaction(
-                    "✅"
-                )  # React with a checkpoint when all files download successfully
-
+                await ctx.message.add_reaction("✅")
             # Log the download action
             await self.bot.get_channel(logs_channel).send(
                 f"{ctx.author.global_name} ({ctx.author.id}) has pootered: {url}"
@@ -145,9 +140,7 @@ class pooter(commands.Cog):
         downloads = 1
         f_name = randhex(128)
         downloaded_files = set()  # Initialize a set to track downloaded files
-
         total_downloads = 0  # Initialize total_downloads here
-
         if ctx.message.attachments:
             total_downloads = len(ctx.message.attachments)
             # Create download tasks for each attachment
@@ -155,9 +148,8 @@ class pooter(commands.Cog):
                 download_file(attachment.url, i + 1)
                 for i, attachment in enumerate(ctx.message.attachments)
             ]
-            await asyncio.gather(
-                *tasks
-            )  # Use asyncio.gather to download files concurrently
+            # Use asyncio.gather to download files concurrently
+            await asyncio.gather(*tasks)
         elif not File_Url:
             # If no attachment or File_Url provided, select a random file from the archive
             pooter_files = os.listdir(f"{dannybot}/database/Pooter/")
