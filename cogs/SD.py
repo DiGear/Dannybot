@@ -3,6 +3,32 @@ from config import *
 
 logger = logging.getLogger(__name__)
 
+# LORA translator keys
+lora = {
+    "senko": "Senko-San.safetensors",
+    "astolfo": "Astolfo.safetensors",
+    "kiryu": "Kiryu Kazuma.safetensors",
+    "megumin": "megumin.safetensors",
+    "izuna": "izuna.safetensors",
+    "fumo": "Fumo.pt",
+    "shitty": "jaggy_lines_noise_taged-000012.safetensors",
+    "the cat": "Karyl.safetensors",
+    "karyl": "Karyl.safetensors",
+    "remilia": "Remilia Scarlet.safetensors",
+    "sans": "Sans.safetensors",
+    "slime": "slimegirls.safetensors",
+    "sylph": "Sylph.safetensors",
+    "yuno": "Yuno Gasai.safetensors",
+    "touhou": "Zun Style.safetensors",
+    "neptunia": "TSNeptunia-000045.safetensors",
+    "neptune": "Neptune.safetensors",
+    "kanade": "Kanade Tachibana.safetensors",
+    "tenshi": "Kanade Tachibana.safetensors",
+    "hu tao": "hu tao.safetensors",
+    "hand": "GoodHands-beta2.safetensors",
+    "compa": "compa_v2-000009.safetensors",
+}
+
 
 class sd(commands.Cog):
     # the address of the server to connect to
@@ -14,6 +40,17 @@ class sd(commands.Cog):
         self.bot = bot
         self.ws = websocket.WebSocket()
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
+
+    @commands.hybrid_command(
+        name="Loras",
+        description="View the list of LORAs supported by Dannybots stable-diffusion command.",
+        brief="Show LORA list",
+    )
+    async def loralist(self, ctx: commands.Context):
+        await ctx.defer()
+        keys_sorted = sorted(lora.keys())
+        keys_string = ", ".join(keys_sorted)
+        await ctx.send(str(keys_string))
 
     @commands.hybrid_command(
         name="sd",
@@ -91,31 +128,6 @@ class sd(commands.Cog):
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
             checkpoint_alias = checkpoints[checkpoint_alias]
-        # LORA translator
-        lora = {
-            "senko": "Senko-San.safetensors",
-            "astolfo": "Astolfo.safetensors",
-            "kiryu": "Kiryu Kazuma.safetensors",
-            "megumin": "megumin.safetensors",
-            "izuna": "izuna.safetensors",
-            "fumo": "Fumo.pt",
-            "shitty": "jaggy_lines_noise_taged-000012.safetensors",
-            "the cat": "Karyl.safetensors",
-            "karyl": "Karyl.safetensors",
-            "remilia": "Remilia Scarlet.safetensors",
-            "sans": "Sans.safetensors",
-            "slime": "slimegirls.safetensors",
-            "sylph": "Sylph.safetensors",
-            "yuno": "Yuno Gasai.safetensors",
-            "touhou": "Zun Style.safetensors",
-            "neptunia": "TSNeptunia-000045.safetensors",
-            "neptune": "Neptune.safetensors",
-            "kanade": "Kanade Tachibana.safetensors",
-            "tenshi": "Kanade Tachibana.safetensors",
-            "hu tao": "hu tao.safetensors",
-            "hand": "GoodHands-beta2.safetensors",
-            "compa": "compa_v2-000009.safetensors",
-        }
         # lora matching logic
         activeloras = []
         for key in lora.keys():
@@ -177,7 +189,9 @@ class sd(commands.Cog):
             "11": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": activeloras[1] if activeloras[1] else "GoodHands-beta2.safetensors",
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 2
+                    else activeloras[1],
                     "strength_model": 0.75,
                     "strength_clip": 1,
                     "model": ["10", 0],
@@ -193,8 +207,10 @@ class sd(commands.Cog):
         negative = prompt["7"]["inputs"]["text"]
         positive = prompt["6"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
-        lora_list_for_embed = str(activeloras).replace(".safetensors","").replace(".pt", "")
-        lora_list_for_embed = re.sub(r'[^\w\s,]', '', lora_list_for_embed)
+        lora_list_for_embed = (
+            str(activeloras).replace(".safetensors", "").replace(".pt", "")
+        )
+        lora_list_for_embed = re.sub(r"[^\w\s,]", "", lora_list_for_embed)
         cfg, denoise, sampler_name, scheduler, seed, steps = [
             inputs_values[key]
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
@@ -212,7 +228,7 @@ class sd(commands.Cog):
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
-        #debugging stuff
+        # debugging stuff
         print(activeloras)
         print(embed_fields)
         # fetch and prepare the generated image for embed
