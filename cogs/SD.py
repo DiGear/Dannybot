@@ -64,7 +64,7 @@ class sd(commands.Cog):
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
-        # trimming CFG value in range of 0.001 to 1.000
+        # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
         # trimming steps value in range of 1 to 50
         steps = max(1, min(steps, 50))
@@ -107,6 +107,7 @@ class sd(commands.Cog):
             "tenshi": "Kanade Tachibana.safetensors",
             "hu tao": "hu tao.safetensors",
             "hand": "GoodHands-beta2.safetensors",
+            "compa": "compa_v2-000009.safetensors",
         }
         # lora matching logic
         activeloras = []
@@ -193,6 +194,7 @@ class sd(commands.Cog):
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
+        print(embed_fields)
         # fetch and prepare the generated image for embed
         for node_id in images:
             for image_data in images[node_id]:
