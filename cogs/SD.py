@@ -26,7 +26,6 @@ class sd(commands.Cog):
         ctx: commands.Context,
         *,
         cfg: float = 7.000,
-        denoise: float = 1.000,
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
@@ -76,8 +75,6 @@ class sd(commands.Cog):
         # trimming width and height value in range of 64 to 1024
         height = min(max(height, 64), 1024)
         width = min(max(width, 64), 1024)
-        # trimming denoise value in range of 0.001 to 1.000
-        denoise = min(max(denoise, 0.001), 1.000)
 
         """
         end anti cris measures
@@ -132,7 +129,7 @@ class sd(commands.Cog):
                 "class_type": "KSampler",
                 "inputs": {
                     "cfg": cfg,
-                    "denoise": denoise,
+                    "denoise": 1,
                     "latent_image": ["5", 0],
                     "model": ["10", 0],
                     "negative": ["7", 0],
@@ -197,7 +194,6 @@ class sd(commands.Cog):
             ("Checkpoint", checkpoint, False),
             ("Active LORA(s)", activeloras[-1].split(".")[0], False),
             ("CFG Scale", cfg, True),
-            ("Denoise", denoise, True),
             ("Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
             ("Sampler", sampler_name, True),
             ("Scheduler", scheduler, True),
