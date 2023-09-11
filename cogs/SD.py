@@ -233,7 +233,7 @@ class sd(commands.Cog):
         images = self.get_images(self.ws, prompt)
         latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
         negative = prompt["7"]["inputs"]["text"]
-        positive = prompt["6"]["inputs"]["vae_name"].split(".")[0]
+        positive = prompt["10"]["inputs"]["vae_name"].split(".")[0]
         vae = prompt["10"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
         lora_list_for_embed = (
