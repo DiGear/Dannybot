@@ -60,6 +60,9 @@ checkpoints = {
     "Anything v3": "anythingV3_fp16.ckpt",
     "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
+    "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
+    "Made In Abyss Style": "MIA 704 120rp 1e-6.ckpt",
+    "AOM2 (NSFW)": "abyssorangemix2_Hard.safetensors",
 }
 
 # VAE translator keys
@@ -124,10 +127,13 @@ class sd(commands.Cog):
             "Default (Anything v5)",
             "Anything v3",
             "AOM3",
+            "AOM2 (NSFW)",
             "RichyRichMix",
             "Realistic",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
+            "CafeMix MIA",
+            "Made In Abyss",
         ] = "Default (Anything v5)",
         vae: Literal[
             "From Model",
@@ -146,10 +152,8 @@ class sd(commands.Cog):
             "dpm_fast",
             "dpm_adaptive",
             "dpmpp_2s_ancestral",
-            "dpmpp_sde",
             "dpmpp_sde_gpu",
             "dpmpp_2m",
-            "dpmpp_2m_sde",
             "dpmpp_2m_sde_gpu",
             "ddim",
             "uni_pc",
