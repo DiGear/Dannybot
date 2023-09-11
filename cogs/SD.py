@@ -339,8 +339,8 @@ class sd(commands.Cog):
 
                     # setting up the embed fields
                     embed_fields = [
-                        ("Positive Prompt", positive[: 1024 - 3] + "...", False),
-                        ("Negative Prompt", negative[: 1024 - 3] + "...", False),
+                        ("Positive Prompt", positive[: 1024 - 3], False),
+                        ("Negative Prompt", negative[: 1024 - 3], False),
                         ("Checkpoint", checkpoint, False),
                         ("VAE", vae, False),
                         ("Active LORA(s)", lora_list_for_embed, False),
