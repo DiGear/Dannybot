@@ -35,6 +35,16 @@ checkpoints = {
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Realistic": "SD_1.5_Base.safetensors",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
+    "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
+    "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
+    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
+}
+
+# VAE translator keys
+vaes = {
+    "From Model": "nothingvae.safetensors",
+    "vaeFtMse840000": "vaeFtMse840000.safetensors",
+    "Danny VAE": "VAE.vae.pt",
 }
 
 
@@ -66,7 +76,7 @@ class sd(commands.Cog):
         description="View the list of Checkpoints supported by Dannybots stable-diffusion command.",
         brief="Show Checkpoint list",
     )
-    async def loralist(self, ctx: commands.Context):
+    async def checkpoints(self, ctx: commands.Context):
         await ctx.defer()
         keys_sorted = sorted(checkpoints.keys())
         keys_string = ", ".join(keys_sorted)
@@ -88,10 +98,18 @@ class sd(commands.Cog):
         height: int = 512,
         checkpoint: Literal[
             "Default (Anything v3)",
+            "Anything v5",
+            "AOM3",
+            "RichyRichMix",
             "Realistic",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
         ] = "Default (Anything v3)",
+        vae: Literal[
+            "From Model",
+            "vaeFtMse840000",
+            "Danny VAE",
+        ] = "From Model",
         positive_prompt: str,
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         sampler: Literal[
@@ -148,6 +166,11 @@ class sd(commands.Cog):
         if checkpoint_alias in checkpoints:
             checkpoint_alias = checkpoints[checkpoint_alias]
 
+        # getting the VAE value from the dictionary
+        vae_alias = vae
+        if vae_alias in vaes:
+            vae_alias = vaes[vae_alias]
+
         # lora matching logic
         activeloras = []
         for key in lora.keys():
@@ -191,7 +214,10 @@ class sd(commands.Cog):
             },
             "8": {
                 "class_type": "VAEDecode",
-                "inputs": {"samples": ["3", 0], "vae": ["10", 0]},
+                "inputs": {
+                    "samples": ["3", 0],
+                    "vae": ["0", 0],
+                },
             },
             "9": {
                 "class_type": "SaveImage",
@@ -202,7 +228,7 @@ class sd(commands.Cog):
             },
             "10": {
                 "class_type": "VAELoader",
-                "inputs": {"vae_name": "vaeFtMse840000.safetensors"},
+                "inputs": {"vae_name": vae_alias},
             },
             "11": {
                 "class_type": "LoraLoader",
@@ -228,13 +254,18 @@ class sd(commands.Cog):
             },
         }
 
+        # vae shit
+        if vae == "From Model":
+            generator_values["8"]["inputs"]["vae"] = ["4", 2]
+        else:
+            generator_values["8"]["inputs"]["vae"] = ["10", 0]
+
         # extracts values from the dict and assigns them to variables so we can use them in the embed
         prompt = generator_values.copy()
         images = self.get_images(self.ws, prompt)
         latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
         negative = prompt["7"]["inputs"]["text"]
         positive = prompt["6"]["inputs"]["text"]
-        vae = prompt["10"]["inputs"]["vae_name"].split(".")[0]
         inputs_values = prompt["3"]["inputs"]
         lora_list_for_embed = (
             str(activeloras).replace(".safetensors", "").replace(".pt", "")
@@ -244,6 +275,11 @@ class sd(commands.Cog):
             inputs_values[key]
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
         ]
+
+        # debugging stuff
+        print(activeloras)
+        print(vae)
+        print(vae_alias)
 
         # setting up the embed fields
         embed_fields = [
@@ -257,14 +293,10 @@ class sd(commands.Cog):
             ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
             ("Sampler", sampler_name, True),
             ("Scheduler", scheduler, True),
-            ("Denoise", sampler_name, True),
+            ("Denoise", denoise, True),
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
-
-        # debugging stuff
-        print(activeloras)
-        print(embed_fields)
 
         # fetch and prepare the generated image for embed
         for node_id in images:
