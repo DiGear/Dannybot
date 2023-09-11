@@ -345,26 +345,22 @@ class sd(commands.Cog):
                     embed_fields = [
                         ("Positive Prompt", positive[: 1024 - 3], False),
                         ("Negative Prompt", negative[: 1024 - 3], False),
-                        ("Checkpoint", checkpoint, False),
-                        ("VAE", vae, False),
-                        ("Active LORA(s)", lora_list_for_embed, False),
-                        ("LORA Strength", lora_strength, False),
+                        ("Checkpoint Model", checkpoint, False),
+                        ("VAE Model", vae, False),
+                        ("Additional Networks (lycoris, loha, lokr, locon, etc…)", lora_list_for_embed, False),
+                        ("AddNet Strength", lora_strength, False),
                         ("CFG Scale", cfg, True),
-                        ("Latent Type", "txt2img", True),
+                        ("Diffusion Type", "txt2img", True),
                         (
-                            "Latent Resolution",
+                            "Resolution",
                             f"{latent_image[0]}x{latent_image[1]}",
                             True,
                         ),
-                        (
-                            "Batch Size",
-                            f"{batch_size} ({batch_processed} of {batch_size})",
-                            True,
-                        ),
-                        ("Sampler", sampler_name, True),
-                        ("Scheduler", scheduler, True),
+                        ("Batch Count", batch_size, True),
+                        ("Batch Index", f"{batch_processed} of {batch_size}", True)
+                        ("Sampling Method", f"{sampler_name} {scheduler}", True),
                         ("Denoise", denoise, True),
-                        ("Seed", "Multiple" if batch_size > 1 else seed, True),
+                        ("Seed", seed, True),
                         ("Steps", steps, True),
                     ]
 
