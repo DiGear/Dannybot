@@ -290,13 +290,13 @@ class sd(commands.Cog):
             ("Positive Prompt", positive, False),
             ("Negative Prompt", negative, False),
             ("Checkpoint", checkpoint, False),
-            ("Active LORA(s)", lora_list_for_embed, True),
-            ("LORA Strength", lora_strength, True)
-            ("VAE", vae, True),
+            ("VAE", vae, False),
+            ("Active LORA(s)", lora_list_for_embed, False),
+            ("LORA Strength", lora_strength, False),
             ("CFG Scale", cfg, True),
             ("Latent Type", "txt2img", True),
             ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
-            ("Batch Size", batch_size, True)
+            ("Batch Size", batch_size, True),
             ("Sampler", sampler_name, True),
             ("Scheduler", scheduler, True),
             ("Denoise", denoise, True),
