@@ -29,6 +29,14 @@ lora = {
     "compa": "compa_v2-000009.safetensors",
 }
 
+# checkpoint translator keys
+checkpoints = {
+    "Default (Anything v3)": "anythingV3_fp16.ckpt",
+    "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
+    "Realistic": "SD_1.5_Base.safetensors",
+    "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
+}
+
 
 class sd(commands.Cog):
     # the address of the server to connect to
@@ -54,6 +62,17 @@ class sd(commands.Cog):
         await ctx.send(str(keys_string))
 
     @commands.hybrid_command(
+        name="checkpoints",
+        description="View the list of Checkpoints supported by Dannybots stable-diffusion command.",
+        brief="Show Checkpoint list",
+    )
+    async def loralist(self, ctx: commands.Context):
+        await ctx.defer()
+        keys_sorted = sorted(checkpoints.keys())
+        keys_string = ", ".join(keys_sorted)
+        await ctx.send(str(keys_string))
+
+    @commands.hybrid_command(
         name="sd",
         aliases=["grok", "diffuse", "stablediffusion"],
         description="Create AI generated images via Stable-Diffusion.",
@@ -67,8 +86,11 @@ class sd(commands.Cog):
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
-            "Default", "Realistic", "Sayori (Nekopara) Artstyle", "Sonic Artstyle"
-        ] = "Default",
+            "Default (Anything v3)",
+            "Realistic",
+            "Sayori (Nekopara) Artstyle",
+            "Sonic-Diffusion",
+        ] = "Default (Anything v3)",
         positive_prompt: str,
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         sampler: Literal[
@@ -118,15 +140,7 @@ class sd(commands.Cog):
         end anti cris measures
         """
 
-        # translator for simplified checkpoint names to the actual filenames
-        checkpoints = {
-            "Default": "anythingV3_fp16.ckpt",
-            "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
-            "Realistic": "SD_1.5_Base.safetensors",
-            "Sonic Artstyle": "sonicdiffusion_v3Beta4.safetensors",
-        }
-
-        # getting the checkpoint value from the above dictionary
+        # getting the checkpoint value from the dictionary
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
             checkpoint_alias = checkpoints[checkpoint_alias]
@@ -147,7 +161,7 @@ class sd(commands.Cog):
                     "cfg": cfg,
                     "denoise": 1,
                     "latent_image": ["5", 0],
-                    "model": ["11", 0],
+                    "model": ["12", 0],
                     "negative": ["7", 0],
                     "positive": ["6", 0],
                     "sampler_name": sampler,
@@ -166,15 +180,15 @@ class sd(commands.Cog):
             },
             "6": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["11", 1], "text": positive_prompt},
+                "inputs": {"clip": ["12", 1], "text": positive_prompt},
             },
             "7": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["11", 1], "text": negative_prompt},
+                "inputs": {"clip": ["12", 1], "text": negative_prompt},
             },
             "8": {
                 "class_type": "VAEDecode",
-                "inputs": {"samples": ["3", 0], "vae": ["4", 2]},
+                "inputs": {"samples": ["3", 0], "vae": ["10", 0]},
             },
             "9": {
                 "class_type": "SaveImage",
@@ -184,6 +198,10 @@ class sd(commands.Cog):
                 },
             },
             "10": {
+                "class_type": "VAELoader",
+                "inputs": {"vae_name": "vaeFtMse840000.safetensors"},
+            },
+            "11": {
                 "class_type": "LoraLoader",
                 "inputs": {
                     "lora_name": activeloras[0],
@@ -193,7 +211,7 @@ class sd(commands.Cog):
                     "clip": ["4", 1],
                 },
             },
-            "11": {
+            "12": {
                 "class_type": "LoraLoader",
                 "inputs": {
                     "lora_name": "GoodHands-beta2.safetensors"
@@ -201,8 +219,8 @@ class sd(commands.Cog):
                     else activeloras[1],
                     "strength_model": 0.75,
                     "strength_clip": 1,
-                    "model": ["10", 0],
-                    "clip": ["10", 1],
+                    "model": ["11", 0],
+                    "clip": ["11", 1],
                 },
             },
         }
