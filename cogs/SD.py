@@ -308,7 +308,7 @@ class sd(commands.Cog):
                         ("Checkpoint", checkpoint, False),
                         ("VAE", vae, False),
                         ("Active LORA(s)", lora_list_for_embed, False),
-                        ("LORA Strength", lora_strength, True),
+                        ("LORA Strength", lora_strength, False),
                         ("CFG Scale", cfg, True),
                         ("Latent Type", "txt2img", True),
                         ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
@@ -316,7 +316,7 @@ class sd(commands.Cog):
                         ("Sampler", sampler_name, True),
                         ("Scheduler", scheduler, True),
                         ("Denoise", denoise, True),
-                        ("Seed", seed, True),
+                        ("Seed", "Multiple" if batch_size > 1 else seed, True),
                         ("Steps", steps, True),
                     ]
                     
