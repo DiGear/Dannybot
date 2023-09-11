@@ -29,6 +29,21 @@ lora = {
     "compa": "compa_v2-000009.safetensors",
     "ryouna": "ryouna.pt",
     "leffrey": "leffrey.pt",
+    "detailed": "add_detail.safetensors",
+    "among us": "Among Us.safetensors",
+    "eyes": "beautifuleyes.safetensors",
+    "canonome": "Camonome Style.safetensors",
+    "chara": "Chara.safetensors",
+    "chibi": "Chibi Style.safetensors",
+    "danganronpa": "Danganronpa Style.safetensors",
+    "feet": "feet 2.safetensors",
+    "figure": "Figurine.safetensors",
+    "anya face": "Anya Face.safetensors",
+    "gape": "gape.safetensors",
+    "gigachad": "Gigachad.safetensors",
+    "made in abyss": "Made In Abyss Style.safetensors",
+    "mgq": "Monster Girl Quest.safetensors",
+    "omori": "Omori.safetensors",
 }
 
 # checkpoint translator keys
@@ -146,7 +161,7 @@ class sd(commands.Cog):
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
-        
+
         # init this
         batch_processed = 0
 
@@ -245,7 +260,7 @@ class sd(commands.Cog):
                 "class_type": "LoraLoader",
                 "inputs": {
                     "lora_name": activeloras[0],
-                    "strength_model": 1,
+                    "strength_model": lora_strength,
                     "strength_clip": 1,
                     "model": ["4", 0],
                     "clip": ["4", 1],
@@ -257,7 +272,7 @@ class sd(commands.Cog):
                     "lora_name": "GoodHands-beta2.safetensors"
                     if len(activeloras) < 2
                     else activeloras[1],
-                    "strength_model": 1,
+                    "strength_model": lora_strength,
                     "strength_clip": 1,
                     "model": ["11", 0],
                     "clip": ["11", 1],
@@ -275,14 +290,14 @@ class sd(commands.Cog):
         prompt = generator_values.copy()
         images = self.get_images(self.ws, prompt)
         latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
-        batch_size = (prompt["5"]["inputs"]["batch_size"])
+        batch_size = prompt["5"]["inputs"]["batch_size"]
         negative = prompt["7"]["inputs"]["text"]
         positive = prompt["6"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
         lora_list_for_embed = (
             str(activeloras).replace(".safetensors", "").replace(".pt", "")
         )
-        lora_list_for_embed = re.sub(r"[^\w\s,]", "", lora_list_for_embed)
+        lora_list_for_embed = re.sub(r"[^\w\s,_-]", "", lora_list_for_embed)
         cfg, denoise, sampler_name, scheduler, seed, steps = [
             inputs_values[key]
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
@@ -300,7 +315,7 @@ class sd(commands.Cog):
                     # preparing the data to be send on discord
                     file = discord.File(fp=out, filename="image.png")
                     embed = discord.Embed()
-                    
+
                     # setting up the embed fields
                     embed_fields = [
                         ("Positive Prompt", positive, False),
@@ -311,15 +326,23 @@ class sd(commands.Cog):
                         ("LORA Strength", lora_strength, False),
                         ("CFG Scale", cfg, True),
                         ("Latent Type", "txt2img", True),
-                        ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
-                        ("Batch Size", f"{batch_size} ({batch_processed} of {batch_size})", True),
+                        (
+                            "Latent Resolution",
+                            f"{latent_image[0]}x{latent_image[1]}",
+                            True,
+                        ),
+                        (
+                            "Batch Size",
+                            f"{batch_size} ({batch_processed} of {batch_size})",
+                            True,
+                        ),
                         ("Sampler", sampler_name, True),
                         ("Scheduler", scheduler, True),
                         ("Denoise", denoise, True),
                         ("Seed", "Multiple" if batch_size > 1 else seed, True),
                         ("Steps", steps, True),
                     ]
-                    
+
                     # debugging stuff
                     print(activeloras)
                     print(vae)
