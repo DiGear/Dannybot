@@ -328,6 +328,8 @@ class sd(commands.Cog):
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
         ]
 
+        sampler_name = sampler_name.replace("_", " ")
+
         # fetch and prepare the generated image for embed
         for node_id in images:
             for image_data in images[node_id]:
@@ -339,7 +341,12 @@ class sd(commands.Cog):
 
                     # preparing the data to be send on discord
                     file = discord.File(fp=out, filename="image.png")
-                    embed = discord.Embed()
+                    embed = discord.Embed(title="txt2img", color=0x80FFFF)
+                    embed.set_image(url="attachment://image.png")
+                    embed.set_footer(text="Stable-Diffusion intepreter on Dannybot 3.0")
+                    embed.set_author(
+                        name=ctx.author.name, icon_url=ctx.author.avatar.url
+                    )
 
                     # setting up the embed fields
                     embed_fields = [
@@ -347,8 +354,13 @@ class sd(commands.Cog):
                         ("Negative Prompt", negative[: 1024 - 3], False),
                         ("Checkpoint Model", checkpoint, False),
                         ("VAE Model", vae, False),
-                        ("Additional Networks (lycoris, loha, lokr, locon, etc…)", lora_list_for_embed, False),
-                        ("AddNet Strength", lora_strength, False),
+                        (
+                            "Additional Networks (lycoris, loha, lokr, locon)",
+                            lora_list_for_embed,
+                            False,
+                        ),
+                        ("Additional Network Strength", lora_strength, False),
+                        ("Seed", seed, True),
                         ("CFG Scale", cfg, True),
                         ("Diffusion Type", "txt2img", True),
                         (
@@ -356,12 +368,11 @@ class sd(commands.Cog):
                             f"{latent_image[0]}x{latent_image[1]}",
                             True,
                         ),
-                        ("Batch Count", batch_size, True),
+                        ("Batch Size", batch_size, True),
                         ("Batch Index", f"{batch_processed} of {batch_size}", True),
-                        ("Sampling Method", f"{sampler_name} {scheduler}", True),
+                        ("Sampling method", f"{sampler_name} {scheduler}", True),
+                        ("Sampling Steps", steps, True),
                         ("Denoise", denoise, True),
-                        ("Seed", seed, True),
-                        ("Steps", steps, True),
                     ]
 
                     # debugging stuff
@@ -373,7 +384,6 @@ class sd(commands.Cog):
                     # looping over the embed fields and adding them one by one to the embed object
                     for name, value, inline in embed_fields:
                         embed.add_field(name=name, value=value, inline=inline)
-                    embed.set_image(url="attachment://image.png")
                     await ctx.send(embed=embed, file=file)
 
     # making a request to the server for a new prompt. it contains the new prompt and client id, encoded in UTF-8 (THIS IS IMPORTANT)
