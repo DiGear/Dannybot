@@ -44,6 +44,12 @@ lora = {
     "made in abyss": "Made In Abyss Style.safetensors",
     "mgq": "Monster Girl Quest.safetensors",
     "omori": "Omori.safetensors",
+    "nanachi": "Nanachi.safetensors",
+    "shrift": "Nekomata Style.safetensors",
+    "papi": "Papi.safetensors",
+    "toka": "tokacomics.safetensors",
+    "scout": "scoutv3.safetensors",
+    
 }
 
 # checkpoint translator keys
