@@ -31,7 +31,7 @@ lora = {
     "leffrey": "leffrey.pt",
     "detailed": "add_detail.safetensors",
     "among us": "Among Us.safetensors",
-    "eyes": "beautifuleyes.safetensors",
+    "good eyes": "beautifuleyes.safetensors",
     "canonome": "Camonome Style.safetensors",
     "chara": "Chara.safetensors",
     "chibi": "Chibi Style.safetensors",
@@ -49,7 +49,6 @@ lora = {
     "papi": "Papi.safetensors",
     "toka": "tokacomics.safetensors",
     "scout": "scoutv3.safetensors",
-    
 }
 
 # checkpoint translator keys
@@ -219,7 +218,7 @@ class sd(commands.Cog):
                     "cfg": cfg,
                     "denoise": denoise,
                     "latent_image": ["5", 0],
-                    "model": ["12", 0],
+                    "model": ["13", 0],
                     "negative": ["7", 0],
                     "positive": ["6", 0],
                     "sampler_name": sampler,
@@ -238,11 +237,11 @@ class sd(commands.Cog):
             },
             "6": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["12", 1], "text": positive_prompt},
+                "inputs": {"clip": ["13", 1], "text": positive_prompt},
             },
             "7": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["12", 1], "text": negative_prompt},
+                "inputs": {"clip": ["13", 1], "text": negative_prompt},
             },
             "8": {
                 "class_type": "VAEDecode",
@@ -282,6 +281,18 @@ class sd(commands.Cog):
                     "strength_clip": 1,
                     "model": ["11", 0],
                     "clip": ["11", 1],
+                },
+            },
+            "13": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 3
+                    else activeloras[2],
+                    "strength_model": 0 if len(activeloras) < 3 else lora_strength ,
+                    "strength_clip": 0 if len(activeloras) < 3 else 1,
+                    "model": ["12", 0],
+                    "clip": ["12", 1],
                 },
             },
         }
