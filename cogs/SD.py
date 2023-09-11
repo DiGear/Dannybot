@@ -61,7 +61,7 @@ checkpoints = {
     "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
-    "Made In Abyss Style": "MIA 704 120rp 1e-6.ckpt",
+    "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
     "AOM2 (NSFW)": "abyssorangemix2_Hard.safetensors",
 }
 
