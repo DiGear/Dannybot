@@ -146,6 +146,9 @@ class sd(commands.Cog):
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
+        
+        # init this
+        batch_processed = 0
 
         """
         anti cris measures
@@ -285,34 +288,10 @@ class sd(commands.Cog):
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
         ]
 
-        # setting up the embed fields
-        embed_fields = [
-            ("Positive Prompt", positive, False),
-            ("Negative Prompt", negative, False),
-            ("Checkpoint", checkpoint, False),
-            ("VAE", vae, False),
-            ("Active LORA(s)", lora_list_for_embed, False),
-            ("LORA Strength", lora_strength, False),
-            ("CFG Scale", cfg, True),
-            ("Latent Type", "txt2img", True),
-            ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
-            ("Batch Size", batch_size, True),
-            ("Sampler", sampler_name, True),
-            ("Scheduler", scheduler, True),
-            ("Denoise", denoise, True),
-            ("Seed", seed, True),
-            ("Steps", steps, True),
-        ]
-        
-        # debugging stuff
-        print(activeloras)
-        print(vae)
-        print(vae_alias)
-        print(embed_fields)
-
         # fetch and prepare the generated image for embed
         for node_id in images:
             for image_data in images[node_id]:
+                batch_processed += 1
                 image = Image.open(io.BytesIO(image_data))
                 with io.BytesIO() as out:
                     image.save(out, format="png")
@@ -321,6 +300,31 @@ class sd(commands.Cog):
                     # preparing the data to be send on discord
                     file = discord.File(fp=out, filename="image.png")
                     embed = discord.Embed()
+                    
+                    # setting up the embed fields
+                    embed_fields = [
+                        ("Positive Prompt", positive, False),
+                        ("Negative Prompt", negative, False),
+                        ("Checkpoint", checkpoint, False),
+                        ("VAE", vae, False),
+                        ("Active LORA(s)", lora_list_for_embed, False),
+                        ("LORA Strength", lora_strength, True),
+                        ("CFG Scale", cfg, True),
+                        ("Latent Type", "txt2img", True),
+                        ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
+                        ("Batch Size", f"{batch_size} ({batch_processed} of {batch_size})", True),
+                        ("Sampler", sampler_name, True),
+                        ("Scheduler", scheduler, True),
+                        ("Denoise", denoise, True),
+                        ("Seed", seed, True),
+                        ("Steps", steps, True),
+                    ]
+                    
+                    # debugging stuff
+                    print(activeloras)
+                    print(vae)
+                    print(vae_alias)
+                    print(embed_fields)
 
                     # looping over the embed fields and adding them one by one to the embed object
                     for name, value, inline in embed_fields:
