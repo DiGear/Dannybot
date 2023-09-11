@@ -27,15 +27,17 @@ lora = {
     "hu tao": "hu tao.safetensors",
     "hand": "GoodHands-beta2.safetensors",
     "compa": "compa_v2-000009.safetensors",
+    "ryouna": "ryouna.pt",
+    "leffrey": "leffrey.pt",
 }
 
 # checkpoint translator keys
 checkpoints = {
-    "Default (Anything v3)": "anythingV3_fp16.ckpt",
+    "Default (Anything v5)": "AnythingV5Ink_v5PrtRE.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Realistic": "SD_1.5_Base.safetensors",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
-    "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
+    "Anything v3": "anythingV3_fp16.ckpt",
     "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
 }
@@ -94,17 +96,19 @@ class sd(commands.Cog):
         *,
         cfg: float = 7.000,
         denoise: float = 1.000,
+        lora_strength: float = 1.000,
+        batch_size: int = 1,
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
-            "Default (Anything v3)",
-            "Anything v5",
+            "Default (Anything v5)",
+            "Anything v3",
             "AOM3",
             "RichyRichMix",
             "Realistic",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
-        ] = "Default (Anything v3)",
+        ] = "Default (Anything v5)",
         vae: Literal[
             "From Model",
             "vaeFtMse840000",
@@ -149,6 +153,10 @@ class sd(commands.Cog):
 
         # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
+        # trimming Lora Strength value in range of 0.001 to 10.000
+        lora_strength = min(max(lora_strength, 0.001), 10.000)
+        # trimming Batch Size value in range of 1 to 4
+        batch_size = min(max(batch_size, 1), 4)
         # trimming Denoise value in range of 0.001 to 1.000
         denoise = min(max(denoise, 0.001), 1.000)
         # trimming steps value in range of 1 to 50
@@ -202,7 +210,7 @@ class sd(commands.Cog):
             },
             "5": {
                 "class_type": "EmptyLatentImage",
-                "inputs": {"batch_size": 1, "height": height, "width": width},
+                "inputs": {"batch_size": batch_size, "height": height, "width": width},
             },
             "6": {
                 "class_type": "CLIPTextEncode",
@@ -234,7 +242,7 @@ class sd(commands.Cog):
                 "class_type": "LoraLoader",
                 "inputs": {
                     "lora_name": activeloras[0],
-                    "strength_model": 0.75,
+                    "strength_model": 1,
                     "strength_clip": 1,
                     "model": ["4", 0],
                     "clip": ["4", 1],
@@ -246,7 +254,7 @@ class sd(commands.Cog):
                     "lora_name": "GoodHands-beta2.safetensors"
                     if len(activeloras) < 2
                     else activeloras[1],
-                    "strength_model": 0.75,
+                    "strength_model": 1,
                     "strength_clip": 1,
                     "model": ["11", 0],
                     "clip": ["11", 1],
@@ -264,6 +272,7 @@ class sd(commands.Cog):
         prompt = generator_values.copy()
         images = self.get_images(self.ws, prompt)
         latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
+        batch_size = (prompt["5"]["inputs"]["batch_size"])
         negative = prompt["7"]["inputs"]["text"]
         positive = prompt["6"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
@@ -276,27 +285,30 @@ class sd(commands.Cog):
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
         ]
 
-        # debugging stuff
-        print(activeloras)
-        print(vae)
-        print(vae_alias)
-
         # setting up the embed fields
         embed_fields = [
             ("Positive Prompt", positive, False),
             ("Negative Prompt", negative, False),
             ("Checkpoint", checkpoint, False),
-            ("Active LORA(s)", lora_list_for_embed, False),
+            ("Active LORA(s)", lora_list_for_embed, True),
+            ("LORA Strength", lora_strength, True)
             ("VAE", vae, True),
             ("CFG Scale", cfg, True),
             ("Latent Type", "txt2img", True),
             ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
+            ("Batch Size", batch_size, True)
             ("Sampler", sampler_name, True),
             ("Scheduler", scheduler, True),
             ("Denoise", denoise, True),
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
+        
+        # debugging stuff
+        print(activeloras)
+        print(vae)
+        print(vae_alias)
+        print(embed_fields)
 
         # fetch and prepare the generated image for embed
         for node_id in images:
