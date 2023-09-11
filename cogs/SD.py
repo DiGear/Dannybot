@@ -357,7 +357,7 @@ class sd(commands.Cog):
                             True,
                         ),
                         ("Batch Count", batch_size, True),
-                        ("Batch Index", f"{batch_processed} of {batch_size}", True)
+                        ("Batch Index", f"{batch_processed} of {batch_size}", True),
                         ("Sampling Method", f"{sampler_name} {scheduler}", True),
                         ("Denoise", denoise, True),
                         ("Seed", seed, True),
