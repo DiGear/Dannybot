@@ -49,6 +49,10 @@ lora = {
     "papi": "Papi.safetensors",
     "toka": "tokacomics.safetensors",
     "scout": "scoutv3.safetensors",
+    "natsuki": "Natsuki_V1.safetensors",
+    "yuri": "YuriV1.safetensors",
+    "monika": "MonikaV1.safetensors",
+    "sayori": "Sayori_V1.safetensors",
 }
 
 # checkpoint translator keys
