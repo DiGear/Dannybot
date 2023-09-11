@@ -42,7 +42,7 @@ class sd(commands.Cog):
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
 
     @commands.hybrid_command(
-        name="Loras",
+        name="loras",
         description="View the list of LORAs supported by Dannybots stable-diffusion command.",
         brief="Show LORA list",
     )
@@ -66,8 +66,8 @@ class sd(commands.Cog):
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
-            "Default", "Anything", "Sayori (Nekopara) Artstyle", "Sonic Artstyle"
-        ] = "Anything",
+            "Default", "Realistic", "Sayori (Nekopara) Artstyle", "Sonic Artstyle"
+        ] = "Default",
         positive_prompt: str,
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         sampler: Literal[
@@ -119,9 +119,9 @@ class sd(commands.Cog):
 
         # translator for simplified checkpoint names to the actual filenames
         checkpoints = {
-            "Anything": "anythingV3_fp16.ckpt",
+            "Default": "anythingV3_fp16.ckpt",
             "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
-            "Default": "SD_1.5_Base.safetensors",
+            "Realistic": "SD_1.5_Base.safetensors",
             "Sonic Artstyle": "sonicdiffusion_v3Beta4.safetensors",
         }
         # getting the checkpoint value from the above dictionary
@@ -174,7 +174,7 @@ class sd(commands.Cog):
             },
             "9": {
                 "class_type": "SaveImage",
-                "inputs": {"filename_prefix": "ComfyUI", "images": ["8", 0]},
+                "inputs": {"filename_prefix": "Dannybot_"+ ctx.author.name, "images": ["8", 0]},
             },
             "10": {
                 "class_type": "LoraLoader",
