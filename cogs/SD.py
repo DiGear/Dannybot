@@ -83,6 +83,7 @@ class sd(commands.Cog):
         ctx: commands.Context,
         *,
         cfg: float = 7.000,
+        denoise: float = 1.000,
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
@@ -130,6 +131,8 @@ class sd(commands.Cog):
 
         # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
+        # trimming Denoise value in range of 0.001 to 1.000
+        denoise = min(max(denoise, 0.001), 1.000)
         # trimming steps value in range of 1 to 50
         steps = max(1, min(steps, 50))
         # trimming width and height value in range of 64 to 1024
@@ -159,7 +162,7 @@ class sd(commands.Cog):
                 "class_type": "KSampler",
                 "inputs": {
                     "cfg": cfg,
-                    "denoise": 1,
+                    "denoise": denoise,
                     "latent_image": ["5", 0],
                     "model": ["12", 0],
                     "negative": ["7", 0],
@@ -230,7 +233,8 @@ class sd(commands.Cog):
         images = self.get_images(self.ws, prompt)
         latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
         negative = prompt["7"]["inputs"]["text"]
-        positive = prompt["6"]["inputs"]["text"]
+        positive = prompt["6"]["inputs"]["vae_name"].split(".")[0]
+        vae = prompt["10"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
         lora_list_for_embed = (
             str(activeloras).replace(".safetensors", "").replace(".pt", "")
@@ -247,10 +251,13 @@ class sd(commands.Cog):
             ("Negative Prompt", negative, False),
             ("Checkpoint", checkpoint, False),
             ("Active LORA(s)", lora_list_for_embed, False),
+            ("VAE", vae, True),
             ("CFG Scale", cfg, True),
-            ("Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
+            ("Latent Type", "txt2img", True)
+            ("Latent Resolution", f"{latent_image[0]}x{latent_image[1]}", True),
             ("Sampler", sampler_name, True),
             ("Scheduler", scheduler, True),
+            ("Denoise", sampler_name, True),
             ("Seed", seed, True),
             ("Steps", steps, True),
         ]
