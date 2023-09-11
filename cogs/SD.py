@@ -277,8 +277,8 @@ class sd(commands.Cog):
                     "lora_name": "GoodHands-beta2.safetensors"
                     if len(activeloras) < 2
                     else activeloras[1],
-                    "strength_model": lora_strength,
-                    "strength_clip": 1,
+                    "strength_model": 0 if len(activeloras) < 2 else lora_strength,
+                    "strength_clip": 0 if len(activeloras) < 2 else 1,
                     "model": ["11", 0],
                     "clip": ["11", 1],
                 },
@@ -289,7 +289,7 @@ class sd(commands.Cog):
                     "lora_name": "GoodHands-beta2.safetensors"
                     if len(activeloras) < 3
                     else activeloras[2],
-                    "strength_model": 0 if len(activeloras) < 3 else lora_strength ,
+                    "strength_model": 0 if len(activeloras) < 3 else lora_strength,
                     "strength_clip": 0 if len(activeloras) < 3 else 1,
                     "model": ["12", 0],
                     "clip": ["12", 1],
