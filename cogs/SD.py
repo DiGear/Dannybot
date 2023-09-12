@@ -11,48 +11,48 @@ lora = [
     ("megumin", "megumin.safetensors", 1.0),
     ("izuna", "izuna.safetensors", 1.0),
     ("fumo", "Fumo.pt", 1.0),
-    ("shitty", "jaggy_lines_noise_taged-000012.safetensors", 1.0),
+    ("shitty", "jaggy_lines_noise_taged-000012.safetensors", 1.3),
     ("the cat", "Karyl.safetensors", 1.0),
     ("karyl", "Karyl.safetensors", 1.0),
     ("remilia", "Remilia Scarlet.safetensors", 1.0),
-    ("sans", "Sans.safetensors", 1.0),
+    ("sans", "Sans.safetensors", 0.85),
     ("slime", "slimegirls.safetensors", 1.0),
-    ("sylph", "Sylph.safetensors", 1.0),
-    ("yuno", "Yuno Gasai.safetensors", 1.0),
+    ("sylph", "Sylph.safetensors", 0.9),
+    ("yuno", "Yuno Gasai.safetensors", 0.9),
     ("touhou", "Zun Style.safetensors", 1.0),
     ("neptunia", "TSNeptunia-000045.safetensors", 1.0),
-    ("neptune", "Neptune.safetensors", 1.0),
-    ("kanade", "Kanade Tachibana.safetensors", 1.0),
-    ("tenshi", "Kanade Tachibana.safetensors", 1.0),
-    ("hu tao", "hu tao.safetensors", 1.0),
+    ("neptune", "Neptune.safetensors", 0.85),
+    ("kanade", "Kanade Tachibana.safetensors", 0.85),
+    ("tenshi", "Kanade Tachibana.safetensors", 0.85),
+    ("hu tao", "hu tao.safetensors", 0.85),
     ("hand", "GoodHands-beta2.safetensors", 1.0),
-    ("compa", "compa_v2-000009.safetensors", 1.0),
-    ("ryouna", "ryouna.pt", 1.0),
+    ("compa", "compa_v2-000009.safetensors", 0.66),
+    ("ryouna", "ryouna.pt", 0.75),
     ("leffrey", "leffrey.pt", 1.0),
-    ("detailed", "add_detail.safetensors", 1.0),
+    ("detailed", "add_detail.safetensors", 0.75),
     ("among us", "Among Us.safetensors", 1.0),
-    ("good eyes", "beautifuleyes.safetensors", 1.0),
+    ("good eyes", "beautifuleyes.safetensors", 0.85),
     ("canonome", "Camonome Style.safetensors", 1.0),
-    ("chara", "Chara.safetensors", 1.0),
-    ("chibi", "Chibi Style.safetensors", 1.0),
-    ("danganronpa", "Danganronpa Style.safetensors", 1.0),
-    ("feet", "feet 2.safetensors", 1.0),
+    ("chara", "Chara.safetensors", 0.8),
+    ("chibi", "Chibi Style.safetensors", 0.7),
+    ("danganronpa", "Danganronpa Style.safetensors", 0.75),
+    ("feet", "feet 2.safetensors", 0.75),
     ("figure", "Figurine.safetensors", 1.0),
-    ("anya face", "Anya Face.safetensors", 1.0),
-    ("gaping", "gape.safetensors", 1.0),
-    ("gigachad", "Gigachad.safetensors", 1.0),
-    ("made in abyss", "Made In Abyss Style.safetensors", 1.0),
+    ("anya face", "Anya Face.safetensors", 0.9),
+    ("gaping", "gape.safetensors", 0.7),
+    ("gigachad", "Gigachad.safetensors", 0.7),
+    ("made in abyss", "Made In Abyss Style.safetensors", 0.7),
     ("mgq", "Monster Girl Quest.safetensors", 1.0),
-    ("omori", "Omori.safetensors", 1.0),
-    ("nanachi", "Nanachi.safetensors", 1.0),
-    ("shrift", "Nekomata Style.safetensors", 1.0),
-    ("papi", "Papi.safetensors", 1.0),
+    ("omori", "Omori.safetensors", 0.45),
+    ("nanachi", "Nanachi.safetensors", 0.7),
+    ("shrift", "Nekomata Style.safetensors", 1.2),
+    ("papi", "Papi.safetensors", 0.85),
     ("toka", "tokacomics.safetensors", 1.0),
-    ("scout", "scoutv3.safetensors", 1.0),
-    ("natsuki", "Natsuki_V1.safetensors", 1.0),
-    ("yuri", "YuriV1.safetensors", 1.0),
-    ("monika", "MonikaV1.safetensors", 1.0),
-    ("sayori", "Sayori_V1.safetensors", 1.0),
+    ("scout", "scoutv3.safetensors", 0.7),
+    ("natsuki", "Natsuki_V1.safetensors", 0.7),
+    ("yuri", "YuriV1.safetensors", 0.7),
+    ("monika", "MonikaV1.safetensors", 0.7),
+    ("sayori", "Sayori_V1.safetensors", 0.7),
     ("teto", "kasanetetoV3-10.safetensors", 0.85),
     ("shrugging", "concept_shrugging-11.safetensors", 1.0),
     ("chungus", "bigchungus.pt", 0.45),
@@ -129,7 +129,6 @@ class sd(commands.Cog):
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         cfg: float = 7.000,
         denoise: float = 1.000,
-        lora_strength: float = 1.000,
         batch_size: int = 1,
         width: int = 512,
         height: int = 512,
@@ -188,8 +187,6 @@ class sd(commands.Cog):
 
         # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
-        # trimming Lora Strength value in range of 0.001 to 10.000
-        lora_strength = min(max(lora_strength, 0.001), 10.000)
         # trimming Batch Size value in range of 1 to 4
         batch_size = min(max(batch_size, 1), 4)
         # trimming Denoise value in range of 0.001 to 1.000
@@ -216,11 +213,14 @@ class sd(commands.Cog):
 
         # lora matching logic
         activeloras = []
+        lora_weight = []
         for lora_tuple in lora:
             if lora_tuple[0] in positive_prompt.lower():
                 activeloras.append(lora_tuple[1])
+                lora_weight.append(lora_tuple[2])
         if not activeloras:
             activeloras = ["GoodHands-beta2.safetensors"]
+            lora_weight = [1]
 
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
@@ -277,7 +277,7 @@ class sd(commands.Cog):
                 "class_type": "LoraLoader",
                 "inputs": {
                     "lora_name": activeloras[0],
-                    "strength_model": lora_strength,
+                    "strength_model": lora_weight[0],
                     "strength_clip": 1,
                     "model": ["4", 0],
                     "clip": ["4", 1],
@@ -289,7 +289,7 @@ class sd(commands.Cog):
                     "lora_name": "GoodHands-beta2.safetensors"
                     if len(activeloras) < 2
                     else activeloras[1],
-                    "strength_model": 0 if len(activeloras) < 2 else lora_strength,
+                    "strength_model": lora_weight[1] if len(lora_weight) >= 2 else 0,
                     "strength_clip": 0 if len(activeloras) < 2 else 1,
                     "model": ["11", 0],
                     "clip": ["11", 1],
@@ -301,7 +301,7 @@ class sd(commands.Cog):
                     "lora_name": "GoodHands-beta2.safetensors"
                     if len(activeloras) < 3
                     else activeloras[2],
-                    "strength_model": 0 if len(activeloras) < 3 else lora_strength,
+                    "strength_model": lora_weight[2] if len(lora_weight) >= 3 else 0,
                     "strength_clip": 0 if len(activeloras) < 3 else 1,
                     "model": ["12", 0],
                     "clip": ["12", 1],
@@ -323,10 +323,12 @@ class sd(commands.Cog):
         negative = prompt["7"]["inputs"]["text"]
         positive = prompt["6"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
-        lora_list_for_embed = (
-            str(activeloras).replace(".safetensors", "").replace(".pt", "")
-        )
-        lora_list_for_embed = re.sub(r"[^\w\s,_-]", "", lora_list_for_embed)
+        lora_list_for_embed = ""
+        for i in range(len(activeloras)):
+            lora_list_for_embed += (
+                str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
+            )
+            lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
         cfg, denoise, sampler_name, scheduler, seed, steps = [
             inputs_values[key]
             for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
@@ -347,7 +349,7 @@ class sd(commands.Cog):
                     file = discord.File(fp=out, filename="image.png")
                     embed = discord.Embed(title="txt2img", color=0x80FFFF)
                     embed.set_image(url="attachment://image.png")
-                    embed.set_footer(text="Stable-Diffusion intepreter on Dannybot 3.0")
+                    embed.set_footer(text=f"Seed: {seed}")
                     embed.set_author(
                         name=ctx.author.name, icon_url=ctx.author.avatar.url
                     )
@@ -363,17 +365,13 @@ class sd(commands.Cog):
                             lora_list_for_embed,
                             False,
                         ),
-                        ("Additional Network Strength", lora_strength, False),
-                        ("Seed", seed, True),
                         ("CFG Scale", cfg, True),
-                        ("Diffusion Type", "txt2img", True),
                         (
                             "Resolution",
                             f"{latent_image[0]}x{latent_image[1]}",
                             True,
                         ),
-                        ("Batch Size", batch_size, True),
-                        ("Batch Index", f"{batch_processed} of {batch_size}", True),
+                        ("Batch Count", f"{batch_processed} of {batch_size}", True),
                         ("Sampling method", f"{sampler_name} {scheduler}", True),
                         ("Sampling Steps", steps, True),
                         ("Denoise", denoise, True),
@@ -381,6 +379,7 @@ class sd(commands.Cog):
 
                     # debugging stuff
                     print(activeloras)
+                    print(lora_weight)
                     print(vae)
                     print(vae_alias)
                     print(embed_fields)
