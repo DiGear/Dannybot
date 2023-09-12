@@ -100,9 +100,9 @@ class sd(commands.Cog):
     )
     async def loralist(self, ctx: commands.Context):
         await ctx.defer()
-        keys_sorted = sorted(lora.keys())
-        keys_string = ", ".join(keys_sorted)
-        await ctx.send(str(keys_string))
+        keys_sorted = sorted(lora, key=lambda x: x[0])
+        keys_string = ", ".join([str(key[0]) for key in keys_sorted])
+        await ctx.send(keys_string)
 
     @commands.hybrid_command(
         name="checkpoints",
