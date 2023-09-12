@@ -387,7 +387,7 @@ class sd(commands.Cog):
                     # looping over the embed fields and adding them one by one to the embed object
                     for name, value, inline in embed_fields:
                         embed.add_field(name=name, value=value, inline=inline)
-                    await ctx.send(embed=embed, file=file)
+                    await ctx.reply(embed=embed, file=file)
 
     # making a request to the server for a new prompt. it contains the new prompt and client id, encoded in UTF-8 (THIS IS IMPORTANT)
     def queue_prompt(self, prompt):
