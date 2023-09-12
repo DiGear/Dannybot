@@ -47,7 +47,7 @@ import ujson
 import websocket
 import yt_dlp
 from aiohttp import ClientSession
-from discord import File, app_commands
+from discord import File, Interaction, InteractionType, app_commands
 from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv
