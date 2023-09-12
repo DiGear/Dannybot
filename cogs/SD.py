@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 lora = [
     ("senko", "Senko-San.safetensors", 1.0),
     ("astolfo", "Astolfo.safetensors", 1.0),
-    ("kiryu", "Ku Kazuma.safetensors", 1.0),
+    ("kiryu", "Kiryu Kazuma.safetensors", 1.0),
     ("megumin", "megumin.safetensors", 1.0),
     ("izuna", "izuna.safetensors", 1.0),
     ("fumo", "Fumo.pt", 1.0),
@@ -65,7 +65,7 @@ lora = [
 
 # checkpoint translator keys
 checkpoints = {
-    "3D Animation": "3dAnimationusion_v10.safetensors",
+    "3D Animation": "3D.safetensors",
     "AOM2 (NSFW)": "abyssorangemix2_Hard.safetensors",
     "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
     "Anything v3": "anythingV3_fp16.ckpt",
@@ -151,7 +151,7 @@ class sd(commands.Cog):
             "RichyRichMix",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
-        ] = "AnyLoRA",
+        ] = "Anything v5",
         vae: Literal[
             "From Model",
             "vaeFtMse840000",
