@@ -4,56 +4,60 @@ from config import *
 logger = logging.getLogger(__name__)
 
 # LORA translator keys
-lora = {
-    "senko": "Senko-San.safetensors",
-    "astolfo": "Astolfo.safetensors",
-    "kiryu": "Kiryu Kazuma.safetensors",
-    "megumin": "megumin.safetensors",
-    "izuna": "izuna.safetensors",
-    "fumo": "Fumo.pt",
-    "shitty": "jaggy_lines_noise_taged-000012.safetensors",
-    "the cat": "Karyl.safetensors",
-    "karyl": "Karyl.safetensors",
-    "remilia": "Remilia Scarlet.safetensors",
-    "sans": "Sans.safetensors",
-    "slime": "slimegirls.safetensors",
-    "sylph": "Sylph.safetensors",
-    "yuno": "Yuno Gasai.safetensors",
-    "touhou": "Zun Style.safetensors",
-    "neptunia": "TSNeptunia-000045.safetensors",
-    "neptune": "Neptune.safetensors",
-    "kanade": "Kanade Tachibana.safetensors",
-    "tenshi": "Kanade Tachibana.safetensors",
-    "hu tao": "hu tao.safetensors",
-    "hand": "GoodHands-beta2.safetensors",
-    "compa": "compa_v2-000009.safetensors",
-    "ryouna": "ryouna.pt",
-    "leffrey": "leffrey.pt",
-    "detailed": "add_detail.safetensors",
-    "among us": "Among Us.safetensors",
-    "good eyes": "beautifuleyes.safetensors",
-    "canonome": "Camonome Style.safetensors",
-    "chara": "Chara.safetensors",
-    "chibi": "Chibi Style.safetensors",
-    "danganronpa": "Danganronpa Style.safetensors",
-    "feet": "feet 2.safetensors",
-    "figure": "Figurine.safetensors",
-    "anya face": "Anya Face.safetensors",
-    "gape": "gape.safetensors",
-    "gigachad": "Gigachad.safetensors",
-    "made in abyss": "Made In Abyss Style.safetensors",
-    "mgq": "Monster Girl Quest.safetensors",
-    "omori": "Omori.safetensors",
-    "nanachi": "Nanachi.safetensors",
-    "shrift": "Nekomata Style.safetensors",
-    "papi": "Papi.safetensors",
-    "toka": "tokacomics.safetensors",
-    "scout": "scoutv3.safetensors",
-    "natsuki": "Natsuki_V1.safetensors",
-    "yuri": "YuriV1.safetensors",
-    "monika": "MonikaV1.safetensors",
-    "sayori": "Sayori_V1.safetensors",
-}
+lora = [
+    ("senko", "Senko-San.safetensors", 1.0),
+    ("astolfo", "Astolfo.safetensors", 1.0),
+    ("kiryu", "Ku Kazuma.safetensors", 1.0),
+    ("megumin", "megumin.safetensors", 1.0),
+    ("izuna", "izuna.safetensors", 1.0),
+    ("fumo", "Fumo.pt", 1.0),
+    ("shitty", "jaggy_lines_noise_taged-000012.safetensors", 1.0),
+    ("the cat", "Karyl.safetensors", 1.0),
+    ("karyl", "Karyl.safetensors", 1.0),
+    ("remilia", "Remilia Scarlet.safetensors", 1.0),
+    ("sans", "Sans.safetensors", 1.0),
+    ("slime", "slimegirls.safetensors", 1.0),
+    ("sylph", "Sylph.safetensors", 1.0),
+    ("yuno", "Yuno Gasai.safetensors", 1.0),
+    ("touhou", "Zun Style.safetensors", 1.0),
+    ("neptunia", "TSNeptunia-000045.safetensors", 1.0),
+    ("neptune", "Neptune.safetensors", 1.0),
+    ("kanade", "Kanade Tachibana.safetensors", 1.0),
+    ("tenshi", "Kanade Tachibana.safetensors", 1.0),
+    ("hu tao", "hu tao.safetensors", 1.0),
+    ("hand", "GoodHands-beta2.safetensors", 1.0),
+    ("compa", "compa_v2-000009.safetensors", 1.0),
+    ("ryouna", "ryouna.pt", 1.0),
+    ("leffrey", "leffrey.pt", 1.0),
+    ("detailed", "add_detail.safetensors", 1.0),
+    ("among us", "Among Us.safetensors", 1.0),
+    ("good eyes", "beautifuleyes.safetensors", 1.0),
+    ("canonome", "Camonome Style.safetensors", 1.0),
+    ("chara", "Chara.safetensors", 1.0),
+    ("chibi", "Chibi Style.safetensors", 1.0),
+    ("danganronpa", "Danganronpa Style.safetensors", 1.0),
+    ("feet", "feet 2.safetensors", 1.0),
+    ("figure", "Figurine.safetensors", 1.0),
+    ("anya face", "Anya Face.safetensors", 1.0),
+    ("gaping", "gape.safetensors", 1.0),
+    ("gigachad", "Gigachad.safetensors", 1.0),
+    ("made in abyss", "Made In Abyss Style.safetensors", 1.0),
+    ("mgq", "Monster Girl Quest.safetensors", 1.0),
+    ("omori", "Omori.safetensors", 1.0),
+    ("nanachi", "Nanachi.safetensors", 1.0),
+    ("shrift", "Nekomata Style.safetensors", 1.0),
+    ("papi", "Papi.safetensors", 1.0),
+    ("toka", "tokacomics.safetensors", 1.0),
+    ("scout", "scoutv3.safetensors", 1.0),
+    ("natsuki", "Natsuki_V1.safetensors", 1.0),
+    ("yuri", "YuriV1.safetensors", 1.0),
+    ("monika", "MonikaV1.safetensors", 1.0),
+    ("sayori", "Sayori_V1.safetensors", 1.0),
+    ("teto", "kasanetetoV3-10.safetensors", 0.85),
+    ("shrugging", "concept_shrugging-11.safetensors", 1.0),
+    ("chungus", "bigchungus.pt", 0.45),
+]
+
 
 # checkpoint translator keys
 checkpoints = {
@@ -121,6 +125,8 @@ class sd(commands.Cog):
         self,
         ctx: commands.Context,
         *,
+        positive_prompt: str,
+        negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         cfg: float = 7.000,
         denoise: float = 1.000,
         lora_strength: float = 1.000,
@@ -144,8 +150,6 @@ class sd(commands.Cog):
             "vaeFtMse840000",
             "Danny VAE",
         ] = "From Model",
-        positive_prompt: str,
-        negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         sampler: Literal[
             "euler",
             "euler_ancestral",
@@ -212,9 +216,9 @@ class sd(commands.Cog):
 
         # lora matching logic
         activeloras = []
-        for key in lora.keys():
-            if key in positive_prompt.lower():
-                activeloras.append(lora[key])
+        for lora_tuple in lora:
+            if lora_tuple[0] in positive_prompt.lower():
+                activeloras.append(lora_tuple[1])
         if not activeloras:
             activeloras = ["GoodHands-beta2.safetensors"]
 
