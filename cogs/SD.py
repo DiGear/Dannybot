@@ -55,7 +55,9 @@ lora = [
     ("sayori", "Sayori_V1.safetensors", 0.7),
     ("teto", "kasanetetoV3-10.safetensors", 0.85),
     ("shrugging", "concept_shrugging-11.safetensors", 1.0),
-    ("chungus", "bigchungus.pt", 0.45),
+    ("chungus", "bigchungus.pt", 0.7),
+    ("afrobull", "afrobull-000018.safetensors", 0.7),
+    ("goblin girl", "gobGirlzLora.pt", 1.2),
 ]
 
 
@@ -361,7 +363,7 @@ class sd(commands.Cog):
                         ("Checkpoint Model", checkpoint, False),
                         ("VAE Model", vae, False),
                         (
-                            "Additional Networks (lycoris, loha, lokr, locon)",
+                            "Additional Networks (lora, loha, lokr, locon)",
                             lora_list_for_embed,
                             False,
                         ),
