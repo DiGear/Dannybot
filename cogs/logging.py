@@ -27,7 +27,7 @@ class logging(commands.Cog):
         args_str = " ".join(f"{k} = {repr(v)}" for k, v in args.items())
         if interaction.type == InteractionType.application_command:
             log_message = (
-                f"{user.global_name} ({user.id}) issued: {command_name} {args_str}"
+                f"{user.global_name} ({user.id}) issued: /{command_name} {args_str}"
             )
             await log_channel.send(log_message)
 
