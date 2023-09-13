@@ -40,7 +40,7 @@ lora = [
     ("figure", "Figurine.safetensors", 1.0),
     ("anya face", "Anya Face.safetensors", 0.9),
     ("gape", "gape.safetensors", 0.7),
-    ("gigachad", "Gigachad.safetensors", 0.7),
+    ("gigachad", "Gigachad.safetensors", 0.66),
     ("made in abyss", "Made In Abyss Style.safetensors", 0.7),
     ("mgq", "Monster Girl Quest.safetensors", 1.0),
     ("omori", "Omori.safetensors", 0.45),
@@ -52,7 +52,7 @@ lora = [
     ("natsuki", "Natsuki_V1.safetensors", 0.7),
     ("yuri", "YuriV1.safetensors", 0.7),
     ("monika", "MonikaV1.safetensors", 0.7),
-    ("sayori", "Sayori_V1.safetensors", 0.7),
+    ("sayori", "Sayori_V1.safetensors", 0.66),
     ("teto", "kasanetetoV3-10.safetensors", 0.85),
     ("korone", "korone.pt", 0.85),
     ("shrugging", "concept_shrugging-11.safetensors", 1.0),
@@ -61,8 +61,17 @@ lora = [
     ("goblin girl", "gobGirlzLora.pt", 1.3),
     ("caracal", "floppa Caracal.pt", 0.75),
     ("lucky star", "lucky_star_offset.safetensors", 0.93),
+    ("ken sugimori", "pokemon_v3_offset.safetensors", 1.0),
+    ("kyu", "HuniepopKyu-v1-06.safetensors", 0.8),
+    ("constricted pupils", "constricted_pupils_v0.2a.safetensors", 1.0),
+    ("spread ass", "ButtLiftV14-000060.safetensors", 0.75),
+    ("aqua", "aqua_konosuba-000035.safetensors", 0.8),
+    ("glowing outline", "nlc_green.safetensors", 1.0),
+    ("cyanide and happiness", "cah-09.safetensors", 1.0),
+    ("skibidi toilet", "Skibidi.safetensors", 0.7),
+    ("taur", "centaurConcept.safetensors", 0.95),
+    ("noela", "noela.safetensors", 0.8),
 ]
-
 
 # checkpoint translator keys
 checkpoints = {
@@ -74,7 +83,7 @@ checkpoints = {
     "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
     "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
     "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
-    "Realistic": "SD_1.5_Base.safetensors",
+    "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
@@ -148,7 +157,7 @@ class sd(commands.Cog):
             "AnyLoRA",
             "CafeMix MIA",
             "Made In Abyss",
-            "Realistic",
+            "Realistic (SD 1.5 Base)",
             "RichyRichMix",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
@@ -179,7 +188,7 @@ class sd(commands.Cog):
             "normal", "karras", "exponential", "simple", "ddim_uniform"
         ] = "normal",
         seed: int = 11223344556677889900112233,  # fuck
-        steps: int = 15,
+        steps: int = 24,
     ):
         await ctx.defer()
         # if the seed is that bullshit default value, it will generate a random seed

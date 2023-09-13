@@ -502,28 +502,25 @@ def make_meme(Top_Text, Bottom_Text, path):
     font_path = f"{dannybot}\\assets\\impactjpn.otf"
 
     # Set the padding size
-    padding = 20
+    padding = 10
 
-    # Split the top and bottom text into lines if their lengths exceed 40 characters
+    # Split the top and bottom text into if lengths exceed 27 characters (this should ultimately end us up with 3 lines of text)
     top_text_lines = [Top_Text]
     bottom_text_lines = [Bottom_Text]
-    if len(Top_Text) > 40:
-        top_text_lines = [
-            Top_Text[: len(Top_Text) // 2],
-            Top_Text[len(Top_Text) // 2 :],
-        ]
-    if len(Bottom_Text) > 40:
-        bottom_text_lines = [
-            Bottom_Text[len(Bottom_Text) // 2 :],
-            Bottom_Text[: len(Bottom_Text) // 2],
-        ]
 
+    if len(Top_Text) > 27:
+        top_text_lines = textwrap.wrap(Top_Text, width=27)
+        
+    if len(Bottom_Text) > 27:
+        bottom_text_lines = textwrap.wrap(Bottom_Text, width=27)
+        bottom_text_lines.reverse()
+        
     # Create a new image with transparent background for text overlay
     text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
     text_draw = PIL.ImageDraw.Draw(text_image)
 
     # Calculate the font size for the top text
-    max_top_font_size = int(img.width / 10)
+    max_top_font_size = int(img.width / 8)
     top_font_size = max_top_font_size
 
     # Adjust the font size until the top text fits within the image width
@@ -539,7 +536,7 @@ def make_meme(Top_Text, Bottom_Text, path):
         top_font_size -= 1
 
     # Calculate the font size for the bottom text
-    max_bottom_font_size = int(img.width / 10)
+    max_bottom_font_size = int(img.width / 8)
     bottom_font_size = max_bottom_font_size
 
     # Adjust the font size until the bottom text fits within the image width
@@ -558,7 +555,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     top_text_height = 0
 
     # Draw each line of the top text on the image
-    for line, font_size in zip(top_text_lines, [top_font_size, top_font_size]):
+    for line, font_size in zip(top_text_lines, [top_font_size]*3):
         font = PIL.ImageFont.truetype(font_path, font_size)
         text_width, text_height = text_draw.textsize(line, font=font)
         x = (img.width - text_width) // 2
@@ -572,7 +569,7 @@ def make_meme(Top_Text, Bottom_Text, path):
     bottom_text_height = 0
 
     # Draw each line of the bottom text on the image
-    for line, font_size in zip(bottom_text_lines, [bottom_font_size, bottom_font_size]):
+    for line, font_size in zip(bottom_text_lines, [bottom_font_size]*3):
         font = PIL.ImageFont.truetype(font_path, font_size)
         text_width, text_height = text_draw.textsize(line, font=font)
         x = (img.width - text_width) // 2
