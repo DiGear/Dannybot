@@ -239,7 +239,7 @@ class sd(commands.Cog):
                     "cfg": cfg,
                     "denoise": denoise,
                     "latent_image": ["5", 0],
-                    "model": ["13", 0],
+                    "model": ["15", 0],
                     "negative": ["7", 0],
                     "positive": ["6", 0],
                     "sampler_name": sampler,
@@ -258,11 +258,11 @@ class sd(commands.Cog):
             },
             "6": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["13", 1], "text": positive_prompt},
+                "inputs": {"clip": ["15", 1], "text": positive_prompt},
             },
             "7": {
                 "class_type": "CLIPTextEncode",
-                "inputs": {"clip": ["13", 1], "text": negative_prompt},
+                "inputs": {"clip": ["15", 1], "text": negative_prompt},
             },
             "8": {
                 "class_type": "VAEDecode",
@@ -316,6 +316,30 @@ class sd(commands.Cog):
                     "clip": ["12", 1],
                 },
             },
+            "14": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 4
+                    else activeloras[3],
+                    "strength_model": lora_weight[3] if len(lora_weight) >= 4 else 0,
+                    "strength_clip": 0 if len(activeloras) < 4 else 1,
+                    "model": ["13", 0],
+                    "clip": ["13", 1],
+                },
+            },
+            "15": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 5
+                    else activeloras[4],
+                    "strength_model": lora_weight[4] if len(lora_weight) >= 5 else 0,
+                    "strength_clip": 0 if len(activeloras) < 5 else 1,
+                    "model": ["14", 0],
+                    "clip": ["14", 1],
+                },
+            },
         }
 
         # vae shit
@@ -333,7 +357,7 @@ class sd(commands.Cog):
         positive = prompt["6"]["inputs"]["text"]
         inputs_values = prompt["3"]["inputs"]
         lora_list_for_embed = ""
-        for i in range(len(activeloras)):
+        for i in range(min(5, len(activeloras))):
             lora_list_for_embed += (
                 str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
             )
