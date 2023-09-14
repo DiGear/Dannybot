@@ -431,6 +431,298 @@ class sd(commands.Cog):
                         embed.add_field(name=name, value=value, inline=inline)
                     await ctx.reply(embed=embed, file=file)
 
+    @commands.hybrid_command(
+        name="img2img",
+        description="Create AI generated images via Stable-Diffusion img2img.",
+        brief="Create AI generated images with Dannybot using img2img.",
+    )
+    async def stablediffusionimg2img(
+        self,
+        ctx: commands.Context,
+        *,
+        positive_prompt: str,
+        image: discord.Attachment,
+        negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
+        cfg: float = 7.000,
+        denoise: float = 0.670,
+        checkpoint: Literal[
+            "3D Animation",
+            "AOM2 (NSFW)",
+            "AOM3",
+            "Anything v3",
+            "Anything v5",
+            "AnyLoRA",
+            "CafeMix MIA",
+            "Made In Abyss",
+            "Realistic (SD 1.5 Base)",
+            "RichyRichMix",
+            "Sayori (Nekopara) Artstyle",
+            "Sonic-Diffusion",
+        ] = "Anything v5",
+        vae: Literal[
+            "From Model",
+            "vaeFtMse840000",
+            "Danny VAE",
+        ] = "From Model",
+        sampler: Literal[
+            "euler",
+            "euler_ancestral",
+            "heun",
+            "dpm_2",
+            "dpm_2_ancestral",
+            "Ims",
+            "dpm_fast",
+            "dpm_adaptive",
+            "dpmpp_2s_ancestral",
+            "dpmpp_sde_gpu",
+            "dpmpp_2m",
+            "dpmpp_2m_sde_gpu",
+            "ddim",
+            "uni_pc",
+            "uni_pc_bh2",
+        ] = "uni_pc",
+        scheduler: Literal[
+            "normal", "karras", "exponential", "simple", "ddim_uniform"
+        ] = "normal",
+        seed: int = 11223344556677889900112233,  # fuck
+        steps: int = 24,
+    ):
+        await ctx.defer()
+        # if the seed is that bullshit default value, it will generate a random seed
+        seed = (
+            random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
+        )
+
+        path = f"{dannybot}\\cache\\img2img.png"
+        response = requests.get(image.url)
+        with open(path, "wb") as file:
+            file.write(response.content)
+        image = PIL.Image.open(path)
+        w, h = image.size
+        nw, nh = (768, int(h * 768 / w)) if w > h else (int(w * 768 / h), 768)
+        scaled_image = image.resize((max(min(nw, w), 1), max(min(nh, h), 1)))
+        scaled_image.save(path)
+
+        """
+        anti cris measures
+        """
+
+        # trimming CFG value in range of 0.001 to 100.000
+        cfg = min(max(cfg, 0.001), 100.000)
+        # trimming Denoise value in range of 0.001 to 1.000
+        denoise = min(max(denoise, 0.001), 1.000)
+        # trimming steps value in range of 1 to 50
+        steps = max(1, min(steps, 50))
+
+        """
+        end anti cris measures
+        """
+
+        # getting the checkpoint value from the dictionary
+        checkpoint_alias = checkpoint
+        if checkpoint_alias in checkpoints:
+            checkpoint_alias = checkpoints[checkpoint_alias]
+
+        # getting the VAE value from the dictionary
+        vae_alias = vae
+        if vae_alias in vaes:
+            vae_alias = vaes[vae_alias]
+
+        # lora matching logic
+        activeloras = []
+        lora_weight = []
+        for lora_tuple in lora:
+            if lora_tuple[0] in positive_prompt.lower():
+                activeloras.append(lora_tuple[1])
+                lora_weight.append(lora_tuple[2])
+        if not activeloras:
+            activeloras = ["GoodHands-beta2.safetensors"]
+            lora_weight = [1]
+
+        # a dictionary which acts as the configuration for the image generation
+        generator_values = {
+            "2": {
+                "class_type": "LoadImage",
+                "inputs": {
+                    "image": f"{dannybot}\\cache\\img2img.png",
+                    "choose file to upload": "image",
+                },
+            },
+            "3": {
+                "class_type": "VAEEncode",
+                "inputs": {"pixels": ["2", 0], "vae": ["0", 0]},
+            },
+            "4": {
+                "class_type": "KSampler",
+                "inputs": {
+                    "cfg": cfg,
+                    "denoise": denoise,
+                    "latent_image": ["3", 0],
+                    "model": ["15", 0],
+                    "negative": ["7", 0],
+                    "positive": ["6", 0],
+                    "sampler_name": sampler,
+                    "scheduler": scheduler,
+                    "seed": seed,
+                    "steps": steps,
+                },
+            },
+            "5": {
+                "class_type": "CheckpointLoaderSimple",
+                "inputs": {"ckpt_name": checkpoint_alias},
+            },
+            "6": {
+                "class_type": "CLIPTextEncode",
+                "inputs": {"clip": ["15", 1], "text": positive_prompt},
+            },
+            "7": {
+                "class_type": "CLIPTextEncode",
+                "inputs": {"clip": ["15", 1], "text": negative_prompt},
+            },
+            "8": {
+                "class_type": "VAEDecode",
+                "inputs": {
+                    "samples": ["4", 0],
+                    "vae": ["0", 0],
+                },
+            },
+            "9": {
+                "class_type": "SaveImage",
+                "inputs": {
+                    "filename_prefix": "Dannybot_" + ctx.author.name,
+                    "images": ["8", 0],
+                },
+            },
+            "10": {
+                "class_type": "VAELoader",
+                "inputs": {"vae_name": vae_alias},
+            },
+            "11": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": activeloras[0],
+                    "strength_model": lora_weight[0],
+                    "strength_clip": 1,
+                    "model": ["5", 0],
+                    "clip": ["5", 1],
+                },
+            },
+            "12": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 2
+                    else activeloras[1],
+                    "strength_model": lora_weight[1] if len(lora_weight) >= 2 else 0,
+                    "strength_clip": 0 if len(activeloras) < 2 else 1,
+                    "model": ["11", 0],
+                    "clip": ["11", 1],
+                },
+            },
+            "13": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 3
+                    else activeloras[2],
+                    "strength_model": lora_weight[2] if len(lora_weight) >= 3 else 0,
+                    "strength_clip": 0 if len(activeloras) < 3 else 1,
+                    "model": ["12", 0],
+                    "clip": ["12", 1],
+                },
+            },
+            "14": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 4
+                    else activeloras[3],
+                    "strength_model": lora_weight[3] if len(lora_weight) >= 4 else 0,
+                    "strength_clip": 0 if len(activeloras) < 4 else 1,
+                    "model": ["13", 0],
+                    "clip": ["13", 1],
+                },
+            },
+            "15": {
+                "class_type": "LoraLoader",
+                "inputs": {
+                    "lora_name": "GoodHands-beta2.safetensors"
+                    if len(activeloras) < 5
+                    else activeloras[4],
+                    "strength_model": lora_weight[4] if len(lora_weight) >= 5 else 0,
+                    "strength_clip": 0 if len(activeloras) < 5 else 1,
+                    "model": ["14", 0],
+                    "clip": ["14", 1],
+                },
+            },
+        }
+
+        # vae shit
+        if vae == "From Model":
+            generator_values["8"]["inputs"]["vae"] = ["5", 2]
+            generator_values["3"]["inputs"]["vae"] = ["5", 2]
+        else:
+            generator_values["8"]["inputs"]["vae"] = ["10", 0]
+            generator_values["3"]["inputs"]["vae"] = ["10", 0]
+
+        # extracts values from the dict and assigns them to variables so we can use them in the embed
+        prompt = generator_values.copy()
+        images = self.get_images(self.ws, prompt)
+        negative = prompt["7"]["inputs"]["text"]
+        positive = prompt["6"]["inputs"]["text"]
+        inputs_values = prompt["4"]["inputs"]
+        lora_list_for_embed = ""
+        for i in range(min(5, len(activeloras))):
+            lora_list_for_embed += (
+                str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
+            )
+            lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+        cfg, denoise, sampler_name, scheduler, seed, steps = [
+            inputs_values[key]
+            for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
+        ]
+
+        sampler_name = sampler_name.replace("_", " ")
+
+        # fetch and prepare the generated image for embed
+        for node_id in images:
+            for image_data in images[node_id]:
+                image = Image.open(io.BytesIO(image_data))
+                with io.BytesIO() as out:
+                    image.save(out, format="png")
+                    out.seek(0)
+
+                    # preparing the data to be send on discord
+                    file = discord.File(fp=out, filename="image.png")
+                    embed = discord.Embed(title="img2img", color=0x80FFFF)
+                    embed.set_image(url="attachment://image.png")
+                    embed.set_footer(text=f"Seed: {seed}")
+                    embed.set_author(
+                        name=ctx.author.name, icon_url=ctx.author.avatar.url
+                    )
+
+                    # setting up the embed fields
+                    embed_fields = [
+                        ("Positive Prompt", positive[: 1024 - 3], False),
+                        ("Negative Prompt", negative[: 1024 - 3], False),
+                        ("Checkpoint Model", checkpoint, False),
+                        ("VAE Model", vae, False),
+                        (
+                            "Additional Networks (lora, loha, lokr, locon)",
+                            lora_list_for_embed,
+                            False,
+                        ),
+                        ("CFG Scale", cfg, True),
+                        ("Sampling method", f"{sampler_name} {scheduler}", True),
+                        ("Sampling Steps", steps, True),
+                        ("Denoise", denoise, True),
+                    ]
+
+                    # looping over the embed fields and adding them one by one to the embed object
+                    for name, value, inline in embed_fields:
+                        embed.add_field(name=name, value=value, inline=inline)
+                    await ctx.reply(embed=embed, file=file)
+
     # making a request to the server for a new prompt. it contains the new prompt and client id, encoded in UTF-8 (THIS IS IMPORTANT)
     def queue_prompt(self, prompt):
         req = urllib.request.Request(
