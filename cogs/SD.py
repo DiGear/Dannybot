@@ -299,7 +299,7 @@ class sd(commands.Cog):
             "9": {
                 "class_type": "SaveImage",
                 "inputs": {
-                    "filename_prefix": "Dannybot_" + ctx.author.name,
+                    "filename_prefix": "Dannybot_txt2img_" + ctx.author.name,
                     "images": ["8", 0],
                 },
             },
@@ -605,7 +605,7 @@ class sd(commands.Cog):
             "9": {
                 "class_type": "SaveImage",
                 "inputs": {
-                    "filename_prefix": "Dannybot_" + ctx.author.name,
+                    "filename_prefix": "Dannybot_img2img_" + ctx.author.name,
                     "images": ["8", 0],
                 },
             },
