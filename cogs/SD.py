@@ -80,7 +80,7 @@ lora = [
     ("buttjob", "buttjob.safetensors", 0.7),
     ("thighjob", "thighjob.safetensors", 0.8),
     ("cameltoe", "Cameltoe.safetensors", 0.76),
-    ("bandaid pn pussy", "Bandaid On Pussy.safetensors", 0.7),
+    ("bandaid on pussy", "Bandaid On Pussy.safetensors", 0.7),
     ("penis shadow", "Penis Shadow.safetensors", 0.86),
     ("bandaids on nipples", "bandaids_on_nipples.safetensors", 0.8),
     ("against glass", "against_glass_v0.2.safetensors", 1.0),
