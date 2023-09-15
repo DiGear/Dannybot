@@ -100,7 +100,7 @@ checkpoints = {
     "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
     "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
     "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
-    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",s
+    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
 }
