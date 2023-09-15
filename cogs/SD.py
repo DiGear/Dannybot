@@ -71,6 +71,22 @@ lora = [
     ("skibidi toilet", "Skibidi.safetensors", 0.7),
     ("taur", "centaurConcept.safetensors", 0.95),
     ("noela", "noela.safetensors", 0.8),
+    ("hyperfusion", "hyperfusion_279k_64dim-LoCon-v6.safetensors", 1.0),
+    ("futanari", "futanari_concept_full_v1-000020.safetensors", 1.0),
+    ("femboi", "femboiFull.safetensors", 0.75),
+    ("one piece", "wanostyle_2_offset.safetensors", 1.0),
+    ("pubic hair", "pubic hair.safetensors", 0.7),
+    ("hyperpreg", "hyperpreg.safetensors", 0.7),
+    ("buttjob", "buttjob.safetensors", 0.7),
+    ("thighjob", "thighjob.safetensors", 0.8),
+    ("cameltoe", "Cameltoe.safetensors", 0.76),
+    ("bandaid pn pussy", "Bandaid On Pussy.safetensors", 0.7),
+    ("penis shadow", "Penis Shadow.safetensors", 0.86),
+    ("bandaids on nipples", "bandaids_on_nipples.safetensors", 0.8),
+    ("against glass", "against_glass_v0.2.safetensors", 1.0),
+    ("grabbing own breasts", "SelfBreastGrab.safetensors", 0.8),
+    ("paizuri", "POVPaizuri.safetensors", 1.0),
+    ("trapped in wall", "Trapped_In_WallV2.safetensors", 0.7)
 ]
 
 # checkpoint translator keys
