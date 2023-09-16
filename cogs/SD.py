@@ -25,7 +25,7 @@ lora = [
     ("kanade", "Kanade Tachibana.safetensors", 0.85),
     ("tenshi", "Kanade Tachibana.safetensors", 0.85),
     ("hu tao", "hu tao.safetensors", 0.85),
-    ("hand", "GoodHands-beta2.safetensors", 1.0),
+    ("hand", "GoodHands-beta2.safetensors", 0.69),
     ("compa", "compa_v2-000009.safetensors", 0.66),
     ("ryouna", "ryouna.pt", 0.75),
     ("leffrey", "leffrey.pt", 1.0),
