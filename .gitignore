@@ -140,3 +140,4 @@ ChatGPT.wav
 ytdl.mp4
 .vscode/settings.json
 *.ignore
+.comfyui*
