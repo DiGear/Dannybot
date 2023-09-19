@@ -77,7 +77,7 @@ lora = [
     ("coyote", "coyo Coyote.pt", 0.75),
     ("dhole", "dolr Dhole.pt", 0.75),
     ("ezo", "ezo Ezo Red Fox.pt", 0.75),
-    ("fennec", "feen Fennec.pt", 0.75),
+    ("fennec", "feen Fennec.pt", 0.9),
     ("silver fox", "gingitsu Silver Fox.pt", 0.75),
     ("giant penguin", "gpeng Giant Penguin.pt", 0.75),
     ("grey wolf", "g_wolkf Grey Wolf.pt", 0.75),
