@@ -93,6 +93,9 @@ lora = [
     ("margay", "specialcat Margay.pt", 0.75),
     ("toki", "toki Crested Ibis.pt", 0.75),
     ("tsuchinoko", "tsunsnek Tsuchinoko.pt", 0.75),
+    ("common bottlenose dolphin", "cbd.pt", 0.75),
+    ("danny", "danny.pt", 0.75),
+    ("appleq", "appleq.pt", 0.85),
 ]
 
 nsfw_lora = [
