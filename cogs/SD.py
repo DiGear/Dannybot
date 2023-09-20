@@ -156,7 +156,11 @@ class sd(commands.Cog):
     )
     async def loralist(self, ctx: commands.Context):
         await ctx.defer()
-        keys_sorted = sorted(lora, key=lambda x: x[0])
+        if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+            blahstodo = lora
+        else:
+            blahstodo = lora + nsfw_lora
+        keys_sorted = sorted(blahstodo, key=lambda x: x[0])
         keys_string = ", ".join([str(key[0]) for key in keys_sorted])
         await ctx.send(keys_string)
 
