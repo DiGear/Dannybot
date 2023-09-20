@@ -95,6 +95,25 @@ lora = [
     ("tsuchinoko", "tsunsnek Tsuchinoko.pt", 0.75),
 ]
 
+nsfw_lora = [
+    ("gape", "gape.safetensors", 0.7),
+    ("spread ass", "ButtLiftV14-000060.safetensors", 0.75),
+    ("futanari", "futanari_concept_full_v1-000020.safetensors", 1.0),
+    ("femboi", "femboiFull.safetensors", 0.75),
+    ("pubic hair", "pubic hair.safetensors", 0.7),
+    ("buttjob", "buttjob.safetensors", 0.7),
+    ("thighjob", "thighjob.safetensors", 0.8),
+    ("cameltoe", "Cameltoe.safetensors", 0.76),
+    ("bandaid on pussy", "Bandaid On Pussy.safetensors", 0.7),
+    ("penis shadow", "Penis Shadow.safetensors", 0.86),
+    ("bandaids on nipples", "bandaids_on_nipples.safetensors", 0.8),
+    ("against glass", "against_glass_v0.2.safetensors", 1.0),
+    ("grabbing own breasts", "SelfBreastGrab.safetensors", 0.8),
+    ("paizuri", "POVPaizuri.safetensors", 1.0),
+    ("trapped in wall", "Trapped_In_WallV2.safetensors", 0.7),
+    ("feet", "feet 2.safetensors", 0.75),
+]
+
 # checkpoint translator keys
 checkpoints = {
     "3D Animation": "3D.safetensors",
@@ -252,10 +271,18 @@ class sd(commands.Cog):
         # lora matching logic
         activeloras = []
         lora_weight = []
-        for lora_tuple in lora:
-            if lora_tuple[0] in positive_prompt.lower():
-                activeloras.append(lora_tuple[1])
-                lora_weight.append(lora_tuple[2])
+        loraconcat = lora + nsfw_lora
+        if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+            for lora_tuple in lora:
+                if lora_tuple[0] in positive_prompt.lower():
+                    activeloras.append(lora_tuple[1])
+                    lora_weight.append(lora_tuple[2])
+        else:
+            for lora_tuple in loraconcat:
+                if lora_tuple[0] in positive_prompt.lower():
+                    activeloras.append(lora_tuple[1])
+                    lora_weight.append(lora_tuple[2])
+
         if not activeloras:
             activeloras = ["GoodHands-beta2.safetensors"]
             lora_weight = [1]
@@ -550,10 +577,18 @@ class sd(commands.Cog):
         # lora matching logic
         activeloras = []
         lora_weight = []
-        for lora_tuple in lora:
-            if lora_tuple[0] in positive_prompt.lower():
-                activeloras.append(lora_tuple[1])
-                lora_weight.append(lora_tuple[2])
+        loraconcat = lora + nsfw_lora
+        if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+            for lora_tuple in lora:
+                if lora_tuple[0] in positive_prompt.lower():
+                    activeloras.append(lora_tuple[1])
+                    lora_weight.append(lora_tuple[2])
+        else:
+            for lora_tuple in loraconcat:
+                if lora_tuple[0] in positive_prompt.lower():
+                    activeloras.append(lora_tuple[1])
+                    lora_weight.append(lora_tuple[2])
+
         if not activeloras:
             activeloras = ["GoodHands-beta2.safetensors"]
             lora_weight = [1]
