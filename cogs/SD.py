@@ -95,7 +95,7 @@ lora = [
     ("tsuchinoko", "tsunsnek Tsuchinoko.pt", 0.75),
     ("common bottlenose dolphin", "cbd.pt", 0.75),
     ("danny", "danny.pt", 0.75),
-    ("appleq", "appleq.pt", 0.85),
+    ("appleq", "appleq.pt", 0.75),
 ]
 
 nsfw_lora = [
