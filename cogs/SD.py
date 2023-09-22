@@ -3,144 +3,21 @@ from config import *
 
 logger = logging.getLogger(__name__)
 
-# LORA translator keys
-lora = [
-    ("senko", "Senko-San.safetensors", 1.0),
-    ("astolfo", "Astolfo.safetensors", 1.0),
-    ("kiryu", "Kiryu Kazuma.safetensors", 1.0),
-    ("megumin", "megumin.safetensors", 1.0),
-    ("izuna", "izuna.safetensors", 1.0),
-    ("fumo", "Fumo.pt", 1.0),
-    ("shitty", "jaggy_lines_noise_taged-000012.safetensors", 1.3),
-    ("the cat", "Karyl.safetensors", 1.0),
-    ("karyl", "Karyl.safetensors", 1.0),
-    ("remilia", "Remilia Scarlet.safetensors", 1.0),
-    ("sans", "Sans.safetensors", 0.85),
-    ("slime", "slimegirls.safetensors", 1.0),
-    ("sylph", "Sylph.safetensors", 0.9),
-    ("yuno", "Yuno Gasai.safetensors", 0.9),
-    ("touhou", "Zun Style.safetensors", 1.0),
-    ("neptunia", "TSNeptunia-000045.safetensors", 1.0),
-    ("neptune", "Neptune.safetensors", 0.85),
-    ("kanade", "Kanade Tachibana.safetensors", 0.85),
-    ("tenshi", "Kanade Tachibana.safetensors", 0.85),
-    ("hu tao", "hu tao.safetensors", 0.85),
-    ("hand", "GoodHands-beta2.safetensors", 0.69),
-    ("compa", "compa_v2-000009.safetensors", 0.66),
-    ("ryouna", "ryouna.pt", 0.75),
-    ("leffrey", "leffrey.pt", 1.0),
-    ("detailed", "add_detail.safetensors", 0.75),
-    ("among us", "Among Us.safetensors", 1.0),
-    ("good eyes", "beautifuleyes.safetensors", 0.85),
-    ("canonome", "Camonome Style.safetensors", 1.0),
-    ("chara", "Chara.safetensors", 0.8),
-    ("chibi", "Chibi Style.safetensors", 0.7),
-    ("danganronpa", "Danganronpa Style.safetensors", 0.75),
-    ("figure", "Figurine.safetensors", 1.0),
-    ("anya face", "Anya Face.safetensors", 0.9),
-    ("gigachad", "Gigachad.safetensors", 0.66),
-    ("made in abyss", "Made In Abyss Style.safetensors", 0.7),
-    ("mgq", "Monster Girl Quest.safetensors", 1.0),
-    ("omori", "Omori.safetensors", 0.45),
-    ("nanachi", "Nanachi.safetensors", 0.7),
-    ("shrift", "Nekomata Style.safetensors", 1.2),
-    ("papi", "Papi.safetensors", 0.85),
-    ("toka", "tokacomics.safetensors", 1.0),
-    ("scout", "scoutv3.safetensors", 0.7),
-    ("natsuki", "Natsuki_V1.safetensors", 0.7),
-    ("yuri", "YuriV1.safetensors", 0.7),
-    ("monika", "MonikaV1.safetensors", 0.7),
-    ("sayori", "Sayori_V1.safetensors", 0.66),
-    ("teto", "kasanetetoV3-10.safetensors", 0.85),
-    ("korone", "korone.pt", 0.85),
-    ("shrugging", "concept_shrugging-11.safetensors", 1.0),
-    ("chungus", "bigchungus.pt", 0.5),
-    ("afrobull", "afrobull-000018.safetensors", 0.7),
-    ("goblin girl", "gobGirlzLora.pt", 1.3),
-    ("caracal", "floppa Caracal.pt", 0.75),
-    ("lucky star", "lucky_star_offset.safetensors", 0.93),
-    ("ken sugimori", "pokemon_v3_offset.safetensors", 1.0),
-    ("kyu", "HuniepopKyu-v1-06.safetensors", 0.8),
-    ("constricted pupils", "constricted_pupils_v0.2a.safetensors", 1.0),
-    ("aqua", "aqua_konosuba-000035.safetensors", 0.8),
-    ("glowing outline", "nlc_green.safetensors", 0.6),
-    ("cyanide and happiness", "cah-09.safetensors", 1.0),
-    ("skibidi toilet", "Skibidi.safetensors", 0.7),
-    ("taur", "centaurConcept.safetensors", 0.95),
-    ("noela", "noela.safetensors", 0.8),
-    ("one piece", "wanostyle_2_offset.safetensors", 1.0),
-    ("akagitsu", "akagitsu Red Fox.pt", 0.75),
-    ("araisan", "araisan Common Raccoon.pt", 0.75),
-    ("giant armadillo", "arma Giant Armadillo.pt", 0.75),
-    ("small-clawed", "ascotter Small-Clawed Otter.pt", 0.75),
-    ("australian devil", "aussie Australian Devil.pt", 0.75),
-    ("coyote", "coyo Coyote.pt", 0.75),
-    ("dhole", "dolr Dhole.pt", 0.75),
-    ("ezo", "ezo Ezo Red Fox.pt", 0.75),
-    ("fennec", "feen Fennec.pt", 0.9),
-    ("silver fox", "gingitsu Silver Fox.pt", 0.75),
-    ("giant penguin", "gpeng Giant Penguin.pt", 0.75),
-    ("grey wolf", "g_wolkf Grey Wolf.pt", 0.75),
-    ("jungle crow", "jcrow Jungle Crow.pt", 0.75),
-    ("japanese wolf", "jpwolf Japanese Wolf.pt", 0.75),
-    ("roadrunner", "kusomeepchan Greater Roadrunner.pt", 0.75),
-    ("lophorina", "lophorina Greater Lophorina.pt", 0.75),
-    ("superb bird-of-paradise", "lophorina Greater Lophorina.pt", 0.75),
-    ("mirai", "mirai Mirai.pt", 0.75),
-    ("scarlet ibis", "red_toki Scarlet Ibis.pt", 0.75),
-    ("serval", "serval Serval.pt", 0.65),
-    ("island fox", "shimahai Island Fox.pt", 0.75),
-    ("margay", "specialcat Margay.pt", 0.75),
-    ("crested ibis", "toki Crested Ibis.pt", 0.75),
-    ("tsuchinoko", "tsunsnek Tsuchinoko.pt", 0.75),
-    ("common bottlenose dolphin", "cbd.pt", 0.75),
-    ("danny", "danny.pt", 0.75),
-    ("appleq", "appleq.pt", 0.75),
-]
+# Load the JSON
+with open(f"{dannybot}\\assets\\stable_diffusion_config.json") as f:
+    SD_Config = json.load(f)
 
-nsfw_lora = [
-    ("gape", "gape.safetensors", 0.7),
-    ("spread ass", "ButtLiftV14-000060.safetensors", 0.75),
-    ("futanari", "futanari_concept_full_v1-000020.safetensors", 1.0),
-    ("femboi", "femboiFull.safetensors", 0.75),
-    ("pubic hair", "pubic hair.safetensors", 0.7),
-    ("buttjob", "buttjob.safetensors", 0.7),
-    ("thighjob", "thighjob.safetensors", 0.8),
-    ("cameltoe", "Cameltoe.safetensors", 0.76),
-    ("bandaid on pussy", "Bandaid On Pussy.safetensors", 0.7),
-    ("penis shadow", "Penis Shadow.safetensors", 0.86),
-    ("bandaids on nipples", "bandaids_on_nipples.safetensors", 0.8),
-    ("against glass", "against_glass_v0.2.safetensors", 1.0),
-    ("grabbing own breasts", "SelfBreastGrab.safetensors", 0.8),
-    ("paizuri", "POVPaizuri.safetensors", 1.0),
-    ("trapped in wall", "Trapped_In_WallV2.safetensors", 0.7),
-    ("feet", "feet 2.safetensors", 0.75),
-]
-
-# checkpoint translator keys
-checkpoints = {
-    "3D Animation": "3D.safetensors",
-    "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
-    "Anything v3": "anythingV3_fp16.ckpt",
-    "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
-    "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
-    "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
-    "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
-    "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
-    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
-    "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
-    "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
-}
-
-# VAE translator keys
-vaes = {
-    "From Model": "nothingvae.safetensors",
-    "vaeFtMse840000": "vaeFtMse840000.safetensors",
-    "Danny VAE": "VAE.vae.pt",
-}
-
+# Load JSON params
+lora = SD_Config["lora"]
+nsfw_lora = SD_Config["nsfw_lora"]
+checkpoints = SD_Config["checkpoints"]
+vaes = SD_Config["vaes"]
+default_ckpt = SD_Config["default_ckpt"]
+default_vae = SD_Config["default_vae"]
 
 class sd(commands.Cog):
+    DefaultLora = SD_Config["default_lora"]
+    SD_Queue = []
     # the address of the server to connect to
     server_address = "127.0.0.1:8188"
 
@@ -151,6 +28,219 @@ class sd(commands.Cog):
         self.bot = bot
         self.ws = websocket.WebSocket()
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
+        self.SD_Task_Loop.start()
+
+    def cog_unload(self):
+        self.SD_Task_Loop.cancel()  # Really important.
+
+    # Task that loops every second to look through the queue and run the topmost item.
+    # The tasks do not overlap and they wait for the last one to finish first and get interrupted when the cog is reloaded.
+    # This is how SilverSpaghetti does it but better this time
+    @tasks.loop(seconds=1.0)
+    async def SD_Task_Loop(self):
+        # this was so i could tell the task was running during testing
+        # print(f'doing medbay task {random.randint(0,3000000)}')
+
+        # Check if there is even anything in the queue first before trying to do anything.
+        if len(self.SD_Queue) > 0:
+            # Look at the queue and get the first one in line
+            current_prompt = self.SD_Queue[0]
+            # Remove the item from the queue so it doesnt do the same grok endlessly
+            self.SD_Queue.pop(0)
+
+            # Each element in SD_Queue is formatted like so:
+            # {prompt, activeloras, lora_weight, cfg, denoise, scheduler, seed, steps, message_id, author_id, batch_processed}
+            # (but formatted like a dict so its like current_prompt['activeloras'])
+            # basically, it contains everything needed to pass onto the task loop
+
+            # Retrieve the variables from the queue
+            # I could probably do this better
+            prompt = current_prompt["prompt"]
+            activeloras = current_prompt["activeloras"]
+            lora_weight = current_prompt["lora_weight"]
+            cfg = current_prompt["cfg"]
+            denoise = current_prompt["denoise"]
+            scheduler = current_prompt["scheduler"]
+            seed = current_prompt["seed"]
+            steps = current_prompt["steps"]
+            ctx = current_prompt["ctx"]
+            author_id = current_prompt["author_id"]
+            batch_processed = current_prompt["batch_processed"]
+            checkpoint = current_prompt["checkpoint"]
+            vae = current_prompt["vae"]
+            vae_alias = current_prompt["vae_alias"]
+            batch_size = current_prompt["batch_size"]
+
+            author = self.bot.get_user(author_id)
+
+            # Run the thingamabob
+
+            # This runs the get_images function in executor, which allows it to wait for completion in this task but still allows the slash command to work
+            # since using this method prevents the whole cog from blocking
+            images = await self.bot.loop.run_in_executor(
+                None, self.get_images, self.ws, prompt
+            )
+
+            if current_prompt["type"] == "txt2img":
+                # images = self.get_images(self.ws, prompt)
+                latent_image = (
+                    prompt["5"]["inputs"]["width"],
+                    prompt["5"]["inputs"]["height"],
+                )
+                batch_size = prompt["5"]["inputs"]["batch_size"]
+                negative = prompt["7"]["inputs"]["text"]
+                positive = prompt["6"]["inputs"]["text"]
+                inputs_values = prompt["3"]["inputs"]
+                lora_list_for_embed = ""
+                for i in range(min(5, len(activeloras))):
+                    lora_list_for_embed += (
+                        str(activeloras[i])
+                        .replace(".safetensors", "")
+                        .replace(".pt", "")
+                    )
+                    lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+                cfg, denoise, sampler_name, scheduler, seed, steps = [
+                    inputs_values[key]
+                    for key in [
+                        "cfg",
+                        "denoise",
+                        "sampler_name",
+                        "scheduler",
+                        "seed",
+                        "steps",
+                    ]
+                ]
+
+                sampler_name = sampler_name.replace("_", " ")
+
+                # fetch and prepare the generated image for embed
+                for node_id in images:
+                    for image_data in images[node_id]:
+                        batch_processed += 1
+                        image = Image.open(io.BytesIO(image_data))
+                        with io.BytesIO() as out:
+                            image.save(out, format="png")
+                            out.seek(0)
+
+                            # preparing the data to be send on discord
+                            file = discord.File(fp=out, filename="image.png")
+                            embed = discord.Embed(title="txt2img", color=0x80FFFF)
+                            embed.set_image(url="attachment://image.png")
+                            embed.set_footer(text=f"Seed: {seed}")
+                            embed.set_author(
+                                name=author.name, icon_url=author.avatar.url
+                            )
+
+                            # setting up the embed fields
+                            embed_fields = [
+                                ("Positive Prompt", positive[: 1024 - 3], False),
+                                ("Negative Prompt", negative[: 1024 - 3], False),
+                                ("Checkpoint Model", checkpoint, False),
+                                ("VAE Model", vae, False),
+                                (
+                                    "Additional Networks (lora, loha, lokr, locon)",
+                                    lora_list_for_embed,
+                                    False,
+                                ),
+                                ("CFG Scale", cfg, True),
+                                (
+                                    "Resolution",
+                                    f"{latent_image[0]}x{latent_image[1]}",
+                                    True,
+                                ),
+                                (
+                                    "Batch Count",
+                                    f"{batch_processed} of {batch_size}",
+                                    True,
+                                ),
+                                (
+                                    "Sampling method",
+                                    f"{sampler_name} {scheduler}",
+                                    True,
+                                ),
+                                ("Sampling Steps", steps, True),
+                                ("Denoise", denoise, True),
+                            ]
+
+                            # debugging stuff
+                            print(activeloras)
+                            print(lora_weight)
+                            print(vae)
+                            print(vae_alias)
+                            print(embed_fields)
+
+                            # looping over the embed fields and adding them one by one to the embed object
+                            for name, value, inline in embed_fields:
+                                embed.add_field(name=name, value=value, inline=inline)
+                            await ctx.reply(embed=embed, file=file)
+            else:
+                negative = prompt["7"]["inputs"]["text"]
+                positive = prompt["6"]["inputs"]["text"]
+                inputs_values = prompt["4"]["inputs"]
+                lora_list_for_embed = ""
+                for i in range(min(5, len(activeloras))):
+                    lora_list_for_embed += (
+                        str(activeloras[i])
+                        .replace(".safetensors", "")
+                        .replace(".pt", "")
+                    )
+                    lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+                cfg, denoise, sampler_name, scheduler, seed, steps = [
+                    inputs_values[key]
+                    for key in [
+                        "cfg",
+                        "denoise",
+                        "sampler_name",
+                        "scheduler",
+                        "seed",
+                        "steps",
+                    ]
+                ]
+
+                sampler_name = sampler_name.replace("_", " ")
+
+                # fetch and prepare the generated image for embed
+                for node_id in images:
+                    for image_data in images[node_id]:
+                        image = Image.open(io.BytesIO(image_data))
+                        with io.BytesIO() as out:
+                            image.save(out, format="png")
+                            out.seek(0)
+
+                            # preparing the data to be send on discord
+                            file = discord.File(fp=out, filename="image.png")
+                            embed = discord.Embed(title="img2img", color=0x80FFFF)
+                            embed.set_image(url="attachment://image.png")
+                            embed.set_footer(text=f"Seed: {seed}")
+                            embed.set_author(
+                                name=ctx.author.name, icon_url=ctx.author.avatar.url
+                            )
+
+                            # setting up the embed fields
+                            embed_fields = [
+                                ("Positive Prompt", positive[: 1024 - 3], False),
+                                ("Negative Prompt", negative[: 1024 - 3], False),
+                                ("Checkpoint Model", checkpoint, False),
+                                ("VAE Model", vae, False),
+                                (
+                                    "Additional Networks (lora, loha, lokr, locon)",
+                                    lora_list_for_embed,
+                                    False,
+                                ),
+                                ("CFG Scale", cfg, True),
+                                (
+                                    "Sampling method",
+                                    f"{sampler_name} {scheduler}",
+                                    True,
+                                ),
+                                ("Sampling Steps", steps, True),
+                                ("Denoise", denoise, True),
+                            ]
+
+                            # looping over the embed fields and adding them one by one to the embed object
+                            for name, value, inline in embed_fields:
+                                embed.add_field(name=name, value=value, inline=inline)
+                            await ctx.reply(embed=embed, file=file)
 
     @commands.hybrid_command(
         name="loras",
@@ -196,23 +286,9 @@ class sd(commands.Cog):
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
-            "3D Animation",
-            "AOM3",
-            "Anything v3",
-            "Anything v5",
-            "AnyLoRA",
-            "CafeMix MIA",
-            "Made In Abyss",
-            "Realistic (SD 1.5 Base)",
-            "RichyRichMix",
-            "Sayori (Nekopara) Artstyle",
-            "Sonic-Diffusion",
-        ] = "Anything v5",
-        vae: Literal[
-            "From Model",
-            "vaeFtMse840000",
-            "Danny VAE",
-        ] = "From Model",
+            "Penis",  # Youre on your own here, i got no clue how this works. what i WANT to do it set the list to always be dir(checkpoints) so its all of the checkpoint names. but that gives me all kinds of errors.
+        ] = default_ckpt,
+        vae: Literal["vaeFtMse840000",] = default_vae,  # Ditto.
         sampler: Literal[
             "euler",
             "euler_ancestral",
@@ -291,8 +367,8 @@ class sd(commands.Cog):
                     lora_weight.append(lora_tuple[2])
 
         if not activeloras:
-            activeloras = ["GoodHands-beta2.safetensors"]
-            lora_weight = [1]
+            activeloras = []
+            lora_weight = []
 
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
@@ -358,7 +434,7 @@ class sd(commands.Cog):
             "12": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 2
                     else activeloras[1],
                     "strength_model": lora_weight[1] if len(lora_weight) >= 2 else 0,
@@ -370,7 +446,7 @@ class sd(commands.Cog):
             "13": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 3
                     else activeloras[2],
                     "strength_model": lora_weight[2] if len(lora_weight) >= 3 else 0,
@@ -382,7 +458,7 @@ class sd(commands.Cog):
             "14": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 4
                     else activeloras[3],
                     "strength_model": lora_weight[3] if len(lora_weight) >= 4 else 0,
@@ -394,7 +470,7 @@ class sd(commands.Cog):
             "15": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 5
                     else activeloras[4],
                     "strength_model": lora_weight[4] if len(lora_weight) >= 5 else 0,
@@ -413,77 +489,29 @@ class sd(commands.Cog):
 
         # extracts values from the dict and assigns them to variables so we can use them in the embed
         prompt = generator_values.copy()
-        images = self.get_images(self.ws, prompt)
-        latent_image = (prompt["5"]["inputs"]["width"], prompt["5"]["inputs"]["height"])
-        batch_size = prompt["5"]["inputs"]["batch_size"]
-        negative = prompt["7"]["inputs"]["text"]
-        positive = prompt["6"]["inputs"]["text"]
-        inputs_values = prompt["3"]["inputs"]
-        lora_list_for_embed = ""
-        for i in range(min(5, len(activeloras))):
-            lora_list_for_embed += (
-                str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
-            )
-            lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
-        cfg, denoise, sampler_name, scheduler, seed, steps = [
-            inputs_values[key]
-            for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
-        ]
+        # {prompt, activeloras, lora_weight, cfg, denoise, scheduler, seed, steps, message_id, author_id, batch_processed}
 
-        sampler_name = sampler_name.replace("_", " ")
+        prompt_ToQueue = {
+            "prompt": prompt,
+            "activeloras": activeloras,
+            "lora_weight": lora_weight,
+            "cfg": cfg,
+            "denoise": denoise,
+            "scheduler": scheduler,
+            "seed": seed,
+            "steps": steps,
+            "ctx": ctx,
+            "author_id": ctx.author.id,
+            "batch_processed": batch_processed,
+            "vae": vae,
+            "checkpoint": checkpoint,
+            "batch_size": batch_size,
+            "vae_alias": vae_alias,
+            "type": "txt2img",
+        }
+        # print(prompt_ToQueue)
 
-        # fetch and prepare the generated image for embed
-        for node_id in images:
-            for image_data in images[node_id]:
-                batch_processed += 1
-                image = Image.open(io.BytesIO(image_data))
-                with io.BytesIO() as out:
-                    image.save(out, format="png")
-                    out.seek(0)
-
-                    # preparing the data to be send on discord
-                    file = discord.File(fp=out, filename="image.png")
-                    embed = discord.Embed(title="txt2img", color=0x80FFFF)
-                    embed.set_image(url="attachment://image.png")
-                    embed.set_footer(text=f"Seed: {seed}")
-                    embed.set_author(
-                        name=ctx.author.name, icon_url=ctx.author.avatar.url
-                    )
-
-                    # setting up the embed fields
-                    embed_fields = [
-                        ("Positive Prompt", positive[: 1024 - 3], False),
-                        ("Negative Prompt", negative[: 1024 - 3], False),
-                        ("Checkpoint Model", checkpoint, False),
-                        ("VAE Model", vae, False),
-                        (
-                            "Additional Networks (lora, loha, lokr, locon)",
-                            lora_list_for_embed,
-                            False,
-                        ),
-                        ("CFG Scale", cfg, True),
-                        (
-                            "Resolution",
-                            f"{latent_image[0]}x{latent_image[1]}",
-                            True,
-                        ),
-                        ("Batch Count", f"{batch_processed} of {batch_size}", True),
-                        ("Sampling method", f"{sampler_name} {scheduler}", True),
-                        ("Sampling Steps", steps, True),
-                        ("Denoise", denoise, True),
-                    ]
-
-                    # debugging stuff
-                    print(activeloras)
-                    print(lora_weight)
-                    print(vae)
-                    print(vae_alias)
-                    print(embed_fields)
-
-                    # looping over the embed fields and adding them one by one to the embed object
-                    for name, value, inline in embed_fields:
-                        embed.add_field(name=name, value=value, inline=inline)
-                    await ctx.reply(embed=embed, file=file)
+        self.SD_Queue.append(prompt_ToQueue)
 
     @commands.hybrid_command(
         name="img2img",
@@ -499,24 +527,8 @@ class sd(commands.Cog):
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         cfg: float = 7.000,
         denoise: float = 0.670,
-        checkpoint: Literal[
-            "3D Animation",
-            "AOM3",
-            "Anything v3",
-            "Anything v5",
-            "AnyLoRA",
-            "CafeMix MIA",
-            "Made In Abyss",
-            "Realistic (SD 1.5 Base)",
-            "RichyRichMix",
-            "Sayori (Nekopara) Artstyle",
-            "Sonic-Diffusion",
-        ] = "Anything v5",
-        vae: Literal[
-            "From Model",
-            "vaeFtMse840000",
-            "Danny VAE",
-        ] = "From Model",
+        checkpoint: Literal["Penis",] = "Penis",
+        vae: Literal["From vaeFtMse840000",] = "vaeFtMse840000",
         sampler: Literal[
             "euler",
             "euler_ancestral",
@@ -597,7 +609,7 @@ class sd(commands.Cog):
                     lora_weight.append(lora_tuple[2])
 
         if not activeloras:
-            activeloras = ["GoodHands-beta2.safetensors"]
+            activeloras = [self.DefaultLora]
             lora_weight = [1]
 
         # a dictionary which acts as the configuration for the image generation
@@ -671,7 +683,7 @@ class sd(commands.Cog):
             "12": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 2
                     else activeloras[1],
                     "strength_model": lora_weight[1] if len(lora_weight) >= 2 else 0,
@@ -683,7 +695,7 @@ class sd(commands.Cog):
             "13": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 3
                     else activeloras[2],
                     "strength_model": lora_weight[2] if len(lora_weight) >= 3 else 0,
@@ -695,7 +707,7 @@ class sd(commands.Cog):
             "14": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 4
                     else activeloras[3],
                     "strength_model": lora_weight[3] if len(lora_weight) >= 4 else 0,
@@ -707,7 +719,7 @@ class sd(commands.Cog):
             "15": {
                 "class_type": "LoraLoader",
                 "inputs": {
-                    "lora_name": "GoodHands-beta2.safetensors"
+                    "lora_name": self.DefaultLora
                     if len(activeloras) < 5
                     else activeloras[4],
                     "strength_model": lora_weight[4] if len(lora_weight) >= 5 else 0,
@@ -728,61 +740,85 @@ class sd(commands.Cog):
 
         # extracts values from the dict and assigns them to variables so we can use them in the embed
         prompt = generator_values.copy()
-        images = self.get_images(self.ws, prompt)
-        negative = prompt["7"]["inputs"]["text"]
-        positive = prompt["6"]["inputs"]["text"]
-        inputs_values = prompt["4"]["inputs"]
-        lora_list_for_embed = ""
-        for i in range(min(5, len(activeloras))):
-            lora_list_for_embed += (
-                str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
-            )
-            lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
-        cfg, denoise, sampler_name, scheduler, seed, steps = [
-            inputs_values[key]
-            for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
-        ]
 
-        sampler_name = sampler_name.replace("_", " ")
+        prompt_ToQueue = {
+            "prompt": prompt,
+            "activeloras": activeloras,
+            "lora_weight": lora_weight,
+            "cfg": cfg,
+            "denoise": denoise,
+            "scheduler": scheduler,
+            "seed": seed,
+            "steps": steps,
+            "ctx": ctx,
+            "author_id": ctx.author.id,
+            "batch_processed": 0,
+            "vae": vae,
+            "checkpoint": checkpoint,
+            "batch_size": 1,
+            "vae_alias": vae_alias,
+            "type": "img2img",
+        }
+        # print(prompt_ToQueue)
 
-        # fetch and prepare the generated image for embed
-        for node_id in images:
-            for image_data in images[node_id]:
-                image = Image.open(io.BytesIO(image_data))
-                with io.BytesIO() as out:
-                    image.save(out, format="png")
-                    out.seek(0)
+        self.SD_Queue.append(prompt_ToQueue)
 
-                    # preparing the data to be send on discord
-                    file = discord.File(fp=out, filename="image.png")
-                    embed = discord.Embed(title="img2img", color=0x80FFFF)
-                    embed.set_image(url="attachment://image.png")
-                    embed.set_footer(text=f"Seed: {seed}")
-                    embed.set_author(
-                        name=ctx.author.name, icon_url=ctx.author.avatar.url
-                    )
+        # self.SD_Queue.append(prompt)
+        # images = self.get_images(self.ws, prompt)
+        # negative = prompt["7"]["inputs"]["text"]
+        # positive = prompt["6"]["inputs"]["text"]
+        # inputs_values = prompt["4"]["inputs"]
+        # lora_list_for_embed = ""
+        # for i in range(min(5, len(activeloras))):
+        # lora_list_for_embed += (
+        # str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
+        # )
+        # lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+        # cfg, denoise, sampler_name, scheduler, seed, steps = [
+        # inputs_values[key]
+        # for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
+        # ]
 
-                    # setting up the embed fields
-                    embed_fields = [
-                        ("Positive Prompt", positive[: 1024 - 3], False),
-                        ("Negative Prompt", negative[: 1024 - 3], False),
-                        ("Checkpoint Model", checkpoint, False),
-                        ("VAE Model", vae, False),
-                        (
-                            "Additional Networks (lora, loha, lokr, locon)",
-                            lora_list_for_embed,
-                            False,
-                        ),
-                        ("CFG Scale", cfg, True),
-                        ("Sampling method", f"{sampler_name} {scheduler}", True),
-                        ("Sampling Steps", steps, True),
-                        ("Denoise", denoise, True),
-                    ]
+        # sampler_name = sampler_name.replace("_", " ")
 
-                    # looping over the embed fields and adding them one by one to the embed object
-                    for name, value, inline in embed_fields:
-                        embed.add_field(name=name, value=value, inline=inline)
-                    await ctx.reply(embed=embed, file=file)
+        # # fetch and prepare the generated image for embed
+        # for node_id in images:
+        # for image_data in images[node_id]:
+        # image = Image.open(io.BytesIO(image_data))
+        # with io.BytesIO() as out:
+        # image.save(out, format="png")
+        # out.seek(0)
+
+        # # preparing the data to be send on discord
+        # file = discord.File(fp=out, filename="image.png")
+        # embed = discord.Embed(title="img2img", color=0x80FFFF)
+        # embed.set_image(url="attachment://image.png")
+        # embed.set_footer(text=f"Seed: {seed}")
+        # embed.set_author(
+        # name=ctx.author.name, icon_url=ctx.author.avatar.url
+        # )
+
+        # # setting up the embed fields
+        # embed_fields = [
+        # ("Positive Prompt", positive[: 1024 - 3], False),
+        # ("Negative Prompt", negative[: 1024 - 3], False),
+        # ("Checkpoint Model", checkpoint, False),
+        # ("VAE Model", vae, False),
+        # (
+        # "Additional Networks (lora, loha, lokr, locon)",
+        # lora_list_for_embed,
+        # False,
+        # ),
+        # ("CFG Scale", cfg, True),
+        # ("Sampling method", f"{sampler_name} {scheduler}", True),
+        # ("Sampling Steps", steps, True),
+        # ("Denoise", denoise, True),
+        # ]
+
+        # # looping over the embed fields and adding them one by one to the embed object
+        # for name, value, inline in embed_fields:
+        # embed.add_field(name=name, value=value, inline=inline)
+        # await ctx.reply(embed=embed, file=file)
 
     # making a request to the server for a new prompt. it contains the new prompt and client id, encoded in UTF-8 (THIS IS IMPORTANT)
     def queue_prompt(self, prompt):
