@@ -48,7 +48,7 @@ import websocket
 import yt_dlp
 from aiohttp import ClientSession
 from discord import File, Interaction, InteractionType, app_commands
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.utils import get
 from dotenv import load_dotenv
 from petpetgif import petpet
