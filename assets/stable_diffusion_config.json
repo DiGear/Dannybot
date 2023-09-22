@@ -1,8 +1,4 @@
 {
-	"default_lora" : "GoodHands-beta2.safetensors",
-	"default_vae" : "From Model",
-	"default_ckpt" : "Anything v5",
-	
 	"lora" : 
 	[
 		["senko", "Senko-San.safetensors", 1.0],
@@ -116,27 +112,5 @@
 		["paizuri", "POVPaizuri.safetensors", 1.0],
 		["trapped in wall", "Trapped_In_WallV2.safetensors", 0.7],
 		["feet", "feet 2.safetensors", 0.75]
-	],
-	
-	"checkpoints" : 
-	{
-		"3D Animation": "3D.safetensors",
-		"AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
-		"Anything v3": "anythingV3_fp16.ckpt",
-		"Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
-		"AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
-		"CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
-		"Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
-		"Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
-		"RichyRichMix": "richyrichmix_V2Fp16.safetensors",
-		"Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
-		"Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors"
-	},
-	
-	"vaes" : 
-	{
-		"From Model": "nothingvae.safetensors",
-		"vaeFtMse840000": "vaeFtMse840000.safetensors",
-		"Danny VAE": "VAE.vae.pt"
-	}
+	]
 }

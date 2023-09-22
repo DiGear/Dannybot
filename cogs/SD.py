@@ -10,10 +10,29 @@ with open(f"{dannybot}\\assets\\stable_diffusion_config.json") as f:
 # Load JSON params
 lora = SD_Config["lora"]
 nsfw_lora = SD_Config["nsfw_lora"]
-checkpoints = SD_Config["checkpoints"]
-vaes = SD_Config["vaes"]
-default_ckpt = SD_Config["default_ckpt"]
-default_vae = SD_Config["default_vae"]
+
+# checkpoint translator keys
+checkpoints = {
+    "3D Animation": "3D.safetensors",
+    "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
+    "Anything v3": "anythingV3_fp16.ckpt",
+    "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
+    "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
+    "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
+    "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
+    "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
+    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
+    "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
+    "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
+}
+
+# VAE translator keys
+vaes = {
+    "From Model": "nothingvae.safetensors",
+    "vaeFtMse840000": "vaeFtMse840000.safetensors",
+    "Danny VAE": "VAE.vae.pt",
+}
+
 
 class sd(commands.Cog):
     DefaultLora = SD_Config["default_lora"]
@@ -30,31 +49,23 @@ class sd(commands.Cog):
         self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
         self.SD_Task_Loop.start()
 
+    # make sure we stop the task loop before reloading the cog
     def cog_unload(self):
-        self.SD_Task_Loop.cancel()  # Really important.
+        self.SD_Task_Loop.cancel()
 
-    # Task that loops every second to look through the queue and run the topmost item.
-    # The tasks do not overlap and they wait for the last one to finish first and get interrupted when the cog is reloaded.
-    # This is how SilverSpaghetti does it but better this time
+    # task loops and executes items in the SD queue without overlap, interrupting when the cog is reloaded.
     @tasks.loop(seconds=1.0)
     async def SD_Task_Loop(self):
-        # this was so i could tell the task was running during testing
-        # print(f'doing medbay task {random.randint(0,3000000)}')
-
         # Check if there is even anything in the queue first before trying to do anything.
         if len(self.SD_Queue) > 0:
             # Look at the queue and get the first one in line
             current_prompt = self.SD_Queue[0]
-            # Remove the item from the queue so it doesnt do the same grok endlessly
+            # Remove the item from the queue so it doesnt do the same task endlessly
             self.SD_Queue.pop(0)
 
-            # Each element in SD_Queue is formatted like so:
-            # {prompt, activeloras, lora_weight, cfg, denoise, scheduler, seed, steps, message_id, author_id, batch_processed}
-            # (but formatted like a dict so its like current_prompt['activeloras'])
-            # basically, it contains everything needed to pass onto the task loop
+            # Each element in SD_Queue contains all necessary information (prompt, activeloras, lora_weight, cfg, denoise, scheduler, seed, steps, message_id, author_id, batch_processed) to pass onto the task loop.
 
-            # Retrieve the variables from the queue
-            # I could probably do this better
+            # Retrieve the variables from the queue. I could probably do this better
             prompt = current_prompt["prompt"]
             activeloras = current_prompt["activeloras"]
             lora_weight = current_prompt["lora_weight"]
@@ -73,10 +84,7 @@ class sd(commands.Cog):
 
             author = self.bot.get_user(author_id)
 
-            # Run the thingamabob
-
-            # This runs the get_images function in executor, which allows it to wait for completion in this task but still allows the slash command to work
-            # since using this method prevents the whole cog from blocking
+            # This code runs the "get_images" function in the executor, allowing it to wait for completion in this task without blocking the slash command.
             images = await self.bot.loop.run_in_executor(
                 None, self.get_images, self.ws, prompt
             )
@@ -286,9 +294,23 @@ class sd(commands.Cog):
         width: int = 512,
         height: int = 512,
         checkpoint: Literal[
-            "Penis",  # Youre on your own here, i got no clue how this works. what i WANT to do it set the list to always be dir(checkpoints) so its all of the checkpoint names. but that gives me all kinds of errors.
-        ] = default_ckpt,
-        vae: Literal["vaeFtMse840000",] = default_vae,  # Ditto.
+            "3D Animation",
+            "AOM3",
+            "Anything v3",
+            "Anything v5",
+            "AnyLoRA",
+            "CafeMix MIA",
+            "Made In Abyss",
+            "Realistic (SD 1.5 Base)",
+            "RichyRichMix",
+            "Sayori (Nekopara) Artstyle",
+            "Sonic-Diffusion",
+        ] = "Anything v5",
+        vae: Literal[
+            "From Model",
+            "vaeFtMse840000",
+            "Danny VAE",
+        ] = "From Model",
         sampler: Literal[
             "euler",
             "euler_ancestral",
@@ -489,7 +511,6 @@ class sd(commands.Cog):
 
         # extracts values from the dict and assigns them to variables so we can use them in the embed
         prompt = generator_values.copy()
-        # {prompt, activeloras, lora_weight, cfg, denoise, scheduler, seed, steps, message_id, author_id, batch_processed}
 
         prompt_ToQueue = {
             "prompt": prompt,
@@ -509,7 +530,6 @@ class sd(commands.Cog):
             "vae_alias": vae_alias,
             "type": "txt2img",
         }
-        # print(prompt_ToQueue)
 
         self.SD_Queue.append(prompt_ToQueue)
 
@@ -527,8 +547,24 @@ class sd(commands.Cog):
         negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
         cfg: float = 7.000,
         denoise: float = 0.670,
-        checkpoint: Literal["Penis",] = "Penis",
-        vae: Literal["From vaeFtMse840000",] = "vaeFtMse840000",
+        checkpoint: Literal[
+            "3D Animation",
+            "AOM3",
+            "Anything v3",
+            "Anything v5",
+            "AnyLoRA",
+            "CafeMix MIA",
+            "Made In Abyss",
+            "Realistic (SD 1.5 Base)",
+            "RichyRichMix",
+            "Sayori (Nekopara) Artstyle",
+            "Sonic-Diffusion",
+        ] = "Anything v5",
+        vae: Literal[
+            "From Model",
+            "vaeFtMse840000",
+            "Danny VAE",
+        ] = "From Model",
         sampler: Literal[
             "euler",
             "euler_ancestral",
@@ -759,66 +795,8 @@ class sd(commands.Cog):
             "vae_alias": vae_alias,
             "type": "img2img",
         }
-        # print(prompt_ToQueue)
 
         self.SD_Queue.append(prompt_ToQueue)
-
-        # self.SD_Queue.append(prompt)
-        # images = self.get_images(self.ws, prompt)
-        # negative = prompt["7"]["inputs"]["text"]
-        # positive = prompt["6"]["inputs"]["text"]
-        # inputs_values = prompt["4"]["inputs"]
-        # lora_list_for_embed = ""
-        # for i in range(min(5, len(activeloras))):
-        # lora_list_for_embed += (
-        # str(activeloras[i]).replace(".safetensors", "").replace(".pt", "")
-        # )
-        # lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
-        # cfg, denoise, sampler_name, scheduler, seed, steps = [
-        # inputs_values[key]
-        # for key in ["cfg", "denoise", "sampler_name", "scheduler", "seed", "steps"]
-        # ]
-
-        # sampler_name = sampler_name.replace("_", " ")
-
-        # # fetch and prepare the generated image for embed
-        # for node_id in images:
-        # for image_data in images[node_id]:
-        # image = Image.open(io.BytesIO(image_data))
-        # with io.BytesIO() as out:
-        # image.save(out, format="png")
-        # out.seek(0)
-
-        # # preparing the data to be send on discord
-        # file = discord.File(fp=out, filename="image.png")
-        # embed = discord.Embed(title="img2img", color=0x80FFFF)
-        # embed.set_image(url="attachment://image.png")
-        # embed.set_footer(text=f"Seed: {seed}")
-        # embed.set_author(
-        # name=ctx.author.name, icon_url=ctx.author.avatar.url
-        # )
-
-        # # setting up the embed fields
-        # embed_fields = [
-        # ("Positive Prompt", positive[: 1024 - 3], False),
-        # ("Negative Prompt", negative[: 1024 - 3], False),
-        # ("Checkpoint Model", checkpoint, False),
-        # ("VAE Model", vae, False),
-        # (
-        # "Additional Networks (lora, loha, lokr, locon)",
-        # lora_list_for_embed,
-        # False,
-        # ),
-        # ("CFG Scale", cfg, True),
-        # ("Sampling method", f"{sampler_name} {scheduler}", True),
-        # ("Sampling Steps", steps, True),
-        # ("Denoise", denoise, True),
-        # ]
-
-        # # looping over the embed fields and adding them one by one to the embed object
-        # for name, value, inline in embed_fields:
-        # embed.add_field(name=name, value=value, inline=inline)
-        # await ctx.reply(embed=embed, file=file)
 
     # making a request to the server for a new prompt. it contains the new prompt and client id, encoded in UTF-8 (THIS IS IMPORTANT)
     def queue_prompt(self, prompt):
