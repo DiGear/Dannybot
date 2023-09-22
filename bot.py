@@ -107,6 +107,8 @@ async def reload(ctx: commands.Context, module: str):
     for cog in cogs:
         await bot.unload_extension(cog)
         await bot.load_extension(cog)
+    command_sync = await bot.tree.sync()
+    print(f"Synced {len(command_sync)} slashes")
     await ctx.send(f"Reloaded {module} module(s)!")
 
 
