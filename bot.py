@@ -105,7 +105,11 @@ async def reload(ctx: commands.Context, module: str):
     else:
         cogs = [f"cogs.{module}"]
     for cog in cogs:
-        await bot.unload_extension(cog)
+        #fix to allow reloading a module that errored out while trying to reload
+        try:
+            await bot.unload_extension(cog)
+        except discord.ext.commands.errors.ExtensionNotLoaded:
+            pass
         await bot.load_extension(cog)
     command_sync = await bot.tree.sync()
     print(f"Synced {len(command_sync)} slashes")
