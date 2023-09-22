@@ -1,4 +1,6 @@
 {
+	"default_lora" : "GoodHands-beta2.safetensors",
+	
 	"lora" : 
 	[
 		["senko", "Senko-San.safetensors", 1.0],
