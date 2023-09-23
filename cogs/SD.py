@@ -170,11 +170,6 @@ class sd(commands.Cog):
                                 ("Denoise", denoise, True),
                             ]
 
-                            # debugging stuff
-                            print(vae)
-                            print(vae_alias)
-                            print(embed_fields)
-
                             # looping over the embed fields and adding them one by one to the embed object
                             for name, value, inline in embed_fields:
                                 embed.add_field(name=name, value=value, inline=inline)
