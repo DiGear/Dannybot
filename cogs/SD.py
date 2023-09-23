@@ -171,8 +171,6 @@ class sd(commands.Cog):
                             ]
 
                             # debugging stuff
-                            print(activeloras)
-                            print(lora_weight)
                             print(vae)
                             print(vae_alias)
                             print(embed_fields)
@@ -389,9 +387,9 @@ class sd(commands.Cog):
                     lora_weight.append(lora_tuple[2])
 
         if not activeloras:
-            activeloras = []
-            lora_weight = []
-
+            activeloras = [self.DefaultLora]
+            lora_weight = [1]
+            
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
             "3": {
@@ -647,6 +645,7 @@ class sd(commands.Cog):
         if not activeloras:
             activeloras = [self.DefaultLora]
             lora_weight = [1]
+            
 
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
