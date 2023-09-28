@@ -107,6 +107,8 @@ class sd(commands.Cog):
                         .replace(".pt", "")
                     )
                     lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+                    if lora_list_for_embed.startswith("GoodHands-beta2 (0.0),"):
+                        lora_list_for_embed = "none"
                 cfg, denoise, sampler_name, scheduler, seed, steps = [
                     inputs_values[key]
                     for key in [
@@ -146,7 +148,7 @@ class sd(commands.Cog):
                                 ("Checkpoint Model", checkpoint, False),
                                 ("VAE Model", vae, False),
                                 (
-                                    "Additional Networks (lora, loha, lokr, locon)",
+                                    "Additional Networks",
                                     lora_list_for_embed,
                                     False,
                                 ),
@@ -186,6 +188,8 @@ class sd(commands.Cog):
                         .replace(".pt", "")
                     )
                     lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+                    if lora_list_for_embed.startswith("GoodHands-beta2 (0.0),"):
+                        lora_list_for_embed = "none"
                 cfg, denoise, sampler_name, scheduler, seed, steps = [
                     inputs_values[key]
                     for key in [
@@ -224,7 +228,7 @@ class sd(commands.Cog):
                                 ("Checkpoint Model", checkpoint, False),
                                 ("VAE Model", vae, False),
                                 (
-                                    "Additional Networks (lora, loha, lokr, locon)",
+                                    "Additional Networks",
                                     lora_list_for_embed,
                                     False,
                                 ),
@@ -383,7 +387,7 @@ class sd(commands.Cog):
 
         if not activeloras:
             activeloras = [self.DefaultLora]
-            lora_weight = [1]
+            lora_weight = [0]
             
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
@@ -639,7 +643,7 @@ class sd(commands.Cog):
 
         if not activeloras:
             activeloras = [self.DefaultLora]
-            lora_weight = [1]
+            lora_weight = [0]
             
 
         # a dictionary which acts as the configuration for the image generation
