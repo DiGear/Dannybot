@@ -9,6 +9,12 @@ logger = logging.getLogger(__name__)
 class pooter(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        logger.info(
+            "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..."
+        )
+        print("---------------------------------------------------------------------")
+        clean_pooter()
+        print("---------------------------------------------------------------------")
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
@@ -39,7 +45,7 @@ class pooter(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Function to download a file from a URL
-        async def download_file(url, count, message):
+        async def download_file(url, count, message, file_name):
             if any(ext in url.lower() for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
                     tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
@@ -48,22 +54,19 @@ class pooter(commands.Cog):
                     total_files = len(input_message.attachments)
                 else:
                     total_files = 1
-                # Display download progress
                 await message.send(
                     f"Downloading... {count} of {total_files}", delete_after=1
                 )
-                # Save the file with a unique name
+                file_url = url.split("?")[0]
+                file_extension = file_url.split(".")[-1]
                 with open(
-                    f'{dannybot}/database/Pooter/{randhex(128)}{url.replace("/", "")[-6:]}',
-                    "wb",
-                ) as file:
-                    file.write(requests.get(url).content)
-                # Log the download
+                    f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
+                ) as f:
+                    f.write(requests.get(url).content)
                 await self.bot.get_channel(logs_channel).send(
                     f"{payload.member.global_name} ({payload.member.id}) has pootered: {url}"
                 )
                 return True
-            # If the file is not valid, notify and add a reaction
             await message.send(
                 "This file is not a valid image or video file!", delete_after=3
             )
@@ -84,13 +87,25 @@ class pooter(commands.Cog):
             files = input_message.attachments or [input_message.content.strip()]
 
             # Create tasks to download each file concurrently
-            tasks = [
-                download_file(
-                    file.url if hasattr(file, "url") else file, idx + 1, message_channel
-                )
-                for idx, file in enumerate(files)
-            ]
+            tasks = []
+            for idx, file in enumerate(files):
+                if hasattr(file, "url"):
+                    file_url = file.url.split("?")[0]
+                    file_extension = file_url.split(".")[-1]
+                    sanitized_filename = (
+                        sanitize_filename(file_url) + "." + file_extension
+                    )
+                else:
+                    file_url = file
+                    file_extension = file.split(".")[-1]
+                    sanitized_filename = sanitize_filename(file) + "." + file_extension
 
+                task = asyncio.create_task(
+                    download_file(
+                        file_url, idx + 1, message_channel, sanitized_filename
+                    )
+                )
+                tasks.append(task)
             # Gather the results of the download tasks
             results = await asyncio.gather(*tasks)
 
@@ -122,9 +137,10 @@ class pooter(commands.Cog):
                 f"Downloading... {current_download} of {total_downloads}",
                 delete_after=1,
             )
-            sanitized_link = url.replace("/", "")
+            file_url = url.split("?")[0]
+            file_extension = file_url.split(".")[-1]
             with open(
-                f"{dannybot}/database/Pooter/{f_name}{sanitized_link[-6:]}", "wb"
+                f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
             ) as f:
                 f.write(requests.get(url).content)
             # Track downloaded files and check if all downloads are complete
@@ -143,12 +159,13 @@ class pooter(commands.Cog):
         total_downloads = 0  # Initialize total_downloads here
         if ctx.message.attachments:
             total_downloads = len(ctx.message.attachments)
-            # Create download tasks for each attachment
-            tasks = [
-                download_file(attachment.url, i + 1)
-                for i, attachment in enumerate(ctx.message.attachments)
-            ]
-            # Use asyncio.gather to download files concurrently
+            tasks = []
+            for i, attachment in enumerate(ctx.message.attachments):
+                file_url = attachment.url.split("?")[0]
+                file_extension = file_url.split(".")[-1]
+                filename = f"{randhex(128)}.{file_extension}"
+                task = asyncio.create_task(download_file(file_url, i + 1))
+                tasks.append(task)
             await asyncio.gather(*tasks)
         elif not File_Url:
             # If no attachment or File_Url provided, select a random file from the archive

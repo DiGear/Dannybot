@@ -717,6 +717,11 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
     return
 
+# makes a filename only have valid windows file chars
+def sanitize_filename(filename):
+    valid_chars = string.ascii_letters + string.digits + "._- "
+    sanitized_filename = ''.join(char for char in filename if char in valid_chars)
+    return sanitized_filename
 
 # generate list from directory of files
 def listgen(directory):
