@@ -254,10 +254,13 @@ class sd(commands.Cog):
     )
     async def loralist(self, ctx: commands.Context):
         await ctx.defer()
-        if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+        try:
+            if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+                blahstodo = lora
+            else:
+                blahstodo = lora + nsfw_lora
+        except:
             blahstodo = lora
-        else:
-            blahstodo = lora + nsfw_lora
         keys_sorted = sorted(blahstodo, key=lambda x: x[0])
         keys_string = ", ".join([str(key[0]) for key in keys_sorted])
         await ctx.send(keys_string)
@@ -374,13 +377,19 @@ class sd(commands.Cog):
         activeloras = []
         lora_weight = []
         loraconcat = lora + nsfw_lora
-        if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+        try:
+            if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+                for lora_tuple in lora:
+                    if lora_tuple[0] in positive_prompt.lower():
+                        activeloras.append(lora_tuple[1])
+                        lora_weight.append(lora_tuple[2])
+            else:
+                for lora_tuple in loraconcat:
+                    if lora_tuple[0] in positive_prompt.lower():
+                        activeloras.append(lora_tuple[1])
+                        lora_weight.append(lora_tuple[2])
+        except:
             for lora_tuple in lora:
-                if lora_tuple[0] in positive_prompt.lower():
-                    activeloras.append(lora_tuple[1])
-                    lora_weight.append(lora_tuple[2])
-        else:
-            for lora_tuple in loraconcat:
                 if lora_tuple[0] in positive_prompt.lower():
                     activeloras.append(lora_tuple[1])
                     lora_weight.append(lora_tuple[2])
@@ -388,7 +397,7 @@ class sd(commands.Cog):
         if not activeloras:
             activeloras = [self.DefaultLora]
             lora_weight = [0]
-            
+
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
             "3": {
@@ -644,7 +653,6 @@ class sd(commands.Cog):
         if not activeloras:
             activeloras = [self.DefaultLora]
             lora_weight = [0]
-            
 
         # a dictionary which acts as the configuration for the image generation
         generator_values = {
