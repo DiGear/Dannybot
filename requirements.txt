@@ -52,7 +52,7 @@ six==1.16.0
 soundfile==0.12.1
 soxr==0.3.6
 threadpoolctl==3.2.0
-tqdm==4.64.1
+tqdm==4.66.1
 typing_extensions==4.8.0
 urllib3>=1.26.17
 uuid==1.30
