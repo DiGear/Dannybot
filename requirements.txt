@@ -54,7 +54,7 @@ soxr==0.3.6
 threadpoolctl==3.2.0
 tqdm==4.64.1
 typing_extensions==4.8.0
-urllib3==1.26.16
+urllib3>=1.26.17
 uuid==1.30
 Wand==0.6.11
 websocket-client==1.6.2
