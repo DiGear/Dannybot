@@ -9,12 +9,7 @@ logger = logging.getLogger(__name__)
 class pooter(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        logger.info(
-            "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..."
-        )
-        print("---------------------------------------------------------------------")
         clean_pooter()
-        print("---------------------------------------------------------------------")
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
