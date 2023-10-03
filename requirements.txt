@@ -25,7 +25,7 @@ kiwisolver==1.4.5
 lazy_loader==0.3
 librosa==0.10.1
 llvmlite==0.40.1
-matplotlib==3.6.3
+matplotlib==3.8.0
 mido==1.2.10
 msgpack==1.0.7
 multidict==6.0.4
