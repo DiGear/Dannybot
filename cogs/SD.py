@@ -25,7 +25,11 @@ checkpoints = {
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
 }
-
+# XL checkpoint translator keys
+xl_checkpoints = {
+    "Realistic (SDXL 1.0 Base)": "sd_xl_base_1.0_0.9vae.safetensors",
+    "Anime Style": "animeArtDiffusionXL_alpha3.safetensors",
+}
 # VAE translator keys
 vaes = {
     "From Model": "nothingvae.safetensors",
@@ -176,6 +180,85 @@ class sd(commands.Cog):
                             for name, value, inline in embed_fields:
                                 embed.add_field(name=name, value=value, inline=inline)
                             await ctx.reply(embed=embed, file=file)
+            elif current_prompt["type"] == "txt2img XL":
+                negative = prompt["7"]["inputs"]["text"]
+                positive = prompt["6"]["inputs"]["text"]
+                latent_image = (
+                    prompt["10"]["inputs"]["width"],
+                    prompt["10"]["inputs"]["height"],
+                )
+                inputs_values = prompt["4"]["inputs"]
+                lora_list_for_embed = ""
+                for i in range(min(5, len(activeloras))):
+                    lora_list_for_embed += (
+                        str(activeloras[i])
+                        .replace(".safetensors", "")
+                        .replace(".pt", "")
+                    )
+                    lora_list_for_embed += " (" + str(float(lora_weight[i])) + "), "
+                    if lora_list_for_embed.startswith("GoodHands-beta2 (0.0),"):
+                        lora_list_for_embed = "none"
+                cfg, denoise, sampler_name, scheduler, seed, steps = [
+                    inputs_values[key]
+                    for key in [
+                        "cfg",
+                        "denoise",
+                        "sampler_name",
+                        "scheduler",
+                        "seed",
+                        "steps",
+                    ]
+                ]
+
+                sampler_name = sampler_name.replace("_", " ")
+
+                # fetch and prepare the generated image for embed
+                for node_id in images:
+                    for image_data in images[node_id]:
+                        image = Image.open(io.BytesIO(image_data))
+                        with io.BytesIO() as out:
+                            image.save(out, format="png")
+                            out.seek(0)
+
+                            # preparing the data to be send on discord
+                            file = discord.File(fp=out, filename="image.png")
+                            embed = discord.Embed(title="txt2img XL", color=0x80FFFF)
+                            embed.set_image(url="attachment://image.png")
+                            embed.set_footer(text=f"Seed: {seed}")
+                            embed.set_author(
+                                name=ctx.author.name, icon_url=ctx.author.avatar.url
+                            )
+
+                            # setting up the embed fields
+                            embed_fields = [
+                                ("Positive Prompt", positive[: 1024 - 3], False),
+                                ("Negative Prompt", negative[: 1024 - 3], False),
+                                ("Checkpoint Model", checkpoint, False),
+                                ("VAE Model", vae, False),
+                                (
+                                    "Additional Networks",
+                                    lora_list_for_embed,
+                                    False,
+                                ),
+                                ("CFG Scale", cfg, True),
+                                (
+                                    "Resolution",
+                                    f"{latent_image[0]}x{latent_image[1]}",
+                                    True,
+                                ),
+                                (
+                                    "Sampling method",
+                                    f"{sampler_name} {scheduler}",
+                                    True,
+                                ),
+                                ("Sampling Steps", steps, True),
+                                ("Denoise", denoise, True),
+                            ]
+
+                            # looping over the embed fields and adding them one by one to the embed object
+                            for name, value, inline in embed_fields:
+                                embed.add_field(name=name, value=value, inline=inline)
+                            await ctx.reply(embed=embed, file=file)
             else:
                 negative = prompt["7"]["inputs"]["text"]
                 positive = prompt["6"]["inputs"]["text"]
@@ -279,8 +362,8 @@ class sd(commands.Cog):
     @commands.hybrid_command(
         name="sd",
         aliases=["grok", "diffuse", "stablediffusion"],
-        description="Create AI generated images via Stable-Diffusion.",
-        brief="Create AI generated images with Dannybot.",
+        description="Create AI generated images via SD 1.5.",
+        brief="Create SD 1.5 generated images with Dannybot.",
     )
     async def stablediffusion(
         self,
@@ -800,6 +883,154 @@ class sd(commands.Cog):
             "batch_size": 1,
             "vae_alias": vae_alias,
             "type": "img2img",
+        }
+
+        self.SD_Queue.append(prompt_ToQueue)
+
+    @commands.hybrid_command(
+        name="sdxl",
+        aliases=["grokxl", "diffusexl", "stablediffusionxl"],
+        description="Create AI generated images via SDXL.",
+        brief="Create SDXL images with Dannybot.",
+    )
+    async def stablediffusionxl(
+        self,
+        ctx: commands.Context,
+        *,
+        positive_prompt: str,
+        negative_prompt: str = "lowres, bad anatomy, bad hands, text, missing fingers, extra digit, fewer digits",
+        cfg: float = 7.000,
+        denoise: float = 1.000,
+        batch_size: int = 1,
+        width: int = 1024,
+        height: int = 1024,
+        checkpoint: Literal[
+            "Realistic (SDXL 1.0 Base)",
+            "Anime Style",
+        ] = "Anime Style",
+        sampler: Literal[
+            "euler",
+            "euler_ancestral",
+            "heun",
+            "dpm_2",
+            "dpm_2_ancestral",
+            "Ims",
+            "dpm_fast",
+            "dpm_adaptive",
+            "dpmpp_2s_ancestral",
+            "dpmpp_sde_gpu",
+            "dpmpp_2m",
+            "dpmpp_2m_sde_gpu",
+            "ddim",
+            "uni_pc",
+            "uni_pc_bh2",
+        ] = "uni_pc",
+        scheduler: Literal[
+            "normal", "karras", "exponential", "simple", "ddim_uniform"
+        ] = "normal",
+        seed: int = 11223344556677889900112233,  # fuck
+        steps: int = 15,
+    ):
+        await ctx.defer()
+        # if the seed is that bullshit default value, it will generate a random seed
+        seed = (
+            random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
+        )
+
+        """
+        anti cris measures
+        """
+
+        # trimming CFG value in range of 0.001 to 100.000
+        cfg = min(max(cfg, 0.001), 100.000)
+        # trimming Denoise value in range of 0.001 to 1.000
+        denoise = min(max(denoise, 0.001), 1.000)
+        # trimming steps value in range of 1 to 50
+        steps = max(1, min(steps, 50))
+        # trimming width and height value in range of 64 to 2048
+        height = min(max(height, 64), 2048)
+        width = min(max(width, 64), 2048)
+
+        """
+        end anti cris measures
+        """
+
+        # getting the checkpoint value from the dictionary
+        checkpoint_alias = checkpoint
+        if checkpoint_alias in xl_checkpoints:
+            checkpoint_alias = xl_checkpoints[checkpoint_alias]
+
+        # a dictionary which acts as the configuration for the image generation
+        generator_values = {
+            "4": {
+                "class_type": "KSampler",
+                "inputs": {
+                    "cfg": cfg,
+                    "denoise": denoise,
+                    "latent_image": ["10", 0],
+                    "model": ["5", 0],
+                    "negative": ["7", 0],
+                    "positive": ["6", 0],
+                    "sampler_name": sampler,
+                    "scheduler": scheduler,
+                    "seed": seed,
+                    "steps": steps,
+                },
+            },
+            "5": {
+                "class_type": "CheckpointLoaderSimple",
+                "inputs": {"ckpt_name": checkpoint_alias},
+            },
+            "6": {
+                "class_type": "CLIPTextEncode",
+                "inputs": {"clip": ["5", 1], "text": positive_prompt},
+            },
+            "7": {
+                "class_type": "CLIPTextEncode",
+                "inputs": {"clip": ["5", 1], "text": negative_prompt},
+            },
+            "8": {
+                "class_type": "VAEDecode",
+                "inputs": {
+                    "samples": ["4", 0],
+                    "vae": ["5", 2],
+                },
+            },
+            "9": {
+                "class_type": "SaveImage",
+                "inputs": {
+                    "filename_prefix": "Dannybot_txt2img_XL_" + ctx.author.name,
+                    "images": ["8", 0],
+                },
+            },
+            "10": {
+                "class_type": "EmptyLatentImage",
+                "inputs": {"batch_size": 1, "height": height, "width": width},
+            },
+        }
+
+        # extracts values from the dict and assigns them to variables so we can use them in the embed
+        prompt = generator_values.copy()
+
+        activeloras = [self.DefaultLora]
+
+        prompt_ToQueue = {
+            "prompt": prompt,
+            "activeloras": activeloras,
+            "lora_weight": [0.0],
+            "cfg": cfg,
+            "denoise": denoise,
+            "scheduler": scheduler,
+            "seed": seed,
+            "steps": steps,
+            "ctx": ctx,
+            "author_id": ctx.author.id,
+            "batch_processed": 1,
+            "vae": "SDXL From Model",
+            "checkpoint": checkpoint,
+            "batch_size": 1,
+            "vae_alias": "SDXL From Model",
+            "type": "txt2img XL",
         }
 
         self.SD_Queue.append(prompt_ToQueue)
