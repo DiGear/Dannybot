@@ -37,7 +37,7 @@ opencv-python-headless==4.8.1.78
 orderedmultidict==1.0.1
 packaging==23.1
 pet-pet-gif==1.0.2
-Pillow==10.0.1
+Pillow<=9.5.0
 pooch==1.7.0
 pycparser==2.21
 pycryptodomex==3.18.0
