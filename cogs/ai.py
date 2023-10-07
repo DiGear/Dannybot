@@ -50,11 +50,15 @@ class ai(commands.Cog):
         description="Interact with GPT with all the funny settings.",
         brief="Get AI generated text based on provided prompts",
     )
-    async def writecustom(self, ctx: commands.Context, *, flags: CustomWrite):
+    async def writecustom(self, ctx: commands.Context, *, flags: CustomWrite, append: bool = False):
         await ctx.defer()
         try:
-            response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
-            await ctx.reply(response["choices"][0]["text"][:2000], mention_author=True)
+            if append == True:
+                response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
+                await ctx.reply(flags.prompt+response["choices"][0]["text"][:1600], mention_author=True)
+            else:
+                response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
+                await ctx.reply(response["choices"][0]["text"][:2000], mention_author=True)
         except Exception as e:
             await ctx.send(f"An error occurred while generating the text: **{str(e)}**")
 
