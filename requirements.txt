@@ -38,6 +38,7 @@ orderedmultidict==1.0.1
 packaging==23.1
 pet-pet-gif==1.0.2
 Pillow<=9.5.0
+platformdirs==3.11.0
 pooch==1.7.0
 pycparser==2.21
 pycryptodomex==3.18.0
@@ -54,12 +55,13 @@ soxr==0.3.6
 threadpoolctl==3.2.0
 tqdm==4.66.1
 typing_extensions==4.8.0
-urllib3>=1.26.17
+ujson==5.8.0
+urllib3==2.0.6
 uuid==1.30
 Wand==0.6.11
 websocket-client==1.6.2
 websockets==11.0.3
 yarl==1.9.2
-yt-dlp==2023.9.24
+yt-dlp==2023.10.7
 zope.event==5.0
 zope.interface==6.0
