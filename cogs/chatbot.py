@@ -40,7 +40,7 @@ class sentience(commands.Cog):
             self.message_array.append(
                 {
                     "role": "user",
-                    "content": f"{message.author.global_name} said: {content}",
+                    "content": f"{message.author.name} said: {content}",
                 }
             )
             self.array_index += 1
@@ -62,7 +62,7 @@ class sentience(commands.Cog):
 
             await message.channel.send(
                 response_array[:2000]
-                .replace("FDG", "Master")
+                .replace("fdg", "Master")
                 .replace("nigger", "feller")
                 .replace("nigga", "fella"),
                 reference=message,
