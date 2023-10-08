@@ -15,6 +15,7 @@ nsfw_lora = SD_Config["nsfw_lora"]
 checkpoints = {
     "3D Animation": "3D.safetensors",
     "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
+    "AnimUWU Ultimate": "animuwultimate145.safetensors",
     "Anything v3": "anythingV3_fp16.ckpt",
     "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
     "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
@@ -296,6 +297,7 @@ class sd(commands.Cog):
         checkpoint: Literal[
             "3D Animation",
             "AOM3",
+            "AnimUWU Ultimate",
             "Anything v3",
             "Anything v5",
             "AnyLoRA",

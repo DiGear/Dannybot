@@ -41,7 +41,7 @@ class pooter(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         # Function to download a file from a URL
         async def download_file(url, count, message, file_name):
-            if any(ext in url.lower() for ext in database_acceptedFiles):
+            if any(ext.lower() in url for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
                     tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                     url = gettenor(tenor_id)
@@ -120,7 +120,7 @@ class pooter(commands.Cog):
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         async def download_file(url, current_download):
             # Check if the file format is valid
-            if not any(ext in url for ext in database_acceptedFiles):
+            if any(ext.lower() in url for ext in database_acceptedFiles):
                 await ctx.send("Invalid image or video file!", delete_after=3)
                 await ctx.message.add_reaction("⚠️")
                 return
