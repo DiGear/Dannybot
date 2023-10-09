@@ -121,32 +121,33 @@ class pooter(commands.Cog):
         async def download_file(url, current_download):
             # Check if the file format is valid
             if any(ext.lower() in url for ext in database_acceptedFiles):
+                if "https://tenor.com/view/" in url:
+                    tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
+                    url = gettenor(tenor_id)
+                # Display download progress
+                await ctx.send(
+                    f"Downloading... {current_download} of {total_downloads}",
+                    delete_after=1,
+                )
+                file_url = url.split("?")[0]
+                file_extension = file_url.split(".")[-1]
+                with open(
+                    f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
+                ) as f:
+                    f.write(requests.get(url).content)
+                # Track downloaded files and check if all downloads are complete
+                downloaded_files.add(url)
+                # React with a checkpoint when all files download successfully
+                if len(downloaded_files) == total_downloads:
+                    await ctx.message.add_reaction("✅")
+                # Log the download action
+                await self.bot.get_channel(logs_channel).send(
+                    f"{ctx.author.global_name} ({ctx.author.id}) has pootered: {url}"
+                )
+            else:
                 await ctx.send("Invalid image or video file!", delete_after=3)
                 await ctx.message.add_reaction("⚠️")
                 return
-            if "https://tenor.com/view/" in url:
-                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
-                url = gettenor(tenor_id)
-            # Display download progress
-            await ctx.send(
-                f"Downloading... {current_download} of {total_downloads}",
-                delete_after=1,
-            )
-            file_url = url.split("?")[0]
-            file_extension = file_url.split(".")[-1]
-            with open(
-                f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
-            ) as f:
-                f.write(requests.get(url).content)
-            # Track downloaded files and check if all downloads are complete
-            downloaded_files.add(url)
-            # React with a checkpoint when all files download successfully
-            if len(downloaded_files) == total_downloads:
-                await ctx.message.add_reaction("✅")
-            # Log the download action
-            await self.bot.get_channel(logs_channel).send(
-                f"{ctx.author.global_name} ({ctx.author.id}) has pootered: {url}"
-            )
 
         downloads = 1
         f_name = randhex(128)
