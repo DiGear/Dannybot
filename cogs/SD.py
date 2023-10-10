@@ -377,8 +377,8 @@ class sd(commands.Cog):
         # trimming steps value in range of 1 to 50
         steps = max(1, min(steps, 50))
         # trimming width and height value in range of 64 to 1024
-        height = min(max(height, 64), 2048)
-        width = min(max(width, 64), 2048)
+        height = min(max(height, 64), 1536)
+        width = min(max(width, 64), 1536)
 
         """
         end anti cris measures
