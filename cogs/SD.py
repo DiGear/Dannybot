@@ -365,8 +365,8 @@ class sd(commands.Cog):
         """
 
         # defining size defaults based on if SDXL is being used or not
-        height = 1024 if SDXL else 512 if (height == 1) else height
-        width = 1024 if SDXL else 512 if (width == 1) else width
+        height = 1024 if (height == 1 and SDXL) else 512 if (height == 1) else height
+        width = 1024 if (width == 1 and SDXL) else 512 if (width == 1) else width
 
         # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
