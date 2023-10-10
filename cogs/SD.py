@@ -25,6 +25,10 @@ checkpoints = {
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
+    # XL SHIT
+    "Hassaku XL": "hassakuXLSfwNsfw_alphaV05.safetensors",
+    "Kohaku XL": "kohakuXL_nyan.safetensors",
+    "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
 }
 
 # VAE translator keys
@@ -292,8 +296,8 @@ class sd(commands.Cog):
         cfg: float = 7.000,
         denoise: float = 1.000,
         batch_size: int = 1,
-        width: int = 512,
-        height: int = 512,
+        width: int = 1,
+        height: int = 1,
         checkpoint: Literal[
             "3D Animation",
             "AOM3",
@@ -302,8 +306,11 @@ class sd(commands.Cog):
             "Anything v5",
             "AnyLoRA",
             "CafeMix MIA",
+            "Hassaku XL",
+            "Kohaku XL",
             "Made In Abyss",
             "Realistic (SD 1.5 Base)",
+            "Realistic (SDXL Base)",
             "RichyRichMix",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
@@ -342,12 +349,24 @@ class sd(commands.Cog):
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
 
+        if any(
+            item in checkpoint
+            for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)"]
+        ):
+            SDXL = True
+        else:
+            SDXL = False
+
         # init this
         batch_processed = 0
 
         """
         anti cris measures
         """
+
+        # defining size defaults based on if SDXL is being used or not
+        height = 1024 if SDXL else 512 if (height == 1) else height
+        width = 1024 if SDXL else 512 if (width == 1) else width
 
         # trimming CFG value in range of 0.001 to 100.000
         cfg = min(max(cfg, 0.001), 100.000)
@@ -358,8 +377,8 @@ class sd(commands.Cog):
         # trimming steps value in range of 1 to 50
         steps = max(1, min(steps, 50))
         # trimming width and height value in range of 64 to 1024
-        height = min(max(height, 64), 1024)
-        width = min(max(width, 64), 1024)
+        height = min(max(height, 64), 2048)
+        width = min(max(width, 64), 2048)
 
         """
         end anti cris measures
@@ -396,7 +415,7 @@ class sd(commands.Cog):
                     activeloras.append(lora_tuple[1])
                     lora_weight.append(lora_tuple[2])
 
-        if not activeloras:
+        if not activeloras or SDXL == True:
             activeloras = [self.DefaultLora]
             lora_weight = [0]
 
@@ -562,8 +581,11 @@ class sd(commands.Cog):
             "Anything v5",
             "AnyLoRA",
             "CafeMix MIA",
+            "Hassaku XL",
+            "Kohaku XL",
             "Made In Abyss",
             "Realistic (SD 1.5 Base)",
+            "Realistic (SDXL Base)",
             "RichyRichMix",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
@@ -602,13 +624,24 @@ class sd(commands.Cog):
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
 
+        if any(
+            item in checkpoint
+            for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)"]
+        ):
+            SDXL = True
+        else:
+            SDXL = False
+
         path = f"{dannybot}\\cache\\img2img.png"
         response = requests.get(image.url)
         with open(path, "wb") as file:
             file.write(response.content)
         image = PIL.Image.open(path)
         w, h = image.size
-        nw, nh = (768, int(h * 768 / w)) if w > h else (int(w * 768 / h), 768)
+        if SDXL == False:
+            nw, nh = (768, int(h * 768 / w)) if w > h else (int(w * 768 / h), 768)
+        else:
+            nw, nh = (1024, int(h * 1024 / w)) if w > h else (int(w * 1024 / h), 1024)
         scaled_image = image.resize((max(min(nw, w), 1), max(min(nh, h), 1)))
         scaled_image.save(path)
 
@@ -641,18 +674,24 @@ class sd(commands.Cog):
         activeloras = []
         lora_weight = []
         loraconcat = lora + nsfw_lora
-        if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+        try:
+            if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
+                for lora_tuple in lora:
+                    if lora_tuple[0] in positive_prompt.lower():
+                        activeloras.append(lora_tuple[1])
+                        lora_weight.append(lora_tuple[2])
+            else:
+                for lora_tuple in loraconcat:
+                    if lora_tuple[0] in positive_prompt.lower():
+                        activeloras.append(lora_tuple[1])
+                        lora_weight.append(lora_tuple[2])
+        except:
             for lora_tuple in lora:
                 if lora_tuple[0] in positive_prompt.lower():
                     activeloras.append(lora_tuple[1])
                     lora_weight.append(lora_tuple[2])
-        else:
-            for lora_tuple in loraconcat:
-                if lora_tuple[0] in positive_prompt.lower():
-                    activeloras.append(lora_tuple[1])
-                    lora_weight.append(lora_tuple[2])
 
-        if not activeloras:
+        if not activeloras or SDXL == True:
             activeloras = [self.DefaultLora]
             lora_weight = [0]
 
