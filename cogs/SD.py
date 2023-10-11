@@ -10,6 +10,8 @@ with open(f"{dannybot}\\assets\\stable_diffusion_config.json") as f:
 # Load JSON params
 lora = SD_Config["lora"]
 nsfw_lora = SD_Config["nsfw_lora"]
+loraXL = SD_Config["loraXL"]
+nsfw_loraXL = SD_Config["nsfw_loraXL"]
 
 # checkpoint translator keys
 checkpoints = {
@@ -29,6 +31,7 @@ checkpoints = {
     "Hassaku XL": "hassakuXLSfwNsfw_alphaV05.safetensors",
     "Kohaku XL": "kohakuXL_nyan.safetensors",
     "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
+    "Nekoray XL": "nekorayxl_v06W3.safetensors",
 }
 
 # VAE translator keys
@@ -259,16 +262,24 @@ class sd(commands.Cog):
     )
     async def loralist(self, ctx: commands.Context):
         await ctx.defer()
-        try:
-            if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
-                blahstodo = lora
-            else:
-                blahstodo = lora + nsfw_lora
-        except:
-            blahstodo = lora
-        keys_sorted = sorted(blahstodo, key=lambda x: x[0])
-        keys_string = ", ".join([str(key[0]) for key in keys_sorted])
-        await ctx.send(keys_string)
+
+        def process_lora_list(main_list):
+            return ", ".join(
+                str(key[0]) for key in sorted(main_list, key=lambda x: x[0])
+            )
+
+        is_nsfw = (
+            False if isinstance(ctx.channel, discord.DMChannel) else ctx.channel.nsfw
+        )
+
+        if is_nsfw:
+            lora_output = process_lora_list(lora + nsfw_lora)
+            loraXL_output = process_lora_list(loraXL + nsfw_loraXL)
+        else:
+            lora_output = process_lora_list(lora)
+            loraXL_output = process_lora_list(loraXL)
+
+        await ctx.send(f"SD 1.X:\n{lora_output}\n\nSDXL:\n{loraXL_output}")
 
     @commands.hybrid_command(
         name="checkpoints",
@@ -308,7 +319,7 @@ class sd(commands.Cog):
             "CafeMix MIA",
             "Hassaku XL",
             "Kohaku XL",
-            "Made In Abyss",
+            "Made In Abyss" "Nekoray XL",
             "Realistic (SD 1.5 Base)",
             "Realistic (SDXL Base)",
             "RichyRichMix",
@@ -349,6 +360,7 @@ class sd(commands.Cog):
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
         )
 
+        # we check if we're using SDXL here because some stuff needs to be modified in order for SDXL to work
         if any(
             item in checkpoint
             for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)"]
@@ -397,25 +409,23 @@ class sd(commands.Cog):
         # lora matching logic
         activeloras = []
         lora_weight = []
-        loraconcat = lora + nsfw_lora
+        if SDXL:
+            loraconcatsfw, loraconcatnsfw = loraXL, loraXL + nsfw_loraXL
+        else:
+            loraconcatsfw, loraconcatnsfw = lora, lora + nsfw_lora
         try:
-            if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
-                for lora_tuple in lora:
-                    if lora_tuple[0] in positive_prompt.lower():
-                        activeloras.append(lora_tuple[1])
-                        lora_weight.append(lora_tuple[2])
-            else:
-                for lora_tuple in loraconcat:
-                    if lora_tuple[0] in positive_prompt.lower():
-                        activeloras.append(lora_tuple[1])
-                        lora_weight.append(lora_tuple[2])
+            isNSFWChannel = (
+                isinstance(ctx.channel, discord.DMChannel) or ctx.channel.nsfw
+            )
         except:
-            for lora_tuple in lora:
-                if lora_tuple[0] in positive_prompt.lower():
-                    activeloras.append(lora_tuple[1])
-                    lora_weight.append(lora_tuple[2])
+            isNSFWChannel = False
+        loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
+        for lora_tuple in loraconcat:
+            if lora_tuple[0] in positive_prompt.lower():
+                activeloras.append(lora_tuple[1])
+                lora_weight.append(lora_tuple[2])
 
-        if not activeloras or SDXL == True:
+        if not activeloras:
             activeloras = [self.DefaultLora]
             lora_weight = [0]
 
@@ -584,6 +594,7 @@ class sd(commands.Cog):
             "Hassaku XL",
             "Kohaku XL",
             "Made In Abyss",
+            "Nekoray XL",
             "Realistic (SD 1.5 Base)",
             "Realistic (SDXL Base)",
             "RichyRichMix",
@@ -673,25 +684,23 @@ class sd(commands.Cog):
         # lora matching logic
         activeloras = []
         lora_weight = []
-        loraconcat = lora + nsfw_lora
+        if SDXL:
+            loraconcatsfw, loraconcatnsfw = loraXL, loraXL + nsfw_loraXL
+        else:
+            loraconcatsfw, loraconcatnsfw = lora, lora + nsfw_lora
         try:
-            if isinstance(ctx.channel, discord.DMChannel) or not ctx.channel.nsfw:
-                for lora_tuple in lora:
-                    if lora_tuple[0] in positive_prompt.lower():
-                        activeloras.append(lora_tuple[1])
-                        lora_weight.append(lora_tuple[2])
-            else:
-                for lora_tuple in loraconcat:
-                    if lora_tuple[0] in positive_prompt.lower():
-                        activeloras.append(lora_tuple[1])
-                        lora_weight.append(lora_tuple[2])
+            isNSFWChannel = (
+                isinstance(ctx.channel, discord.DMChannel) or ctx.channel.nsfw
+            )
         except:
-            for lora_tuple in lora:
-                if lora_tuple[0] in positive_prompt.lower():
-                    activeloras.append(lora_tuple[1])
-                    lora_weight.append(lora_tuple[2])
+            isNSFWChannel = False
+        loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
+        for lora_tuple in loraconcat:
+            if lora_tuple[0] in positive_prompt.lower():
+                activeloras.append(lora_tuple[1])
+                lora_weight.append(lora_tuple[2])
 
-        if not activeloras or SDXL == True:
+        if not activeloras:
             activeloras = [self.DefaultLora]
             lora_weight = [0]
 
