@@ -378,7 +378,7 @@ def gettenor(gifid=None):
 
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
-    text = " ".join(args)  # Combine all arguments as text
+    text = " ".join(args)
     logger.info("Resolving URL and arguments...")
 
     extensions = {
@@ -391,7 +391,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         "text": ("txt", "rtf", "json"),
         "code": ("py", "java", "cpp", "c", "h", "html", "css", "js", "php", "cs", "rb"),
     }
-    extension_list = extensions.get(type, ())
+    extension_list = [ext.lower() for ext in extensions.get(type, ())]
 
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
@@ -403,7 +403,6 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     break
 
     if not url and attachments:
-        # Check if there are attachments
         for attachment in attachments:
             if attachment.content_type.startswith(type):
                 url = attachment.url.split("?")[0]
@@ -411,28 +410,23 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 break
 
     if not url:
-        # Check if the first argument is a URL
         if args and args[0].startswith("http"):
-            url = args[0].split("?")[0]  # Extract the URL
+            url = args[0].split("?")[0]
             text = " ".join(args[1:])
             logger.info(f"URL from argument: {url}")
 
     if not url:
         channel = ctx.message.channel
         async for msg in channel.history(limit=500):
-            content = str(msg.content).lower()
-
-            attachment_url = next(
-                (
-                    a.url
-                    for a in msg.attachments
-                    if a.url.split(".")[-1] in extension_list
-                ),
-                None,
-            )
-            if attachment_url:
-                logger.info(f"URL from message attachment: {attachment_url}")
-                url = attachment_url
+            content = msg.content
+            for attachment in msg.attachments:
+                attch_url = attachment.url.split("?")[0]
+                ext = attch_url.split(".")[-1]
+                if ext.lower() in extension_list:
+                    logger.info(f"URL from attachment: {attch_url}")
+                    url = attch_url
+                    break
+            if url:
                 break
 
             if type == "image" and "https://tenor.com/view/" in content:
@@ -446,7 +440,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 if http_urls:
                     http_url = http_urls[0].split("?")[0]
                     ext = http_url.split(".")[-1]
-                    if ext in extension_list:
+                    if ext.lower() in extension_list:
                         logger.info(f"URL from message content: {http_url}")
                         url = http_url
                         break
