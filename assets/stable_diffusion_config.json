@@ -27,9 +27,7 @@
 		["compa", "compa_v2-000009.safetensors", 0.66],
 		["ryouna", "ryouna.pt", 0.75],
 		["leffrey", "leffrey.pt", 1.0],
-		["detailed", "add_detail.safetensors", 0.75],
 		["among us", "Among Us.safetensors", 1.0],
-		["good eyes", "beautifuleyes.safetensors", 0.85],
 		["canonome", "Camonome Style.safetensors", 1.0],
 		["chara", "Chara.safetensors", 0.8],
 		["chibi", "Chibi Style.safetensors", 0.7],
@@ -75,7 +73,7 @@
 		["coyote", "coyo Coyote.pt", 0.75],
 		["dhole", "dolr Dhole.pt", 0.75],
 		["ezo", "ezo Ezo Red Fox.pt", 0.75],
-		["fennec", "feen Fennec.pt", 0.9],
+		["fennec", "feen Fennec.pt", 0.75],
 		["silver fox", "gingitsu Silver Fox.pt", 0.75],
 		["giant penguin", "gpeng Giant Penguin.pt", 0.75],
 		["grey wolf", "g_wolkf Grey Wolf.pt", 0.75],
@@ -100,8 +98,6 @@
 	
 	"nsfw_lora" : 
 	[
-		["gape", "gape.safetensors", 0.7],
-		["spread ass", "ButtLiftV14-000060.safetensors", 0.75],
 		["futanari", "futanari_concept_full_v1-000020.safetensors", 1.0],
 		["femboi", "femboiFull.safetensors", 0.75],
 		["pubic hair", "pubic hair.safetensors", 0.7],
