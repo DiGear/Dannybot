@@ -52,10 +52,14 @@ class sd(commands.Cog):
     client_id = str(uuid.uuid4())
 
     def __init__(self, bot: commands.Bot):
-        self.bot = bot
-        self.ws = websocket.WebSocket()
-        self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
-        self.SD_Task_Loop.start()
+        try:
+            self.bot = bot
+            self.ws = websocket.WebSocket()
+            self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
+            self.SD_Task_Loop.start()
+        except:
+            "Could not connect to the ComfyUI instance."
+            pass
 
     # make sure we stop the task loop before reloading the cog
     def cog_unload(self):
