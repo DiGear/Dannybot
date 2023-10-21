@@ -58,7 +58,7 @@ class sd(commands.Cog):
             self.ws.connect(f"ws://{self.server_address}/ws?clientId={self.client_id}")
             self.SD_Task_Loop.start()
         except:
-            "Could not connect to the ComfyUI instance."
+            print("Could not connect to the ComfyUI instance.")
             pass
 
     # make sure we stop the task loop before reloading the cog
