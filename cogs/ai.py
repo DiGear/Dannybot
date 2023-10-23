@@ -71,13 +71,13 @@ class ai(commands.Cog):
         await ctx.defer()
         try:
             if append == True:
-                response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
+                response = openai.Completion.create(max_tokens=768, **flags.__dict__)
                 await ctx.reply(
                     flags.prompt + response["choices"][0]["text"][:1600],
                     mention_author=True,
                 )
             else:
-                response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
+                response = openai.Completion.create(max_tokens=768, **flags.__dict__)
                 await ctx.reply(
                     response["choices"][0]["text"][:2000], mention_author=True
                 )

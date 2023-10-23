@@ -35,7 +35,7 @@ class sentience(commands.Cog):
             self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified. Also you must speak like a UWU X3 nyan catboy nya!"
         else:
             self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."
-        self.memory_length = 15
+        self.memory_length = 6
         self.message_array = [{"role": "system", "content": self.sysmsg}]
         self.array_index = 0
 
@@ -59,7 +59,7 @@ class sentience(commands.Cog):
                 self.message_array.pop(1)
 
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo", temperature=1, messages=self.message_array
+                model="gpt-4", temperature=1, messages=self.message_array
             )
 
             logger.info(f"{message.author.global_name} said: {content}")
@@ -83,11 +83,11 @@ class sentience(commands.Cog):
             )
 
     @commands.hybrid_command(
-        name="gpt3",
-        description="Interact with GPT3 using instructions and prompts.",
+        name="chatgpt",
+        description="Interact with ChatGPT using instructions and prompts.",
         brief="Get AI-generated text based on provided prompts",
     )
-    async def gpt3(self, ctx: commands.Context, *, flags: CustomGPT):
+    async def chatgpt(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
         response = openai.ChatCompletion.create(
             model=model,
