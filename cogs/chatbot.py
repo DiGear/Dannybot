@@ -14,6 +14,16 @@ class CustomGPT(commands.FlagConverter):
     frequency_penalty: typing.Optional[float] = 0.00
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
+    model: Literal[
+        "gpt-4-0613",
+        "gpt-4-0314",
+        "gpt-4",
+        "gpt-3.5-turbo-16k-0613",
+        "gpt-3.5-turbo-16k",
+        "gpt-3.5-turbo-0613",
+        "gpt-3.5-turbo-0301",
+        "gpt-3.5-turbo",
+    ]
 
 
 # Class that stores every global variable and initializes them
@@ -80,8 +90,8 @@ class sentience(commands.Cog):
     async def gpt3(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            max_tokens=3072,
+            model=model,
+            max_tokens=768,
             top_p=flags.top_p,
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,

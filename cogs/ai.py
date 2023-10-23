@@ -14,7 +14,22 @@ class CustomWrite(commands.FlagConverter):
     frequency_penalty: typing.Optional[float] = 0.00
     presence_penalty: typing.Optional[float] = 0.00
     engine: Literal[
-        "text-davinci-003", "text-davinci-002", "text-babbage-001", "text-ada-001"
+        "text-davinci-003",
+        "text-davinci-002",
+        "text-davinci-001",
+        "text-curie-001",
+        "text-babbage-001",
+        "text-ada-001",
+        "davinci-instruct-beta",
+        "davinci",
+        "curie-instruct-beta",
+        "curie",
+        "babbage",
+        "ada",
+        "gpt-3.5-turbo-instruct-0914",
+        "gpt-3.5-turbo-instruct",
+        "babbage-002",
+        "davinci-002",
     ]
 
 
@@ -36,7 +51,7 @@ class ai(commands.Cog):
                 engine="text-davinci-003",
                 prompt=gpt_prompt,
                 temperature=random.uniform(0.1, 1.0),
-                max_tokens=512,
+                max_tokens=768,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.1,
@@ -50,15 +65,22 @@ class ai(commands.Cog):
         description="Interact with GPT with all the funny settings.",
         brief="Get AI generated text based on provided prompts",
     )
-    async def writecustom(self, ctx: commands.Context, *, flags: CustomWrite, append: bool = False):
+    async def writecustom(
+        self, ctx: commands.Context, *, flags: CustomWrite, append: bool = False
+    ):
         await ctx.defer()
         try:
             if append == True:
                 response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
-                await ctx.reply(flags.prompt+response["choices"][0]["text"][:1600], mention_author=True)
+                await ctx.reply(
+                    flags.prompt + response["choices"][0]["text"][:1600],
+                    mention_author=True,
+                )
             else:
                 response = openai.Completion.create(max_tokens=1024, **flags.__dict__)
-                await ctx.reply(response["choices"][0]["text"][:2000], mention_author=True)
+                await ctx.reply(
+                    response["choices"][0]["text"][:2000], mention_author=True
+                )
         except Exception as e:
             await ctx.send(f"An error occurred while generating the text: **{str(e)}**")
 
