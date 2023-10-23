@@ -142,3 +142,4 @@ ytdl.mp4
 *.ignore
 .comfyui*
 modify_requirements.bat
+.venv.rar
