@@ -90,7 +90,7 @@ class sentience(commands.Cog):
     async def chatgpt(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
         response = openai.ChatCompletion.create(
-            model=model,
+            model=flags.model,
             max_tokens=768,
             top_p=flags.top_p,
             temperature=flags.temperature,
