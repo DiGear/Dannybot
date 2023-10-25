@@ -11,6 +11,78 @@ class image(commands.Cog):
         self.bot = bot
 
     @commands.command(
+        name="eat",
+        description="Takes randomized bite marks out of an image.",
+        brief="Eat an image",
+    )
+    async def eat(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        file_url = cmd_info[0]
+        logging.info("Received 'eat' command")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(file_url) as response:
+                if response.status != 200:
+                    await ctx.send("failed to download the image")
+                    return
+
+                image_bytes = await response.read()
+        try:
+            input_image = Image.open(io.BytesIO(image_bytes))
+            input_image = input_image.convert("RGBA")
+            max_size = 600
+            width, height = input_image.size
+            if width > height:
+                new_width = max_size
+                new_height = int(height * (max_size / width))
+            else:
+                new_height = max_size
+                new_width = int(width * (max_size / height))
+            input_image = input_image.resize((new_width, new_height))
+            bite_marks = Image.new("RGBA", input_image.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(bite_marks)
+            margin = 20
+            bitesLeft = random.randint(0, 8)
+            bitesRight = random.randint(0, 8)
+            for _ in range(bitesLeft):
+                x = random.randint(margin, margin + 50)
+                y = random.randint(0, input_image.height)
+                radius = random.randint(66, 112)
+                mask = Image.new("L", input_image.size, 0)
+                mask_draw = ImageDraw.Draw(mask)
+                mask_draw.ellipse(
+                    (x - radius, y - radius, x + radius, y + radius), fill=255
+                )
+                input_image.paste((0, 0, 0, 0), mask=mask)
+            for _ in range(bitesRight):
+                x = random.randint(
+                    input_image.width - margin - 50, input_image.width - margin
+                )
+                y = random.randint(0, input_image.height)
+                radius = random.randint(66, 112)
+                mask = Image.new("L", input_image.size, 0)
+                mask_draw = ImageDraw.Draw(mask)
+                mask_draw.ellipse(
+                    (x - radius, y - radius, x + radius, y + radius), fill=255
+                )
+                input_image.paste((0, 0, 0, 0), mask=mask)
+            background = Image.open(f"{dannybot}\\assets\\plate.png")
+            background = background.convert("RGBA")
+            x = (background.width - input_image.width) // 2
+            y = (background.height - input_image.height) // 2
+            background.paste(input_image, (x, y), input_image)
+
+            with io.BytesIO() as image_binary:
+                background.save(image_binary, format="PNG")
+                image_binary.seek(0)
+                await ctx.send(
+                    f"get eaten bitch (bites taken: {bitesLeft + bitesRight})",
+                    file=discord.File(image_binary, "biten_image.png"),
+                )
+        except Exception as e:
+            await ctx.send("An error occurred while processing the image.")
+            logging.error(f"Error processing the image: {str(e)}")
+
+    @commands.command(
         description="Flips a provided image vertically.",
         brief="Flips an image vertically",
     )
