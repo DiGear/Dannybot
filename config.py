@@ -393,6 +393,18 @@ async def resolve_args(ctx, args, attachments, type="image"):
     }
     extension_list = [ext.lower() for ext in extensions.get(type, ())]
 
+    # Grab a URL from mentioned users avatar
+    if not url and ctx.message.mentions:
+        mentioned_member = ctx.message.mentions[0]
+
+    if mentioned_member.guild_avatar:
+        url = str(mentioned_member.guild_avatar.url)
+        logger.info(f"URL from avatar of mentioned user: {url}")
+    else:
+        url = str(mentioned_member.avatar.url)
+        logger.info(f"URL from avatar of mentioned user: {url}")
+
+    # Grab a URL if the command is a reply to an image
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
         if referenced_message.attachments:
@@ -402,6 +414,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     logger.info("URL from reply: %s", url)
                     break
 
+    # Grab a URL if the command has an attachment
     if not url and attachments:
         for attachment in attachments:
             if attachment.content_type.startswith(type):
@@ -409,16 +422,20 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 logger.info(f"URL from attachment: {url}")
                 break
 
+    # Grab a URL passed from args
     if not url:
         if args and args[0].startswith("http"):
             url = args[0].split("?")[0]
             text = " ".join(args[1:])
             logger.info(f"URL from argument: {url}")
 
+    # Message content iteration
     if not url:
         channel = ctx.message.channel
         async for msg in channel.history(limit=500):
             content = msg.content
+            
+            # Grab the URL from the last sent messages Attachement
             for attachment in msg.attachments:
                 attch_url = attachment.url.split("?")[0]
                 ext = attch_url.split(".")[-1]
@@ -428,13 +445,15 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     break
             if url:
                 break
-
+            
+            # Grab the URL (tenor) from the last sent message
             if type == "image" and "https://tenor.com/view/" in content:
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
                 url = gettenor(tenor_id)
                 logger.info(f"URL from Tenor: {url}")
                 break
-
+            
+            # Grab the URL from the last sent message
             if type == "image":
                 http_urls = re.findall(r"http\S+", content)
                 if http_urls:
