@@ -74,10 +74,13 @@ class image(commands.Cog):
             with io.BytesIO() as image_binary:
                 background.save(image_binary, format="PNG")
                 image_binary.seek(0)
-                await ctx.send(
-                    f"get eaten bitch (bites taken: {bitesLeft + bitesRight})",
-                    file=discord.File(image_binary, "biten_image.png"),
-                )
+                if bitesLeft + bitesRight == 0:
+                    await ctx.send("im not hungry")
+                else:
+                    await ctx.send(
+                        f"get eaten bitch (bites taken: {bitesLeft + bitesRight})",
+                        file=discord.File(image_binary, "biten_image.png"),
+                    )
         except Exception as e:
             await ctx.send("An error occurred while processing the image.")
             logging.error(f"Error processing the image: {str(e)}")
