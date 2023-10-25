@@ -44,9 +44,9 @@ class image(commands.Cog):
             bitesLeft = random.randint(0, 8)
             bitesRight = random.randint(0, 8)
             for _ in range(bitesLeft):
-                x = random.randint(margin, margin + 50)
+                x = random.randint(margin, margin + random.randint(35, 60))
                 y = random.randint(0, input_image.height)
-                radius = random.randint(66, 112)
+                radius = random.randint(50, 125)
                 mask = Image.new("L", input_image.size, 0)
                 mask_draw = ImageDraw.Draw(mask)
                 mask_draw.ellipse(
@@ -55,10 +55,10 @@ class image(commands.Cog):
                 input_image.paste((0, 0, 0, 0), mask=mask)
             for _ in range(bitesRight):
                 x = random.randint(
-                    input_image.width - margin - 50, input_image.width - margin
+                    input_image.width - margin - random.randint(35, 60), input_image.width - margin
                 )
                 y = random.randint(0, input_image.height)
-                radius = random.randint(66, 112)
+                radius = random.randint(50, 125)
                 mask = Image.new("L", input_image.size, 0)
                 mask_draw = ImageDraw.Draw(mask)
                 mask_draw.ellipse(
