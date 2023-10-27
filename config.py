@@ -16,6 +16,7 @@ import math
 import os
 import random
 import re
+import colorsys
 import string
 import sys
 import textwrap
@@ -417,7 +418,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             url = args[0].split("?")[0]
             text = " ".join(args[1:])
             logger.info(f"URL from argument: {url}")
-            
+
         # Grab a URL from mentioned users avatar
         if ctx.message.mentions:
             mentioned_member = ctx.message.mentions[0]
@@ -468,6 +469,21 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
     return [url, text]
 
+# change hue (apparently not an inbuilt function with PIL)
+def change_hue(img, target_hue):
+    img = img.convert('RGB')  # Ensure image is RGB
+    pixels = list(img.getdata())
+    new_pixels = []
+
+    for pixel in pixels:
+        r, g, b = pixel
+        h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
+        h = (h + target_hue) % 1.0
+        r, g, b = colorsys.hsv_to_rgb(h, s, v)
+        new_pixels.append((int(r * 255), int(g * 255), int(b * 255)))
+
+    img.putdata(new_pixels)
+    return img
 
 # deepfry an image
 def deepfry(inputpath, outputpath):
