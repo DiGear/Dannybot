@@ -41,8 +41,8 @@ class image(commands.Cog):
             bite_marks = Image.new("RGBA", input_image.size, (0, 0, 0, 0))
             draw = ImageDraw.Draw(bite_marks)
             margin = 20
-            bitesLeft = random.randint(0, 8)
-            bitesRight = random.randint(0, 8)
+            bitesLeft = random.randint(0, 10)
+            bitesRight = random.randint(0, 10)
             for _ in range(bitesLeft):
                 x = random.randint(margin, margin + random.randint(35, 60))
                 y = random.randint(0, input_image.height)
@@ -134,7 +134,7 @@ class image(commands.Cog):
         description="Flips a provided image horizontally.",
         brief="Flips an image horizontally",
     )
-    async def mirror(self, ctx, *args):
+    async def flop(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = cmd_info[0]
         cache_dir = f"{dannybot}\\cache"
@@ -334,7 +334,7 @@ class image(commands.Cog):
                         f"{dannybot}\\cache\\ffmpeg\\{frame}"
                     ).convert("RGB")
                     image.save(
-                        f"{dannybot}\\cache\\ffmpeg\\output\\{frame}.jpg", quality=15
+                        f"{dannybot}\\cache\\ffmpeg\\output\\{frame}.jpg", quality=1
                     )
             repack_gif_JPG()
 
@@ -345,7 +345,7 @@ class image(commands.Cog):
             image = PIL.Image.open(requests.get(file_url, stream=True).raw).convert(
                 "RGB"
             )
-            image.save(f"{dannybot}\\cache\\jpg_out.jpg", quality=15)
+            image.save(f"{dannybot}\\cache\\jpg_out.jpg", quality=1)
 
             with open(f"{dannybot}\\cache\\jpg_out.jpg", "rb") as f:
                 await ctx.reply(file=File(f, "jpg-ed.jpg"), mention_author=True)
