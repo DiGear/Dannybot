@@ -469,14 +469,12 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
     return [url, text]
 
-# change hue (apparently not an inbuilt function with PIL)
+# change hue (apparently not an inbuilt function of PIL)
 def change_hue(img, target_hue):
-    img = img.convert('RGB')  # Ensure image is RGB
-    pixels = list(img.getdata())
+    img = img.convert('RGB')  # Ensure image is RGB (so that i can convert it to hsv lmfao)
     new_pixels = []
 
-    for pixel in pixels:
-        r, g, b = pixel
+    for r, g, b in img.getdata():
         h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
         h = (h + target_hue) % 1.0
         r, g, b = colorsys.hsv_to_rgb(h, s, v)
