@@ -27,6 +27,7 @@ bot = commands.Bot(
     status=discord.Status.online,
     activity=discord.Activity(name="d.help", type=1),
     intents=intents,
+    case_insensitive=True,
 )
 
 

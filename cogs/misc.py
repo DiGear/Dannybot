@@ -68,6 +68,35 @@ class misc(commands.Cog):
             file=discord.File(f"{dannybot}/cache/{filename}"), mention_author=True
         )
 
+    @commands.hybrid_command(
+        name="robloxstock",
+        description="Get information about the Roblox Corporation's stock (RBLX).",
+        brief="view the current Roblox stock prices",
+    )
+    async def robloxstock(self, ctx: commands.Context):
+        api_key = AlphaVantageAPI
+        symbol = "RBLX"
+        interval = "1min"
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&interval={interval}&apikey={api_key}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            last_refreshed = data["Meta Data"]["3. Last Refreshed"]
+            stock_data = data['Time Series (Daily)']
+            latest_data = stock_data[last_refreshed]
+
+            embed = discord.Embed(
+                title="Roblox (RBLX) Stock Information",
+                description=f"Last Refreshed: {last_refreshed}",
+            )
+            embed.add_field(name="Open Price", value=latest_data["1. open"])
+            embed.add_field(name="High Price", value=latest_data["2. high"])
+            embed.add_field(name="Low Price", value=latest_data["3. low"])
+            embed.add_field(name="Close Price", value=latest_data["4. close"])
+            embed.add_field(name="Volume", value=latest_data["5. volume"])
+
+            await ctx.send(embed=embed)
+
     @commands.command(hidden=True)
     async def bugle(self, ctx):
         with open(f"{dannybot}\\assets\\bugle.png", "rb") as f:

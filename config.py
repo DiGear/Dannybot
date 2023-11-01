@@ -113,6 +113,7 @@ logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 openai.api_key = os.getenv("OPENAI_API_KEY")
 removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey = os.getenv("TENOR_KEY")
+AlphaVantageAPI = os.getenv("AV_API_KEY") 
 
 # external paths
 NekoparaPath = "I:\\Anime\\Nekopara"  # put your nekopara files into here
@@ -469,9 +470,12 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
     return [url, text]
 
+
 # change hue (apparently not an inbuilt function of PIL)
 def change_hue(img, target_hue):
-    img = img.convert('RGB')  # Ensure image is RGB (so that i can convert it to hsv lmfao)
+    img = img.convert(
+        "RGB"
+    )  # Ensure image is RGB (so that i can convert it to hsv lmfao)
     new_pixels = []
 
     for r, g, b in img.getdata():
@@ -482,6 +486,7 @@ def change_hue(img, target_hue):
 
     img.putdata(new_pixels)
     return img
+
 
 # deepfry an image
 def deepfry(inputpath, outputpath):

@@ -73,6 +73,7 @@ class sentience(commands.Cog):
             await message.channel.send(
                 response_array[:2000]
                 .replace("fdg", "Master")
+                .replace("FDG", "Master")
                 .replace("nigger", "feller")
                 .replace("nigga", "fella"),
                 reference=message,

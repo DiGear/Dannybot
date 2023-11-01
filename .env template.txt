@@ -15,3 +15,6 @@ LOGS=
 
 # Channel for self-bookmarking
 BOOKMARKS=
+
+# Alpha Vantage API Key
+AV_API_KEY=
