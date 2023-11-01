@@ -59,7 +59,7 @@ class sentience(commands.Cog):
                 self.message_array.pop(1)
 
             response = openai.ChatCompletion.create(
-                model="gpt-4", temperature=1, messages=self.message_array
+                model="gpt-3.5-turbo", temperature=1.3, messages=self.message_array
             )
 
             logger.info(f"{message.author.global_name} said: {content}")
