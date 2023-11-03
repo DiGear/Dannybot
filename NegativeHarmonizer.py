@@ -1,96 +1,56 @@
 import argparse
 import os
-
 import mido
 
-
-def get_mirror_axis(tonic):
+def get_mirror_line(tonic):
     return tonic + 3.5
 
+def mirror_note_over_line(note, line):
+    original_distance = line - note
+    return int(line + original_distance)
 
-def mirror_note_over_axis(note, axis):
-    original_note_distance = axis - note
-    return int(axis + original_note_distance)
+def find_average_track_notes(track):
+    notes = [message.note for message in track if message.type == 'note_on']
+    return sum(notes) / len(notes) if notes else None
 
+def mirror_all_notes_in_track(track, line, ignored_channels):
+    for message in track:
+        if message.type in ('note_on', 'note_off') and message.channel not in ignored_channels:
+            message.note = mirror_note_over_line(message.note, line)
 
-def find_average_octave_of_tracks(mid):
-    octaves = {}
-    for i, track in enumerate(mid.tracks):
-        track_avg_notes = []
+def transpose_to_original_octaves(track, original_notes, new_notes, ignored_channels):
+    if original_notes is not None and new_notes is not None:
+        notes_distance = original_notes - new_notes
+        octaves_to_transpose = round(notes_distance / 12)
         for message in track:
-            if message.type == 'note_on':
-                track_avg_notes.append(message.note)
-        if len(track_avg_notes) > 0:
-            track_avg_note = sum(track_avg_notes) / len(track_avg_notes)
-            octaves[i] = track_avg_note
-            try:
-                track_name = track.name
-            except AttributeError:
-                track_name = i
-            print(track_name, track_avg_note)
-    return octaves
+            if message.type in ('note_on', 'note_off') and message.channel not in ignored_channels:
+                transposed_note = message.note + (octaves_to_transpose * 12)
+                message.note = max(0, min(transposed_note, 127))
 
+def invert_tonality(midi_file, tonic, ignored_channels, adjust_octaves):
+    mirror_line = get_mirror_line(tonic)
 
-def mirror_all_notes(mid, mirror_axis, ignored_channels):
-    for track in mid.tracks:
-        for message in track:
-            if message.type == 'note_on' or message.type == 'note_off':
-                if message.channel not in ignored_channels:
-                    mirrored_note = mirror_note_over_axis(message.note, mirror_axis)
-                    message.note = mirrored_note
-    return
+    original_track_notes = {}
+    new_track_notes = {}
 
-
-def transpose_back_to_original_octaves(mid, original_octaves, new_octaves, ignored_channels):
-    for i, track in enumerate(mid.tracks):
-        if i in original_octaves:
-            notes_distance = original_octaves[i] - new_octaves[i]
-            octaves_to_transpose = round(notes_distance / 12)
-            for message in track:
-                if message.type == 'note_on' or message.type == 'note_off':
-                    if message.channel not in ignored_channels:
-                        transposed_note = message.note + (octaves_to_transpose * 12)
-                        message.note = int(transposed_note)
-
-
-def invert_tonality(mid, tonic, ignored_channels, adjust_octaves):
-    mirror_axis = get_mirror_axis(tonic)
-
-    if adjust_octaves:
-        print("---")
-        print("original average note values:")
-        original_octaves = find_average_octave_of_tracks(mid)
-
-    mirror_all_notes(mid, mirror_axis, ignored_channels)
-
-    if adjust_octaves:
-        print("---")
-        print("new average note values:")
-        new_octaves = find_average_octave_of_tracks(mid)
-
-        transpose_back_to_original_octaves(mid, original_octaves, new_octaves, ignored_channels)
-
-        print("---")
-        print("adjusted average note values:")
-        find_average_octave_of_tracks(mid)
-    return
-
+    for i, track in enumerate(midi_file.tracks):
+        original_track_notes[i] = find_average_track_notes(track)
+        mirror_all_notes_in_track(track, mirror_line, ignored_channels)
+        new_track_notes[i] = find_average_track_notes(track)
+        transpose_to_original_octaves(track, original_track_notes[i], new_track_notes[i], ignored_channels)
 
 def main(input_file, tonic, ignored_channels, adjust_octaves):
     root, ext = os.path.splitext(input_file)
-    mid = mido.MidiFile(input_file)
+    midi_file = mido.MidiFile(input_file)
 
-    invert_tonality(mid, tonic, ignored_channels, adjust_octaves)
-    mid.save(root + "_negative" + ext)
-
+    invert_tonality(midi_file, tonic, ignored_channels, adjust_octaves)
+    midi_file.save(root + "_negative" + ext)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Negative Harmonize a midi file.')
 
-    parser.add_argument('file', metavar='f',
-                        help='the input midi file (with no extension .mid)')
-    parser.add_argument('--tonic', type=int, default=60,
-                        help='the tonic')
+    parser.add_argument('file', metavar='f', help='the input midi file (with no extension .mid)')
+    parser.add_argument('--tonic', type=int, default=60, help='the tonic')
     parser.add_argument('--ignore', type=int, nargs="+", default=[],
                         help='the midi channels to ignore (usually 9 for drums)')
     parser.add_argument('--adjust-octaves', dest='adjust_octaves', action='store_true',
