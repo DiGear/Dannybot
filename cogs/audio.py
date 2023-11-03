@@ -29,29 +29,28 @@ class audio(commands.Cog):
     async def midiflip(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments, "midi")
         file_url = cmd_info[0]
-
-        with open(f"{dannybot}\\cache\\midiflip.mid", "wb") as f:
+        filename = os.path.basename(file_url)
+        
+        with open(f"{dannybot}\\cache\\{filename}", "wb") as f:
             f.write(requests.get(file_url).content)
 
         os.system(
-            f"python NegativeHarmonizer.py {dannybot}\\cache\\midiflip.mid --tonic 60 --ignore 9 --adjust-octaves"
+            f"python NegativeHarmonizer.py {dannybot}\\cache\\{filename} --tonic 60 --ignore 9 --adjust-octaves"
         )
 
-        midi_output_path = f"{dannybot}\\cache\\midiflip_negative.mid"
+        midi_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', '_negative.mid')}"
         os.system(
             f"fluidsynth -ni {dannybot}\\assets\\SF2\\general.sf2 {midi_output_path} -F {dannybot}\\cache\\midislap_{ctx.message.id}.wav -r 44100"
         )
 
-        ogg_output_path = f"{dannybot}\\cache\\midislap_{ctx.message.id}.ogg"
+        ogg_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', f'_midislap_{ctx.message.id}.ogg')}"
         os.system(
             f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {ogg_output_path} -c:a libopus -b:a 64k --keep-loudness-range-target -f"
         )
 
-        with open(f"{dannybot}\\cache\\midiflip_negative.mid", "rb") as i, open(
-            ogg_output_path, "rb"
-        ) as f:
-            await ctx.reply(file=File(i, "flipped.mid"))
-            await ctx.reply(f"Audio preview:", file=File(f, "midislap.ogg"))
+        with open(midi_output_path, "rb") as i, open(ogg_output_path, "rb") as f:
+            await ctx.reply(file=File(i, filename.replace('.mid', '_negative.mid')))
+            await ctx.reply(f"Audio preview:", file=File(f, filename.replace('.mid', f'_negative.ogg')))
 
     # i need to find a nice way to implement a viewable list of soundfonts
     @commands.command(
