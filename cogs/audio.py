@@ -49,8 +49,8 @@ class audio(commands.Cog):
         )
 
         with open(midi_output_path, "rb") as i, open(ogg_output_path, "rb") as f:
-            await ctx.reply(file=File(i, filename.replace('.mid', '_negative.mid')))
-            await ctx.reply(f"Audio preview:", file=File(f, filename.replace('.mid', f'_negative.ogg')))
+            await ctx.reply(file=File(i, filename.replace('.mid', '_flipped.mid')))
+            await ctx.reply(f"Audio preview:", file=File(f, filename.replace('.mid', f'_flipped.ogg')))
 
     # i need to find a nice way to implement a viewable list of soundfonts
     @commands.command(
