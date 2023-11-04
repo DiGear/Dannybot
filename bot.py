@@ -11,6 +11,7 @@ print("---------------------------------------------------------------------")
 
 # asyncio bad btw
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+bot_is_busy = False
 
 # intents shit
 intents = discord.Intents.all()
@@ -47,6 +48,7 @@ async def on_ready():
 # this is our message handler
 @bot.event
 async def on_message(input):
+    global bot_is_busy
     if input.author.bot:
         return
     is_denial = random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(
@@ -58,8 +60,10 @@ async def on_message(input):
             random.choice(dannybot_denialResponses), reference=input
         )
     else:
-        os.chdir(dannybot)  # Ensure we're in Dannybot's directory
+        os.chdir(dannybot)
+        bot_is_busy = True
         await bot.process_commands(input)
+        bot_is_busy = False
 
 
 # this is a ping command and it's pretty self-explanatory
@@ -126,6 +130,17 @@ async def load_extensions():
             await bot.load_extension(cog_path)
             logger.info(f"Imported module: {cog_name}")
 
+# Task to clean itself automatically
+async def clear_cache_periodically():
+    global bot_is_busy
+    while True:
+        await asyncio.sleep(600)
+        if not bot_is_busy:
+            print("---------------------------------------------------------------------")
+            logger.info("Clearing cache...")
+            print("---------------------------------------------------------------------")
+            clear_cache()
+            print("---------------------------------------------------------------------")
 
 async def main():
     if clean_pooter_onLaunch:
@@ -141,8 +156,8 @@ async def main():
         clear_cache()
         print("---------------------------------------------------------------------")
 
+    asyncio.create_task(clear_cache_periodically())
     await load_extensions()
     await bot.start(dannybot_token)
-
 
 asyncio.run(main())
