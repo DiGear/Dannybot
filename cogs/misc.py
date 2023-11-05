@@ -133,6 +133,7 @@ class misc(commands.Cog):
             "force_overwrites": True,
             "no_check_certificate": True,
             "no_playlist": True,
+            'cookiefile': Cookies,
         }
 
         if format not in format_opts:

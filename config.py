@@ -123,7 +123,7 @@ VideosPath = "C:\\Users\\weebm\\Videos\\epic"  # set this to your videos folder
 GifsPath = "C:\\Users\\weebm\\Pictures\\GIFS"  # set this to your gifs folder
 
 # internal paths
-Cookies = f"{dannybot}\\assets"  # set this to your YT-DL cookies folder
+Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe"  # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 
 # 8ball responses for the 8ball command
