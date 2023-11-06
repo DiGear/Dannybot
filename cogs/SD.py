@@ -298,7 +298,7 @@ class sd(commands.Cog):
 
     @commands.hybrid_command(
         name="sd",
-        aliases=["grok", "diffuse", "stablediffusion"],
+        aliases=["groch", "diffuse", "stablediffusion"],
         description="Create AI generated images via Stable-Diffusion.",
         brief="Create AI generated images with Dannybot.",
     )
