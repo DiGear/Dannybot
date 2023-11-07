@@ -15,6 +15,7 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
+        "gpt-4-1106-preview",
         "gpt-4-0613",
         "gpt-4-0314",
         "gpt-4",
