@@ -94,7 +94,7 @@
 		["appleq", "appleq.pt", 0.75],
 		["cupa", "cupa_minecraft_v0.0.safetensors", 0.7],
 		["minecraft", "mcnsfwv2_5248.safetensors", 1.0],
-		["hululu", "hululu.pt", 0.75]
+		["hululu", "hululu.pt", 1.0]
 	],
 	
 	"nsfw_lora" : 
