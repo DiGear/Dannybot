@@ -14,5 +14,6 @@ nekopara
 mimi
 taurs
 pooter
+po
 
 If you don't know what these folders are then you probably shouldn't be hosting a fork of Dannybot lmao

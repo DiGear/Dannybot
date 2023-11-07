@@ -27,6 +27,12 @@ class server(commands.Cog):
                         await ctx.reply(image_url, mention_author=True)
                     else:
                         await ctx.send("Failed to retrieve catgirl image.")
+                        
+    @commands.command(hidden=True)
+    async def po(self, ctx):
+        file_name = random.choice(os.listdir(f"{dannybot}\\database\\Po"))
+        with open(f"{dir}\\{file_name}", "rb") as f:
+            await ctx.reply(file=File(f, "img.png"), mention_author=True)
 
     @commands.hybrid_command(
         name="img",
