@@ -22,16 +22,18 @@ checkpoints = {
     "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
     "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
     "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
+    "ExquisiteDetails": "exquisiteDetails_art.safetensors",
     "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
     "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
     # XL SHIT
+    "Crystal Clear XL": "crystalClearXL_ccxl.safetensors",
     "Hassaku XL": "hassakuXLSfwNsfw_alphaV05.safetensors",
     "Kohaku XL": "kohakuXL_nyan.safetensors",
-    "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
     "Nekoray XL": "nekorayxl_v06W3.safetensors",
+    "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
 }
 
 # VAE translator keys
@@ -321,6 +323,8 @@ class sd(commands.Cog):
             "Anything v5",
             "AnyLoRA",
             "CafeMix MIA",
+            "Crystal Clear XL"
+            "Exquisite Details"
             "Hassaku XL",
             "Kohaku XL",
             "Made In Abyss",
