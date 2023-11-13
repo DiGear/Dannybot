@@ -46,7 +46,9 @@ class server(commands.Cog):
             captured_output = output_buffer.getvalue()
             return captured_output.strip().splitlines()[-1]
         pizzi_text = generate_pizzi_text()
-        await ctx.reply(pizzi_text)
+        pizzi_image = random.choice(os.listdir(f"{dannybot}\\database\\dooter\\"))
+        with open(f"{dannybot}\\database\\dooter\\{pizzi_image}", "rb") as f:
+            await ctx.reply(pizzi_text, file=File(f, "pizzi.png"))
                         
     @commands.command(hidden=True)
     async def po(self, ctx):
