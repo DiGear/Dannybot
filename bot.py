@@ -11,7 +11,6 @@ print("---------------------------------------------------------------------")
 
 # asyncio bad btw
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-bot_is_busy = False
 
 # intents shit
 intents = discord.Intents.all()
@@ -31,6 +30,8 @@ bot = commands.Bot(
     case_insensitive=True,
 )
 
+# unused
+bot_is_busy = False
 
 # do this when everything else is done
 @bot.event
@@ -75,7 +76,7 @@ async def on_message(input):
 async def ping(ctx: commands.Context):
     ping_time = int(round(bot.latency * 1000))
     await ctx.send(content=f"Ping is {ping_time}ms")
-    logger.info(f"Dannybot was pinged at {ping_time}ms")
+    print(f"Dannybot was pinged at {ping_time}ms")
 
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
@@ -128,35 +129,22 @@ async def load_extensions():
             cog_name = filename[:-3]
             cog_path = f"cogs.{cog_name}"
             await bot.load_extension(cog_path)
-            logger.info(f"Imported module: {cog_name}")
-
-# Task to clean itself automatically
-async def clear_cache_periodically():
-    global bot_is_busy
-    while True:
-        await asyncio.sleep(600)
-        if not bot_is_busy:
-            print("---------------------------------------------------------------------")
-            logger.info("Clearing cache...")
-            print("---------------------------------------------------------------------")
-            clear_cache()
-            print("---------------------------------------------------------------------")
+            print(f"Imported module: {cog_name}")
 
 async def main():
     if clean_pooter_onLaunch:
-        logger.info(
+        print(
             "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..."
         )
         print("---------------------------------------------------------------------")
         clean_pooter()
         print("---------------------------------------------------------------------")
     if cache_clear_onLaunch:
-        logger.info("Clearing cache from previous session...")
+        print("Clearing cache from previous session...")
         print("---------------------------------------------------------------------")
         clear_cache()
         print("---------------------------------------------------------------------")
 
-    asyncio.create_task(clear_cache_periodically())
     await load_extensions()
     await bot.start(dannybot_token)
 

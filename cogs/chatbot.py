@@ -64,7 +64,7 @@ class sentience(commands.Cog):
                 model="gpt-3.5-turbo", temperature=1.3, messages=self.message_array
             )
 
-            logger.info(f"{message.author.global_name} said: {content}")
+            print(f"{message.author.global_name} said: {content}")
             response_array = response.choices[0].message.content.replace(
                 "Dannybot:", ""
             )[:2000]

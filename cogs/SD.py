@@ -22,7 +22,7 @@ checkpoints = {
     "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
     "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
     "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
-    "ExquisiteDetails": "exquisiteDetails_art.safetensors",
+    "Exquisite Details": "exquisiteDetails_art.safetensors",
     "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
     "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
@@ -323,8 +323,8 @@ class sd(commands.Cog):
             "Anything v5",
             "AnyLoRA",
             "CafeMix MIA",
-            "Crystal Clear XL"
-            "Exquisite Details"
+            "Crystal Clear XL",
+            "Exquisite Details",
             "Hassaku XL",
             "Kohaku XL",
             "Made In Abyss",

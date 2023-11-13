@@ -28,6 +28,26 @@ class server(commands.Cog):
                     else:
                         await ctx.send("Failed to retrieve catgirl image.")
                         
+    @commands.hybrid_command(
+        name="pizzi",
+        description="Emulate Pizzi messages using textgenrnn.",
+        brief="Emulate Pizzi using AI",
+    )
+    async def pizzi(self, ctx: commands.Context):
+        def generate_pizzi_text():
+            temperature = round(random.uniform(0.2, 2), 2)
+            textgen_2 = textgenrnn(f"{dannybot}\\assets\\textgenrnn\\pizzi.hdf5")
+            output_buffer = StringIO()
+            sys.stdout = output_buffer
+            try:
+                textgen_2.generate(1, temperature=temperature)
+            finally:
+                sys.stdout = sys.__stdout__
+            captured_output = output_buffer.getvalue()
+            return captured_output.strip().splitlines()[-1]
+        pizzi_text = generate_pizzi_text()
+        await ctx.reply(pizzi_text)
+                        
     @commands.command(hidden=True)
     async def po(self, ctx):
         file_name = random.choice(os.listdir(f"{dannybot}\\database\\Po\\"))

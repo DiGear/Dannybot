@@ -182,7 +182,7 @@ class ai(commands.Cog):
                             "Processing of the image failed. This is most likely because no background was detected.",
                             mention_author=True,
                         )
-                        logger.info(await response.text())
+                        print(await response.text())
 
 
 async def setup(bot: commands.Bot):

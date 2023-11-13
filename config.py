@@ -33,6 +33,10 @@ from io import BytesIO
 from pathlib import Path
 from textwrap import wrap
 from typing import Literal
+from io import StringIO
+# tensorfuck
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+from textgenrnn import textgenrnn
 from urllib import request
 from xml.etree import ElementTree
 
@@ -211,7 +215,7 @@ deltarune_dw = [
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
 def unpack_gif(file):
-    logger.info("unpacking gif...")
+    print("unpacking gif...")
     os.system(
         f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y'
     )
@@ -220,11 +224,11 @@ def unpack_gif(file):
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
-    logger.info("generating palette...")
+    print("generating palette...")
     os.system(
         f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y'
     )
-    logger.info("repacking gif...")
+    print("repacking gif...")
     os.system(
         f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y'
     )
@@ -233,8 +237,8 @@ def repack_gif():
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
 def repack_gif_JPG():
-    logger.info("generating palette...")
-    logger.info("repacking gif (jpg)...")
+    print("generating palette...")
+    print("repacking gif (jpg)...")
     os.system(
         f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y'
     )
@@ -248,13 +252,13 @@ def repack_gif_JPG():
 def cleanup_ffmpeg():
     ffmpeg_folder = os.path.join("dannybot", "cache", "ffmpeg")
     output_folder = os.path.join(ffmpeg_folder, "output")
-    logger.info("Cleaning up...")
+    print("Cleaning up...")
     # Remove residual .png files in ffmpeg and output folders
     for folder in [ffmpeg_folder, output_folder]:
         for file_path in glob.glob(os.path.join(folder, "*.png")):
             if os.path.isfile(file_path):
                 os.remove(file_path)
-                logger.info(f"Deleted: {file_path}")
+                print(f"Deleted: {file_path}")
 
 
 # generate a random hexadecimal string
@@ -275,7 +279,7 @@ def clear_cache():
         for file_path in folder.glob("*"):
             if file_path.is_file() and "git" not in str(file_path):
                 file_path.unlink()
-                logger.info(f"Deleted: {file_path}")
+                print(f"Deleted: {file_path}")
 
 
 # get the amount of files in a folder
@@ -381,7 +385,7 @@ def gettenor(gifid=None):
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     text = " ".join(args)
-    logger.info("Resolving URL and arguments...")
+    print("Resolving URL and arguments...")
 
     extensions = {
         "image": ("png", "jpg", "jpeg", "gif", "bmp", "webp"),
@@ -402,7 +406,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
                     url = attachment.url.split("?")[0]
-                    logger.info("URL from reply: %s", url)
+                    print("URL from reply: %s", url)
                     break
 
     # Grab a URL if the command has an attachment
@@ -410,7 +414,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         for attachment in attachments:
             if attachment.content_type.startswith(type):
                 url = attachment.url.split("?")[0]
-                logger.info(f"URL from attachment: {url}")
+                print(f"URL from attachment: {url}")
                 break
 
     # Grab a URL passed from args
@@ -418,7 +422,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         if args and args[0].startswith("http"):
             url = args[0].split("?")[0]
             text = " ".join(args[1:])
-            logger.info(f"URL from argument: {url}")
+            print(f"URL from argument: {url}")
 
         # Grab a URL from mentioned users avatar
         if ctx.message.mentions:
@@ -426,10 +430,10 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
-                logger.info(f"URL from avatar of mentioned user: {url}")
+                print(f"URL from avatar of mentioned user: {url}")
             else:
                 url = str(mentioned_member.avatar.url)
-                logger.info(f"URL from avatar of mentioned user: {url}")
+                print(f"URL from avatar of mentioned user: {url}")
 
     # Message content iteration
     if not url:
@@ -442,7 +446,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 attch_url = attachment.url.split("?")[0]
                 ext = attch_url.split(".")[-1]
                 if ext.lower() in extension_list:
-                    logger.info(f"URL from attachment: {attch_url}")
+                    print(f"URL from attachment: {attch_url}")
                     url = attch_url
                     break
             if url:
@@ -452,7 +456,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if type == "image" and "https://tenor.com/view/" in content:
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
                 url = gettenor(tenor_id)
-                logger.info(f"URL from Tenor: {url}")
+                print(f"URL from Tenor: {url}")
                 break
 
             # Grab the URL from the last sent message
@@ -462,11 +466,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     http_url = http_urls[0].split("?")[0]
                     ext = http_url.split(".")[-1]
                     if ext.lower() in extension_list:
-                        logger.info(f"URL from message content: {http_url}")
+                        print(f"URL from message content: {http_url}")
                         url = http_url
                         break
 
-    logger.info(f"Arguments: {text}")
+    print(f"Arguments: {text}")
 
     return [url, text]
 
@@ -833,11 +837,11 @@ def clean_pooter():
                 # Delete the duplicate file and files with no extensions
                 if file_hash in file_hashes or file in files_without_extension:
                     os.remove(file_path)
-                    logger.info(f"Deleted: {file}")
+                    print(f"Deleted: {file}")
                 else:
                     file_hashes[file_hash] = file_path  # Add to dict
 
-        logger.info("No more files to clean.")
+        print("No more files to clean.")
     else:
         logger.error(f"Pooter folder not found. Aborting.")
 
@@ -858,6 +862,6 @@ def clean_pooter_silent():
                 file_hash = calculate_file_hash(file_path)
                 if file_hash in file_hashes or file in files_without_extension:
                     os.remove(file_path)
-                    logger.info(f"Deleted: {file}")
+                    print(f"Deleted: {file}")
                 else:
                     file_hashes[file_hash] = file_path
