@@ -35,7 +35,7 @@ class server(commands.Cog):
     )
     async def pizzi(self, ctx: commands.Context):
         def generate_pizzi_text():
-            temperature = round(random.uniform(0.2, 2), 2)
+            temperature = round(random.uniform(0.01, 1.5), 2)
             textgen_2 = textgenrnn(f"{dannybot}\\assets\\textgenrnn\\pizzi.hdf5")
             output_buffer = StringIO()
             sys.stdout = output_buffer
