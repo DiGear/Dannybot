@@ -45,6 +45,19 @@ async def on_ready():
     print("---------------------------------------------------------------------")
     return
 
+# in the event of a connection error
+@bot.event
+async def on_disconnect():
+    print('Disconnected. Attempting to reconnect...')
+    while not bot.is_closed():
+        try:
+            await bot.start(dannybot_token, reconnect=True)
+        except discord.LoginFailure:
+            print("Reconnect failed.")
+            break
+        except Exception as e:
+            print(f"Error during reconnect: {type(e).__name__} - {e}")
+            await asyncio.sleep(5)
 
 # this is our message handler
 @bot.event
