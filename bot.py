@@ -110,42 +110,52 @@ async def reload(ctx: commands.Context, module: str):
         ]
     else:
         cogs = [f"cogs.{module}"]
+    
+    # loop through each specified cog to unload and reload
     for cog in cogs:
-        #fix to allow reloading a module that errored out while trying to reload
         try:
+            # attempt to unload the extension if loaded
             await bot.unload_extension(cog)
         except discord.ext.commands.errors.ExtensionNotLoaded:
             pass
+        # reload the extension
         await bot.load_extension(cog)
+    
+    # resynchronize slash commands
     command_sync = await bot.tree.sync()
     print(f"Synced {len(command_sync)} slashes")
     await ctx.send(f"Reloaded {module} module(s)!")
 
+async def load_extension(cog):
+    try:
+        await bot.load_extension(cog)
+        print(f"Imported module: {cog}")
+    except Exception as e:
+        print(f"Failed to load {cog}: {e}")
 
-# stage all of our cogs
 async def load_extensions():
+    tasks = []
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
             cog_name = filename[:-3]
             cog_path = f"cogs.{cog_name}"
-            await bot.load_extension(cog_path)
-            print(f"Imported module: {cog_name}")
+            tasks.append(load_extension(cog_path))
 
+    # gather and execute all load_extension tasks concurrently
+    await asyncio.gather(*tasks)
+
+# this ACTUALLY starts the bot
 async def main():
     if clean_pooter_onLaunch:
-        print(
-            "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..."
-        )
+        print("Cleaning up pooter folder... This may clog up the terminal if there are a lot of files...")
         print("---------------------------------------------------------------------")
         clean_pooter()
         print("---------------------------------------------------------------------")
     if cache_clear_onLaunch:
-        print("Clearing cache from previous session...")
+        print("Clearing cache from the previous session...")
         print("---------------------------------------------------------------------")
         clear_cache()
         print("---------------------------------------------------------------------")
-
     await load_extensions()
     await bot.start(dannybot_token)
-
 asyncio.run(main())

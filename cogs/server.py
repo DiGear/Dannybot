@@ -34,6 +34,7 @@ class server(commands.Cog):
         brief="Emulate Pizzi using AI",
     )
     async def pizzi(self, ctx: commands.Context):
+        await ctx.defer()
         def generate_pizzi_text():
             temperature = round(random.uniform(0.01, 1.5), 2)
             textgen_2 = textgenrnn(f"{dannybot}\\assets\\textgenrnn\\pizzi.hdf5")
