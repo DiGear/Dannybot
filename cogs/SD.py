@@ -372,7 +372,7 @@ class sd(commands.Cog):
         # we check if we're using SDXL here because some stuff needs to be modified in order for SDXL to work
         if any(
             item in checkpoint
-            for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)", "Nekoray XL"]
+            for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)", "Nekoray XL", "Crystal Clear XL"]
         ):
             SDXL = True
         else:
