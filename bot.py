@@ -65,7 +65,6 @@ async def on_message(input):
         await bot.process_commands(input)
         bot_is_busy = False
 
-
 # this is a ping command and it's pretty self-explanatory
 @bot.hybrid_command(
     name="ping",

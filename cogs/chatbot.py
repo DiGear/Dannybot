@@ -47,43 +47,42 @@ class sentience(commands.Cog):
             return
 
         if self.bot.user.mentioned_in(message) and not message.reference:
-            content = message.content.replace(self.bot.user.mention, "")
-            content = content.replace("Dannybot said:", "")
-            self.message_array.append(
-                {
-                    "role": "user",
-                    "content": f"{message.author.name} said: {content}",
-                }
-            )
-            self.array_index += 1
+            async with message.channel.typing():
+                content = message.content.replace(self.bot.user.mention, "")
+                content = content.replace("Dannybot said:", "")
+                self.message_array.append(
+                    {
+                        "role": "user",
+                        "content": f"{message.author.name} said: {content}",
+                    }
+                )
+                self.array_index += 1
 
-            if self.array_index > self.memory_length:
-                self.message_array.pop(1)
+                if self.array_index > self.memory_length:
+                    self.message_array.pop(1)
 
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo", temperature=round(random.uniform(0.7,1.5),1), messages=self.message_array
-            )
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo", temperature=round(random.uniform(0.7,1.5),1), messages=self.message_array
+                )
 
-            print(f"{message.author.global_name} said: {content}")
-            response_array = response.choices[0].message.content.replace(
-                "Dannybot:", ""
-            )[:2000]
-            if self.catboy_mode:
-                response_array = uwuify(response_array)
-            self.array_index += 1
+                print(f"{message.author.name} said: {content}")
+                response_array = response.choices[0].message.content.replace(
+                    "Dannybot:", ""
+                )[:2000]
+                if self.catboy_mode:
+                    response_array = uwuify(response_array)
+                self.array_index += 1
 
-            await message.channel.send(
-                response_array[:2000]
-                .replace("fdg", "Master")
-                .replace("FDG", "Master")
-                .replace("nigger", "feller")
-                .replace("nigga", "fella"),
-                reference=message,
-            )
+                await message.channel.send(
+                    response_array[:2000]
+                    .replace("fdg", "Master")
+                    .replace("FDG", "Master"),
+                    reference=message,
+                )
 
-            self.message_array.append(
-                {"role": "assistant", "content": response_array[:2000]}
-            )
+                self.message_array.append(
+                    {"role": "assistant", "content": response_array[:2000]}
+                )
 
     @commands.hybrid_command(
         name="chatgpt",

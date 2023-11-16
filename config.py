@@ -768,28 +768,39 @@ def listgen(directory):
     string = ", ".join(list)
     return string
 
+def case_agnostic_replace(text, old, new):
+    result = ""
+    i = 0
+    while i < len(text):
+        if text[i:i + len(old)].lower() == old.lower():
+            result += text[i:i + len(old)].replace(old, new, 1)
+            i += len(old)
+        else:
+            result += text[i]
+            i += 1
+    return result
 
 # i hate this - FDG
 def uwuify(input_text):
     # Replacement for 'l' -> 'w'
-    modified_text1 = input_text.replace("l", "w")
+    modified_text1 = case_agnostic_replace(input_text, "l", "w")
 
     # Replacement for 'u' -> 'uu'
-    modified_text2 = modified_text1.replace("u", "uu")
+    modified_text2 = case_agnostic_replace(modified_text1, "u", "uu")
 
     # Replacement for 'r' -> 'w'
-    modified_text3 = modified_text2.replace("r", "w")
+    modified_text3 = case_agnostic_replace(modified_text2, "r", "w")
 
     # Replacement for 'the' -> 'de'
-    modified_text4 = modified_text3.replace("the", "de")
+    modified_text4 = case_agnostic_replace(modified_text3, "the", "de")
 
     # Replacement for 'to' -> 'tu'
-    modified_text5 = modified_text4.replace("to", "tu")
+    modified_text5 = case_agnostic_replace(modified_text4, "to", "tu")
 
     # List of emoticons
     emoticons = ["^_^", ">w<", "x3", "^.^", "^-^", "(・ˋω´・)", "x3", ";;w;;"]
 
-    # Split the input text into individual wordss
+    # Split the input text into individual words
     words = modified_text5.split()
 
     # Iterate over the words and randomly insert an emoticon between them
@@ -805,8 +816,8 @@ def uwuify(input_text):
     modified_text6 = " ".join(output_text)
 
     # Perform additional replacements using .replace statements
-    modified_text7 = modified_text6.replace("~", "")
-    modified_text = modified_text7.replace("!", " !~ ")
+    modified_text7 = case_agnostic_replace(modified_text6, "~", "")
+    modified_text = case_agnostic_replace(modified_text7, "!", " !~ ")
 
     return modified_text
 
