@@ -82,18 +82,18 @@ class server(commands.Cog):
     ):
         await ctx.defer()
         file_types = {
-            "mimi": MimiPath,
-            "nekopara": NekoparaPath,
-            "vid": VideosPath,
-            "img": PicturesPath,
+            "mimi": f"{dannybot}\\database\\Mimi",
+            "nekopara": f"{dannybot}\\database\\Nekopara",
+            "vid": f"{dannybot}\\database\\Vid",
+            "img": f"{dannybot}\\database\\Img",
             "leffrey": f"{dannybot}\\database\\Leffrey",
-            "gif": GifsPath,
+            "gif": f"{dannybot}\\database\\Gif",
             "femboy": f"{dannybot}\\database\\Femboy",
             "fanboy": f"{dannybot}\\database\\Fanboy",
             "glasscup": f"{dannybot}\\database\\Glasscup",
             "plasticcup": f"{dannybot}\\database\\Plasticcup",
             "burger": f"{dannybot}\\database\\Burger",
-            "danny": f"I:\\Danny Infinitum",
+            "danny": f"{dannybot}\\database\\Danny",
         }
         if category not in file_types:
             await ctx.reply(
@@ -115,18 +115,18 @@ class server(commands.Cog):
         # Define directory paths in a dictionary
         directory_paths = {
             "Pooter Files:": f"{dannybot}\\database\\Pooter",
-            "Danny Files:": "I:\\Danny Infinitum",
+            "Danny Files:": f"{dannybot}\\database\\Danny",
             "Leffrey Files:": f"{dannybot}\\database\\Leffrey",
             "Femboy Files:": f"{dannybot}\\database\\Femboy",
             "Fanboy Files:": f"{dannybot}\\database\\Fanboy",
             "Glass Cup Images:": f"{dannybot}\\database\\Glasscup",
             "Plastic Cup Images:": f"{dannybot}\\database\\Plasticcup",
             "Burger Files:": f"{dannybot}\\database\\Burger",
-            "Nekopara Files:": NekoparaPath,
+            "Nekopara Files:": f"{dannybot}\\database\\Nekopara",
             "Animal Girl Images:": f"{dannybot}\\database\\Mimi",
-            "Video Files:": VideosPath,
-            "Image Files:": PicturesPath,
-            "GIF Files:": GifsPath,
+            "Video Files:": f"{dannybot}\\database\\Vid",
+            "Image Files:": f"{dannybot}\\database\\Img",
+            "GIF Files:": f"{dannybot}\\database\\Gif",
         }
 
         # Create the embed
