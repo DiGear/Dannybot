@@ -14,7 +14,7 @@ class logging(commands.Cog):
     async def on_message(self, message: discord.Message):
         log_channel = self.bot.get_channel(logs_channel)
         if any(message.content.startswith(prefix) for prefix in dannybot_prefixes):
-            log_message = f"{message.author.global_name} ({message.author.id}) issued: {message.content}"
+            log_message = f"{message.author.name} ({message.author.id}) issued: {message.content}"
             await log_channel.send(log_message)
 
     @commands.Cog.listener()
@@ -27,7 +27,7 @@ class logging(commands.Cog):
         args_str = " ".join(f"{k} = {repr(v)}" for k, v in args.items())
         if interaction.type == InteractionType.application_command:
             log_message = (
-                f"{user.global_name} ({user.id}) issued: /{command_name} {args_str}"
+                f"{user.name} ({user.id}) issued: /{command_name} {args_str}"
             )
             await log_channel.send(log_message)
 

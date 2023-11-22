@@ -139,6 +139,17 @@ class server(commands.Cog):
             )
 
         await ctx.reply(embed=embed, mention_author=True)
+        
+    @commands.command()
+    async def kill(self, ctx, user: discord.User):
+        def is_user(m):
+            return m.author == user
+
+        # Purge messages based on the custom check
+        deleted = await ctx.channel.purge(check=is_user, bulk=True)
+
+        # Inform about the number of deleted messages
+        await ctx.send(f'Deleted {len(deleted)} messages from {user.mention}')
 
 
 async def setup(bot: commands.Bot):
