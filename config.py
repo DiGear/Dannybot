@@ -27,7 +27,7 @@ import typing
 import urllib
 import urllib.request
 import uuid
-from collections import namedtuple
+from collections import namedtuple, deque
 from datetime import datetime
 from functools import lru_cache, partial
 from io import BytesIO

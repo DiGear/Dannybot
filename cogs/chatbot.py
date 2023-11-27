@@ -30,59 +30,33 @@ class CustomGPT(commands.FlagConverter):
 
 # Class that stores every global variable and initializes them
 class sentience(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot, memory_length=6):
         self.bot = bot
-        self.catboy_mode = False
-        if self.catboy_mode:
-            self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified. Also you must speak like a UWU X3 nyan catboy nya!"
-        else:
-            self.sysmsg = "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."
-        self.memory_length = 6
-        self.message_array = [{"role": "system", "content": self.sysmsg}]
-        self.array_index = 0
+        self.memory_length = memory_length
+        self.message_array = deque([{"role": "system", "content": "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."}], maxlen=memory_length + 1)
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot:
+        if message.author.bot or message.reference:
             return
-
-        if self.bot.user.mentioned_in(message) and not message.reference:
+        if self.bot.user.mentioned_in(message):
             async with message.channel.typing():
-                content = message.content.replace(self.bot.user.mention, "")
-                content = content.replace("Dannybot said:", "")
-                self.message_array.append(
-                    {
-                        "role": "user",
-                        "content": f"{message.author.name} said: {content}",
-                    }
+                content = message.content.replace(self.bot.user.mention, "").strip()
+                self.message_array.append({
+                    "role": "user",
+                    "content": f"{message.author.display_name} said: {content}"
+                })
+                response_data = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo-1106",
+                    temperature=round(random.uniform(0.7, 1.5), 1),
+                    messages=list(self.message_array)
                 )
-                self.array_index += 1
-
-                if self.array_index > self.memory_length:
-                    self.message_array.pop(1)
-
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo-1106", temperature=round(random.uniform(0.7,1.5),1), messages=self.message_array
-                )
-
-                print(f"{message.author.name} said: {content}")
-                response_array = response.choices[0].message.content.replace(
-                    "Dannybot:", ""
-                )[:2000]
-                if self.catboy_mode:
-                    response_array = uwuify(response_array)
-                self.array_index += 1
-
-                await message.channel.send(
-                    response_array[:2000]
-                    .replace("fdg", "Master")
-                    .replace("FDG", "Master"),
-                    reference=message,
-                )
-
-                self.message_array.append(
-                    {"role": "assistant", "content": response_array[:2000]}
-                )
+                response_text = response_data.choices[0].message.content.replace("Dannybot:", "").strip()[:2000]
+                formatted_response = response_text.replace("fdg", "Master").replace("FDG", "Master")
+                print(f"{message.author.display_name} Said: {content}")
+                print(f"dannybot Said: {formatted_response}")
+                await message.channel.send(formatted_response, reference=message)
+                self.message_array.append({"role": "assistant", "content": formatted_response})
 
     @commands.hybrid_command(
         name="chatgpt",
