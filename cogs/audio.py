@@ -99,5 +99,42 @@ class audio(commands.Cog):
             await ctx.reply(f"Midislapped with {SF2}:", file=File(f, "midislap.ogg"))
 
 
+    @commands.command()
+    async def play(self, ctx, url=None):
+        channel = ctx.author.voice.channel
+        if ctx.voice_client:
+            voice_channel = ctx.voice_client
+        else:
+            try:
+                voice_channel = await channel.connect()
+            except:
+                await ctx.send('Unable to connect to the voice channel.')
+                return
+        if url is None and len(ctx.message.attachments) > 0:
+            url = ctx.message.attachments[0].url
+
+        if url is None:
+            await ctx.send('Please provide a URL or attach an MP3 file.')
+            return
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            url2 = info['formats'][0]['url']
+        if voice_channel.is_playing():
+            voice_channel.stop()
+        voice_channel.play(FFmpegPCMAudio(url2))
+        await ctx.send(f'Now playing: `{info["title"]}`')
+
+    @commands.command()
+    async def leave(self, ctx):
+        await ctx.voice_client.disconnect()
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(audio(bot))
