@@ -11,7 +11,7 @@ def mirror_note_over_line(note, line):
 
 def mirror_pitch_bend_over_line(pitch_bend, line):
     original_distance = line - pitch_bend
-    mirrored_value = line + original_distance
+    mirrored_value = int(line + original_distance)
     return max(min(mirrored_value, 8191), -8192)
 
 def find_average_track_notes(track):
