@@ -9,6 +9,9 @@ def mirror_note_over_line(note, line):
     original_distance = line - note
     return int(line + original_distance)
 
+def mirror_pitch_bend_over_line(pitch_bend, line):
+    return int(line - (pitch_bend - line))
+
 def find_average_track_notes(track):
     notes = [message.note for message in track if message.type == 'note_on']
     return sum(notes) / len(notes) if notes else None
@@ -17,6 +20,8 @@ def mirror_all_notes_in_track(track, line, ignored_channels):
     for message in track:
         if message.type in ('note_on', 'note_off') and message.channel not in ignored_channels:
             message.note = mirror_note_over_line(message.note, line)
+        elif message.type == 'pitchwheel' and message.channel not in ignored_channels:
+            message.pitch = mirror_pitch_bend_over_line(message.pitch, line)
 
 def transpose_to_original_octaves(track, original_notes, new_notes, ignored_channels):
     if original_notes is not None and new_notes is not None:
