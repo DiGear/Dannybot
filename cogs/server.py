@@ -148,6 +148,5 @@ class server(commands.Cog):
         deleted = await ctx.channel.purge(check=is_user, bulk=True)
         await ctx.send(f'Deleted {len(deleted)} messages from {user.mention}')
 
-
 async def setup(bot: commands.Bot):
     await bot.add_cog(server(bot))
