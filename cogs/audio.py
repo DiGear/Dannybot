@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 class audio(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.loop = True
 
     @commands.command(hidden=True)
     async def join(self, ctx):
@@ -101,37 +102,52 @@ class audio(commands.Cog):
 
     @commands.command()
     async def play(self, ctx, url=None):
-        channel = ctx.author.voice.channel
-        if ctx.voice_client:
-            voice_channel = ctx.voice_client
-        else:
-            try:
-                voice_channel = await channel.connect()
-            except:
-                await ctx.send('Unable to connect to the voice channel.')
+        current_directory = os.getcwd()
+        try:
+            os.chdir(f"{dannybot}\\cache")
+            channel = ctx.author.voice.channel
+            if ctx.voice_client:
+                voice_channel = ctx.voice_client
+            else:
+                try:
+                    voice_channel = await channel.connect()
+                except Exception as e:
+                    await ctx.send(f'Unable to connect to the voice channel: {e}')
+                    return
+            if url is None and len(ctx.message.attachments) > 0:
+                url = ctx.message.attachments[0].url
+            if url is None:
+                await ctx.send('Please provide a URL or attach an MP3 file.')
                 return
-        if url is None and len(ctx.message.attachments) > 0:
-            url = ctx.message.attachments[0].url
+            ydl_opts = {
+                'outtmpl': '%(title)s.%(ext)s',
+                'force_overwrites': True,
+                'no_check_certificate': True,
+                'no_playlist': True,
+                'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+                'cookiefile': Cookies,
+            }
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info_dict = ydl.extract_info(url, download=True)
+                    file_path = ydl.prepare_filename(info_dict)
+                    file_path_with_format = file_path.rsplit(".", maxsplit=1)[0] + ".mp3"
+            except Exception as e:
+                await ctx.send(f'An error occurred during the download process: {e}')
+                return
+            if voice_channel.is_playing():
+                voice_channel.stop()
+            voice_channel.play(discord.FFmpegPCMAudio(file_path_with_format))
+            await ctx.send(f'Now playing: `{info_dict["title"]}`')
 
-        if url is None:
-            await ctx.send('Please provide a URL or attach an MP3 file.')
-            return
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-        }
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=False)
-            url2 = info['formats'][0]['url']
-        if voice_channel.is_playing():
-            voice_channel.stop()
-        voice_channel.play(FFmpegPCMAudio(url2))
-        await ctx.send(f'Now playing: `{info["title"]}`')
-
+        finally:
+            os.chdir(current_directory)
+            
     @commands.command()
     async def leave(self, ctx):
         await ctx.voice_client.disconnect()
