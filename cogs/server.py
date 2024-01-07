@@ -140,8 +140,7 @@ class server(commands.Cog):
 
         await ctx.reply(embed=embed, mention_author=True)
     
-    @commands.command()
-    @commands.hidden()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def kill(self, ctx, user: discord.User):
         def is_user(m):
