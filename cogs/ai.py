@@ -14,24 +14,11 @@ class CustomWrite(commands.FlagConverter):
     frequency_penalty: typing.Optional[float] = 0.00
     presence_penalty: typing.Optional[float] = 0.00
     engine: Literal[
-        "text-davinci-003",
-        "text-davinci-002",
-        "text-davinci-001",
-        "text-curie-001",
-        "text-babbage-001",
-        "text-ada-001",
-        "davinci-instruct-beta",
-        "davinci",
-        "curie-instruct-beta",
-        "curie",
-        "babbage",
-        "ada",
         "gpt-3.5-turbo-instruct-0914",
         "gpt-3.5-turbo-instruct",
         "babbage-002",
         "davinci-002",
     ]
-
 
 class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -48,7 +35,7 @@ class ai(commands.Cog):
         try:
             gpt_prompt = str(prompt)
             response = openai.Completion.create(
-                engine="text-davinci-003",
+                engine="gpt-3.5-turbo-instruct-0914",
                 prompt=gpt_prompt,
                 temperature=random.uniform(0.1, 1.0),
                 max_tokens=768,

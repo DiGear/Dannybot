@@ -139,14 +139,46 @@ class server(commands.Cog):
             )
 
         await ctx.reply(embed=embed, mention_author=True)
-    
-    @commands.command(hidden=True)
+        
+    @commands.hybrid_command()
     @commands.is_owner()
     async def kill(self, ctx, user: discord.User):
-        def is_user(m):
-            return m.author == user
-        deleted = await ctx.channel.purge(check=is_user, bulk=True)
-        await ctx.send(f'Deleted {len(deleted)} messages from {user.mention}')
+        count = 0
+        on_cooldown = False
+        async for message in ctx.channel.history(limit=None):
+            if message.author != user:
+                continue
+            if (ctx.message.created_at - message.created_at).days < 14:
+                try:
+                    deleted = await ctx.channel.purge(limit=100, check=lambda m: m.author == user, before=message)
+                    count += len(deleted)
+                    break
+                except discord.errors.HTTPException as e:
+                    if e.status == 429:
+                        await asyncio.sleep(e.retry_after)
+                    else:
+                        await ctx.send(f"Failed to bulk delete messages: {e}")
+                        return
+            if on_cooldown:
+                await asyncio.sleep(1)
+                on_cooldown = False
+            try:
+                await message.delete()
+                count += 1
+            except discord.NotFound:
+                pass
+            except discord.Forbidden:
+                await ctx.send("I don't have permission to delete messages.")
+                return
+            except discord.HTTPException as e:
+                if e.status == 429:
+                    await asyncio.sleep(e.retry_after)
+                    on_cooldown = True
+                else:
+                    await ctx.send(f"Failed to delete a message: {e}")
+                    return
+
+        await ctx.send(f'Deleted {count} messages from {user.mention}.')
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(server(bot))

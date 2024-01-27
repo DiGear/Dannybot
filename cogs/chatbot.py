@@ -15,6 +15,7 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
+        "gpt-4-turbo-preview"
         "gpt-4-1106-preview",
         "gpt-4-0613",
         "gpt-4-0314",
@@ -47,7 +48,7 @@ class sentience(commands.Cog):
                     "content": f"{message.author.display_name} said: {content}"
                 })
                 response_data = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo-1106",
+                    model="gpt-4-turbo-preview",
                     temperature=round(random.uniform(0.7, 1.5), 1),
                     messages=list(self.message_array)
                 )
