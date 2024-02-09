@@ -15,19 +15,11 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
-        "gpt-4-turbo-preview"
-        "gpt-4-1106-preview",
-        "gpt-4-0613",
-        "gpt-4-0314",
+        "gpt-4-turbo-preview",
         "gpt-4",
-        "gpt-3.5-turbo-16k-0613",
-        "gpt-3.5-turbo-16k",
-        "gpt-3.5-turbo-1106"
-        "gpt-3.5-turbo-0613",
-        "gpt-3.5-turbo-0301",
-        "gpt-3.5-turbo",
+        "gpt-3.5-turbo-0125",
+        "gpt-3.5-turbo"
     ]
-
 
 # Class that stores every global variable and initializes them
 class sentience(commands.Cog):
@@ -48,11 +40,11 @@ class sentience(commands.Cog):
                     "content": f"{message.author.display_name} said: {content}"
                 })
                 response_data = openai.ChatCompletion.create(
-                    model="gpt-4-turbo-preview",
+                    model="gpt-3.5-turbo-0125",
                     temperature=round(random.uniform(0.7, 1.5), 1),
                     messages=list(self.message_array)
                 )
-                response_text = response_data.choices[0].message.content.replace("Dannybot:", "").strip()[:2000]
+                response_text = response_data.choices[0].message.content.replace("Dannybot:", "").strip()[:1990]
                 formatted_response = response_text.replace("fdg", "Master").replace("FDG", "Master")
                 print(f"{message.author.display_name} Said: {content}")
                 print(f"dannybot Said: {formatted_response}")
@@ -68,7 +60,7 @@ class sentience(commands.Cog):
         await ctx.defer()
         response = openai.ChatCompletion.create(
             model=flags.model,
-            max_tokens=768,
+            max_tokens=512,
             top_p=flags.top_p,
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,

@@ -14,7 +14,6 @@ class CustomWrite(commands.FlagConverter):
     frequency_penalty: typing.Optional[float] = 0.00
     presence_penalty: typing.Optional[float] = 0.00
     engine: Literal[
-        "gpt-3.5-turbo-instruct-0914",
         "gpt-3.5-turbo-instruct",
         "babbage-002",
         "davinci-002",
