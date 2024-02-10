@@ -23,7 +23,7 @@ class CustomGPT(commands.FlagConverter):
 
 # Class that stores every global variable and initializes them
 class sentience(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=6):
+    def __init__(self, bot: commands.Bot, memory_length=12):
         self.bot = bot
         self.memory_length = memory_length
         self.message_array = deque([{"role": "system", "content": "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."}], maxlen=memory_length + 1)
