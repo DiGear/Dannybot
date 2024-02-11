@@ -399,7 +399,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         if referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
-                    url = attachment.url.split("?")[0]
+                    url = attachment.url.split("?")
                     print("URL from reply: %s", url)
                     break
 
@@ -407,14 +407,14 @@ async def resolve_args(ctx, args, attachments, type="image"):
     if not url and attachments:
         for attachment in attachments:
             if attachment.content_type.startswith(type):
-                url = attachment.url.split("?")[0]
+                url = attachment.url.split("?")
                 print(f"URL from attachment: {url}")
                 break
 
     # Grab a URL passed from args
     if not url:
         if args and args[0].startswith("http"):
-            url = args[0].split("?")[0]
+            url = args[0].split("?")
             text = " ".join(args[1:])
             print(f"URL from argument: {url}")
 
@@ -437,8 +437,8 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
             # Grab the URL from the last sent messages Attachement
             for attachment in msg.attachments:
-                attch_url = attachment.url.split("?")[0]
-                ext = attch_url.split(".")[-1]
+                attch_url = attachment.url.split("?")
+                ext = attch_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
                     print(f"URL from attachment: {attch_url}")
                     url = attch_url
@@ -457,7 +457,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if type == "image":
                 http_urls = re.findall(r"http\S+", content)
                 if http_urls:
-                    http_url = http_urls[0].split("?")[0]
+                    http_url = http_urls[0].split("?")
                     ext = http_url.split(".")[-1]
                     if ext.lower() in extension_list:
                         print(f"URL from message content: {http_url}")
@@ -466,7 +466,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
     print(f"Arguments: {text}")
 
-    return [url, text]
+    return [url[0], text, url[1]]
 
 
 # change hue (apparently not an inbuilt function of PIL)

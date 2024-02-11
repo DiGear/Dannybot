@@ -70,7 +70,8 @@ class audio(commands.Cog):
             )
             return
 
-        file_url = context[0]
+        file_url = str(context[0] + "?" + context[2])
+        print(file_url)
         SF2 = context[1] + ".sf2" if context[1] else random.choice(sf2s)
         if context[1] == "random":
             SF2 = random.choice(sf2s)
