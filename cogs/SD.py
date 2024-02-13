@@ -169,29 +169,24 @@ class sd(commands.Cog):
         # Choose appropriate lora concatenation based on NSFW or not
         loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
 
-        # Loop through each lora tuple in the concatenated loras
+        # Create a dictionary to store LORAs and their corresponding tags
+        lora_tags = {}
+
+        # Loop through each LORA tuple in the concatenated LORAs
         for lora_tuple in loraconcat:
-            # Check if the lora is present in the prompt (case-insensitive comparison)
-            if lora_tuple[0].lower() in positive_prompt2.lower():
-                # Store the matched lora from the positive prompt
-                matched_lora = lora_tuple[0]
-                # Append the lora and its weight to the lists
-                activeloras.append(matched_lora)  # Append the lora name
-                lora_weight.append(lora_tuple[2])  # Append the lora weight
+            lora_name = lora_tuple[0].lower()  # Convert to lowercase to handle case-insensitive matching
+            lora_tags[lora_name] = (lora_tuple[1], lora_tuple[2])  # Assign name and strength
 
-                # Replace the matched lora with its corresponding tag while preserving case
-                positive_prompt2 = positive_prompt2.replace(matched_lora, f"<lora:{matched_lora}:{lora_tuple[2]}>")
+        # Replace LORAs in the positive prompt with their tags while preserving case
+        for lora_name, (name, strength) in lora_tags.items():
+            # Construct the replacement tag
+            lora_tag = f"<lora:{name}:{strength}>"
+            # Use regular expression for case-insensitive replacement
+            positive_prompt2 = re.compile(re.escape(lora_name), re.IGNORECASE).sub(lora_tag, positive_prompt2)
 
-        # If no active loras found, default to a DefaultLora
-        if not activeloras:
-            activeloras = [self.DefaultLora]
-            lora_weight = [0]
-
-        # Construct the output string with lora and its strength
+        # Construct the output prompt
         output_prompt = positive_prompt2
-
-        print(output_prompt)
-            
+     
         #defining stuff for the command
         sd_url = "http://127.0.0.1:7860"
         
@@ -218,6 +213,7 @@ class sd(commands.Cog):
 
         #apply the overrides
         payload["override_settings"] = override_settings
+        print(payload)
         
         # actually generate the image
         response = requests.post(url=f'{sd_url}/sdapi/v1/txt2img', json=payload)
