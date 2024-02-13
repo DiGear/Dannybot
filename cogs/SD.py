@@ -150,51 +150,32 @@ class sd(commands.Cog):
         
         # LORA shit
         positive_prompt2 = positive_prompt
-
-        # Initialize lists to store active loras and their weights
         activeloras = []
         lora_weight = []
-
         if SDXL:
             loraconcatsfw, loraconcatnsfw = loraXL, loraXL + nsfw_loraXL
         else:
             loraconcatsfw, loraconcatnsfw = lora, lora + nsfw_lora
-
-        # Check if it's a NSFW channel or DM
         try:
             isNSFWChannel = isinstance(ctx.channel, discord.DMChannel) or ctx.channel.nsfw
         except:
             isNSFWChannel = False
-
-        # Choose appropriate lora concatenation based on NSFW or not
         loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
-
-        # Create a dictionary to store LORAs and their corresponding tags
         lora_tags = {}
-
-        # Create a string to store found LORAs with their strengths
         found_loras_string = ""
-
-        # Loop through each LORA tuple in the concatenated LORAs
         for lora_tuple in loraconcat:
-            lora_name = os.path.splitext(lora_tuple[0].lower())[0]  # Remove extension and convert to lowercase
-            lora_tags[lora_name] = (os.path.splitext(lora_tuple[1])[0], lora_tuple[2])  # Assign name without extension and strength
-
-        # Replace LORAs in the positive prompt with their tags while preserving case
-        for lora_name, (name, strength) in lora_tags.items():
-            # Construct the replacement tag
-            lora_tag = f"<lora:{name}:{strength}>"
-            # Use regular expression for case-insensitive replacement
-            positive_prompt2 = re.compile(r'\b{}\b'.format(re.escape(lora_name)), re.IGNORECASE).sub(lora_tag, positive_prompt2)
-            # Append the found LORA and its strength to the string
-            found_loras_string += f"{name} ({strength}), "
-
-        # Remove the trailing comma and space from the found LORAs string
+            lora_name = os.path.splitext(lora_tuple[0].lower())[0]
+            lora_tags[lora_name] = (os.path.splitext(lora_tuple[1])[0], lora_tuple[2])
+        for lora_name in lora_tags.keys():
+            if lora_name in positive_prompt.lower():
+                name, strength = lora_tags[lora_name]
+                found_loras_string += f"{name} ({strength}), "
         found_loras_string = found_loras_string.rstrip(", ")
-
-        # Construct the output prompt
+        for lora_name, (name, strength) in lora_tags.items():
+            lora_tag = f"<lora:{name}:{strength}>"
+            positive_prompt2 = re.compile(r'\b{}\b'.format(re.escape(lora_name)), re.IGNORECASE).sub(lora_tag, positive_prompt2)
         output_prompt = positive_prompt2
-        
+
         # getting the checkpoint value from the dictionary
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
@@ -257,7 +238,7 @@ class sd(commands.Cog):
             ("Negative Prompt", negative_prompt[: 1024 - 3], False),
             ("Checkpoint Model", checkpoint, False),
             ("VAE Model", vae, False),
-            ("Additional Networks", found_loras_string, False,)
+            ("Additional Networks", found_loras_string, False),
             ("CFG Scale", cfg, True),
             ("Resolution",f"{width}x{height}",True,),
             ("Sampler",f"{sampler}",True,),
