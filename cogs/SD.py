@@ -114,16 +114,23 @@ class sd(commands.Cog):
         ] = "Anything v5",
         vae: Literal[
             "Automatic",
+            "None",
             "vaeFtMse840000",
             "Danny VAE",
-        ] = "Automatic",
+        ] = "None",
     ):
         #clip_skip: int = 1, 
         #hires_fix: bool = False,   
         await ctx.defer()
         
         #the new logic will go here
-        SDXL = False # this is carryover
+        if any(
+            item in checkpoint
+            for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)", "Nekoray XL", "Crystal Clear XL"]
+        ):
+            SDXL = True
+        else:
+            SDXL = False
         
         """
         anti [REDACTED] measures
