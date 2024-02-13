@@ -464,7 +464,6 @@ async def resolve_args(ctx, args, attachments, type="image"):
                         break
 
     print("Arguments:", text)
-
     return [url, text]
 
 async def resolve_args_w_keys(ctx, args, attachments, type="image"):
@@ -556,9 +555,7 @@ async def resolve_args_w_keys(ctx, args, attachments, type="image"):
                         break
 
     print(f"Arguments: {text}")
-
     return [url[0], text, url[1]]
-
 
 # change hue (apparently not an inbuilt function of PIL)
 def change_hue(img, target_hue):
