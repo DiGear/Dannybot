@@ -398,24 +398,24 @@ async def resolve_args(ctx, args, attachments, type="image"):
         if referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
-                    url = attachment.url.split("?")[0]
-                    print("URL from reply: %s", url)
+                    url = attachment.url
+                    print("URL from reply:", url)
                     break
 
     # Grab a URL if the command has an attachment
     if not url and attachments:
         for attachment in attachments:
             if attachment.content_type.startswith(type):
-                url = attachment.url.split("?")[0]
-                print(f"URL from attachment: {url}")
+                url = attachment.url
+                print("URL from attachment:", url)
                 break
 
     # Grab a URL passed from args
     if not url:
         if args and args[0].startswith("http"):
-            url = args[0].split("?")[0]
+            url = args[0]
             text = " ".join(args[1:])
-            print(f"URL from argument: {url}")
+            print("URL from argument:", url)
 
         # Grab a URL from mentioned users avatar
         if ctx.message.mentions:
@@ -423,10 +423,10 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
-                print(f"URL from avatar of mentioned user: {url}")
+                print("URL from avatar of mentioned user:", url)
             else:
                 url = str(mentioned_member.avatar.url)
-                print(f"URL from avatar of mentioned user: {url}")
+                print("URL from avatar of mentioned user:", url)
 
     # Message content iteration
     if not url:
@@ -434,12 +434,12 @@ async def resolve_args(ctx, args, attachments, type="image"):
         async for msg in channel.history(limit=500):
             content = msg.content
 
-            # Grab the URL from the last sent messages Attachement
+            # Grab the URL from the last sent messages Attachment
             for attachment in msg.attachments:
-                attch_url = attachment.url.split("?")[0]
+                attch_url = attachment.url
                 ext = attch_url.split(".")[-1]
                 if ext.lower() in extension_list:
-                    print(f"URL from attachment: {attch_url}")
+                    print("URL from attachment:", attch_url)
                     url = attch_url
                     break
             if url:
@@ -449,21 +449,21 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if type == "image" and "https://tenor.com/view/" in content:
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
                 url = gettenor(tenor_id)
-                print(f"URL from Tenor: {url}")
+                print("URL from Tenor:", url)
                 break
 
             # Grab the URL from the last sent message
             if type == "image":
                 http_urls = re.findall(r"http\S+", content)
                 if http_urls:
-                    http_url = http_urls[0].split("?")[0]
+                    http_url = http_urls[0]
                     ext = http_url.split(".")[-1]
                     if ext.lower() in extension_list:
-                        print(f"URL from message content: {http_url}")
+                        print("URL from message content:", http_url)
                         url = http_url
                         break
 
-    print(f"Arguments: {text}")
+    print("Arguments:", text)
 
     return [url, text]
 
