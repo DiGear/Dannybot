@@ -28,7 +28,7 @@ class audio(commands.Cog):
         brief="Flips a MIDI file upside down",
     )
     async def midiflip(self, ctx, *args):
-        cmd_info = await resolve_args(ctx, args, ctx.message.attachments, "midi")
+        cmd_info = await resolve_args_w_keys(ctx, args, ctx.message.attachments, "midi")
         file_url = cmd_info[0]
         filename = os.path.basename(file_url)
         
@@ -61,7 +61,7 @@ class audio(commands.Cog):
     )
     async def midislap(self, ctx, *args):
         sf2s = os.listdir(f"{dannybot}\\assets\\SF2\\")
-        context = await resolve_args(ctx, args, ctx.message.attachments, "midi")
+        context = await resolve_args_w_keys(ctx, args, ctx.message.attachments, "midi")
 
         if not args and not ctx.message.attachments:
             soundfonts_list = "\n".join(sf2.replace(".sf2", "") for sf2 in sf2s)
