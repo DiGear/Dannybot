@@ -3,6 +3,47 @@ from config import *
 
 logger = logging.getLogger(__name__)
 
+# Load the JSON
+with open(f"{dannybot}\\assets\\stable_diffusion_config.json") as f:
+    SD_Config = json.load(f)
+
+# Load JSON params
+lora = SD_Config["lora"]
+nsfw_lora = SD_Config["nsfw_lora"]
+loraXL = SD_Config["loraXL"]
+nsfw_loraXL = SD_Config["nsfw_loraXL"]
+
+# checkpoint translator keys
+checkpoints = {
+    "3D Animation": "3D.safetensors",
+    "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
+    "AnimUWU Ultimate": "animuwultimate145.safetensors",
+    "Anything v3": "anythingV3_fp16.ckpt",
+    "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
+    "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
+    "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
+    "Exquisite Details": "exquisiteDetails_art.safetensors",
+    "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
+    "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
+    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
+    "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
+    "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
+    
+    # XL SHIT
+    "Crystal Clear XL": "crystalClearXL_ccxl.safetensors",
+    "Hassaku XL": "hassakuXLSfwNsfw_alphaV05.safetensors",
+    "Kohaku XL": "kohakuXL_nyan.safetensors",
+    "Nekoray XL": "nekorayxl_v06W3.safetensors",
+    "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
+}
+
+# VAE translator keys
+vaes = {
+    "Automatic": "nothingvae.safetensors",
+    "vaeFtMse840000": "vaeFtMse840000.safetensors",
+    "Danny VAE": "VAE.vae.pt",
+}
+
 class sd(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -82,47 +123,6 @@ class sd(commands.Cog):
         await ctx.defer()
         
         #the new logic will go here
-        
-        # Load the JSON
-        with open(f"{dannybot}\\assets\\stable_diffusion_config.json") as f:
-            SD_Config = json.load(f)
-
-        # Load JSON params
-        lora = SD_Config["lora"]
-        nsfw_lora = SD_Config["nsfw_lora"]
-        loraXL = SD_Config["loraXL"]
-        nsfw_loraXL = SD_Config["nsfw_loraXL"]
-
-        # checkpoint translator keys
-        checkpoints = {
-            "3D Animation": "3D.safetensors",
-            "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
-            "AnimUWU Ultimate": "animuwultimate145.safetensors",
-            "Anything v3": "anythingV3_fp16.ckpt",
-            "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
-            "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
-            "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
-            "Exquisite Details": "exquisiteDetails_art.safetensors",
-            "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
-            "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
-            "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
-            "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
-            "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
-            
-            # XL SHIT
-            "Crystal Clear XL": "crystalClearXL_ccxl.safetensors",
-            "Hassaku XL": "hassakuXLSfwNsfw_alphaV05.safetensors",
-            "Kohaku XL": "kohakuXL_nyan.safetensors",
-            "Nekoray XL": "nekorayxl_v06W3.safetensors",
-            "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
-        }
-
-        # VAE translator keys
-        vaes = {
-            "Automatic": "nothingvae.safetensors",
-            "vaeFtMse840000": "vaeFtMse840000.safetensors",
-            "Danny VAE": "VAE.vae.pt",
-        }
         SDXL = False # this is carryover
         
         """
@@ -172,20 +172,38 @@ class sd(commands.Cog):
         # Create a dictionary to store LORAs and their corresponding tags
         lora_tags = {}
 
+        # Create a string to store found LORAs with their strengths
+        found_loras_string = ""
+
         # Loop through each LORA tuple in the concatenated LORAs
         for lora_tuple in loraconcat:
-            lora_name = lora_tuple[0].lower()  # Convert to lowercase to handle case-insensitive matching
-            lora_tags[lora_name] = (lora_tuple[1], lora_tuple[2])  # Assign name and strength
+            lora_name = os.path.splitext(lora_tuple[0].lower())[0]  # Remove extension and convert to lowercase
+            lora_tags[lora_name] = (os.path.splitext(lora_tuple[1])[0], lora_tuple[2])  # Assign name without extension and strength
 
         # Replace LORAs in the positive prompt with their tags while preserving case
         for lora_name, (name, strength) in lora_tags.items():
             # Construct the replacement tag
             lora_tag = f"<lora:{name}:{strength}>"
             # Use regular expression for case-insensitive replacement
-            positive_prompt2 = re.compile(re.escape(lora_name), re.IGNORECASE).sub(lora_tag, positive_prompt2)
+            positive_prompt2 = re.compile(r'\b{}\b'.format(re.escape(lora_name)), re.IGNORECASE).sub(lora_tag, positive_prompt2)
+            # Append the found LORA and its strength to the string
+            found_loras_string += f"{name} ({strength}), "
+
+        # Remove the trailing comma and space from the found LORAs string
+        found_loras_string = found_loras_string.rstrip(", ")
 
         # Construct the output prompt
         output_prompt = positive_prompt2
+        
+        # getting the checkpoint value from the dictionary
+        checkpoint_alias = checkpoint
+        if checkpoint_alias in checkpoints:
+            checkpoint_alias = checkpoints[checkpoint_alias]
+
+        # getting the VAE value from the dictionary
+        vae_alias = vae
+        if vae_alias in vaes:
+            vae_alias = vaes[vae_alias]
      
         #defining stuff for the command
         sd_url = "http://127.0.0.1:7860"
@@ -207,8 +225,8 @@ class sd(commands.Cog):
         
         #these are specific overrides
         override_settings = {
-        "sd_model_checkpoint": checkpoint,
-        "sd_vae": vae,
+        "sd_model_checkpoint": checkpoint_alias,
+        "sd_vae": vae_alias,
         }
 
         #apply the overrides
@@ -239,6 +257,7 @@ class sd(commands.Cog):
             ("Negative Prompt", negative_prompt[: 1024 - 3], False),
             ("Checkpoint Model", checkpoint, False),
             ("VAE Model", vae, False),
+            ("Additional Networks", found_loras_string, False,)
             ("CFG Scale", cfg, True),
             ("Resolution",f"{width}x{height}",True,),
             ("Sampler",f"{sampler}",True,),
