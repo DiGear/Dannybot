@@ -268,6 +268,7 @@ def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
     output_folder = ffmpeg_cache_folder / "output"
+    #sd_folder = cache_folder / "SD_OUT"
 
     for folder in [cache_folder, ffmpeg_cache_folder, output_folder]:
         for file_path in folder.glob("*"):
