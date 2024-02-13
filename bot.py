@@ -4,6 +4,13 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+#im blocking dumb shit here
+class Suppressor:
+    def write(self, message):
+        if "WARNING:discord.gateway:Shard ID None heartbeat blocked" not in message:
+            sys.stderr.write(message)
+sys.stderr = Suppressor()
+
 # make it look nice in the console
 print("---------------------------------------------------------------------")
 print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
