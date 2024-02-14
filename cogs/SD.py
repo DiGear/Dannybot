@@ -238,6 +238,9 @@ class sd(commands.Cog):
         embed.set_author(
             name=ctx.author.name, icon_url=ctx.author.avatar.url
         )
+        
+        if found_loras_string == "":
+            found_loras_string = "None"
 
         # setting up the embed fields
         embed_fields = [
