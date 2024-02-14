@@ -119,6 +119,7 @@ class sd(commands.Cog):
             "Danny VAE",
         ] = "None",
         clip_skip: int = 1, 
+        #bool: bool = True
     ):
         await ctx.defer()
         
@@ -150,8 +151,8 @@ class sd(commands.Cog):
         
         steps = max(1, min(steps, 150))
         
-        height = min(max(height, 64), 2048)
-        width = min(max(width, 64), 2048)
+        height = min(max(height, 64), 1024)
+        width = min(max(width, 64), 1024)
 
         """
         end anti [REDACTED] measures
@@ -208,7 +209,6 @@ class sd(commands.Cog):
         "seed": seed,
         "width": width,
         "height": height,
-        "CLIP_stop_at_last_layers": clip_skip,
         #this is for me :)
         "save_images": True
         }
@@ -217,6 +217,7 @@ class sd(commands.Cog):
         override_settings = {
         "sd_model_checkpoint": checkpoint_alias,
         "sd_vae": vae_alias,
+        "CLIP_stop_at_last_layers": clip_skip
         }
 
         #apply the overrides
