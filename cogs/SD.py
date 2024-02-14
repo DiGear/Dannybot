@@ -118,9 +118,8 @@ class sd(commands.Cog):
             "vaeFtMse840000",
             "Danny VAE",
         ] = "None",
+        clip_skip: int = 1, 
     ):
-        #clip_skip: int = 1, 
-        #hires_fix: bool = False,   
         await ctx.defer()
         
         #the new logic will go here
@@ -131,6 +130,9 @@ class sd(commands.Cog):
             SDXL = True
         else:
             SDXL = False
+            
+        if seed == -1:
+            seed = random.randint(0,999999999)
         
         """
         anti [REDACTED] measures
@@ -206,7 +208,7 @@ class sd(commands.Cog):
         "seed": seed,
         "width": width,
         "height": height,
-        
+        "CLIP_stop_at_last_layers": clip_skip,
         #this is for me :)
         "save_images": True
         }
@@ -251,6 +253,7 @@ class sd(commands.Cog):
             ("Additional Networks", found_loras_string, False),
             ("CFG Scale", cfg, True),
             ("Resolution",f"{width}x{height}",True,),
+            ("Clip Skip",str(clip_skip),True,),
             ("Sampler",f"{sampler}",True,),
             ("Sampling Steps", steps, True),
             ("Seed", seed, True),
