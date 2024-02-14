@@ -118,7 +118,7 @@ class sd(commands.Cog):
             "vaeFtMse840000",
             "Danny VAE",
         ] = "None",
-        clip_skip: int = 1, 
+        clip_skip: int = 2, 
         #bool: bool = True
     ):
         await ctx.defer()
