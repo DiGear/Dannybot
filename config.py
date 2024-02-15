@@ -399,97 +399,6 @@ async def resolve_args(ctx, args, attachments, type="image"):
         if referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
-                    url = attachment.url
-                    print("URL from reply:", url)
-                    break
-
-    # Grab a URL if the command has an attachment
-    if not url and attachments:
-        for attachment in attachments:
-            if attachment.content_type.startswith(type):
-                url = attachment.url
-                print("URL from attachment:", url)
-                break
-
-    # Grab a URL passed from args
-    if not url:
-        if args and args[0].startswith("http"):
-            url = args[0]
-            text = " ".join(args[1:])
-            print("URL from argument:", url)
-
-        # Grab a URL from mentioned users avatar
-        if ctx.message.mentions:
-            mentioned_member = ctx.message.mentions[0]
-
-            if mentioned_member.guild_avatar:
-                url = str(mentioned_member.guild_avatar.url)
-                print("URL from avatar of mentioned user:", url)
-            else:
-                url = str(mentioned_member.avatar.url)
-                print("URL from avatar of mentioned user:", url)
-
-    # Message content iteration
-    if not url:
-        channel = ctx.message.channel
-        async for msg in channel.history(limit=500):
-            content = msg.content
-
-            # Grab the URL from the last sent messages Attachment
-            for attachment in msg.attachments:
-                attch_url = attachment.url
-                ext = attch_url.split(".")[-1]
-                if ext.lower() in extension_list:
-                    print("URL from attachment:", attch_url)
-                    url = attch_url
-                    break
-            if url:
-                break
-
-            # Grab the URL (tenor) from the last sent message
-            if type == "image" and "https://tenor.com/view/" in content:
-                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
-                url = gettenor(tenor_id)
-                print("URL from Tenor:", url)
-                break
-
-            # Grab the URL from the last sent message
-            if type == "image":
-                http_urls = re.findall(r"http\S+", content)
-                if http_urls:
-                    http_url = http_urls[0]
-                    ext = http_url.split(".")[-1]
-                    if ext.lower() in extension_list:
-                        print("URL from message content:", http_url)
-                        url = http_url
-                        break
-
-    print("Arguments:", text)
-    return [url, text]
-
-async def resolve_args_w_keys(ctx, args, attachments, type="image"):
-    url = None
-    text = " ".join(args)
-    print("Resolving URL and arguments...")
-
-    extensions = {
-        "image": ("png", "jpg", "jpeg", "gif", "bmp", "webp"),
-        "audio": ("wav", "ogg", "mp3", "flac", "aiff", "opus", "m4a", "oga"),
-        "midi": ("mid", "midi"),
-        "video": ("mp4", "avi", "mpeg", "mpg", "webm", "mov", "mkv"),
-        "3d": ("obj", "fbx", "stl", "dae"),
-        "office": ("doc", "docx", "xls", "xlsx", "ppt", "pptx"),
-        "text": ("txt", "rtf", "json"),
-        "code": ("py", "java", "cpp", "c", "h", "html", "css", "js", "php", "cs", "rb"),
-    }
-    extension_list = [ext.lower() for ext in extensions.get(type, ())]
-
-    # Grab a URL if the command is a reply to an image
-    if ctx.message.reference:
-        referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
-        if referenced_message.attachments:
-            for attachment in referenced_message.attachments:
-                if attachment.content_type.startswith(type):
                     url = attachment.url.split("?")
                     print("URL from reply: %s", url)
                     break
@@ -549,14 +458,15 @@ async def resolve_args_w_keys(ctx, args, attachments, type="image"):
                 http_urls = re.findall(r"http\S+", content)
                 if http_urls:
                     http_url = http_urls[0].split("?")
-                    ext = http_url.split(".")[-1]
+                    ext = http_url[0].split(".")[-1]
                     if ext.lower() in extension_list:
                         print(f"URL from message content: {http_url}")
                         url = http_url
                         break
-
-    print(f"Arguments: {text}")
-    return [url[0], text, url[1]]
+    
+    url = f"{url[0]}?{url[1]}"
+    print(f"Arguments: {url}, {text}")
+    return [url, text]
 
 # change hue (apparently not an inbuilt function of PIL)
 def change_hue(img, target_hue):
