@@ -69,6 +69,7 @@ async def on_message(input):
     else:
         os.chdir(dannybot)
         bot_is_busy = True
+        clear_cache()
         await bot.process_commands(input)
         bot_is_busy = False
 
