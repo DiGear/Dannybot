@@ -28,9 +28,9 @@ class audio(commands.Cog):
         brief="Flips a MIDI file upside down",
     )
     async def midiflip(self, ctx, *args):
-        cmd_info = await resolve_args_w_keys(ctx, args, ctx.message.attachments, "midi")
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments, "midi")
         file_url = cmd_info[0]
-        filename = os.path.basename(file_url)
+        filename = os.path.basename(file_url).split("?")[0]
         
         with open(f"{dannybot}\\cache\\{filename}", "wb") as f:
             f.write(requests.get(file_url).content)
