@@ -13,6 +13,7 @@ import io
 import json
 import logging
 import math
+import shutil
 import os
 import random
 import re
@@ -242,19 +243,6 @@ def repack_gif_JPG():
     return
 
 
-# clear the ffmpeg and ffmpeg/output folders of any residual files
-def cleanup_ffmpeg():
-    ffmpeg_folder = os.path.join("dannybot", "cache", "ffmpeg")
-    output_folder = os.path.join(ffmpeg_folder, "output")
-    print("Cleaning up...")
-    # Remove residual .png files in ffmpeg and output folders
-    for folder in [ffmpeg_folder, output_folder]:
-        for file_path in glob.glob(os.path.join(folder, "*.png")):
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-                print(f"Deleted: {file_path}")
-
-
 # generate a random hexadecimal string
 def randhex(bits):
     random_number = random.getrandbits(bits)
@@ -273,9 +261,12 @@ def clear_cache():
     for folder in [cache_folder, ffmpeg_cache_folder, output_folder]:
         for file_path in folder.glob("*"):
             if file_path.is_file() and "git" not in str(file_path):
-                file_path.unlink()
-                print(f"Deleted: {file_path}")
-
+                try:
+                    os.remove(file_path)
+                    print(f"Deleted: {file_path}")
+                except PermissionError:
+                    print(f"Skipped: {file_path} (File in use)")
+                    continue
 
 # get the amount of files in a folder
 def fileCount(folder):
@@ -378,6 +369,7 @@ def gettenor(gifid=None):
 
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
+    tenor = False
     text = " ".join(args)
     print("Resolving URL and arguments...")
 
@@ -396,7 +388,12 @@ async def resolve_args(ctx, args, attachments, type="image"):
     # Grab a URL if the command is a reply to an image
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
-        if referenced_message.attachments:
+        if "https://tenor.com/view/" in referenced_message.content:
+                tenor = True
+                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", referenced_message.content).group(1)
+                url = gettenor(tenor_id)
+                print(f"URL from Tenor: {url}")
+        elif referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
                     url = attachment.url.split("?")
@@ -414,9 +411,15 @@ async def resolve_args(ctx, args, attachments, type="image"):
     # Grab a URL passed from args
     if not url:
         if args and args[0].startswith("http"):
-            url = args[0].split("?")
-            text = " ".join(args[1:])
-            print(f"URL from argument: {url}")
+            if "https://tenor.com/view/" in args[0]:
+                tenor = True
+                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", args[0]).group(1)
+                url = gettenor(tenor_id)
+                print(f"URL from Tenor: {url}")
+            else:
+                url = args[0].split("?")
+                text = " ".join(args[1:])
+                print(f"URL from argument: {url}")
 
         # Grab a URL from mentioned users avatar
         if ctx.message.mentions:
@@ -447,7 +450,8 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 break
 
             # Grab the URL (tenor) from the last sent message
-            if type == "image" and "https://tenor.com/view/" in content:
+            if "https://tenor.com/view/" in content:
+                tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
                 url = gettenor(tenor_id)
                 print(f"URL from Tenor: {url}")
@@ -463,8 +467,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
                         print(f"URL from message content: {http_url}")
                         url = http_url
                         break
-    
-    url = f"{url[0]}?{url[1]}"
+    if tenor:
+        url = url
+    else:
+        url = f"{url[0]}?{url[1]}"
+        
     print(f"Arguments: {url}, {text}")
     return [url, text]
 

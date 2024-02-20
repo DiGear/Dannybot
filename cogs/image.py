@@ -117,7 +117,7 @@ class image(commands.Cog):
 
             with open(f"{cache_dir}\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "flipped.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             image_file = f"{cache_dir}\\flip.png"
             with open(image_file, "wb") as f:
@@ -162,7 +162,7 @@ class image(commands.Cog):
 
             with open(f"{cache_dir}\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "mirrored.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             image_file = f"{cache_dir}\\mirror.png"
             with open(image_file, "wb") as f:
@@ -247,7 +247,7 @@ class image(commands.Cog):
 
             with open(f"{cache_dir}\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, output_file), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             image_file = f"{cache_dir}\\magik_in.png"
             with open(image_file, "wb") as f:
@@ -299,7 +299,7 @@ class image(commands.Cog):
 
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "deepfried.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             with open(f"{dannybot}\\cache\\deepfry_in.png", "wb") as f:
                 f.write(requests.get(file_url).content)
@@ -341,7 +341,7 @@ class image(commands.Cog):
 
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "jpg-ed.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             image = PIL.Image.open(requests.get(file_url, stream=True).raw).convert(
                 "RGB"
@@ -388,7 +388,7 @@ class image(commands.Cog):
 
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "koala.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             image = PIL.Image.open(requests.get(file_url, stream=True).raw)
             koala1 = image.resize(
@@ -451,7 +451,7 @@ class image(commands.Cog):
         if is_gif:
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "meme.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
         else:
             with open(f"{dannybot}\\cache\\meme_out.png", "rb") as f:
                 await ctx.reply(file=File(f, "meme.png"), mention_author=True)
@@ -488,7 +488,7 @@ class image(commands.Cog):
             repack_gif()
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "explode.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
 
         else:
             with open(f"{dannybot}\\cache\\explodein.png", "wb") as f:
@@ -533,7 +533,7 @@ class image(commands.Cog):
             repack_gif()
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "implode.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
 
         else:
             with open(f"{dannybot}\\cache\\impin.png", "wb") as f:
@@ -574,7 +574,7 @@ class image(commands.Cog):
             repack_gif()
             with open(f"{dannybot}\\cache\\ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=File(f, "radial.gif"), mention_author=True)
-                cleanup_ffmpeg()
+                clear_cache()
 
         else:  # still
             with open(f"{dannybot}\\cache\\radin.png", "wb") as f:
