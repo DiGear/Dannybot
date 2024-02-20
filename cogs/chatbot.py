@@ -75,7 +75,7 @@ class sentience(commands.Cog):
     @commands.command(hidden=True)
     @commands.is_owner()
     async def alzheimers(self, ctx):
-        self.message_array = [{"role": "system", "content": self.sysmsg}]
+        self.message_array = [{"role": "system", "content": "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."}]
         self.array_index = 0
 
     @commands.command(hidden=True)
