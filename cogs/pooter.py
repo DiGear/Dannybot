@@ -49,11 +49,9 @@ class pooter(commands.Cog):
                     total_files = len(input_message.attachments)
                 else:
                     total_files = 1
-                await message.send(
-                    f"Downloading... {count} of {total_files}", delete_after=1
-                )
-                file_url = url.split("?")[0]
-                file_extension = file_url.split(".")[-1]
+                file_url = url.split("?")
+                file_extension = file_url[0].split(".")[-1]
+                file_url = f"{file_url[0]}?{file_url[1]}"
                 with open(
                     f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
                 ) as f:
@@ -85,8 +83,9 @@ class pooter(commands.Cog):
             tasks = []
             for idx, file in enumerate(files):
                 if hasattr(file, "url"):
-                    file_url = file.url.split("?")[0]
-                    file_extension = file_url.split(".")[-1]
+                    file_url = file.url.split("?")
+                    file_extension = file_url[0].split(".")[-1]
+                    file_url = f"{file_url[0]}?{file_url[1]}"
                     sanitized_filename = (
                         sanitize_filename(file_url) + "." + file_extension
                     )
@@ -124,13 +123,9 @@ class pooter(commands.Cog):
                 if "https://tenor.com/view/" in url:
                     tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                     url = gettenor(tenor_id)
-                # Display download progress
-                await ctx.send(
-                    f"Downloading... {current_download} of {total_downloads}",
-                    delete_after=1,
-                )
-                file_url = url.split("?")[0]
-                file_extension = file_url.split(".")[-1]
+                file_url = url.split("?")
+                file_extension = file_url[0].split(".")[-1]
+                file_url = f"{file_url[0]}?{file_url[1]}"
                 with open(
                     f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
                 ) as f:
@@ -157,8 +152,9 @@ class pooter(commands.Cog):
             total_downloads = len(ctx.message.attachments)
             tasks = []
             for i, attachment in enumerate(ctx.message.attachments):
-                file_url = attachment.url.split("?")[0]
-                file_extension = file_url.split(".")[-1]
+                file_url = attachment.url.split("?")
+                file_extension = file_url[0].split(".")[-1]
+                file_url = f"{file_url[0]}?{file_url[1]}"
                 filename = f"{randhex(128)}.{file_extension}"
                 task = asyncio.create_task(download_file(file_url, i + 1))
                 tasks.append(task)
