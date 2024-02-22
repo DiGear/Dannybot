@@ -43,15 +43,20 @@ class pooter(commands.Cog):
         async def download_file(url, count, message, file_name):
             if any(ext.lower() in url for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
+                    tenor = True
                     tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                     url = gettenor(tenor_id)
                 if input_message.attachments:
                     total_files = len(input_message.attachments)
                 else:
                     total_files = 1
-                file_url = url.split("?")
-                file_extension = file_url[0].split(".")[-1]
-                file_url = f"{file_url[0]}?{file_url[1]}"
+                if not tenor:
+                    file_url = url.split("?")
+                    file_extension = file_url[0].split(".")[-1]
+                    file_url = f"{file_url[0]}?{file_url[1]}"
+                else:
+                    file_url = url
+                    file_extension = file_url.split(".")[-1]
                 with open(
                     f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
                 ) as f:
@@ -121,11 +126,16 @@ class pooter(commands.Cog):
             # Check if the file format is valid
             if any(ext.lower() in url for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
+                    tenor = True
                     tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", url).group(1)
                     url = gettenor(tenor_id)
-                file_url = url.split("?")
-                file_extension = file_url[0].split(".")[-1]
-                file_url = f"{file_url[0]}?{file_url[1]}"
+                if not tenor:
+                    file_url = url.split("?")
+                    file_extension = file_url[0].split(".")[-1]
+                    file_url = f"{file_url[0]}?{file_url[1]}"
+                else:
+                    file_url = url
+                    file_extension = file_url.split(".")[-1]
                 with open(
                     f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
                 ) as f:
