@@ -41,6 +41,7 @@ class pooter(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         # Function to download a file from a URL
         async def download_file(url, count, message, file_name):
+            tenor = False
             if any(ext.lower() in url for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
                     tenor = True
@@ -123,6 +124,7 @@ class pooter(commands.Cog):
     )
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         async def download_file(url, current_download):
+            tenor = False
             # Check if the file format is valid
             if any(ext.lower() in url for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
