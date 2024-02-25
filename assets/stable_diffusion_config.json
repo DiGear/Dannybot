@@ -1,6 +1,4 @@
 {
-	"default_lora" : "GoodHands-beta2.safetensors",
-	
 	"lora" : 
 	[
 		["senko", "senko_2023-04-03_nai_no-vae_lr_1e-3_dim64", 1],
