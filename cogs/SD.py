@@ -50,7 +50,6 @@ class sd(commands.Cog):
 
     @commands.hybrid_command(
         name="sd",
-        aliases=["groch", "diffuse", "stablediffusion"],
         description="Create AI generated images via Stable-Diffusion.",
         brief="Create AI generated images with Dannybot.",
     )
@@ -158,34 +157,42 @@ class sd(commands.Cog):
         end anti [REDACTED] measures
         """
         
+        #--------------
         # LORA shit
+        #--------------
         positive_prompt2 = positive_prompt
         activeloras = []
         lora_weight = []
+
         if SDXL:
             loraconcatsfw, loraconcatnsfw = loraXL, loraXL + nsfw_loraXL
         else:
             loraconcatsfw, loraconcatnsfw = lora, lora + nsfw_lora
+
         try:
             isNSFWChannel = isinstance(ctx.channel, discord.DMChannel) or ctx.channel.nsfw
         except:
             isNSFWChannel = False
+
         loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
         lora_tags = {}
         found_loras_string = ""
-        for lora_tuple in loraconcat:
-            lora_name = os.path.splitext(lora_tuple[0].lower())[0]
-            lora_tags[lora_name] = (os.path.splitext(lora_tuple[1])[0], lora_tuple[2])
-        for lora_name in lora_tags.keys():
-            if lora_name in positive_prompt.lower():
-                name, strength = lora_tags[lora_name]
-                found_loras_string += f"{name} ({strength}), "
-        found_loras_string = found_loras_string.rstrip(", ")
-        for lora_name, (name, strength) in lora_tags.items():
-            lora_tag = f"<lora:{name}:{strength}>"
-            positive_prompt2 = re.compile(r'\b{}\b'.format(re.escape(lora_name)), re.IGNORECASE).sub(lora_tag, positive_prompt2)
-        output_prompt = positive_prompt2
+        used_loras = []
 
+        for lora_tuple in loraconcat:
+            lora_name = lora_tuple[0].lower()
+            if lora_name in positive_prompt.lower():
+                name, strength = lora_tuple[1], lora_tuple[2]
+                lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
+                positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
+                used_loras.append((lora_name.capitalize(), strength))
+
+        output_prompt = positive_prompt2
+        found_loras_string = ", ".join([f"{lora[0]} ({lora[1]})" for lora in used_loras])
+        #--------------
+        # End LORA Shit
+        #--------------
+        
         # getting the checkpoint value from the dictionary
         checkpoint_alias = checkpoint
         if checkpoint_alias in checkpoints:
