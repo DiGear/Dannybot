@@ -251,27 +251,22 @@ def randhex(bits):
     return random_hex
 
 
-def delete_file(file_path):
-    try:
-        os.remove(file_path)
-        print(f"Deleted: {file_path}")
-    except PermissionError:
-        print(f"Skipped: {file_path} (File in use)")
-    except Exception as e:
-        print(f"Error deleting {file_path}: {e}")
-
+# clear the cache folder of all files
 def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
     output_folder = ffmpeg_cache_folder / "output"
     #sd_folder = cache_folder / "SD_OUT"
 
-    folders = [cache_folder, ffmpeg_cache_folder, output_folder]
-    with ThreadPoolExecutor(max_workers=os.cpu_count() * 2) as executor:
-        for folder in folders:
-            for file_path in folder.glob("*"):
-                if file_path.is_file() and "git" not in str(file_path):
-                    executor.submit(delete_file, file_path)
+    for folder in [cache_folder, ffmpeg_cache_folder, output_folder]:
+        for file_path in folder.glob("*"):
+            if file_path.is_file() and "git" not in str(file_path):
+                try:
+                    os.remove(file_path)
+                    print(f"Deleted: {file_path}")
+                except PermissionError:
+                    print(f"Skipped: {file_path} (File in use)")
+                    continue
 
 # get the amount of files in a folder
 def fileCount(folder):
@@ -826,36 +821,40 @@ def uwuify(input_text):
     return modified_text
 
 
-# Function to calculate file hash
-def calculate_file_hash(fp, block_size=65536):
-    return hashlib.md5(open(fp, "rb").read(block_size)).hexdigest()
-
-# Function to clean up the pooter folder
+# clean up the pooter folder
 def clean_pooter():
+    # Directory path
     directory_path = f"{dannybot}\\database\\Pooter"
 
-    if not os.path.exists(directory_path):
-        logger.error(f"Pooter folder not found. Aborting.")
-        return
+    # Calculate file hash with hashlib.md5
+    calculate_file_hash = lambda fp, block_size=65536: hashlib.md5(
+        open(fp, "rb").read(block_size)
+    ).hexdigest()
 
-    file_hashes = {}
-    files_without_extension = {file for file in os.listdir(directory_path) if "." not in file}
+    if os.path.exists(directory_path):
+        # Initialize empty dict
+        file_hashes = {}
+        # Filter files without extensions while creating the list
+        files_without_extension = {
+            file for file in os.listdir(directory_path) if "." not in file
+        }
 
-    def process_file(file):
-        file_path = os.path.join(directory_path, file)
-        file_hash = calculate_file_hash(file_path)
-        if file_hash in file_hashes or file in files_without_extension:
-            os.remove(file_path)
-            print(f"Deleted: {file}")
-        else:
-            file_hashes[file_hash] = file_path
-
-    with ThreadPoolExecutor(max_workers=os.cpu_count() * 2) as executor:
+        # Go through all files in directory including subdirectories
         for path, _, files in os.walk(directory_path):
             for file in files:
-                executor.submit(process_file, file)
+                file_path = os.path.join(path, file)  # Create full file path
+                file_hash = calculate_file_hash(file_path)  # Calculate file hash
 
-    print("No more files to clean.")
+                # Delete the duplicate file and files with no extensions
+                if file_hash in file_hashes or file in files_without_extension:
+                    os.remove(file_path)
+                    print(f"Deleted: {file}")
+                else:
+                    file_hashes[file_hash] = file_path  # Add to dict
+
+        print("No more files to clean.")
+    else:
+        logger.error(f"Pooter folder not found. Aborting.")
 
 
 def clean_pooter_silent():
