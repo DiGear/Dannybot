@@ -77,6 +77,7 @@ logger = logging.getLogger(__name__)
 
 # ----------
 # Variables
+# (im considering moving these into a large config json, not the functions but just this stuff)
 # ----------
 
 # dannybot config
@@ -116,7 +117,7 @@ bookmarks_channel = int(os.getenv("BOOKMARKS"))  # channel to send personal book
 logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 
 # more .env keys being assigned here
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY") # i hope i can remove this soon
 removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey = os.getenv("TENOR_KEY")
 AlphaVantageAPI = os.getenv("AV_API_KEY") 
@@ -245,20 +246,19 @@ def repack_gif_JPG():
 
 # generate a random hexadecimal string
 def randhex(bits):
+    num_bytes = (bits + 3) // 4
     random_number = random.getrandbits(bits)
-    random_bytes = random_number.to_bytes((bits + 7) // 8, "big")
-    random_hex = random_bytes.hex()
+    random_hex = hex(random_number)[2:].zfill(num_bytes)
     return random_hex
-
 
 # clear the cache folder of all files
 def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
     output_folder = ffmpeg_cache_folder / "output"
-    #sd_folder = cache_folder / "SD_OUT"
+    folders_to_clear = [cache_folder, ffmpeg_cache_folder, output_folder]
 
-    for folder in [cache_folder, ffmpeg_cache_folder, output_folder]:
+    def clear_files(folder):
         for file_path in folder.glob("*"):
             if file_path.is_file() and "git" not in str(file_path):
                 try:
@@ -267,6 +267,18 @@ def clear_cache():
                 except PermissionError:
                     print(f"Skipped: {file_path} (File in use)")
                     continue
+
+    threads = []
+    for folder in folders_to_clear:
+        thread = threading.Thread(target=clear_files, args=(folder,))
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
+
+    print("Cache cleared.")
+
 
 # get the amount of files in a folder
 def fileCount(folder):
@@ -284,17 +296,16 @@ def is_float(value):
 
 # get the total size of all files in a folder
 def fileSize(folder):
-    walk = partial(os.walk, top=folder, topdown=False)
-    total_size = sum(
-        os.path.getsize(os.path.join(dp, f))
-        for dp, dn, filenames in walk()
-        for f in filenames
-    )
+    total_size = 0
+    for root, _, filenames in os.walk(folder, topdown=False):
+        for filename in filenames:
+            file_path = os.path.join(root, filename)
+            total_size += os.path.getsize(file_path)
+
     units = ["bytes", "KB", "MB", "GB", "TB"]
-    unit_index = 0
-    while total_size >= 1024 and unit_index < len(units) - 1:
-        total_size /= 1024
-        unit_index += 1
+    unit_index = min(len(units) - 1, int(math.floor(math.log(total_size, 1024))))
+    total_size /= 1024 ** unit_index
+
     return f"{total_size:.2f} {units[unit_index]}"
 
 
@@ -367,6 +378,7 @@ def gettenor(gifid=None):
         gifs = None
     return gifs["results"][0]["media"][0]["gif"]["url"]
 
+# this shit hole of a function is how dannybot handles files sent within discord and how they should be used with other args
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     tenor = False
@@ -474,6 +486,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         
     print(f"Arguments: {url}, {text}")
     return [url, text]
+
 
 # change hue (apparently not an inbuilt function of PIL)
 def change_hue(img, target_hue):
@@ -767,57 +780,38 @@ def listgen(directory):
     string = ", ".join(list)
     return string
 
-def case_agnostic_replace(text, old, new):
-    result = ""
-    i = 0
-    while i < len(text):
-        if text[i:i + len(old)].lower() == old.lower():
-            result += text[i:i + len(old)].replace(old, new, 1)
-            i += len(old)
-        else:
-            result += text[i]
-            i += 1
-    return result
 
 # i hate this - FDG
+# i went back and make this more annoying to read and look at so hopefully people avoid it and dont get infected with the uwu virus
 def uwuify(input_text):
-    # Replacement for 'l' -> 'w'
+    def case_agnostic_replace(text, old, new):
+        result = ""
+        i = 0
+        while i < len(text):
+            if text[i:i + len(old)].lower() == old.lower():
+                result += text[i:i + len(old)].replace(old, new, 1)
+                i += len(old)
+            else:
+                result += text[i]
+                i += 1
+        return result
     modified_text1 = case_agnostic_replace(input_text, "l", "w")
-
-    # Replacement for 'u' -> 'uu'
     modified_text2 = case_agnostic_replace(modified_text1, "u", "uu")
-
-    # Replacement for 'r' -> 'w'
     modified_text3 = case_agnostic_replace(modified_text2, "r", "w")
-
-    # Replacement for 'the' -> 'de'
     modified_text4 = case_agnostic_replace(modified_text3, "the", "de")
-
-    # Replacement for 'to' -> 'tu'
     modified_text5 = case_agnostic_replace(modified_text4, "to", "tu")
-
-    # List of emoticons
     emoticons = ["^_^", ">w<", "x3", "^.^", "^-^", "(・ˋω´・)", "x3", ";;w;;"]
-
-    # Split the input text into individual words
     words = modified_text5.split()
-
-    # Iterate over the words and randomly insert an emoticon between them
     output_text = []
     for i, word in enumerate(words):
         output_text.append(word)
         if (
             i < len(words) - 1 and random.random() < 0.1
-        ):  # Adjust the chance as desired (e.g., 0.2 for 20% chance)
+        ): 
             output_text.append(random.choice(emoticons))
-
-    # Join the modified words back into a single string
     modified_text6 = " ".join(output_text)
-
-    # Perform additional replacements using .replace statements
     modified_text7 = case_agnostic_replace(modified_text6, "~", "")
     modified_text = case_agnostic_replace(modified_text7, "!", " !~ ")
-
     return modified_text
 
 
@@ -830,6 +824,7 @@ def clean_pooter():
         return
 
     file_hashes = {}
+    lock = threading.Lock()
 
     def calculate_file_hash(file_path, block_size=65536):
         hasher = hashlib.md5()
@@ -838,18 +833,31 @@ def clean_pooter():
                 hasher.update(chunk)
         return hasher.hexdigest()
 
-    for path, _, files in os.walk(directory_path):
-        for file in files:
-            file_path = os.path.join(path, file)
-            if '.' not in file:
-                os.remove(file_path)
+    def clean_file(file):
+        nonlocal file_hashes
+        file_path = os.path.join(directory_path, file)
+        if '.' not in file:
+            os.remove(file_path)
+            with lock:
                 print(f"Deleted: {file}")
-                continue
-            file_hash = calculate_file_hash(file_path)
+            return
+        file_hash = calculate_file_hash(file_path)
+        with lock:
             if file_hash in file_hashes:
                 os.remove(file_path)
                 print(f"Deleted: {file}")
             else:
                 file_hashes[file_hash] = file_path
+
+    files_to_clean = [file for file in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, file))]
+
+    threads = []
+    for file in files_to_clean:
+        thread = threading.Thread(target=clean_file, args=(file,))
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
 
     print("No more files to clean.")
