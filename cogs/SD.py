@@ -160,7 +160,7 @@ class sd(commands.Cog):
         #--------------
         # LORA shit
         #--------------
-        positive_prompt2 = positive_prompt
+        positive_prompt2 = positive_prompt.lower()
         activeloras = []
         lora_weight = []
 
@@ -179,10 +179,10 @@ class sd(commands.Cog):
         found_loras_string = ""
         used_loras = []
 
-        for word in re.findall(r'\b[\w\s]+\b', positive_prompt):
+        for word in re.findall(r'\b[\w\s]+\b|\b\w+\b', positive_prompt2):
             for lora_tuple in loraconcat:
                 lora_name = lora_tuple[0].lower()
-                if lora_name == word.lower():
+                if lora_name == word:
                     name, strength = lora_tuple[1], lora_tuple[2]
                     lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
                     positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
@@ -255,7 +255,8 @@ class sd(commands.Cog):
 
         # setting up the embed fields
         embed_fields = [
-            ("Positive Prompt", positive_prompt[: 1024 - 3], False),
+            ("User Prompt", positive_prompt[: 1024 - 3], False),
+            ("Refined Prompt", output_prompt[: 1024 - 3], False),
             ("Negative Prompt", negative_prompt[: 1024 - 3], False),
             ("Checkpoint Model", checkpoint, False),
             ("VAE Model", vae, False),
