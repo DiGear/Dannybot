@@ -25,7 +25,7 @@ intents.voice_states = True
 intents.messages = True
 
 # We set up logger here
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # define our prefix(es) and status
@@ -36,9 +36,6 @@ bot = commands.Bot(
     intents=intents,
     case_insensitive=True,
 )
-
-# unused
-bot_is_busy = False
 
 # do this when everything else is done
 @bot.event
@@ -54,24 +51,22 @@ async def on_ready():
 
 # this is our message handler
 @bot.event
-async def on_message(input):
-    global bot_is_busy
-    if input.author.bot:
+async def on_message(message):
+    if message.author.bot:
         return
-    is_denial = random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(
-        input.content.startswith(prefix) for prefix in dannybot_prefixes
+    
+    is_denial = (
+        random.randint(0, dannybot_denialRatio) == dannybot_denialRatio
+        and any(message.content.startswith(prefix) for prefix in dannybot_prefixes)
     )
 
     if is_denial:
-        await input.channel.send(
-            random.choice(dannybot_denialResponses), reference=input
-        )
+        await message.channel.send(random.choice(dannybot_denialResponses), reference=message)
     else:
-        os.chdir(dannybot)
-        bot_is_busy = True
-        clear_cache()
-        await bot.process_commands(input)
-        bot_is_busy = False
+        if any(message.content.startswith(prefix) for prefix in dannybot_prefixes):
+            os.chdir(dannybot)
+            await bot.process_commands(message)
+
 
 # this is a ping command and it's pretty self-explanatory
 @bot.hybrid_command(
@@ -80,10 +75,12 @@ async def on_message(input):
     brief="Sends the current bot latency",
 )
 async def ping(ctx: commands.Context):
-    ping_time = int(round(bot.latency * 1000))
-    await ctx.send(content=f"Ping is {ping_time}ms")
-    print(f"Dannybot was pinged at {ping_time}ms")
-
+    start_time = time.monotonic()
+    message = await ctx.send(f"Round-trip Latency: NANms | API Latency: NANms")
+    end_time = time.monotonic()
+    ping_time = round((end_time - start_time) * 1000)
+    await message.edit(content=f"Round-trip Latency: {ping_time}ms | API Latency: {round(bot.latency * 1000)}ms")
+    print(f"Dannybot was pinged at {ping_time}ms on Round-trip, {round(bot.latency * 1000)}ms on API")
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.hybrid_command(
@@ -145,7 +142,7 @@ async def load_extensions():
         if filename.endswith(".py"):
             cog_name = filename[:-3]
             cog_path = f"cogs.{cog_name}"
-            tasks.append(load_extension(cog_path))
+            tasks.append(asyncio.create_task(load_extension(cog_path)))
 
     # gather and execute all load_extension tasks concurrently
     await asyncio.gather(*tasks)
