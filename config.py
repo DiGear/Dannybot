@@ -823,56 +823,33 @@ def uwuify(input_text):
 
 # clean up the pooter folder
 def clean_pooter():
-    # Directory path
-    directory_path = f"{dannybot}\\database\\Pooter"
+    directory_path = os.path.join(dannybot, 'database', 'Pooter')
 
-    # Calculate file hash with hashlib.md5
-    calculate_file_hash = lambda fp, block_size=65536: hashlib.md5(
-        open(fp, "rb").read(block_size)
-    ).hexdigest()
+    if not os.path.exists(directory_path):
+        logging.error("Pooter folder not found. Aborting.")
+        return
 
-    if os.path.exists(directory_path):
-        # Initialize empty dict
-        file_hashes = {}
-        # Filter files without extensions while creating the list
-        files_without_extension = {
-            file for file in os.listdir(directory_path) if "." not in file
-        }
+    file_hashes = {}
 
-        # Go through all files in directory including subdirectories
-        for path, _, files in os.walk(directory_path):
-            for file in files:
-                file_path = os.path.join(path, file)  # Create full file path
-                file_hash = calculate_file_hash(file_path)  # Calculate file hash
+    def calculate_file_hash(file_path, block_size=65536):
+        hasher = hashlib.md5()
+        with open(file_path, 'rb') as f:
+            for chunk in iter(lambda: f.read(block_size), b''):
+                hasher.update(chunk)
+        return hasher.hexdigest()
 
-                # Delete the duplicate file and files with no extensions
-                if file_hash in file_hashes or file in files_without_extension:
-                    os.remove(file_path)
-                    print(f"Deleted: {file}")
-                else:
-                    file_hashes[file_hash] = file_path  # Add to dict
+    for path, _, files in os.walk(directory_path):
+        for file in files:
+            file_path = os.path.join(path, file)
+            if '.' not in file:
+                os.remove(file_path)
+                print(f"Deleted: {file}")
+                continue
+            file_hash = calculate_file_hash(file_path)
+            if file_hash in file_hashes:
+                os.remove(file_path)
+                print(f"Deleted: {file}")
+            else:
+                file_hashes[file_hash] = file_path
 
-        print("No more files to clean.")
-    else:
-        logger.error(f"Pooter folder not found. Aborting.")
-
-
-def clean_pooter_silent():
-    directory_path = f"{dannybot}\\database\\Pooter"
-    calculate_file_hash = lambda fp, block_size=65536: hashlib.md5(
-        open(fp, "rb").read(block_size)
-    ).hexdigest()
-    if os.path.exists(directory_path):
-        file_hashes = {}
-        files_without_extension = {
-            file for file in os.listdir(directory_path) if "." not in file
-        }
-        for path, _, files in os.walk(directory_path):
-            for file in files:
-                file_path = os.path.join(path, file)
-                file_hash = calculate_file_hash(file_path)
-                if file_hash in file_hashes or file in files_without_extension:
-                    os.remove(file_path)
-                    print(f"Deleted: {file}")
-                else:
-                    file_hashes[file_hash] = file_path
+    print("No more files to clean.")
