@@ -94,21 +94,21 @@
 	
 	"nsfw_lora" : 
 	[
-		["futanari", "futanari_concept_full_v1-000020.safetensors", 1.0],
-		["femboi", "femboiFull.safetensors", 0.75],
-		["pubic hair", "pubic hair.safetensors", 0.7],
-		["buttjob", "buttjob.safetensors", 0.7],
-		["thighjob", "thighjob.safetensors", 0.8],
-		["cameltoe", "Cameltoe.safetensors", 0.76],
-		["penishead", "penisheadv1.safetensors", 0.66],
-		["bandaid on pussy", "Bandaid On Pussy.safetensors", 0.7],
-		["penis shadow", "Penis Shadow.safetensors", 0.86],
-		["bandaids on nipples", "bandaids_on_nipples.safetensors", 0.8],
-		["against glass", "against_glass_v0.2.safetensors", 1.0],
-		["grabbing own breasts", "SelfBreastGrab.safetensors", 0.8],
-		["paizuri", "POVPaizuri.safetensors", 1.0],
-		["trapped in wall", "Trapped_In_WallV2.safetensors", 0.7],
-		["feet", "feet 2.safetensors", 0.75]
+		["futanari", "futanari_concept_full_v1", 1.0],
+		["femboi", "femboiFull", 0.75],
+		["female_pubic_hair", "female pubic hair3", 0.7],
+		["buttjob", "assjob", 0.7],
+		["thigh_sex ", "THIGHJOB", 0.8],
+		["cameltoe", "GGCameltoe", 0.76],
+		["penis_head", "penisheadv1", 0.66],
+		["bandaid_on_pussy", "Bandaid On Pussy", 0.7],
+		["penis shadow", "Penis Shadow", 0.86],
+		["bandaids_on_nipples", "bandaids_on_nipples", 0.8],
+		["against_glass", "SelfBreastGrab", 1.0],
+		["grabbing_own_breast", "SelfBreastGrab", 0.8],
+		["paizuri", "pzuri", 1.0],
+		["glory_wall ", "Trapped_In_WallV2", 0.7],
+		["foot_focus", "feet 2", 0.75]
 	],
 	
 	"loraXL" : 
