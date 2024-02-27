@@ -160,7 +160,7 @@ class sd(commands.Cog):
         #--------------
         # LORA shit
         #--------------
-        positive_prompt2 = positive_prompt
+        positive_prompt2 = positive_prompt.lower()
         activeloras = []
         lora_weight = []
 
@@ -178,31 +178,15 @@ class sd(commands.Cog):
         lora_tags = {}
         found_loras_string = ""
         used_loras = []
-        pattern_phrases = r'"[^"]+"'
-        pattern_words = r'\b\w+\b'
 
-        for match in re.finditer(pattern_phrases, positive_prompt):
-            phrase = match.group(0).strip('"')
-            print("Matched phrase:", phrase)
+        for word in re.findall(r'\b[\w\s]+\b|\b\w+\b', positive_prompt2):
             for lora_tuple in loraconcat:
                 lora_name = lora_tuple[0].lower()
-                if lora_name == phrase.lower():
+                if lora_name == word:
                     name, strength = lora_tuple[1], lora_tuple[2]
-                    lora_tag = f"<lora:{name}:{strength}> {phrase}"
-                    positive_prompt2 = positive_prompt2.replace(match.group(0), lora_tag)
-                    used_loras.append((phrase.capitalize(), strength))
-        for word in re.findall(pattern_words, positive_prompt):
-            print("Matched word:", word)
-            for lora_tuple in loraconcat:
-                lora_name = lora_tuple[0].lower()
-                if lora_name == word.lower():
-                    name, strength = lora_tuple[1], lora_tuple[2]
-                    lora_tag = f"<lora:{name}:{strength}> {word}"
-                    positive_prompt2 = re.sub(r'\b{}\b'.format(re.escape(word)), lora_tag, positive_prompt2)
-                    used_loras.append((word.capitalize(), strength))
-
-        print("Modified prompt:", positive_prompt2)
-        print("Used Loras:", used_loras)
+                    lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
+                    positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
+                    used_loras.append((lora_name.capitalize(), strength))
 
         output_prompt = positive_prompt2
         found_loras_string = ", ".join([f"{lora[0]} ({lora[1]})" for lora in used_loras])
@@ -271,11 +255,12 @@ class sd(commands.Cog):
 
         # setting up the embed fields
         embed_fields = [
-            ("Positive Prompt", positive_prompt[: 1024 - 3], False),
+            ("User Prompt", positive_prompt[: 1024 - 3], False),
+            ("Refined Prompt", output_prompt[: 1024 - 3], False),
             ("Negative Prompt", negative_prompt[: 1024 - 3], False),
             ("Checkpoint Model", checkpoint, False),
             ("VAE Model", vae, False),
-            ("Triggered LORAs", found_loras_string, False),
+            ("Additional Networks", found_loras_string, False),
             ("CFG Scale", cfg, True),
             ("Resolution",f"{width}x{height}",True,),
             ("Clip Skip",str(clip_skip),True,),
