@@ -181,20 +181,12 @@ class sd(commands.Cog):
         used_loras = []
 
         for lora_tuple in loraconcat:
-<<<<<<< HEAD
             lora_name = lora_tuple[0]
             pattern = r'\b' + re.escape(lora_name) + r'\b'
             if re.search(pattern, positive_prompt2, re.IGNORECASE):
                 name, strength = lora_tuple[1], lora_tuple[2]
                 lora_tag = f"<lora:{name}:{strength}> {lora_name}"
                 positive_prompt2 = re.sub(pattern, lora_tag, positive_prompt2, flags=re.IGNORECASE)
-=======
-            lora_name = lora_tuple[0].lower()
-            if lora_name in positive_prompt.lower():
-                name, strength = lora_tuple[1], lora_tuple[2]
-                lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
-                positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
->>>>>>> parent of d5a03ca (use regex patterns to un-wildcard lora triggers)
                 used_loras.append((lora_name.capitalize(), strength))
 
         output_prompt = positive_prompt2
