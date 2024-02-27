@@ -179,13 +179,14 @@ class sd(commands.Cog):
         found_loras_string = ""
         used_loras = []
 
-        for lora_tuple in loraconcat:
-            lora_name = lora_tuple[0].lower()
-            if lora_name in positive_prompt.lower():
-                name, strength = lora_tuple[1], lora_tuple[2]
-                lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
-                positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
-                used_loras.append((lora_name.capitalize(), strength))
+        for word in re.findall(r'\b[\w\s]+\b', positive_prompt):
+            for lora_tuple in loraconcat:
+                lora_name = lora_tuple[0].lower()
+                if lora_name == word.lower():
+                    name, strength = lora_tuple[1], lora_tuple[2]
+                    lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
+                    positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
+                    used_loras.append((lora_name.capitalize(), strength))
 
         output_prompt = positive_prompt2
         found_loras_string = ", ".join([f"{lora[0]} ({lora[1]})" for lora in used_loras])
