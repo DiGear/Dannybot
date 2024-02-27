@@ -178,25 +178,21 @@ class sd(commands.Cog):
         lora_tags = {}
         found_loras_string = ""
         used_loras = []
+        pattern_phrases = r'"[^"]+"'
+        pattern_words = r'\b\w+\b'
 
-        pattern_phrases = r'"[^"]+"'  # Pattern to match phrases in double quotes
-        pattern_words = r'\b\w+\b'     # Pattern to match individual words
-
-        # Match phrases
         for match in re.finditer(pattern_phrases, positive_prompt):
             phrase = match.group(0).strip('"')
-            print("Matched phrase:", phrase)  # Debugging: Print matched phrase
+            print("Matched phrase:", phrase)
             for lora_tuple in loraconcat:
                 lora_name = lora_tuple[0].lower()
                 if lora_name == phrase.lower():
                     name, strength = lora_tuple[1], lora_tuple[2]
-                    lora_tag = f"<lora:{name}:{strength}> {phrase}"  # Use phrase instead of lora_name
+                    lora_tag = f"<lora:{name}:{strength}> {phrase}"
                     positive_prompt2 = positive_prompt2.replace(match.group(0), lora_tag)
                     used_loras.append((phrase.capitalize(), strength))
-
-        # Match individual words
         for word in re.findall(pattern_words, positive_prompt):
-            print("Matched word:", word)  # Debugging: Print matched word
+            print("Matched word:", word)
             for lora_tuple in loraconcat:
                 lora_name = lora_tuple[0].lower()
                 if lora_name == word.lower():
