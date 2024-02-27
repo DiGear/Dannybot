@@ -175,18 +175,19 @@ class sd(commands.Cog):
             isNSFWChannel = False
 
         loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
+        
         lora_tags = {}
         found_loras_string = ""
         used_loras = []
 
-        for word in re.findall(r'\b[\w\s]+\b', positive_prompt):
-            for lora_tuple in loraconcat:
-                lora_name = lora_tuple[0].lower()
-                if lora_name == word.lower():
-                    name, strength = lora_tuple[1], lora_tuple[2]
-                    lora_tag = f"<lora:{name}:{strength}> {lora_tuple[0]}"
-                    positive_prompt2 = positive_prompt2.replace(lora_name, lora_tag)
-                    used_loras.append((lora_name.capitalize(), strength))
+        for lora_tuple in loraconcat:
+            lora_name = lora_tuple[0]
+            pattern = r'\b' + re.escape(lora_name) + r'\b'
+            if re.search(pattern, positive_prompt2, re.IGNORECASE):
+                name, strength = lora_tuple[1], lora_tuple[2]
+                lora_tag = f"<lora:{name}:{strength}> {lora_name}"
+                positive_prompt2 = re.sub(pattern, lora_tag, positive_prompt2, flags=re.IGNORECASE)
+                used_loras.append((lora_name.capitalize(), strength))
 
         output_prompt = positive_prompt2
         found_loras_string = ", ".join([f"{lora[0]} ({lora[1]})" for lora in used_loras])
@@ -255,11 +256,12 @@ class sd(commands.Cog):
 
         # setting up the embed fields
         embed_fields = [
-            ("Positive Prompt", positive_prompt[: 1024 - 3], False),
-            ("Negative Prompt", negative_prompt[: 1024 - 3], False),
+            ("User Positive Prompt", f"{positive_prompt[: 1024 - 3]}", False),
+            ("SD Internal Positive Prompt", f"{output_prompt[: 1024 - 3]}", False),
+            ("Negative Prompt", f"{negative_prompt[: 1024 - 3]}", False),
             ("Checkpoint Model", checkpoint, False),
             ("VAE Model", vae, False),
-            ("Additional Networks", found_loras_string, False),
+            ("Triggered LORAs", f"{found_loras_string[: 1024 - 3]}", False),
             ("CFG Scale", cfg, True),
             ("Resolution",f"{width}x{height}",True,),
             ("Clip Skip",str(clip_skip),True,),
