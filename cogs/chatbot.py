@@ -48,6 +48,7 @@ class sentience(commands.Cog):
                 messages=list(self.message_array)
             )
             response_text = response_data.choices[0].message.content
+            response_text = re.sub(r'(?i)dannybot:', '', response_text)
             response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
 
             print(f"{message.author.display_name} Said: {content}")
