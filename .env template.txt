@@ -4,9 +4,6 @@ TOKEN=
 # OpenAI API Key
 OPENAI_API_KEY=
 
-# RemoveBG API Key
-REMOVEBG_KEY=
-
 # Tenor API Key
 TENOR_KEY=
 

@@ -117,7 +117,6 @@ logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 
 # more .env keys being assigned here
 openai.api_key = os.getenv("OPENAI_API_KEY") # i hope i can remove this soon
-removebg_key = os.getenv("REMOVEBG_KEY")
 tenor_apikey = os.getenv("TENOR_KEY")
 AlphaVantageAPI = os.getenv("AV_API_KEY") 
 
