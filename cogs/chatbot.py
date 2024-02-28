@@ -26,7 +26,9 @@ class sentience(commands.Cog):
     def __init__(self, bot: commands.Bot, memory_length=12):
         self.bot = bot
         self.memory_length = memory_length
-        self.message_array = deque([{"role": "system", "content": "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."}], maxlen=memory_length + 1)
+        self.message_array = deque([{"role": "system", "content": '''
+            Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified.
+            '''}], maxlen=memory_length + 1)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -39,6 +41,8 @@ class sentience(commands.Cog):
                     "role": "user",
                     "content": f"{message.author.display_name} said: {content}"
                 })
+                if len(self.message_array) > self.memory_length:
+                    self.pop_not_sys()
                 response_data = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo-0125",
                     temperature=round(random.uniform(0.7, 1.5), 1),
@@ -50,6 +54,12 @@ class sentience(commands.Cog):
                 print(f"dannybot Said: {formatted_response}")
                 await message.channel.send(formatted_response, reference=message)
                 self.message_array.append({"role": "assistant", "content": formatted_response})
+    
+    def pop_not_sys(self):
+        for msg in self.message_array:
+            if msg["role"] != "system":
+                self.message_array.remove(msg)
+                break
 
     @commands.hybrid_command(
         name="chatgpt",
@@ -74,16 +84,9 @@ class sentience(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def alzheimers(self, ctx):
-        self.message_array = [{"role": "system", "content": "Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified."}]
-        self.array_index = 0
-
-    @commands.command(hidden=True)
-    @commands.is_owner()
     async def braindump(self, ctx):
         logger.debug(str(self.message_array))
         await ctx.send(str(self.message_array))
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))
