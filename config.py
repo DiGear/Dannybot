@@ -387,7 +387,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
     extensions = {
         "image": ("png", "jpg", "jpeg", "gif", "bmp", "webp"),
         "audio": ("wav", "ogg", "mp3", "flac", "aiff", "opus", "m4a", "oga"),
-        "midi": ("mid", "midi"),
+        "midi": ("mid", "midi", "smf"),
         "video": ("mp4", "avi", "mpeg", "mpg", "webm", "mov", "mkv"),
         "3d": ("obj", "fbx", "stl", "dae"),
         "office": ("doc", "docx", "xls", "xlsx", "ppt", "pptx"),
