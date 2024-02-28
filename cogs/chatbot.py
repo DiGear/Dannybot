@@ -34,29 +34,27 @@ class sentience(commands.Cog):
     async def on_message(self, message):
         if message.author.bot or message.reference:
             return
+
         if self.bot.user.mentioned_in(message):
-            async with message.channel.typing():
-                content = message.content.replace(self.bot.user.mention, "").strip()
-                self.message_array.append({
-                    "role": "user",
-                    "content": f"{message.author.display_name} said: {content}"
-                })
-                if len(self.message_array) > self.memory_length:
-                    self.pop_not_sys()
-                response_data = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo-0125",
-                    temperature=round(random.uniform(0.7, 1.5), 1),
-                    messages=list(self.message_array)
-                )
-                response_text = response_data.choices[0].message.content
-                substring = "dannybot said:"
-                response_text = re.sub(re.escape(substring), "", response_text, flags=re.IGNORECASE)
-                response_text = re.sub(r'fdg', 'Master', response_text, flags=re.IGNORECASE)
-                response_text = response_text.strip()[:1990]
-                print(f"{message.author.display_name} Said: {content}")
-                print(f"dannybot Said: {response_text}")
-                await message.channel.send(response_text, reference=message)
-                self.message_array.append({"role": "assistant", "content": response_text})
+            content = message.content.replace(self.bot.user.mention, "").strip()
+            self.message_array.append({"role": "user", "content": f"{message.author.display_name} said: {content}"})
+
+            if len(self.message_array) > self.memory_length:
+                self.pop_not_sys()
+
+            response_data = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo-0125",
+                temperature=round(random.uniform(0.7, 1.5), 1),
+                messages=list(self.message_array)
+            )
+            response_text = response_data.choices[0].message.content
+            response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
+
+            print(f"{message.author.display_name} Said: {content}")
+            print(f"dannybot Said: {response_text}")
+
+            await message.channel.send(response_text, reference=message)
+            self.message_array.append({"role": "assistant", "content": response_text})
     
     def pop_not_sys(self):
         for msg in self.message_array:
@@ -84,12 +82,6 @@ class sentience(commands.Cog):
             ],
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
-
-    @commands.command(hidden=True)
-    @commands.is_owner()
-    async def braindump(self, ctx):
-        logger.debug(str(self.message_array))
-        await ctx.send(str(self.message_array))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(sentience(bot))
