@@ -612,8 +612,6 @@ class image(commands.Cog):
                 if bbox:
                     cropped_image = image.crop(bbox)
                     return cropped_image
-            else:
-                await ctx.send("image is already cropped")
             return image
 
         cropped_image = auto_crop(image)
