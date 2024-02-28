@@ -143,40 +143,18 @@ class ai(commands.Cog):
             "Processing. Please wait... This can take a while for GIF files.",
             delete_after=5,
         )
+        image_file = f"{cache_dir}\\input.png"
+        with open(image_file, "wb") as f:
+            f.write(requests.get(file_url).content)
 
-        if ".gif" in file_url:
-            gif_file = f"{cache_dir}\\gif.gif"
-            with open(gif_file, "wb") as f:
-                f.write(requests.get(file_url).content)
+        with open(image_file, "rb") as i:
+            with open(f"{cache_dir}\\output.png", "wb") as o:
+                input_data = i.read()
+                output_data = remove(input_data)
+                o.write(output_data)
 
-            unpack_gif(gif_file)
-
-            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
-                if ".png" in frame:
-                    with open(f"{cache_dir}\\ffmpeg\\{frame}", "rb") as i:
-                        with open(f"{cache_dir}\\ffmpeg\\output\\{frame}", "wb") as o:
-                            input_data = i.read()
-                            output_data = remove(input_data)
-                            o.write(output_data)
-
-            repack_gif()
-
-            with open(f"{cache_dir}\\ffmpeg_out.gif", "rb") as f:
-                await ctx.reply(file=File(f, "transparent.gif"), mention_author=True)
-                clear_cache()
-        else:
-            image_file = f"{cache_dir}\\input.png"
-            with open(image_file, "wb") as f:
-                f.write(requests.get(file_url).content)
-
-            with open(image_file, "rb") as i:
-                with open(f"{cache_dir}\\output.png", "wb") as o:
-                    input_data = i.read()
-                    output_data = remove(input_data)
-                    o.write(output_data)
-
-            with open(f"{cache_dir}\\output.png", "rb") as f:
-                await ctx.reply(file=File(f, "transparent.png"), mention_author=True)
+        with open(f"{cache_dir}\\output.png", "rb") as f:
+            await ctx.reply(file=File(f, "transparent.png"), mention_author=True)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ai(bot))
