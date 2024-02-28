@@ -129,6 +129,13 @@ async def reload(ctx: commands.Context, module: str):
     print(f"Synced {len(command_sync)} slashes")
     await ctx.send(f"Reloaded {module} module(s)!")
 
+#hide pooter shit
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound) and ctx.invoked_with.startswith("poo"):
+        return
+    raise error
+
 async def load_extension(cog):
     try:
         await bot.load_extension(cog)
