@@ -91,9 +91,7 @@ dannybot_denialResponses = [
     "nope",
     "no thanks",
 ]  # what dannybot says upon denial
-dannybot = (
-    os.getcwd()
-)  # easy to call variable that stores our current working directory
+dannybot = (os.getcwd())  # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
 clean_pooter_onLaunch = True  # dannybot will clean up pooter on launch if set to true
 database_acceptedFiles = [
