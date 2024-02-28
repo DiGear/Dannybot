@@ -27,7 +27,7 @@ class sentience(commands.Cog):
         self.bot = bot
         self.memory_length = memory_length
         self.message_array = deque([{"role": "system", "content": '''
-            Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified.
+            Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified (The name will be display as "name said:").
             '''}], maxlen=memory_length + 1)
 
     @commands.Cog.listener()
@@ -48,12 +48,15 @@ class sentience(commands.Cog):
                     temperature=round(random.uniform(0.7, 1.5), 1),
                     messages=list(self.message_array)
                 )
-                response_text = response_data.choices[0].message.content.replace("Dannybot:", "").strip()[:1990]
-                formatted_response = response_text.replace("fdg", "Master").replace("FDG", "Master")
+                response_text = response_data.choices[0].message.content
+                substring = "dannybot said:"
+                response_text = re.sub(re.escape(substring), "", response_text, flags=re.IGNORECASE)
+                response_text = re.sub(r'fdg', 'Master', response_text, flags=re.IGNORECASE)
+                response_text = response_text.strip()[:1990]
                 print(f"{message.author.display_name} Said: {content}")
-                print(f"dannybot Said: {formatted_response}")
-                await message.channel.send(formatted_response, reference=message)
-                self.message_array.append({"role": "assistant", "content": formatted_response})
+                print(f"dannybot Said: {response_text}")
+                await message.channel.send(response_text, reference=message)
+                self.message_array.append({"role": "assistant", "content": response_text})
     
     def pop_not_sys(self):
         for msg in self.message_array:
