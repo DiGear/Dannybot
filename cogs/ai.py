@@ -131,45 +131,52 @@ class ai(commands.Cog):
 
     @commands.command(
         aliases=["pngify", "transparent"],
-        description="Runs the provided image through a (free) API call to remove.bg, to make the image transparent.",
+        description="Runs the provided image through a rembg, to make the image transparent.",
         brief="Remove the background from an image using AI",
     )
     async def removebg(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
-        Link_To_File = cmd_info[0]
-        await ctx.send("Removing background. Please wait...", delete_after=5)
+        file_url = cmd_info[0]
+        cache_dir = f"{dannybot}\\cache"
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(Link_To_File) as response:
-                image_data = await response.read()
+        await ctx.send(
+            "Processing. Please wait... This can take a while for GIF files.",
+            delete_after=5,
+        )
 
-                headers = {
-                    "X-Api-Key": os.getenv("REMOVEBG_KEY"),
-                }
+        if ".gif" in file_url:
+            gif_file = f"{cache_dir}\\gif.gif"
+            with open(gif_file, "wb") as f:
+                f.write(requests.get(file_url).content)
 
-                async with session.post(
-                    "https://api.remove.bg/v1.0/removebg",
-                    data={"image_file": image_data, "size": "auto"},
-                    headers=headers,
-                ) as response:
-                    if response.status == 200:
-                        result_data = await response.read()
+            unpack_gif(gif_file)
 
-                        with open(f"{dannybot}\\cache\\removebg.png", "wb") as f:
-                            f.write(result_data)
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
+                if ".png" in frame:
+                    with open(f"{cache_dir}\\ffmpeg\\{frame}", "rb") as i:
+                        with open(f"{cache_dir}\\ffmpeg\\output\\{frame}", "wb") as o:
+                            input_data = i.read()
+                            output_data = remove(input_data)
+                            o.write(output_data)
 
-                        await ctx.reply(
-                            file=discord.File(io.BytesIO(result_data), "removed.png"),
-                            mention_author=True,
-                        )
+            repack_gif()
 
-                    else:
-                        await ctx.reply(
-                            "Processing of the image failed. This is most likely because no background was detected.",
-                            mention_author=True,
-                        )
-                        print(await response.text())
+            with open(f"{cache_dir}\\ffmpeg_out.gif", "rb") as f:
+                await ctx.reply(file=File(f, "transparent.gif"), mention_author=True)
+                clear_cache()
+        else:
+            image_file = f"{cache_dir}\\input.png"
+            with open(image_file, "wb") as f:
+                f.write(requests.get(file_url).content)
 
+            with open(image_file, "rb") as i:
+                with open(f"{cache_dir}\\output.png", "wb") as o:
+                    input_data = i.read()
+                    output_data = remove(input_data)
+                    o.write(output_data)
+
+            with open(f"{cache_dir}\\output.png", "rb") as f:
+                await ctx.reply(file=File(f, "transparent.png"), mention_author=True)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ai(bot))

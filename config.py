@@ -40,6 +40,7 @@ from io import StringIO
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from textgenrnn import textgenrnn
 from urllib import request
+from rembg import remove
 from xml.etree import ElementTree
 
 import aiofiles
