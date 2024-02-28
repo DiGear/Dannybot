@@ -586,6 +586,41 @@ class image(commands.Cog):
 
             with open(f"{dannybot}\\cache\\radial_blur.png", "rb") as f:
                 await ctx.reply(file=File(f, "radial_blur.png"), mention_author=True)
+                
+    @commands.command(
+        aliases=["crop"],
+        description="Auto-crop the provided image.",
+        brief="Auto-crop an image",
+    )
+    async def autocrop(self, ctx, *args):
+        file_url, _ = await resolve_args(ctx, args, ctx.message.attachments)
+        await ctx.send(
+            "Processing. Please wait...",
+            delete_after=5,
+        )
+
+        with open(f"{dannybot}\\cache\\image_to_crop.png", "wb") as f:
+            f.write(requests.get(file_url).content)
+
+        image_path = f"{dannybot}\\cache\\image_to_crop.png"
+        image = Image.open(image_path)
+
+        def auto_crop(image):
+            if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
+                alpha = image.convert('RGBA').split()[-1]
+                bbox = alpha.getbbox()
+                if bbox:
+                    cropped_image = image.crop(bbox)
+                    return cropped_image
+            else:
+                await ctx.send("image is already cropped")
+            return image
+
+        cropped_image = auto_crop(image)
+        cropped_image.save(f"{dannybot}\\cache\\cropped_image.png")
+
+        with open(f"{dannybot}\\cache\\cropped_image.png", "rb") as f:
+            await ctx.reply(file=File(f, "cropped_image.png"), mention_author=True)
 
 
 async def setup(bot: commands.Bot):
