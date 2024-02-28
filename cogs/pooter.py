@@ -117,7 +117,7 @@ class pooter(commands.Cog):
 
     @commands.command(
         hidden=True,
-        aliases=["poo", "poop", ":spoon:", "🥄"],
+        aliases=["poo", "poop", ":spoon:", "🥄", "💩"],
         description="Send or receive a file from a user-built archive of files. You can upload 10 files at a time, or not attach any files to view the archive instead.",
         brief="Send/Receive files from a public archive.",
     )
