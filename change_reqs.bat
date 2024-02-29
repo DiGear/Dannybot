@@ -1,5 +1,5 @@
 @echo off
 echo modifying requirements...
-%~dp0\.venv\python -m pip install onnxruntime-gpu
+%~dp0\.venv\python -m pip install onnxruntime-gpu --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
 echo Requirements modified
 pause
