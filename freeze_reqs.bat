@@ -1,5 +1,5 @@
 @echo off
-echo modiying requirements...
+echo freezing requirements...
 %~dp0\.venv\python -m pip freeze
-echo Requirements installed.
+echo Requirements freezed.
 pause

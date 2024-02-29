@@ -137,10 +137,11 @@ class ai(commands.Cog):
     async def removebg(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = cmd_info[0]
+        model = cmd_info[1]
         cache_dir = f"{dannybot}\\cache"
 
         await ctx.send(
-            "Processing. Please wait... This can take a while for GIF files.",
+            "Processing. Please wait...",
             delete_after=5,
         )
         image_file = f"{cache_dir}\\input.png"
@@ -150,7 +151,12 @@ class ai(commands.Cog):
         with open(image_file, "rb") as i:
             with open(f"{cache_dir}\\output.png", "wb") as o:
                 input_data = i.read()
-                output_data = remove(input_data)
+                if model == "anime":
+                    model_name = "isnet-anime"
+                else:
+                    model_name = "u2net"
+                session = new_session(model_name)
+                output_data = remove(input_data, session=session)
                 o.write(output_data)
 
         with open(f"{cache_dir}\\output.png", "rb") as f:
