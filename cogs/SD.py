@@ -117,10 +117,10 @@ class sd(commands.Cog):
 
         # defining size defaults
         if height == 1:
-            height == 512
-            
+            height = 512
+                    
         if width == 1:
-            width == 512
+            width = 512
         
         cfg = round(cfg, 1)
         cfg = min(max(cfg, 0.5), 30.0)
@@ -148,6 +148,8 @@ class sd(commands.Cog):
             isNSFWChannel = isinstance(ctx.channel, discord.DMChannel) or ctx.channel.nsfw
         except:
             isNSFWChannel = False
+            
+        loraconcatsfw, loraconcatnsfw = lora, lora + nsfw_lora
 
         loraconcat = loraconcatnsfw if isNSFWChannel else loraconcatsfw
         
