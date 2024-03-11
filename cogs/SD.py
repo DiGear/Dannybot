@@ -10,8 +10,6 @@ with open(f"{dannybot}\\assets\\stable_diffusion_config.json") as f:
 # Load JSON params
 lora = SD_Config["lora"]
 nsfw_lora = SD_Config["nsfw_lora"]
-loraXL = SD_Config["loraXL"]
-nsfw_loraXL = SD_Config["nsfw_loraXL"]
 
 # checkpoint translator keys
 checkpoints = {
@@ -28,13 +26,6 @@ checkpoints = {
     "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
     "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
-    
-    # XL SHIT
-    "Crystal Clear XL": "crystalClearXL_ccxl.safetensors",
-    "Hassaku XL": "hassakuXLSfwNsfw_alphaV05.safetensors",
-    "Kohaku XL": "kohakuXL_nyan.safetensors",
-    "Nekoray XL": "nekorayxl_v06W3.safetensors",
-    "Realistic (SDXL Base)": "sd_xl_base_1.0_0.9vae.safetensors",
 }
 
 # VAE translator keys
@@ -99,14 +90,9 @@ class sd(commands.Cog):
             "Anything v5",
             "AnyLoRA",
             "CafeMix MIA",
-            "Crystal Clear XL",
             "Exquisite Details",
-            "Hassaku XL",
-            "Kohaku XL",
             "Made In Abyss",
-            "Nekoray XL",
             "Realistic (SD 1.5 Base)",
-            "Realistic (SDXL Base)",
             "RichyRichMix",
             "Sayori (Nekopara) Artstyle",
             "Sonic-Diffusion",
@@ -121,15 +107,6 @@ class sd(commands.Cog):
         #bool: bool = True
     ):
         await ctx.defer()
-        
-        #the new logic will go here
-        if any(
-            item in checkpoint
-            for item in ["Hassaku XL", "Kohaku XL", "Realistic (SDXL Base)", "Nekoray XL", "Crystal Clear XL"]
-        ):
-            SDXL = True
-        else:
-            SDXL = False
             
         if seed == -1:
             seed = random.randint(0,999999999)
@@ -138,9 +115,9 @@ class sd(commands.Cog):
         anti [REDACTED] measures
         """
 
-        # defining size defaults based on if SDXL is being used or not
-        height = 1024 if (height == 1 and SDXL) else 512 if (height == 1) else height
-        width = 1024 if (width == 1 and SDXL) else 512 if (width == 1) else width
+        # defining size defaults
+        if height = 1:
+            height = 512
         
         cfg = round(cfg, 1)
         cfg = min(max(cfg, 0.5), 30.0)

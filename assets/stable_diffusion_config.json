@@ -109,24 +109,5 @@
 		["paizuri", "pzuri", 1.0],
 		["glory_wall ", "Trapped_In_WallV2", 0.7],
 		["foot_focus", "feet 2", 0.75]
-	],
-	
-	"loraXL" : 
-	[
-		["neon sign", "PE_NeonSignStyle.safetensors", 0.9],
-		["watermiku", "watermikuV14_SDXL.safetensors", 0.88],
-		["wojak", "wojak_SDXL.safetensors", 1.0],
-		["n64", "diffusion64-v2-merge.safetensors", 1.0],
-		["badly drawn", "PE_TerribleFanArtV1.safetensors", 1.0],
-		["nendoroid", "nedo2.safetensors", 0.75],
-		["headpat", "HeadpatPOVXL.safetensors", 1.0]
-	],
-	
-	"nsfw_loraXL" : 
-	[
-		["pov", "NsfwPovAllInOneLoraSdxl-000009.safetensors", 0.75],
-		["feet", "xuegao-sdxl.safetensors", 0.6],
-		["blowjob", "animeblowjob_v4.safetensors", 0.8],
-		["one finger selfie challenge", "one finger selfie challenge-000008.safetensors", 1.0]
 	]
 }
