@@ -116,8 +116,11 @@ class sd(commands.Cog):
         """
 
         # defining size defaults
-        if height = 1:
-            height = 512
+        if height == 1:
+            height == 512
+            
+        if width == 1:
+            width == 512
         
         cfg = round(cfg, 1)
         cfg = min(max(cfg, 0.5), 30.0)
@@ -140,11 +143,6 @@ class sd(commands.Cog):
         positive_prompt2 = positive_prompt
         activeloras = []
         lora_weight = []
-
-        if SDXL:
-            loraconcatsfw, loraconcatnsfw = loraXL, loraXL + nsfw_loraXL
-        else:
-            loraconcatsfw, loraconcatnsfw = lora, lora + nsfw_lora
 
         try:
             isNSFWChannel = isinstance(ctx.channel, discord.DMChannel) or ctx.channel.nsfw
@@ -276,12 +274,10 @@ class sd(commands.Cog):
 
         if is_nsfw:
             lora_list += nsfw_lora
-            loraXL_list += nsfw_loraXL
 
         lora_output = process_lora_list(lora_list)
-        loraXL_output = process_lora_list(loraXL_list)
 
-        await ctx.send(f"SD 1.X:\n{lora_output}\n\nSDXL:\n{loraXL_output}")
+        await ctx.send(f"SD 1.X:\n{lora_output}")
 
     @commands.hybrid_command(
         name="checkpoints",
