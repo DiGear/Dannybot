@@ -149,8 +149,15 @@ class ai(commands.Cog):
             f.write(requests.get(file_url).content)
 
         input_data = Image.open(image_file)
+
+        if model == "anime":
+            model_name = "isnet-anime"
+        else:
+            model_name = "u2net"
+                    
         session = new_session(model_name)
         output_data = remove(input_data, session=session)
+        
         
         #rembg improvements
         
