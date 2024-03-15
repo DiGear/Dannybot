@@ -13,19 +13,14 @@ nsfw_lora = SD_Config["nsfw_lora"]
 
 # checkpoint translator keys
 checkpoints = {
-    "3D Animation": "3D.safetensors",
-    "AOM3": "abyssorangemix3AOM3_aom3a1b.safetensors",
     "AnimUWU Ultimate": "animuwultimate145.safetensors",
     "Anything v3": "anythingV3_fp16.ckpt",
     "Anything v5": "AnythingV5Ink_v5PrtRE.safetensors",
     "AnyLoRA": "anyloraCheckpoint_bakedvaeBlessedFp16.safetensors",
     "CafeMix MIA": "madeinabyssCafemix_v10.safetensors",
-    "Exquisite Details": "exquisiteDetails_art.safetensors",
     "Made In Abyss": "MIA 704 120rp 1e-6.ckpt",
     "Realistic (SD 1.5 Base)": "SD_1.5_Base.safetensors",
-    "RichyRichMix": "richyrichmix_V2Fp16.safetensors",
     "Sayori (Nekopara) Artstyle": "SayoriDiffusion.ckpt",
-    "Sonic-Diffusion": "sonicdiffusion_v3Beta4.safetensors",
 }
 
 # VAE translator keys
