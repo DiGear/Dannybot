@@ -324,6 +324,7 @@ class sd(commands.Cog):
             "None",
             "vaeFtMse840000",
             "Danny VAE",
+            "None",
         ] = "None",
         sampler: Literal[
             "euler",
