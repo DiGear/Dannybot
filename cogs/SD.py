@@ -28,6 +28,7 @@ checkpoints = {
 # VAE translator keys
 vaes = {
     "Automatic": "nothingvae.safetensors",
+    "None": "nothingvae.safetensors",
     "vaeFtMse840000": "vaeFtMse840000.safetensors",
     "Danny VAE": "VAE.vae.pt",
 }
