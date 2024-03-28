@@ -477,6 +477,18 @@ async def resolve_args(ctx, args, attachments, type="image"):
                         print(f"URL from message content: {http_url}")
                         url = http_url
                         break
+                    
+            # Generic
+            if type == "image":
+                http_urls = re.findall(r"http\S+", content)
+                if http_urls:
+                    http_url = http_urls[0].split("?")
+                    ext = http_url[0].split(".")[-1]
+                    if ext.lower() in extension_list:
+                        print(f"URL from message content: {http_url}")
+                        url = http_url
+                        break
+                    
     if tenor:
         url = url
     else:
