@@ -45,9 +45,7 @@ class audio(commands.Cog):
         )
 
         ogg_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', f'_midislap_{ctx.message.id}.ogg')}"
-        os.system(
-            f"ffmpeg-normalize {dannybot}\\cache\\midislap_{ctx.message.id}.wav -o {ogg_output_path} -c:a libopus -b:a 64k --keep-loudness-range-target -f"
-        )
+        os.system(f"ffmpeg {dannybot}\\cache\\midislap_{ctx.message.id}.wav -c:a libopus -b:a 64k {ogg_output_path}")
 
         with open(midi_output_path, "rb") as i, open(ogg_output_path, "rb") as f:
             await ctx.reply(file=File(i, filename.replace('.mid', '_flipped.mid')))
@@ -93,9 +91,7 @@ class audio(commands.Cog):
         )
 
         ogg_output_path = f"{dannybot}\\cache\\midislap_{ctx.message.id}.ogg"
-        os.system(
-            f"ffmpeg-normalize {midi_output_path} -o {ogg_output_path} -c:a libopus -b:a 64k -f"
-        )
+        os.system(f"ffmpeg -i {midi_output_path} -c:a libopus -b:a 64k {ogg_output_path}")
 
         with open(ogg_output_path, "rb") as f:
             await ctx.reply(f"Midislapped with {SF2}:", file=File(f, "midislap.ogg"))

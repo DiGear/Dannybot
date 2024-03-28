@@ -398,7 +398,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
     # Grab a URL if the command is a reply to an image
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
-        if "https://tenor.com/view/" in referenced_message.content:
+        if "https://tenor.com/view/" in referenced_message.content and type == "image":
                 tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", referenced_message.content).group(1)
                 url = gettenor(tenor_id)
@@ -460,7 +460,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 break
 
             # Grab the URL (tenor) from the last sent message
-            if "https://tenor.com/view/" in content:
+            if "https://tenor.com/view/" in content and type == "image":
                 tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
                 url = gettenor(tenor_id)
