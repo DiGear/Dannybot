@@ -13,12 +13,13 @@ class pooter(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
         # Check if the message starts with any of the bot prefixes
+        if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
+            return
+        
         if msg.guild.id not in whitelist:
             await msg.channel.send("This server is not whitelisted for this command.")
             return
-        if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
-            return
-
+        
         # Count the occurrences of "poo" in the message
         poo_count = msg.content.count("poo")
 
@@ -182,6 +183,8 @@ class pooter(commands.Cog):
             await asyncio.gather(*tasks)
         elif not File_Url:
             # If no attachment or File_Url provided, select a random file from the archive
+            if ctx.guild.id not in whitelist:
+                return
             pooter_files = os.listdir(f"{dannybot}/database/Pooter/")
             pooter_file = random.choice(pooter_files)
             with open(f"{dannybot}/database/Pooter/{pooter_file}", "rb") as f:
