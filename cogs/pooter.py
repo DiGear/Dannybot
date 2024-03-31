@@ -13,6 +13,9 @@ class pooter(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
         # Check if the message starts with any of the bot prefixes
+        if msg.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
             return
 

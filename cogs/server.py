@@ -17,6 +17,9 @@ class server(commands.Cog):
         brief="Send a picture of an catgirl",
     )
     async def neko(self, ctx: commands.Context):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         async with aiohttp.ClientSession() as session:
             async with session.get("https://nekos.life/api/v2/img/neko") as response:
                 if response.status == 200:
@@ -35,6 +38,9 @@ class server(commands.Cog):
     )
     async def pizzi(self, ctx: commands.Context):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         def generate_pizzi_text():
             temperature = round(random.uniform(0.01, 1.5), 2)
             textgen_2 = textgenrnn(f"{dannybot}\\assets\\textgenrnn\\pizzi.hdf5")
@@ -81,6 +87,9 @@ class server(commands.Cog):
         ] = "img",
     ):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         file_types = {
             "mimi": f"{dannybot}\\database\\Mimi",
             "nekopara": f"{dannybot}\\database\\Nekopara",
@@ -112,6 +121,9 @@ class server(commands.Cog):
         brief="Display file counts for key directories in Dannybot",
     )
     async def db(self, ctx):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         # Define directory paths in a dictionary
         directory_paths = {
             "Pooter Files:": f"{dannybot}\\database\\Pooter",

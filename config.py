@@ -106,6 +106,14 @@ database_acceptedFiles = [
     "mov",
 ]  # list of accepted files for the bots public database
 cmd_blacklist = ["0"]  # Users who cant use the bot lol
+whitelist = [
+    779136383033147403,
+    367767486004985857,
+    706353387855151105,
+    922428724744454164,
+    796606820348723230,
+    1131490848014598268,
+]  # servers with full bot access
 
 # configs for the image manipulation commands
 imageLower = 250  # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size

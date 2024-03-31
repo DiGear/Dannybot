@@ -13,6 +13,9 @@ class audio(commands.Cog):
 
     @commands.command(hidden=True)
     async def join(self, ctx):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         channel = ctx.author.voice.channel
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
@@ -20,6 +23,9 @@ class audio(commands.Cog):
 
     @commands.command(hidden=True)
     async def leave(self, ctx):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         if ctx.voice_client is not None:
             await ctx.voice_client.disconnect()
 
@@ -99,6 +105,9 @@ class audio(commands.Cog):
 
     @commands.command()
     async def play(self, ctx, url=None):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         current_directory = os.getcwd()
         try:
             os.chdir(f"{dannybot}\\cache")
@@ -144,10 +153,6 @@ class audio(commands.Cog):
 
         finally:
             os.chdir(current_directory)
-            
-    @commands.command()
-    async def leave(self, ctx):
-        await ctx.voice_client.disconnect()
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(audio(bot))

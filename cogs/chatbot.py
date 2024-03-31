@@ -22,7 +22,7 @@ class CustomGPT(commands.FlagConverter):
     ]
 
 # Class that stores every global variable and initializes them
-class sentience(commands.Cog):
+class chatbot(commands.Cog):
     def __init__(self, bot: commands.Bot, memory_length=12):
         self.bot = bot
         self.memory_length = memory_length
@@ -33,6 +33,9 @@ class sentience(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author.bot or message.reference:
+            return
+        
+        if message.guild.id not in whitelist:
             return
 
         if self.bot.user.mentioned_in(message):
@@ -70,6 +73,9 @@ class sentience(commands.Cog):
     )
     async def chatgpt(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         response = openai.ChatCompletion.create(
             model=flags.model,
             max_tokens=512,
@@ -85,4 +91,4 @@ class sentience(commands.Cog):
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(sentience(bot))
+    await bot.add_cog(chatbot(bot))

@@ -31,6 +31,9 @@ class ai(commands.Cog):
     )
     async def write(self, ctx: commands.Context, *, prompt: str):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         try:
             gpt_prompt = str(prompt)
             response = openai.Completion.create(
@@ -55,6 +58,9 @@ class ai(commands.Cog):
         self, ctx: commands.Context, *, flags: CustomWrite, append: bool = False
     ):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         try:
             if append == True:
                 response = openai.Completion.create(max_tokens=768, **flags.__dict__)
@@ -76,6 +82,9 @@ class ai(commands.Cog):
         brief="Upscale images using waifu2x",
     )
     async def waifu(self, ctx, *args):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         try:
             Link_To_File = (await resolve_args(ctx, args, ctx.message.attachments))[0]
             with open(f"{dannybot}\\cache\\w2x_in.png", "wb") as f:
@@ -135,6 +144,9 @@ class ai(commands.Cog):
         brief="Remove the background from an image using AI",
     )
     async def removebg(self, ctx, *args):
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = cmd_info[0]
         model = cmd_info[1]

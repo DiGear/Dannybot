@@ -258,6 +258,9 @@ class sd(commands.Cog):
     )
     async def loralist(self, ctx: commands.Context):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
 
         def process_lora_list(main_list):
             return ", ".join(
@@ -284,6 +287,9 @@ class sd(commands.Cog):
     )
     async def checkpoints(self, ctx: commands.Context):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         keys_sorted = sorted(checkpoints.keys())
         keys_string = ", ".join(keys_sorted)
         await ctx.send(str(keys_string))
@@ -350,6 +356,9 @@ class sd(commands.Cog):
         steps: int = 24,
     ):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         # if the seed is that bullshit default value, it will generate a random seed
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
@@ -624,6 +633,9 @@ class sd(commands.Cog):
         steps: int = 24,
     ):
         await ctx.defer()
+        if ctx.guild.id not in whitelist:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
         # if the seed is that bullshit default value, it will generate a random seed
         seed = (
             random.randint(0, 999999999) if seed == 11223344556677889900112233 else seed
