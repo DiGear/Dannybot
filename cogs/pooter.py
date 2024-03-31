@@ -14,7 +14,7 @@ class pooter(commands.Cog):
     async def on_message(self, msg: discord.Message):
         # Check if the message starts with any of the bot prefixes
         if msg.guild.id not in whitelist:
-            await ctx.send("This server is not whitelisted for this command.")
+            await msg.channel.send("This server is not whitelisted for this command.")
             return
         if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
             return
@@ -43,6 +43,10 @@ class pooter(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         # Function to download a file from a URL
         async def download_file(url, count, message, file_name):
+            guild = self.bot.get_guild(payload.guild_id)
+            if guild.id not in whitelist:
+                await message.send("This server is not whitelisted for this command.")
+                return
             tenor = False
             if any(ext.lower() in url for ext in database_acceptedFiles):
                 if "https://tenor.com/view/" in url:
@@ -126,6 +130,9 @@ class pooter(commands.Cog):
     )
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         async def download_file(url, current_download):
+            if ctx.guild.id not in whitelist:
+                await ctx.send("This server is not whitelisted for this command.")
+                return
             tenor = False
             # Check if the file format is valid
             if any(ext.lower() in url for ext in database_acceptedFiles):
