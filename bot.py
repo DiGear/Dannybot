@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 bot = commands.Bot(
     command_prefix=(dannybot_prefixes),
     status=discord.Status.online,
-    activity=discord.Activity(name="d.help", type=1),
+    activity=discord.Activity(name="for d.help", type=3),
     intents=intents,
     case_insensitive=True,
 )
