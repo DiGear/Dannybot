@@ -116,6 +116,7 @@ class misc(commands.Cog):
 
         format_opts = {
             "mp4": {"format": "mp4"},
+            "webm": {"format": "bestvideo[ext=webm]+bestaudio[ext=webm]/best[ext=webm]"},
             "mp3": {
                 "format": "bestaudio/best",
                 "postprocessors": [
@@ -138,11 +139,14 @@ class misc(commands.Cog):
 
         if format not in format_opts:
             await ctx.reply(
-                "The format specified is invalid. Please use `mp4` for video or `mp3` for audio."
-            )
+                "The format specified is invalid. Please use `mp4, webm` for video or `mp3` for audio."
+                )
             return
 
         ydl_opts.update(format_opts[format])
+
+        if format == "webm":
+            ydl_opts["merge_output_format"] = False
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
