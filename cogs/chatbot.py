@@ -47,7 +47,7 @@ class chatbot(commands.Cog):
 
             response_data = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo-0125",
-                temperature=round(random.uniform(0.7, 1.5), 1),
+                temperature=1,
                 messages=list(self.message_array)
             )
             response_text = response_data.choices[0].message.content
