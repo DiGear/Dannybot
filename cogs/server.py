@@ -74,17 +74,14 @@ class server(commands.Cog):
         category: Literal[
             "mimi",
             "nekopara",
-            "vid",
-            "img",
             "leffrey",
-            "gif",
             "femboy",
             "fanboy",
             "glasscup",
             "plasticcup",
             "burger",
             "danny",
-        ] = "img",
+        ] = "danny",
     ):
         await ctx.defer()
         if ctx.guild.id not in whitelist:
@@ -93,10 +90,7 @@ class server(commands.Cog):
         file_types = {
             "mimi": f"{dannybot}\\database\\Mimi",
             "nekopara": f"{dannybot}\\database\\Nekopara",
-            "vid": f"{dannybot}\\database\\Vid",
-            "img": f"{dannybot}\\database\\Img",
             "leffrey": f"{dannybot}\\database\\Leffrey",
-            "gif": f"{dannybot}\\database\\Gif",
             "femboy": f"{dannybot}\\database\\Femboy",
             "fanboy": f"{dannybot}\\database\\Fanboy",
             "glasscup": f"{dannybot}\\database\\Glasscup",
@@ -136,9 +130,6 @@ class server(commands.Cog):
             "Burger Files:": f"{dannybot}\\database\\Burger",
             "Nekopara Files:": f"{dannybot}\\database\\Nekopara",
             "Animal Girl Images:": f"{dannybot}\\database\\Mimi",
-            "Video Files:": f"{dannybot}\\database\\Vid",
-            "Image Files:": f"{dannybot}\\database\\Img",
-            "GIF Files:": f"{dannybot}\\database\\Gif",
         }
 
         # Create the embed
