@@ -41,17 +41,35 @@ class audio(commands.Cog):
         with open(f"{dannybot}\\cache\\{filename}", "wb") as f:
             f.write(requests.get(file_url).content)
 
-        os.system(
-            f"python NegativeHarmonizer.py {dannybot}\\cache\\{filename} --tonic 60 --ignore 9 --adjust-octaves"
-        )
+            negative_harmonizer_cmd = [
+                "python", "NegativeHarmonizer.py",
+                f"{dannybot}\\cache\\{filename}",
+                "--tonic", "60",
+                "--ignore", "9",
+                "--adjust-octaves"
+            ]
+            subprocess.Popen(negative_harmonizer_cmd).wait()
 
-        midi_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', '_negative.mid')}"
-        os.system(
-            f"fluidsynth -ni {dannybot}\\assets\\SF2\\general.sf2 {midi_output_path} -F {dannybot}\\cache\\midislap_{ctx.message.id}.wav -r 44100"
-        )
+            midi_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', '_negative.mid')}"
+            fluidsynth_cmd = [
+                "fluidsynth", "-ni",
+                f"{dannybot}\\assets\\SF2\\general.sf2",
+                midi_output_path,
+                "-F",
+                f"{dannybot}\\cache\\midislap_{ctx.message.id}.wav",
+                "-r", "44100"
+            ]
+            subprocess.Popen(fluidsynth_cmd).wait()
 
-        ogg_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', f'_midislap_{ctx.message.id}.ogg')}"
-        os.system(f"ffmpeg {dannybot}\\cache\\midislap_{ctx.message.id}.wav -c:a libopus -b:a 64k {ogg_output_path}")
+            ogg_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', f'_midislap_{ctx.message.id}.ogg')}"
+            ffmpeg_cmd = [
+                "ffmpeg",
+                "-i", f"{dannybot}\\cache\\midislap_{ctx.message.id}.wav",
+                "-c:a", "libopus",
+                "-b:a", "64k",
+                ogg_output_path
+            ]
+            subprocess.Popen(ffmpeg_cmd).wait()
 
         with open(midi_output_path, "rb") as i, open(ogg_output_path, "rb") as f:
             await ctx.reply(file=File(i, filename.replace('.mid', '_flipped.mid')))
