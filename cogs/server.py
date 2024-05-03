@@ -36,22 +36,24 @@ class server(commands.Cog):
         description="Emulate Pizzi messages using textgenrnn.",
         brief="Emulate Pizzi using AI",
     )
-    async def pizzi(self, ctx: commands.Context):
+    async def pizzi(self, ctx: commands.Context, temperature: typing.Optional[float]):
         await ctx.defer()
         if ctx.guild.id not in whitelist:
             await ctx.send("This server is not whitelisted for this command.")
             return
-        def generate_pizzi_text():
-            temperature = round(random.uniform(0.01, 1.5), 2)
+        def generate_pizzi_text(temp=temperature):
+            if temp is None:
+                temp = round(random.uniform(0.01, 1.5), 2)
             textgen_2 = textgenrnn(f"{dannybot}\\assets\\textgenrnn\\pizzi.hdf5")
             output_buffer = StringIO()
             sys.stdout = output_buffer
             try:
-                textgen_2.generate(1, temperature=temperature)
+                textgen_2.generate(1, temperature=temp)
             finally:
                 sys.stdout = sys.__stdout__
             captured_output = output_buffer.getvalue()
             return captured_output.strip().splitlines()[-1]
+            #return captured_output.strip().splitlines()[-1] + str(f"\n\n(temperature: {temp})")
         pizzi_text = generate_pizzi_text()
         pizzi_image = random.choice(os.listdir(f"{dannybot}\\database\\dooter\\"))
         with open(f"{dannybot}\\database\\dooter\\{pizzi_image}", "rb") as f:
