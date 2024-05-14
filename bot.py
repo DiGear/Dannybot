@@ -130,7 +130,7 @@ async def on_command_error(ctx, error):
 async def load_extension(cog):
     try:
         await bot.load_extension(cog)
-        print(Fore.LIGHTMAGENTA_EX + "Imported module: " + Fore.LIGHTCYAN_EX + f"{cog}")
+        print(Fore.LIGHTMAGENTA_EX + "Imported module: " + Fore.LIGHTCYAN_EX + f"{cog}" + Fore.RESET)
     except Exception as e:
         print(Fore.RED + f"Failed to load {cog}: {e}"+ Fore.RESET)
 
