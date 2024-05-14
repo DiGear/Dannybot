@@ -433,7 +433,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
                     url = attachment.url.split("?")
-                    print(Fore.BLUE + "URL from reply: %s", url + Fore.RESET)
+                    print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
                     break
         else:
             http_urls = re.findall(r"http\S+",referenced_message.content)
@@ -442,7 +442,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 ext = http_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
                     url = http_url
-                    print(Fore.BLUE + "URL from reply:", url + Fore.RESET)
+                    print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
 
     # Grab a URL if the command has an attachment
     if not url and attachments:
