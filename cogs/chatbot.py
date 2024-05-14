@@ -28,7 +28,7 @@ class chatbot(commands.Cog):
         self.bot = bot
         self.memory_length = memory_length
         self.message_array = deque([{"role": "system", "content": '''
-            Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified (The name will be displayed as "name said:").
+            Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified (The name will be display as "name said:").
             '''}], maxlen=memory_length + 1)
 
     @commands.Cog.listener()
