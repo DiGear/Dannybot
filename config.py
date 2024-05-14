@@ -418,6 +418,14 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     url = attachment.url.split("?")
                     print("URL from reply: %s", url)
                     break
+        else:
+            http_urls = re.findall(r"http\S+",referenced_message.content)
+            if http_urls:
+                http_url = http_urls[0].split("?")
+                ext = http_url[0].split(".")[-1]
+                if ext.lower() in extension_list:
+                    url = http_url
+                    print("URL from reply:", url)
 
     # Grab a URL if the command has an attachment
     if not url and attachments:
@@ -497,13 +505,14 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     url = http_url
                     break
                     
-    if tenor:
-        url = url
-    else:
+    try:
         url = f"{url[0]}?{url[1]}"
-        
-    print(f"Arguments: {url}, {text}")
-    return [url, text]
+    except:
+        #this fixes it so whatever
+        url = ''.join(char for char in url if char not in '[]\'"')
+    finally:
+        print(f"Arguments: {url}, {text}")
+        return [url, text]
 
 
 # change hue (apparently not an inbuilt function of PIL)
