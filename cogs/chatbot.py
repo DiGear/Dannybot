@@ -49,17 +49,15 @@ class chatbot(commands.Cog):
             self.message_array.append({"role": "user", "content": content})
             
             if len(self.message_array) > self.memory_length:
-                self.remove_image_messages()
                 self.pop_not_sys()
-            
-            print(self.message_array)
 
-            model = "gpt-4o" if message.attachments else "gpt-3.5-turbo"
+            model = "gpt-4o"
             response_data = openai.ChatCompletion.create(
                 model=model,
                 temperature=1,
                 messages=list(self.message_array)
             )
+
             response_text = response_data.choices[0].message.content
             response_text = re.sub(r'(?i)dannybot:', '', response_text)
             response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
@@ -72,10 +70,6 @@ class chatbot(commands.Cog):
                 if msg["role"] != "system":
                     self.message_array.remove(msg)
                     break
-        
-        def remove_image_messages(self):
-            for msg in self.message_array:
-                msg["content"] = [content for content in msg["content"] if content.get("type") != "image_url"]
 
     @commands.hybrid_command(
         name="chatgpt",
