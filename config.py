@@ -83,20 +83,20 @@ logger = logging.getLogger(__name__)
 # ----------
 
 # dannybot config
-dannybot_prefixes = ["d.", "#", "D.", "ratio + "]  # bot prefix(es)
+dannybot_prefixes = {"d.", "#", "D.", "ratio + "}  # bot prefix(es)
 dannybot_token = os.getenv("TOKEN")  # token
-dannybot_team_ids = [343224184110841856, 158418656861093888, 249411048518451200]
+dannybot_team_ids = {343224184110841856, 158418656861093888, 249411048518451200}
 dannybot_denialRatio = 250  # chance for dannybot to deny your command input
-dannybot_denialResponses = [
+dannybot_denialResponses = {
     "no",
     "nah",
     "nope",
     "no thanks",
-]  # what dannybot says upon denial
+}  # what dannybot says upon denial
 dannybot = (os.getcwd())  # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
 clean_pooter_onLaunch = True  # dannybot will clean up pooter on launch if set to true
-database_acceptedFiles = [
+database_acceptedFiles = {
     "png",
     "jpg",
     "jpeg",
@@ -105,16 +105,16 @@ database_acceptedFiles = [
     "mp4",
     "webm",
     "mov",
-]  # list of accepted files for the bots public database
+}  # list of accepted files for the bots public database
 cmd_blacklist = ["0"]  # Users who cant use the bot lol
-whitelist = [
+whitelist = {
     779136383033147403,
     367767486004985857,
     706353387855151105,
     922428724744454164,
     796606820348723230,
     1131490848014598268,
-]  # servers with full bot access
+}  # servers with full bot access
 
 # configs for the image manipulation commands
 imageLower = 250  # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
@@ -134,7 +134,7 @@ Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe"  # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 
 # 8ball responses for the 8ball command
-ball_responses = [
+ball_responses = {
     "It is certain.",
     "It is decidedly so.",
     "Without a doubt.",
@@ -155,10 +155,10 @@ ball_responses = [
     "My sources say no.",
     "Outlook not so good.",
     "Very doubtful.",
-]
+}
 
 # logo list for the logo command
-logolist = [
+logolist = {
     "clan",
     "neon",
     "fluffy",
@@ -195,10 +195,10 @@ logolist = [
     "golden",
     "outline",
     "funtime",
-]
+}
 
 # this is for the undertext command
-deltarune_dw = [
+deltarune_dw = {
     "ralsei",
     "lancer",
     "king",
@@ -208,7 +208,7 @@ deltarune_dw = [
     "clyde",
     "lori",
     "rhombo",
-]
+}
 
 
 # ----------
