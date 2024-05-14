@@ -29,39 +29,46 @@ class CustomVoice(commands.FlagConverter):
 class TranscriptionSink(AudioSink):
     def __init__(self, whisper_api_key, bot, ctx):
         super().__init__()
-        self.whisper_client = Whisper(api_key=whisper_api_key)
+        self.whisper_api_key = whisper_api_key 
         self.bot = bot
         self.ctx = ctx
-        self.openai_client = OpenAI()
     
     def wants_opus(self):
         return False  # Or True, depending on your requirements
 
     def write(self, user, data):
-        # Perform speech recognition using Whisper API
-        with open(data, "rb") as audio_file:
-            transcription = self.whisper_client.transcribe_audio(audio_file)
+        # Ensure the data is in the correct format
+        if isinstance(data, discord.VoiceData):
+            # Extract audio data from the VoiceData object
+            audio_data = data.data
+            # Perform speech recognition using Whisper API
+            with tempfile.NamedTemporaryFile(suffix='.opus') as temp_file:
+                temp_file.write(audio_data)
+                temp_file.seek(0)
+                # Initialize Whisper client with API key
+                whisper_client = Whisper(api_key=self.whisper_api_key)
+                transcription = whisper_client.transcribe_audio(temp_file.name)
 
-        # Pass the transcription to the ChatGPT model and get the response
-        model = "gpt-4o"
-        response_data = openai.ChatCompletion.create(
-            model=model,
-            temperature=1,
-            messages=[{"role": "user", "content": transcription.text}],
-        )
+            # Pass the transcription to the ChatGPT model and get the response
+            model = "gpt-4o"
+            response_data = openai.ChatCompletion.create(
+                model=model,
+                temperature=1,
+                messages=[{"role": "user", "content": transcription.text}],
+            )
 
-        response_text = response_data.choices[0].message.content
-        response_text = re.sub(r'(?i)dannybot:', '', response_text)
-        response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
+            response_text = response_data.choices[0].message.content
+            response_text = re.sub(r'(?i)dannybot:', '', response_text)
+            response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
 
-        # Speak the response in the voice channel
-        voice_channel = self.ctx.author.voice.channel
-        if voice_channel:
-            voice_client = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
-            if voice_client:
-                voice_client.play(discord.FFmpegPCMAudio(response_text, pipe=True))
-            else:
-                asyncio.run_coroutine_threadsafe(voice_channel.connect(), self.bot.loop)
+            # Speak the response in the voice channel
+            voice_channel = self.ctx.author.voice.channel
+            if voice_channel:
+                voice_client = discord.utils.get(self.bot.voice_clients, guild=self.ctx.guild)
+                if voice_client:
+                    voice_client.play(discord.FFmpegPCMAudio(response_text, pipe=True))
+                else:
+                    asyncio.run_coroutine_threadsafe(voice_channel.connect(), self.bot.loop)
 
     def cleanup(self):
         pass
