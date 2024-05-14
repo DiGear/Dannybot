@@ -49,9 +49,10 @@ class chatbot(commands.Cog):
             self.message_array.append({"role": "user", "content": content})
             
             if len(self.message_array) > self.memory_length:
-                if not message.attachments:
-                    self.remove_image_messages()
+                self.remove_image_messages()
                 self.pop_not_sys()
+            
+            print(self.message_array)
 
             model = "gpt-4o" if message.attachments else "gpt-3.5-turbo"
             response_data = openai.ChatCompletion.create(
@@ -73,10 +74,12 @@ class chatbot(commands.Cog):
                     break
         
         def remove_image_messages(self):
+            new_message_array = []
             for msg in reversed(self.message_array):
-                if any("image_url" in content for content in msg["content"]):
-                    self.message_array.remove(msg)
-                    break
+                if not any(content.get("image_url") for content in msg["content"]):
+                    new_message_array.append(msg)
+            self.message_array = new_message_array
+
 
     @commands.hybrid_command(
         name="chatgpt",
