@@ -15,6 +15,7 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
+        "gpt-4o",
         "gpt-4-turbo-preview",
         "gpt-4",
         "gpt-3.5-turbo-0125",
@@ -39,14 +40,20 @@ class chatbot(commands.Cog):
             return
 
         if self.bot.user.mentioned_in(message):
-            content = message.content.replace(self.bot.user.mention, "").strip()
-            self.message_array.append({"role": "user", "content": f"{message.author.display_name} said: {content}"})
+            content = [{"type": "text", "text": f"{message.author.display_name} said: {message.content}"}]
+            print(f"{message.author.display_name} Said: {content}")
+            attachment_url = None
 
+            if message.attachments:
+                attachment_url = message.attachments[0].url
+                content.append({"type": "image_url", "image_url": {"url": str(attachment_url)}})
+            self.message_array.append({"role": "user", "content": content})
+            
             if len(self.message_array) > self.memory_length:
                 self.pop_not_sys()
 
             response_data = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-0125",
+                model="gpt-4o",
                 temperature=1,
                 messages=list(self.message_array)
             )
@@ -54,7 +61,6 @@ class chatbot(commands.Cog):
             response_text = re.sub(r'(?i)dannybot:', '', response_text)
             response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
 
-            print(f"{message.author.display_name} Said: {content}")
             print(f"dannybot Said: {response_text}")
 
             await message.channel.send(response_text, reference=message)
