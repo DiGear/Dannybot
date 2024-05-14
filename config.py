@@ -396,7 +396,6 @@ def gettenor(gifid=None):
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     tenor = False
-    avatar = False
     text = " ".join(args)
     print("Resolving URL and arguments...")
 
@@ -463,11 +462,9 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
                 print(f"URL from avatar of mentioned user: {url}")
-                avatar = True
             else:
                 url = str(mentioned_member.avatar.url)
                 print(f"URL from avatar of mentioned user: {url}")
-                avatar = True
 
     # Message content iteration
     if not url:
@@ -516,11 +513,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     break
                     
     try:
-        if not avatar:
-            url = f"{url[0]}?{url[1]}"
-        else:
-            url = url
-            text = re.sub(r'<@[^>]+>\s*', '',text)
+        url = f"{url[0]}?{url[1]}"
     except:
         #this fixes it so whatever
         url = ''.join(char for char in url if char not in '[]\'"')
