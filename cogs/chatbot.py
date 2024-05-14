@@ -41,21 +41,21 @@ class chatbot(commands.Cog):
 
         if self.bot.user.mentioned_in(message):
             content = [{"type": "text", "text": f"{message.author.display_name} said: {message.content}"}]
-            print(f"{message.author.display_name} Said: {content}")
-            attachment_url = None
-
+            
             if message.attachments:
                 attachment_url = message.attachments[0].url
                 content.append({"type": "image_url", "image_url": {"url": str(attachment_url)}})
+            
             self.message_array.append({"role": "user", "content": content})
             
             if len(self.message_array) > self.memory_length:
+                if not message.attachments:
+                    self.remove_image_messages()
                 self.pop_not_sys()
 
-            print(self.message_array)
-
+            model = "gpt-4o" if message.attachments else "gpt-3.5-turbo"
             response_data = openai.ChatCompletion.create(
-                model = "gpt-4o" if message.attachments else "gpt-3.5-turbo",
+                model=model,
                 temperature=1,
                 messages=list(self.message_array)
             )
@@ -63,16 +63,20 @@ class chatbot(commands.Cog):
             response_text = re.sub(r'(?i)dannybot:', '', response_text)
             response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
 
-            print(f"dannybot Said: {response_text}")
-
             await message.channel.send(response_text, reference=message)
             self.message_array.append({"role": "assistant", "content": response_text})
-    
-    def pop_not_sys(self):
-        for msg in self.message_array:
-            if msg["role"] != "system":
-                self.message_array.remove(msg)
-                break
+        
+        def pop_not_sys(self):
+            for msg in reversed(self.message_array):
+                if msg["role"] != "system":
+                    self.message_array.remove(msg)
+                    break
+        
+        def remove_image_messages(self):
+            for msg in reversed(self.message_array):
+                if any("image_url" in content for content in msg["content"]):
+                    self.message_array.remove(msg)
+                    break
 
     @commands.hybrid_command(
         name="chatgpt",
