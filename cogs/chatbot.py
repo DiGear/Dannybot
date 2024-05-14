@@ -52,8 +52,10 @@ class chatbot(commands.Cog):
             if len(self.message_array) > self.memory_length:
                 self.pop_not_sys()
 
+            print(self.message_array)
+
             response_data = openai.ChatCompletion.create(
-                model="gpt-4o",
+                model = "gpt-4o" if message.attachments else "gpt-3.5-turbo",
                 temperature=1,
                 messages=list(self.message_array)
             )
