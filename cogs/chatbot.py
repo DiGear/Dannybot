@@ -74,12 +74,8 @@ class chatbot(commands.Cog):
                     break
         
         def remove_image_messages(self):
-            new_message_array = []
-            for msg in reversed(self.message_array):
-                if not any(content.get("image_url") for content in msg["content"]):
-                    new_message_array.append(msg)
-            self.message_array = new_message_array
-
+            for msg in self.message_array:
+                msg["content"] = [content for content in msg["content"] if content.get("type") != "image_url"]
 
     @commands.hybrid_command(
         name="chatgpt",
