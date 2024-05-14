@@ -6,7 +6,7 @@ from config import *
 
 # make it look nice in the console
 print("---------------------------------------------------------------------")
-print("DANNYBOT IS STARTING UP... PLEASE WAIT...")
+print(Fore.LIGHTMAGENTA_EX + "DANNYBOT IS STARTING UP... PLEASE WAIT..." + Fore.RESET)
 print("---------------------------------------------------------------------")
 
 # asyncio bad btw
@@ -35,10 +35,9 @@ bot = commands.Bot(
 async def on_ready():
     print("---------------------------------------------------------------------")
     command_sync = await bot.tree.sync()
-    print(f"Synced {len(command_sync)} slashes")
-    # print a success message upon boot
+    print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
     print("---------------------------------------------------------------------")
-    print(f"{bot.user} successfully booted on discord.py version {discord.__version__}")
+    print(Fore.GREEN + f"{bot.user} successfully booted on discord.py version {discord.__version__}" + Fore.RESET)
     print("---------------------------------------------------------------------")
     return
 
@@ -73,7 +72,6 @@ async def ping(ctx: commands.Context):
     end_time = time.monotonic()
     ping_time = round((end_time - start_time) * 1000)
     await message.edit(content=f"Round-trip Latency: {ping_time}ms | API Latency: {round(bot.latency * 1000)}ms")
-    print(f"Dannybot was pinged at {ping_time}ms on Round-trip, {round(bot.latency * 1000)}ms on API")
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.hybrid_command(
@@ -119,8 +117,8 @@ async def reload(ctx: commands.Context, module: str):
     
     # resynchronize slash commands
     command_sync = await bot.tree.sync()
-    print(f"Synced {len(command_sync)} slashes")
-    await ctx.send(f"Reloaded {module} module(s)!")
+    print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
+    await ctx.sendFore.BLUE + (f"Reloaded {module} module(s)!" + Fore.RESET)
 
 #hide pooter shit
 @bot.event
@@ -132,9 +130,9 @@ async def on_command_error(ctx, error):
 async def load_extension(cog):
     try:
         await bot.load_extension(cog)
-        print(f"Imported module: {cog}")
+        print(Fore.LIGHTMAGENTA_EX + "Imported module: " + Fore.LIGHTCYAN_EX + f"{cog}")
     except Exception as e:
-        print(f"Failed to load {cog}: {e}")
+        print(Fore.RED + f"Failed to load {cog}: {e}"+ Fore.RESET)
 
 async def load_extensions():
     tasks = []
@@ -150,12 +148,12 @@ async def load_extensions():
 # this ACTUALLY starts the bot
 async def main():
     if clean_pooter_onLaunch:
-        print("Cleaning up pooter folder... This may clog up the terminal if there are a lot of files...")
+        print(Fore.LIGHTMAGENTA_EX + "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..." + Fore.RESET)
         print("---------------------------------------------------------------------")
         clean_pooter()
         print("---------------------------------------------------------------------")
     if cache_clear_onLaunch:
-        print("Clearing cache from the previous session...")
+        print(Fore.LIGHTMAGENTA_EX + "Clearing cache from the previous session..." + Fore.RESET)
         print("---------------------------------------------------------------------")
         clear_cache()
         print("---------------------------------------------------------------------")

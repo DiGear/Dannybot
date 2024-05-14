@@ -18,7 +18,6 @@ class image(commands.Cog):
     async def eat(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = cmd_info[0]
-        print("Received 'eat' command")
         async with aiohttp.ClientSession() as session:
             async with session.get(file_url) as response:
                 if response.status != 200:

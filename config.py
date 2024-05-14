@@ -24,7 +24,6 @@ import sys
 import textwrap
 import threading
 import time
-import traceback
 import typing
 import urllib
 import urllib.request
@@ -54,8 +53,11 @@ import PIL
 import requests
 import ujson
 import websocket
+import traceback
+import warnings
 import yt_dlp
 from aiohttp import ClientSession
+from colorama import init, Fore
 from discord import File, Interaction, InteractionType, app_commands, FFmpegPCMAudio
 from discord.ext import commands, tasks
 from discord.utils import get
@@ -216,10 +218,23 @@ deltarune_dw = {
 # Functions
 # ----------
 
+#Custom colors
+def custom_color_handler(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, Warning):
+        msg = Fore.YELLOW + f"Warning: {exc_type.__name__}: {exc_value}\n" + Fore.RESET
+    else:
+        error_msg = f'Error: {exc_value}\n'
+        traceback_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+        msg = Fore.RED + error_msg + traceback_str + Fore.RESET
+    sys.stderr.write(msg)
+    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
+sys.excepthook = custom_color_handler
+warnings.showwarning = custom_color_handler
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
 def unpack_gif(file):
-    print("unpacking gif...")
+    print(Fore.LIGHTMAGENTA_EX + "unpacking gif..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y'
     )
@@ -228,11 +243,11 @@ def unpack_gif(file):
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
 def repack_gif():
-    print("generating palette...")
+    print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y'
     )
-    print("repacking gif...")
+    print(Fore.LIGHTMAGENTA_EX + "repacking gif..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y'
     )
@@ -241,8 +256,8 @@ def repack_gif():
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
 def repack_gif_JPG():
-    print("generating palette...")
-    print("repacking gif (jpg)...")
+    print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
+    print(Fore.LIGHTMAGENTA_EX + "repacking gif (jpg)..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y'
     )
@@ -271,9 +286,9 @@ def clear_cache():
             if file_path.is_file() and "git" not in str(file_path):
                 try:
                     os.remove(file_path)
-                    print(f"Deleted: {file_path}")
+                    print(Fore.LIGHTMAGENTA_EX +  f"Deleted: {file_path}" + Fore.RESET)
                 except PermissionError:
-                    print(f"Skipped: {file_path} (File in use)")
+                    print(Fore.YELLOW +  f"Skipped: {file_path} (File in use)" + Fore.RESET)
                     continue
 
     threads = []
@@ -285,7 +300,7 @@ def clear_cache():
     for thread in threads:
         thread.join()
 
-    print("Cache cleared.")
+    print(Fore.BLUE + "Cache cleared." + Fore.RESET)
 
 
 # get the amount of files in a folder
@@ -392,7 +407,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
     tenor = False
     avatar = False
     text = " ".join(args)
-    print("Resolving URL and arguments...")
+    print(Fore.LIGHTMAGENTA_EX + "Resolving URL and arguments..." + Fore.RESET)
 
     extensions = {
         "image": ("png", "jpg", "jpeg", "gif", "bmp", "webp"),
@@ -413,12 +428,12 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", referenced_message.content).group(1)
                 url = gettenor(tenor_id)
-                print(f"URL from Tenor: {url}")
+                print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
         elif referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
                     url = attachment.url.split("?")
-                    print("URL from reply: %s", url)
+                    print(Fore.BLUE + "URL from reply: %s", url + Fore.RESET)
                     break
         else:
             http_urls = re.findall(r"http\S+",referenced_message.content)
@@ -427,14 +442,14 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 ext = http_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
                     url = http_url
-                    print("URL from reply:", url)
+                    print(Fore.BLUE + "URL from reply:", url + Fore.RESET)
 
     # Grab a URL if the command has an attachment
     if not url and attachments:
         for attachment in attachments:
             if attachment.content_type.startswith(type):
                 url = attachment.url.split("?")
-                print(f"URL from attachment: {url}")
+                print(Fore.BLUE + f"URL from attachment: {url}" + Fore.RESET)
                 break
 
     # Grab a URL passed from args
@@ -444,11 +459,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", args[0]).group(1)
                 url = gettenor(tenor_id)
-                print(f"URL from Tenor: {url}")
+                print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
             else:
                 url = args[0].split("?")
                 text = " ".join(args[1:])
-                print(f"URL from argument: {url}")
+                print(Fore.BLUE + f"URL from argument: {url}" + Fore.RESET)
 
         # Grab a URL from mentioned users avatar
         if ctx.message.mentions:
@@ -456,11 +471,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
-                print(f"URL from avatar of mentioned user: {url}")
+                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
                 avatar = True
             else:
                 url = str(mentioned_member.avatar.url)
-                print(f"URL from avatar of mentioned user: {url}")
+                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
                 avatar = True
 
     # Message content iteration
@@ -474,7 +489,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 attch_url = attachment.url.split("?")
                 ext = attch_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
-                    print(f"URL from attachment: {attch_url}")
+                    print(Fore.BLUE + f"URL from attachment: {attch_url}" + Fore.RESET)
                     url = attch_url
                     break
             if url:
@@ -485,7 +500,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
                 url = gettenor(tenor_id)
-                print(f"URL from Tenor: {url}")
+                print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
                 break
 
             # Grab the URL from the last sent message
@@ -495,7 +510,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     http_url = http_urls[0].split("?")
                     ext = http_url[0].split(".")[-1]
                     if ext.lower() in extension_list:
-                        print(f"URL from message content: {http_url}")
+                        print(Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET)
                         url = http_url
                         break
                     
@@ -505,7 +520,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 http_url = http_urls[0].split("?")
                 ext = http_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
-                    print(f"URL from message content: {http_url}")
+                    print(Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET)
                     url = http_url
                     break
                     
@@ -519,7 +534,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
         #this fixes it so whatever
         url = ''.join(char for char in url if char not in '[]\'"')
     finally:
-        print(f"Arguments: {url}, {text}")
+        print(Fore.CYAN + f"Arguments: {url}, {text}" + Fore.RESET)
         return [url, text]
 
 
@@ -855,7 +870,7 @@ def clean_pooter():
     directory_path = os.path.join(dannybot, 'database', 'Pooter')
 
     if not os.path.exists(directory_path):
-        logging.error("Pooter folder not found. Aborting.")
+        logging.error(Fore.RED + "Pooter folder not found. Aborting." + Fore.RESET)
         return
 
     file_hashes = {}
@@ -874,13 +889,13 @@ def clean_pooter():
         if '.' not in file:
             os.remove(file_path)
             with lock:
-                print(f"Deleted: {file}")
+                print(Fore.LIGHTMAGENTA_EX +  f"Deleted: {file}" + Fore.RESET)
             return
         file_hash = calculate_file_hash(file_path)
         with lock:
             if file_hash in file_hashes:
                 os.remove(file_path)
-                print(f"Deleted: {file}")
+                print(Fore.LIGHTMAGENTA_EX +  f"Deleted: {file}" + Fore.RESET)
             else:
                 file_hashes[file_hash] = file_path
 
@@ -895,4 +910,4 @@ def clean_pooter():
     for thread in threads:
         thread.join()
 
-    print("No more files to clean.")
+    print(Fore.BLUE + "No more files to clean." + Fore.RESET)
