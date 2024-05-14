@@ -65,11 +65,11 @@ class chatbot(commands.Cog):
             await message.channel.send(response_text, reference=message)
             self.message_array.append({"role": "assistant", "content": response_text})
         
-        def pop_not_sys(self):
-            for msg in reversed(self.message_array):
-                if msg["role"] != "system":
-                    self.message_array.remove(msg)
-                    break
+    def pop_not_sys(self):
+        for msg in reversed(self.message_array):
+            if msg["role"] != "system":
+                self.message_array.remove(msg)
+                break
 
     @commands.hybrid_command(
         name="chatgpt",
