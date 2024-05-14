@@ -5,10 +5,6 @@
 # Imports
 # ----------
 
-import os
-# tensorfuck
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 import asyncio
 import base64
 import glob
@@ -18,6 +14,7 @@ import json
 import logging
 import math
 import shutil
+import os
 import random
 import re
 import subprocess
@@ -40,9 +37,8 @@ from pathlib import Path
 from textwrap import wrap
 from typing import Literal
 from io import StringIO
-from discord.ext import voice_recv
-from discord.ext.voice_recv import VoiceRecvClient, AudioSink
-from whisper import Whisper
+# tensorfuck
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 from textgenrnn import textgenrnn
 from urllib import request
 from rembg import new_session, remove
@@ -133,8 +129,6 @@ logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 openai.api_key = os.getenv("OPENAI_API_KEY") # i hope i can remove this soon
 tenor_apikey = os.getenv("TENOR_KEY")
 AlphaVantageAPI = os.getenv("AV_API_KEY") 
-
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 # internal paths
 Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
@@ -396,6 +390,7 @@ def gettenor(gifid=None):
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     tenor = False
+    avatar = False
     text = " ".join(args)
     print("Resolving URL and arguments...")
 
@@ -462,9 +457,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
                 print(f"URL from avatar of mentioned user: {url}")
+                avatar = True
             else:
                 url = str(mentioned_member.avatar.url)
                 print(f"URL from avatar of mentioned user: {url}")
+                avatar = True
 
     # Message content iteration
     if not url:
@@ -513,7 +510,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     break
                     
     try:
-        url = f"{url[0]}?{url[1]}"
+        if not avatar:
+            url = f"{url[0]}?{url[1]}"
+        else:
+            url = url
+            text = re.sub(r'<@[^>]+>\s*', '',text)
     except:
         #this fixes it so whatever
         url = ''.join(char for char in url if char not in '[]\'"')
