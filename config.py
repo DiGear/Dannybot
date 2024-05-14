@@ -5,6 +5,10 @@
 # Imports
 # ----------
 
+import os
+# tensorfuck
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import asyncio
 import base64
 import glob
@@ -14,7 +18,6 @@ import json
 import logging
 import math
 import shutil
-import os
 import random
 import re
 import subprocess
@@ -37,8 +40,9 @@ from pathlib import Path
 from textwrap import wrap
 from typing import Literal
 from io import StringIO
-# tensorfuck
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+from discord.ext import voice_recv
+from discord.ext.voice_recv import VoiceRecvClient, AudioSink
+from whisper import Whisper
 from textgenrnn import textgenrnn
 from urllib import request
 from rembg import new_session, remove
@@ -114,6 +118,7 @@ whitelist = {
     922428724744454164,
     796606820348723230,
     1131490848014598268,
+    352972878645428225,
 }  # servers with full bot access
 
 # configs for the image manipulation commands
@@ -128,6 +133,8 @@ logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 openai.api_key = os.getenv("OPENAI_API_KEY") # i hope i can remove this soon
 tenor_apikey = os.getenv("TENOR_KEY")
 AlphaVantageAPI = os.getenv("AV_API_KEY") 
+
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
 # internal paths
 Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
