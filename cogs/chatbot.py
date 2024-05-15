@@ -15,61 +15,76 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
-        "gpt-4o",
-        "gpt-4-turbo-preview",
-        "gpt-4",
-        "gpt-3.5-turbo-0125",
-        "gpt-3.5-turbo"
-    ]
+        "gpt-4o", "gpt-4-turbo-preview", "gpt-4", "gpt-3.5-turbo-0125", "gpt-3.5-turbo"
+    ] = "gpt-4o"
 
-# Class that stores every global variable and initializes them
+
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=5):
+    def __init__(self, bot: commands.Bot, memory_length=5, model="gpt-4o"):
         self.bot = bot
         self.memory_length = memory_length
-        self.message_array = deque([{"role": "system", "content": '''
+        self.model = model
+        self.message_array = deque(
+            [
+                {
+                    "role": "system",
+                    "content": """
             Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified (The name will be display as "name said:").
-            '''}], maxlen=memory_length + 1)
+            """,
+                }
+            ],
+            maxlen=memory_length + 1,
+        )
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot or message.reference:
-            return
-        
-        if message.guild.id not in whitelist:
+        if (
+            message.author.bot
+            or message.reference
+            or message.guild.id not in whitelist
+            or not self.bot.user.mentioned_in(message)
+        ):
             return
 
-        if self.bot.user.mentioned_in(message):
-            content = [{"type": "text", "text": f"{message.author.display_name} said: {message.content}"}]
-            
-            if message.attachments:
-                attachment_url = message.attachments[0].url
-                content.append({"type": "image_url", "image_url": {"url": str(attachment_url)}})
-            
-            self.message_array.append({"role": "user", "content": content})
-            
-            if len(self.message_array) > self.memory_length:
-                self.pop_not_sys()
+        content = [
+            {
+                "type": "text",
+                "text": f"{message.author.display_name} said: {message.content}",
+            }
+        ]
 
-            model = "gpt-4o"
-            response_data = openai.ChatCompletion.create(
-                model=model,
-                temperature=1,
-                messages=list(self.message_array)
+        if message.attachments:
+            attachment_url = message.attachments[0].url
+            content.append(
+                {"type": "image_url", "image_url": {"url": str(attachment_url)}}
             )
 
-            response_text = response_data.choices[0].message.content
-            response_text = re.sub(r'(?i)dannybot:', '', response_text)
-            response_text = re.sub(r'(?i)dannybot said:', '', response_text).strip()[:1990]
+        self.message_array.append({"role": "user", "content": content})
 
-            await message.channel.send(response_text, reference=message)
-            self.message_array.append({"role": "assistant", "content": response_text})
-        
+        if len(self.message_array) > self.memory_length:
+            self.pop_not_sys()
+
+        response_text = await self.get_openai_response()
+        response_text = self.clean_response(response_text)
+        await message.channel.send(response_text, reference=message)
+        self.message_array.append({"role": "assistant", "content": response_text})
+
+    async def get_openai_response(self) -> str:
+        response_data = openai.ChatCompletion.create(
+            model=self.model, temperature=1, messages=list(self.message_array)
+        )
+        return response_data.choices[0].message.content
+
+    def clean_response(self, response_text: str) -> str:
+        response_text = re.sub(r"(?i)dannybot:", "", response_text)
+        response_text = re.sub(r"(?i)dannybot said:", "", response_text).strip()[:1990]
+        return response_text
+
     def pop_not_sys(self):
-            for msg in self.message_array:
-                if msg["role"] != "system":
-                    self.message_array.remove(msg)
-                    break
+        for msg in list(self.message_array):
+            if msg["role"] != "system":
+                self.message_array.remove(msg)
+                break
 
     @commands.hybrid_command(
         name="chatgpt",
@@ -94,6 +109,7 @@ class chatbot(commands.Cog):
             ],
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(chatbot(bot))
