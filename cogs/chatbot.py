@@ -24,7 +24,7 @@ class CustomGPT(commands.FlagConverter):
 
 # Class that stores every global variable and initializes them
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=12):
+    def __init__(self, bot: commands.Bot, memory_length=5):
         self.bot = bot
         self.memory_length = memory_length
         self.message_array = deque([{"role": "system", "content": '''
@@ -66,10 +66,10 @@ class chatbot(commands.Cog):
             self.message_array.append({"role": "assistant", "content": response_text})
         
     def pop_not_sys(self):
-        for msg in reversed(self.message_array):
-            if msg["role"] != "system":
-                self.message_array.remove(msg)
-                break
+            for msg in self.message_array:
+                if msg["role"] != "system":
+                    self.message_array.remove(msg)
+                    break
 
     @commands.hybrid_command(
         name="chatgpt",

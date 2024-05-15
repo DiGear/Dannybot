@@ -118,7 +118,7 @@ async def reload(ctx: commands.Context, module: str):
     # resynchronize slash commands
     command_sync = await bot.tree.sync()
     print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
-    await ctx.sendFore.BLUE + (f"Reloaded {module} module(s)!" + Fore.RESET)
+    await ctx.send(f"Reloaded {module} module(s)!")
 
 #hide pooter shit
 @bot.event
