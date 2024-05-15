@@ -231,6 +231,34 @@ class ai(commands.Cog):
         with open(f"{cache_dir}\\output.png", "rb") as f:
             await ctx.reply(file=File(f, "transparent.png"), mention_author=True)
 
+    @commands.command(
+        aliases=["vision"],
+        description="Runs the provided image through a vision, and describes it.",
+        brief="Identify an image using AI",
+    )
+    async def identify(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        file_url = cmd_info[0]
+
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": file_url, "detail": "high"},
+                        },
+                    ],
+                }
+            ],
+            max_tokens=300,
+        )
+
+        await ctx.send(response.choices[0].message.content)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ai(bot))
