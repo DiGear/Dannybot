@@ -438,10 +438,10 @@ async def resolve_args(ctx, args, attachments, type="image"):
         else:
             http_urls = re.findall(r"http\S+",referenced_message.content)
             if http_urls:
-                http_url = http_urls[0].split("?")
+                http_url = http_urls[0].split("?")[0]
                 ext = http_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
-                    url = http_url
+                    url = http_urls[0]
                     print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
 
     # Grab a URL if the command has an attachment
@@ -517,11 +517,11 @@ async def resolve_args(ctx, args, attachments, type="image"):
             # Generic
             http_urls = re.findall(r"http\S+", content)
             if http_urls:
-                http_url = http_urls[0].split("?")
+                http_url = http_urls[0].split("?")[0]
                 ext = http_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
                     print(Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET)
-                    url = http_url
+                    url = http_urls[0]
                     break
                     
     try:
