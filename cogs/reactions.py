@@ -20,5 +20,6 @@ class reactions(commands.Cog):
                 reference=message,
             )
 
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(reactions(bot))

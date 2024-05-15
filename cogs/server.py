@@ -30,7 +30,7 @@ class server(commands.Cog):
                         await ctx.reply(image_url, mention_author=True)
                     else:
                         await ctx.send("Failed to retrieve catgirl image.")
-                        
+
     @commands.hybrid_command(
         name="pizzi",
         description="Emulate Pizzi messages using textgenrnn.",
@@ -41,6 +41,7 @@ class server(commands.Cog):
         if ctx.guild.id not in whitelist:
             await ctx.send("This server is not whitelisted for this command.")
             return
+
         def generate_pizzi_text(temp=temperature):
             if temp is None:
                 temp = round(random.uniform(0.01, 1.5), 2)
@@ -53,12 +54,13 @@ class server(commands.Cog):
                 sys.stdout = sys.__stdout__
             captured_output = output_buffer.getvalue()
             return captured_output.strip().splitlines()[-1]
-            #return captured_output.strip().splitlines()[-1] + str(f"\n\n(temperature: {temp})")
+            # return captured_output.strip().splitlines()[-1] + str(f"\n\n(temperature: {temp})")
+
         pizzi_text = generate_pizzi_text()
         pizzi_image = random.choice(os.listdir(f"{dannybot}\\database\\dooter\\"))
         with open(f"{dannybot}\\database\\dooter\\{pizzi_image}", "rb") as f:
             await ctx.reply(pizzi_text, file=File(f, "pizzi.png"))
-                        
+
     @commands.command(hidden=True)
     async def po(self, ctx):
         file_name = random.choice(os.listdir(f"{dannybot}\\database\\Po\\"))
@@ -144,7 +146,7 @@ class server(commands.Cog):
             )
 
         await ctx.reply(embed=embed, mention_author=True)
-        
+
     @commands.hybrid_command()
     @commands.is_owner()
     async def kill(self, ctx, user: discord.User):
@@ -155,7 +157,9 @@ class server(commands.Cog):
                 continue
             if (ctx.message.created_at - message.created_at).days < 14:
                 try:
-                    deleted = await ctx.channel.purge(limit=100, check=lambda m: m.author == user, before=message)
+                    deleted = await ctx.channel.purge(
+                        limit=100, check=lambda m: m.author == user, before=message
+                    )
                     count += len(deleted)
                     break
                 except discord.errors.HTTPException as e:
@@ -183,7 +187,8 @@ class server(commands.Cog):
                     await ctx.send(f"Failed to delete a message: {e}")
                     return
 
-        await ctx.send(f'Deleted {count} messages from {user.mention}.')
+        await ctx.send(f"Deleted {count} messages from {user.mention}.")
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(server(bot))

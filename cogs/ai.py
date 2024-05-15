@@ -19,6 +19,7 @@ class CustomWrite(commands.FlagConverter):
         "davinci-002",
     ]
 
+
 class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -166,54 +167,70 @@ class ai(commands.Cog):
             model_name = "isnet-anime"
         else:
             model_name = "u2net"
-                    
+
         session = new_session(model_name)
         output_data = remove(input_data, session=session)
-        
-        
-        #rembg improvements
-        
-        #convert premultiplied alpha to straight alpha (gets rid of gray edges - premultiplied is only used in specific pro video editing contexts)
-        og_r, og_g, og_b = input_data.convert('RGB').split() #separate the original image's RGBA
-        rm_a = output_data.split()[3] #separate the RGBA from the new image
-        
-        #here it gets ugly since we have to iterate every pixel to do things PIL cant
-        
-        #which are midpoint-based contrast correction and optimizing the alpha channel for better compression
-        #contrast correction is necessary because this fixes the slightly opaque (~20) splotches and not fully opaque (~252) foreground
-        
-        #merge the input RGB with the output A (alpha conversion pt 2)
-        output_data = Image.merge("RGBA", [og_r, og_g, og_b, rm_a]) 
-        
-        #load image as a PixelAccess object
+
+        # rembg improvements
+
+        # convert premultiplied alpha to straight alpha (gets rid of gray edges - premultiplied is only used in specific pro video editing contexts)
+        og_r, og_g, og_b = input_data.convert(
+            "RGB"
+        ).split()  # separate the original image's RGBA
+        rm_a = output_data.split()[3]  # separate the RGBA from the new image
+
+        # here it gets ugly since we have to iterate every pixel to do things PIL cant
+
+        # which are midpoint-based contrast correction and optimizing the alpha channel for better compression
+        # contrast correction is necessary because this fixes the slightly opaque (~20) splotches and not fully opaque (~252) foreground
+
+        # merge the input RGB with the output A (alpha conversion pt 2)
+        output_data = Image.merge("RGBA", [og_r, og_g, og_b, rm_a])
+
+        # load image as a PixelAccess object
         output_pixels = output_data.load()
-        
-        #initialize last known color
-        last_color = (0,0,0,0)
+
+        # initialize last known color
+        last_color = (0, 0, 0, 0)
         for y in range(output_data.height):
             for x in range(output_data.width):
-                #contrast "curve" (actually a clipped line)
+                # contrast "curve" (actually a clipped line)
                 midpoint = 240
                 contrast = 1.5
-                #y = ((n - midpoint) * contrast) + midpoint
-                new_alpha = round(((output_pixels[x,y][3] - midpoint) * contrast) + midpoint)
-                #clip to 0-255
-                new_alpha = max(new_alpha,0) #clip values below 0 to 0
-                new_alpha = min(new_alpha,255) #clip values above 255 to 255
-                
-                #tuples dont support item assignment so forced to write ugly redundant code
-                output_pixels[x,y] = (output_pixels[x,y][0], output_pixels[x,y][1], output_pixels[x,y][2], new_alpha)
-                
-                #optimize alpha=0 pixels (this brings a 5.09mb file down to only 951kb!)
-                if output_pixels[x,y][3] == 0: # if fully transparent
-                    output_pixels[x,y] = (last_color[0], last_color[1], last_color[2], 0) # replace value with last known color to save RLE compression
-                else: # if opaque in any way
-                    last_color = output_pixels[x,y] # set last known color to current color
-                    
+                # y = ((n - midpoint) * contrast) + midpoint
+                new_alpha = round(
+                    ((output_pixels[x, y][3] - midpoint) * contrast) + midpoint
+                )
+                # clip to 0-255
+                new_alpha = max(new_alpha, 0)  # clip values below 0 to 0
+                new_alpha = min(new_alpha, 255)  # clip values above 255 to 255
+
+                # tuples dont support item assignment so forced to write ugly redundant code
+                output_pixels[x, y] = (
+                    output_pixels[x, y][0],
+                    output_pixels[x, y][1],
+                    output_pixels[x, y][2],
+                    new_alpha,
+                )
+
+                # optimize alpha=0 pixels (this brings a 5.09mb file down to only 951kb!)
+                if output_pixels[x, y][3] == 0:  # if fully transparent
+                    output_pixels[x, y] = (
+                        last_color[0],
+                        last_color[1],
+                        last_color[2],
+                        0,
+                    )  # replace value with last known color to save RLE compression
+                else:  # if opaque in any way
+                    last_color = output_pixels[
+                        x, y
+                    ]  # set last known color to current color
+
         output_data.save(f"{cache_dir}\\output.png")
 
         with open(f"{cache_dir}\\output.png", "rb") as f:
             await ctx.reply(file=File(f, "transparent.png"), mention_author=True)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ai(bot))

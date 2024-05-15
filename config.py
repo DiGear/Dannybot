@@ -36,8 +36,9 @@ from pathlib import Path
 from textwrap import wrap
 from typing import Literal
 from io import StringIO
+
 # tensorfuck
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 from textgenrnn import textgenrnn
 from urllib import request
 from rembg import new_session, remove
@@ -95,7 +96,9 @@ dannybot_denialResponses = {
     "nope",
     "no thanks",
 }  # what dannybot says upon denial
-dannybot = (os.getcwd())  # easy to call variable that stores our current working directory
+dannybot = (
+    os.getcwd()
+)  # easy to call variable that stores our current working directory
 cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
 clean_pooter_onLaunch = True  # dannybot will clean up pooter on launch if set to true
 database_acceptedFiles = {
@@ -128,9 +131,9 @@ bookmarks_channel = int(os.getenv("BOOKMARKS"))  # channel to send personal book
 logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 
 # more .env keys being assigned here
-openai.api_key = os.getenv("OPENAI_API_KEY") # i hope i can remove this soon
+openai.api_key = os.getenv("OPENAI_API_KEY")  # i hope i can remove this soon
 tenor_apikey = os.getenv("TENOR_KEY")
-AlphaVantageAPI = os.getenv("AV_API_KEY") 
+AlphaVantageAPI = os.getenv("AV_API_KEY")
 
 # internal paths
 Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
@@ -218,19 +221,24 @@ deltarune_dw = {
 # Functions
 # ----------
 
-#Custom colors
+
+# Custom colors
 def custom_color_handler(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, Warning):
         msg = Fore.YELLOW + f"Warning: {exc_type.__name__}: {exc_value}\n" + Fore.RESET
     else:
-        error_msg = f'Error: {exc_value}\n'
-        traceback_str = ''.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+        error_msg = f"Error: {exc_value}\n"
+        traceback_str = "".join(
+            traceback.format_exception(exc_type, exc_value, exc_traceback)
+        )
         msg = Fore.RED + error_msg + traceback_str + Fore.RESET
     sys.stderr.write(msg)
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
+
 sys.excepthook = custom_color_handler
 warnings.showwarning = custom_color_handler
+
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
 def unpack_gif(file):
@@ -274,6 +282,7 @@ def randhex(bits):
     random_hex = hex(random_number)[2:].zfill(num_bytes)
     return random_hex
 
+
 # clear the cache folder of all files
 def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
@@ -286,9 +295,11 @@ def clear_cache():
             if file_path.is_file() and "git" not in str(file_path):
                 try:
                     os.remove(file_path)
-                    print(Fore.LIGHTMAGENTA_EX +  f"Deleted: {file_path}" + Fore.RESET)
+                    print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file_path}" + Fore.RESET)
                 except PermissionError:
-                    print(Fore.YELLOW +  f"Skipped: {file_path} (File in use)" + Fore.RESET)
+                    print(
+                        Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET
+                    )
                     continue
 
     threads = []
@@ -327,7 +338,7 @@ def fileSize(folder):
 
     units = ["bytes", "KB", "MB", "GB", "TB"]
     unit_index = min(len(units) - 1, int(math.floor(math.log(total_size, 1024))))
-    total_size /= 1024 ** unit_index
+    total_size /= 1024**unit_index
 
     return f"{total_size:.2f} {units[unit_index]}"
 
@@ -401,6 +412,7 @@ def gettenor(gifid=None):
         gifs = None
     return gifs["results"][0]["media"][0]["gif"]["url"]
 
+
 # this shit hole of a function is how dannybot handles files sent within discord and how they should be used with other args
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
@@ -425,10 +437,12 @@ async def resolve_args(ctx, args, attachments, type="image"):
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
         if "https://tenor.com/view/" in referenced_message.content and type == "image":
-                tenor = True
-                tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", referenced_message.content).group(1)
-                url = gettenor(tenor_id)
-                print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
+            tenor = True
+            tenor_id = re.search(
+                r"tenor\.com/view/.*-(\d+)", referenced_message.content
+            ).group(1)
+            url = gettenor(tenor_id)
+            print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
         elif referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
@@ -436,7 +450,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
                     break
         else:
-            http_urls = re.findall(r"http\S+",referenced_message.content)
+            http_urls = re.findall(r"http\S+", referenced_message.content)
             if http_urls:
                 http_url = http_urls[0].split("?")[0]
                 ext = http_url[0].split(".")[-1]
@@ -471,11 +485,15 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
-                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
+                print(
+                    Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET
+                )
                 avatar = True
             else:
                 url = str(mentioned_member.avatar.url)
-                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
+                print(
+                    Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET
+                )
                 avatar = True
 
     # Message content iteration
@@ -510,29 +528,35 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     http_url = http_urls[0].split("?")
                     ext = http_url[0].split(".")[-1]
                     if ext.lower() in extension_list:
-                        print(Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET)
+                        print(
+                            Fore.BLUE
+                            + f"URL from message content: {http_url}"
+                            + Fore.RESET
+                        )
                         url = http_url
                         break
-                    
+
             # Generic
             http_urls = re.findall(r"http\S+", content)
             if http_urls:
                 http_url = http_urls[0].split("?")[0]
                 ext = http_url[0].split(".")[-1]
                 if ext.lower() in extension_list:
-                    print(Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET)
+                    print(
+                        Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET
+                    )
                     url = http_urls[0]
                     break
-                    
+
     try:
         if not avatar:
             url = f"{url[0]}?{url[1]}"
         else:
             url = url
-            text = re.sub(r'<@[^>]+>\s*', '',text)
+            text = re.sub(r"<@[^>]+>\s*", "", text)
     except:
-        #this fixes it so whatever
-        url = ''.join(char for char in url if char not in '[]\'"')
+        # this fixes it so whatever
+        url = "".join(char for char in url if char not in "[]'\"")
     finally:
         print(Fore.CYAN + f"Arguments: {url}, {text}" + Fore.RESET)
         return [url, text]
@@ -838,13 +862,14 @@ def uwuify(input_text):
         result = ""
         i = 0
         while i < len(text):
-            if text[i:i + len(old)].lower() == old.lower():
-                result += text[i:i + len(old)].replace(old, new, 1)
+            if text[i : i + len(old)].lower() == old.lower():
+                result += text[i : i + len(old)].replace(old, new, 1)
                 i += len(old)
             else:
                 result += text[i]
                 i += 1
         return result
+
     modified_text1 = case_agnostic_replace(input_text, "l", "w")
     modified_text2 = case_agnostic_replace(modified_text1, "u", "uu")
     modified_text3 = case_agnostic_replace(modified_text2, "r", "w")
@@ -855,9 +880,7 @@ def uwuify(input_text):
     output_text = []
     for i, word in enumerate(words):
         output_text.append(word)
-        if (
-            i < len(words) - 1 and random.random() < 0.1
-        ): 
+        if i < len(words) - 1 and random.random() < 0.1:
             output_text.append(random.choice(emoticons))
     modified_text6 = " ".join(output_text)
     modified_text7 = case_agnostic_replace(modified_text6, "~", "")
@@ -867,7 +890,7 @@ def uwuify(input_text):
 
 # clean up the pooter folder
 def clean_pooter():
-    directory_path = os.path.join(dannybot, 'database', 'Pooter')
+    directory_path = os.path.join(dannybot, "database", "Pooter")
 
     if not os.path.exists(directory_path):
         logging.error(Fore.RED + "Pooter folder not found. Aborting." + Fore.RESET)
@@ -878,28 +901,32 @@ def clean_pooter():
 
     def calculate_file_hash(file_path, block_size=65536):
         hasher = hashlib.md5()
-        with open(file_path, 'rb') as f:
-            for chunk in iter(lambda: f.read(block_size), b''):
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(block_size), b""):
                 hasher.update(chunk)
         return hasher.hexdigest()
 
     def clean_file(file):
         nonlocal file_hashes
         file_path = os.path.join(directory_path, file)
-        if '.' not in file:
+        if "." not in file:
             os.remove(file_path)
             with lock:
-                print(Fore.LIGHTMAGENTA_EX +  f"Deleted: {file}" + Fore.RESET)
+                print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file}" + Fore.RESET)
             return
         file_hash = calculate_file_hash(file_path)
         with lock:
             if file_hash in file_hashes:
                 os.remove(file_path)
-                print(Fore.LIGHTMAGENTA_EX +  f"Deleted: {file}" + Fore.RESET)
+                print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file}" + Fore.RESET)
             else:
                 file_hashes[file_hash] = file_path
 
-    files_to_clean = [file for file in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, file))]
+    files_to_clean = [
+        file
+        for file in os.listdir(directory_path)
+        if os.path.isfile(os.path.join(directory_path, file))
+    ]
 
     threads = []
     for file in files_to_clean:

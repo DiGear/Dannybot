@@ -82,7 +82,7 @@ class misc(commands.Cog):
         if response.status_code == 200:
             data = response.json()
             last_refreshed = data["Meta Data"]["3. Last Refreshed"]
-            stock_data = data['Time Series (Daily)']
+            stock_data = data["Time Series (Daily)"]
             latest_data = stock_data[last_refreshed]
 
             embed = discord.Embed(
@@ -116,7 +116,9 @@ class misc(commands.Cog):
 
         format_opts = {
             "mp4": {"format": "mp4"},
-            "webm": {"format": "bestvideo[ext=webm]+bestaudio[ext=webm]/best[ext=webm]"},
+            "webm": {
+                "format": "bestvideo[ext=webm]+bestaudio[ext=webm]/best[ext=webm]"
+            },
             "mp3": {
                 "format": "bestaudio/best",
                 "postprocessors": [
@@ -134,13 +136,13 @@ class misc(commands.Cog):
             "force_overwrites": True,
             "no_check_certificate": True,
             "no_playlist": True,
-            'cookiefile': Cookies,
+            "cookiefile": Cookies,
         }
 
         if format not in format_opts:
             await ctx.reply(
                 "The format specified is invalid. Please use `mp4, webm` for video or `mp3` for audio."
-                )
+            )
             return
 
         ydl_opts.update(format_opts[format])

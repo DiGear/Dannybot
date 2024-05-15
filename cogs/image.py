@@ -54,7 +54,8 @@ class image(commands.Cog):
                 input_image.paste((0, 0, 0, 0), mask=mask)
             for _ in range(bitesRight):
                 x = random.randint(
-                    input_image.width - margin - random.randint(35, 60), input_image.width - margin
+                    input_image.width - margin - random.randint(35, 60),
+                    input_image.width - margin,
                 )
                 y = random.randint(0, input_image.height)
                 radius = random.randint(50, 125)
@@ -65,7 +66,7 @@ class image(commands.Cog):
                 )
                 input_image.paste((0, 0, 0, 0), mask=mask)
             background = Image.open(f"{dannybot}\\assets\\plate.png")
-            background = change_hue(background, round(random.uniform(0, 1), 4) )
+            background = change_hue(background, round(random.uniform(0, 1), 4))
             background = background.convert("RGBA")
             x = (background.width - input_image.width) // 2
             y = (background.height - input_image.height) // 2
@@ -585,7 +586,7 @@ class image(commands.Cog):
 
             with open(f"{dannybot}\\cache\\radial_blur.png", "rb") as f:
                 await ctx.reply(file=File(f, "radial_blur.png"), mention_author=True)
-                
+
     @commands.command(
         aliases=["crop"],
         description="Auto-crop the provided image.",
@@ -605,8 +606,10 @@ class image(commands.Cog):
         image = Image.open(image_path)
 
         def auto_crop(image):
-            if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
-                alpha = image.convert('RGBA').split()[-1]
+            if image.mode in ("RGBA", "LA") or (
+                image.mode == "P" and "transparency" in image.info
+            ):
+                alpha = image.convert("RGBA").split()[-1]
                 bbox = alpha.getbbox()
                 if bbox:
                     cropped_image = image.crop(bbox)

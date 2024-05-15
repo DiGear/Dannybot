@@ -15,11 +15,11 @@ class pooter(commands.Cog):
         # Check if the message starts with any of the bot prefixes
         if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
             return
-        
+
         if msg.guild.id not in whitelist:
             await msg.channel.send("This server is not whitelisted for this command.")
             return
-        
+
         # Count the occurrences of "poo" in the message
         poo_count = msg.content.count("poo")
 

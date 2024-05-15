@@ -30,6 +30,7 @@ bot = commands.Bot(
     case_insensitive=True,
 )
 
+
 # do this when everything else is done
 @bot.event
 async def on_ready():
@@ -37,23 +38,29 @@ async def on_ready():
     command_sync = await bot.tree.sync()
     print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
     print("---------------------------------------------------------------------")
-    print(Fore.GREEN + f"{bot.user} successfully booted on discord.py version {discord.__version__}" + Fore.RESET)
+    print(
+        Fore.GREEN
+        + f"{bot.user} successfully booted on discord.py version {discord.__version__}"
+        + Fore.RESET
+    )
     print("---------------------------------------------------------------------")
     return
+
 
 # this is our message handler
 @bot.event
 async def on_message(message):
     if message.author.bot:
         return
-    
-    is_denial = (
-        random.randint(0, dannybot_denialRatio) == dannybot_denialRatio
-        and any(message.content.startswith(prefix) for prefix in dannybot_prefixes)
+
+    is_denial = random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(
+        message.content.startswith(prefix) for prefix in dannybot_prefixes
     )
 
     if is_denial:
-        await message.channel.send(random.choice(dannybot_denialResponses), reference=message)
+        await message.channel.send(
+            random.choice(dannybot_denialResponses), reference=message
+        )
     else:
         if any(message.content.startswith(prefix) for prefix in dannybot_prefixes):
             os.chdir(dannybot)
@@ -71,7 +78,10 @@ async def ping(ctx: commands.Context):
     message = await ctx.send(f"Round-trip Latency: NANms | API Latency: NANms")
     end_time = time.monotonic()
     ping_time = round((end_time - start_time) * 1000)
-    await message.edit(content=f"Round-trip Latency: {ping_time}ms | API Latency: {round(bot.latency * 1000)}ms")
+    await message.edit(
+        content=f"Round-trip Latency: {ping_time}ms | API Latency: {round(bot.latency * 1000)}ms"
+    )
+
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
 @bot.hybrid_command(
@@ -104,7 +114,7 @@ async def reload(ctx: commands.Context, module: str):
         ]
     else:
         cogs = [f"cogs.{module}"]
-    
+
     # loop through each specified cog to unload and reload
     for cog in cogs:
         try:
@@ -114,25 +124,36 @@ async def reload(ctx: commands.Context, module: str):
             pass
         # reload the extension
         await bot.load_extension(cog)
-    
+
     # resynchronize slash commands
     command_sync = await bot.tree.sync()
     print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
     await ctx.send(f"Reloaded {module} module(s)!")
 
-#hide pooter shit
+
+# hide pooter shit
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound) and ctx.invoked_with.startswith("poo"):
+    if isinstance(error, commands.CommandNotFound) and ctx.invoked_with.startswith(
+        "poo"
+    ):
         return
     raise error
+
 
 async def load_extension(cog):
     try:
         await bot.load_extension(cog)
-        print(Fore.LIGHTMAGENTA_EX + "Imported module: " + Fore.LIGHTCYAN_EX + f"{cog}" + Fore.RESET)
+        print(
+            Fore.LIGHTMAGENTA_EX
+            + "Imported module: "
+            + Fore.LIGHTCYAN_EX
+            + f"{cog}"
+            + Fore.RESET
+        )
     except Exception as e:
-        print(Fore.RED + f"Failed to load {cog}: {e}"+ Fore.RESET)
+        print(Fore.RED + f"Failed to load {cog}: {e}" + Fore.RESET)
+
 
 async def load_extensions():
     tasks = []
@@ -145,18 +166,29 @@ async def load_extensions():
     # gather and execute all load_extension tasks concurrently
     await asyncio.gather(*tasks)
 
+
 # this ACTUALLY starts the bot
 async def main():
     if clean_pooter_onLaunch:
-        print(Fore.LIGHTMAGENTA_EX + "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..." + Fore.RESET)
+        print(
+            Fore.LIGHTMAGENTA_EX
+            + "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..."
+            + Fore.RESET
+        )
         print("---------------------------------------------------------------------")
         clean_pooter()
         print("---------------------------------------------------------------------")
     if cache_clear_onLaunch:
-        print(Fore.LIGHTMAGENTA_EX + "Clearing cache from the previous session..." + Fore.RESET)
+        print(
+            Fore.LIGHTMAGENTA_EX
+            + "Clearing cache from the previous session..."
+            + Fore.RESET
+        )
         print("---------------------------------------------------------------------")
         clear_cache()
         print("---------------------------------------------------------------------")
     await load_extensions()
     await bot.start(dannybot_token)
+
+
 asyncio.run(main())
