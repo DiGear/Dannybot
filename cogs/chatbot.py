@@ -71,7 +71,10 @@ class chatbot(commands.Cog):
 
     async def get_openai_response(self) -> str:
         response_data = openai.ChatCompletion.create(
-            model=self.model, temperature=1, messages=list(self.message_array)
+            model=self.model,
+            temperature=1.2,
+            max_tokens=200,
+            messages=list(self.message_array),
         )
         return response_data.choices[0].message.content
 
@@ -98,7 +101,7 @@ class chatbot(commands.Cog):
             return
         response = openai.ChatCompletion.create(
             model=flags.model,
-            max_tokens=512,
+            max_tokens=200,
             top_p=flags.top_p,
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,

@@ -254,7 +254,7 @@ class ai(commands.Cog):
                     ],
                 }
             ],
-            max_tokens=300,
+            max_tokens=200,
         )
 
         await ctx.send(response.choices[0].message.content)
