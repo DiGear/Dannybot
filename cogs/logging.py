@@ -13,9 +13,10 @@ class logging(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         log_channel = self.bot.get_channel(logs_channel)
+        clearedcontent = message.content.replace("@", "\@")
         if any(message.content.startswith(prefix) for prefix in dannybot_prefixes):
             log_message = (
-                f"{message.author.name} ({message.author.id}) issued: {message.content}"
+                f"{message.author.name} ({message.author.id}) issued: {clearedcontent}"
             )
             await log_channel.send(log_message)
 
