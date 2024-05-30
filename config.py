@@ -435,7 +435,6 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
     # Helper function to ensure proper URL combination
     def combine_url(url_parts):
-        """Combine URL parts into a single URL if they exist."""
         return "?".join(filter(None, url_parts))
 
     # Grab a URL if the command is a reply to an image
