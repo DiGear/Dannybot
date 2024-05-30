@@ -29,7 +29,7 @@ class chatbot(commands.Cog):
                 {
                     "role": "system",
                     "content": """
-            Your name is Dannybot. You are talking to more than one person. Please refer to people by name as specified (The name will be display as "name said:").
+            Your name is Dannybot. You are talking to more than one person. The name format is (name said: thing) respond to their message
             """,
                 }
             ],
@@ -68,11 +68,12 @@ class chatbot(commands.Cog):
         response_text = self.clean_response(response_text)
         await message.channel.send(response_text, reference=message)
         self.message_array.append({"role": "assistant", "content": response_text})
+        print(self.message_array)
 
     async def get_openai_response(self) -> str:
         response_data = openai.ChatCompletion.create(
             model=self.model,
-            temperature=1.2,
+            temperature=1.0,
             max_tokens=250,
             messages=list(self.message_array),
         )
