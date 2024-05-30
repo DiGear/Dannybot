@@ -433,36 +433,41 @@ async def resolve_args(ctx, args, attachments, type="image"):
     }
     extension_list = [ext.lower() for ext in extensions.get(type, ())]
 
+    # Helper function to ensure proper URL combination
+    def combine_url(url_parts):
+        """Combine URL parts into a single URL if they exist."""
+        return "?".join(filter(None, url_parts))
+
     # Grab a URL if the command is a reply to an image
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
         if "https://tenor.com/view/" in referenced_message.content and type == "image":
             tenor = True
-            tenor_id = re.search(
-                r"tenor\.com/view/.*-(\d+)", referenced_message.content
-            ).group(1)
+            tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", referenced_message.content).group(1)
             url = gettenor(tenor_id)
             print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
         elif referenced_message.attachments:
             for attachment in referenced_message.attachments:
                 if attachment.content_type.startswith(type):
-                    url = attachment.url.split("?")
+                    url_parts = attachment.url.split("?")
+                    url = combine_url(url_parts)
                     print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
                     break
         else:
             http_urls = re.findall(r"http\S+", referenced_message.content)
             if http_urls:
-                http_url = http_urls[0].split("?")[0]
-                ext = http_url[0].split(".")[-1]
+                http_url_parts = http_urls[0].split("?")
+                ext = http_url_parts[0].split(".")[-1]
                 if ext.lower() in extension_list:
-                    url = http_urls[0]
+                    url = combine_url(http_url_parts)
                     print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
 
     # Grab a URL if the command has an attachment
     if not url and attachments:
         for attachment in attachments:
             if attachment.content_type.startswith(type):
-                url = attachment.url.split("?")
+                url_parts = attachment.url.split("?")
+                url = combine_url(url_parts)
                 print(Fore.BLUE + f"URL from attachment: {url}" + Fore.RESET)
                 break
 
@@ -475,25 +480,22 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 url = gettenor(tenor_id)
                 print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
             else:
-                url = args[0].split("?")
+                url_parts = args[0].split("?")
+                url = combine_url(url_parts)
                 text = " ".join(args[1:])
                 print(Fore.BLUE + f"URL from argument: {url}" + Fore.RESET)
 
-        # Grab a URL from mentioned users avatar
+        # Grab a URL from mentioned user's avatar
         if ctx.message.mentions:
             mentioned_member = ctx.message.mentions[0]
 
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
-                print(
-                    Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET
-                )
+                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
                 avatar = True
             else:
                 url = str(mentioned_member.avatar.url)
-                print(
-                    Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET
-                )
+                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
                 avatar = True
 
     # Message content iteration
@@ -502,13 +504,13 @@ async def resolve_args(ctx, args, attachments, type="image"):
         async for msg in channel.history(limit=500):
             content = msg.content
 
-            # Grab the URL from the last sent messages Attachement
+            # Grab the URL from the last sent message's attachment
             for attachment in msg.attachments:
-                attch_url = attachment.url.split("?")
-                ext = attch_url[0].split(".")[-1]
+                attch_url_parts = attachment.url.split("?")
+                ext = attch_url_parts[0].split(".")[-1]
                 if ext.lower() in extension_list:
-                    print(Fore.BLUE + f"URL from attachment: {attch_url}" + Fore.RESET)
-                    url = attch_url
+                    url = combine_url(attch_url_parts)
+                    print(Fore.BLUE + f"URL from attachment: {url}" + Fore.RESET)
                     break
             if url:
                 break
@@ -525,38 +527,30 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if type == "image":
                 http_urls = re.findall(r"http\S+", content)
                 if http_urls:
-                    http_url = http_urls[0].split("?")
-                    ext = http_url[0].split(".")[-1]
+                    http_url_parts = http_urls[0].split("?")
+                    ext = http_url_parts[0].split(".")[-1]
                     if ext.lower() in extension_list:
-                        print(
-                            Fore.BLUE
-                            + f"URL from message content: {http_url}"
-                            + Fore.RESET
-                        )
-                        url = http_url
+                        url = combine_url(http_url_parts)
+                        print(Fore.BLUE + f"URL from message content: {url}" + Fore.RESET)
                         break
 
-            # Generic
+            # Generic URL extraction
             http_urls = re.findall(r"http\S+", content)
             if http_urls:
-                http_url = http_urls[0].split("?")[0]
-                ext = http_url[0].split(".")[-1]
+                http_url_parts = http_urls[0].split("?")[0]
+                ext = http_url_parts.split(".")[-1]
                 if ext.lower() in extension_list:
-                    print(
-                        Fore.BLUE + f"URL from message content: {http_url}" + Fore.RESET
-                    )
-                    url = http_urls[0]
+                    url = combine_url(http_url_parts)
+                    print(Fore.BLUE + f"URL from message content: {url}" + Fore.RESET)
                     break
 
     try:
-        if not avatar:
-            url = f"{url[0]}?{url[1]}"
-        else:
-            url = url
-            text = re.sub(r"<@[^>]+>\s*", "", text)
-    except:
-        # this fixes it so whatever
-        url = "".join(char for char in url if char not in "[]'\"")
+        if not avatar and isinstance(url, list):
+            url = combine_url(url)
+        text = re.sub(r"<@[^>]+>\s*", "", text)
+    except Exception as e:
+        # Handle any exceptions in URL processing
+        print(Fore.RED + f"Error combining URL: {e}" + Fore.RESET)
     finally:
         print(Fore.CYAN + f"Arguments: {url}, {text}" + Fore.RESET)
         return [url, text]
