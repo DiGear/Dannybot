@@ -144,6 +144,6 @@ Werkzeug==3.0.1
 whisper-client==0.4.0
 wrapt==1.14.1
 yarl==1.9.2
-yt-dlp==2023.12.30
+yt-dlp==2024.5.27
 zope.event==5.0
 zope.interface==6.0
