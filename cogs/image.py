@@ -37,34 +37,44 @@ class image(commands.Cog):
                 new_height = max_size
                 new_width = int(width * (max_size / height))
             input_image = input_image.resize((new_width, new_height))
-            bite_marks = Image.new("RGBA", input_image.size, (0, 0, 0, 0))
-            draw = ImageDraw.Draw(bite_marks)
+
             margin = 20
-            bitesLeft = random.randint(0, 10)
-            bitesRight = random.randint(0, 10)
-            for _ in range(bitesLeft):
-                x = random.randint(margin, margin + random.randint(35, 60))
-                y = random.randint(0, input_image.height)
+            edge_bites_left = random.randint(0, 15)
+            edge_bites_right = random.randint(0, 15)
+
+            def gaussian_clamped(mean, stddev, min_value, max_value):
+                value = random.gauss(mean, stddev)
+                return max(min_value, min(max_value, int(value)))
+
+            stddev_x = input_image.width / 2
+            stddev_y = input_image.height / 2
+
+            def place_edge_bites(count, side):
+                for _ in range(count):
+                    if side == 'left':
+                        x = random.randint(margin, margin + 50)
+                    elif side == 'right':
+                        x = random.randint(input_image.width - margin - 50, input_image.width - margin)
+                    y = random.randint(0, input_image.height)
+                    radius = random.randint(50, 125)
+                    mask = Image.new("L", input_image.size, 0)
+                    mask_draw = ImageDraw.Draw(mask)
+                    mask_draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=255)
+                    input_image.paste((0, 0, 0, 0), mask=mask)
+
+            place_edge_bites(edge_bites_left, 'left')
+            place_edge_bites(edge_bites_right, 'right')
+
+            center_bites = random.randint(5, 10)
+            for _ in range(center_bites):
+                x = gaussian_clamped(input_image.width / 2, stddev_x, margin, input_image.width - margin)
+                y = gaussian_clamped(input_image.height / 2, stddev_y, 0, input_image.height)
                 radius = random.randint(50, 125)
                 mask = Image.new("L", input_image.size, 0)
                 mask_draw = ImageDraw.Draw(mask)
-                mask_draw.ellipse(
-                    (x - radius, y - radius, x + radius, y + radius), fill=255
-                )
+                mask_draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=255)
                 input_image.paste((0, 0, 0, 0), mask=mask)
-            for _ in range(bitesRight):
-                x = random.randint(
-                    input_image.width - margin - random.randint(35, 60),
-                    input_image.width - margin,
-                )
-                y = random.randint(0, input_image.height)
-                radius = random.randint(50, 125)
-                mask = Image.new("L", input_image.size, 0)
-                mask_draw = ImageDraw.Draw(mask)
-                mask_draw.ellipse(
-                    (x - radius, y - radius, x + radius, y + radius), fill=255
-                )
-                input_image.paste((0, 0, 0, 0), mask=mask)
+
             background = Image.open(f"{dannybot}\\assets\\plate.png")
             background = change_hue(background, round(random.uniform(0, 1), 4))
             background = background.convert("RGBA")
@@ -75,12 +85,12 @@ class image(commands.Cog):
             with io.BytesIO() as image_binary:
                 background.save(image_binary, format="PNG")
                 image_binary.seek(0)
-                if bitesLeft + bitesRight == 0:
-                    await ctx.send("im not hungry")
+                if edge_bites_left + edge_bites_right + center_bites == 0:
+                    await ctx.send("I'm not hungry")
                 else:
                     await ctx.send(
-                        f"get eaten bitch (bites taken: {bitesLeft + bitesRight})",
-                        file=discord.File(image_binary, "biten_image.png"),
+                        f"get eaten bitch (bites taken: {edge_bites_left + edge_bites_right + center_bites})",
+                        file=discord.File(image_binary, "bitten_image.png"),
                     )
         except Exception as e:
             await ctx.send("An error occurred while processing the image.")
