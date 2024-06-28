@@ -106,6 +106,7 @@ class image(commands.Cog):
             await ctx.send("An error occurred while processing the image.")
             logging.error(f"Error processing the image: {str(e)}")
 
+
     @commands.command(
         name="caption",
         description="Adds text on the provided image or GIF.",
@@ -120,6 +121,7 @@ class image(commands.Cog):
             "Processing. Please wait... This can take a while for GIF files.",
             delete_after=5,
         )
+
         if ".gif" in file_url:
             gif_file = f"{cache_dir}/gif.gif"
             with open(gif_file, "wb") as f:
@@ -129,29 +131,24 @@ class image(commands.Cog):
                 if ".png" in frame:
                     im = Image.open(f"{cache_dir}/ffmpeg/{frame}")
                     draw = ImageDraw.Draw(im)
-                    font = ImageFont.truetype(f"{dannybot}/assets/futura.ttf", 64)
-                    max_width = im.width - 20
-                    wrapped_text = textwrap.fill(text, width=20)
-                    wrapped_text_width, wrapped_text_height = draw.textsize(
-                        wrapped_text, font=font
+                    font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
+                    max_width = im.width - 40
+                    lines = wrap_text(text, draw, font, max_width)
+                    line_height = font.getsize('A')[1]
+                    line_spacing = 18
+                    rectangle_height = (line_height + line_spacing) * len(lines) + 30
+                    new_im = Image.new(
+                        "RGBA", (im.width, im.height + rectangle_height), "white"
                     )
-                    box_width = wrapped_text_width + 40
-                    box_height = wrapped_text_height + 20
-                    new_im = Image.new("RGBA", (im.width, im.height), (0, 0, 0, 0))
-                    new_im.paste(im, (0, 0))
+                    new_im.paste(im, (0, rectangle_height))
                     draw = ImageDraw.Draw(new_im)
-                    text_position = ((im.width - wrapped_text_width) // 2, 10)
-                    draw.rectangle(
-                        [
-                            (text_position[0] - 10, text_position[1] - 10),
-                            (
-                                text_position[0] + wrapped_text_width + 10,
-                                text_position[1] + wrapped_text_height + 10,
-                            ),
-                        ],
-                        fill="white",
-                    )
-                    draw.text(text_position, wrapped_text, font=font, fill="black")
+                    draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
+                    y = 20
+                    for line in lines:
+                        text_width, _ = draw.textsize(line, font=font)
+                        text_position = ((im.width - text_width) // 2, y)
+                        draw.text(text_position, line, font=font, fill="black")
+                        y += (line_height + line_spacing)
                     new_im.save(f"{cache_dir}/ffmpeg/output/{frame}")
             repack_gif()
             with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
@@ -163,27 +160,22 @@ class image(commands.Cog):
                 f.write(requests.get(file_url).content)
             im = Image.open(image_file)
             draw = ImageDraw.Draw(im)
-            font = ImageFont.truetype(f"{dannybot}/assets/futura.ttf", 65)
-            max_width = im.width - 20
-            wrapped_text = textwrap.fill(text, width=20)
-            wrapped_text_width, wrapped_text_height = draw.textsize(wrapped_text, font=font)
-            box_width = wrapped_text_width + 40
-            box_height = wrapped_text_height + 20
-            new_im = Image.new("RGBA", (im.width, im.height), (0, 0, 0, 0))
-            new_im.paste(im, (0, 0))
+            font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
+            max_width = im.width - 40
+            lines = wrap_text(text, draw, font, max_width)
+            line_height = font.getsize('A')[1]
+            line_spacing = 18
+            rectangle_height = (line_height + line_spacing) * len(lines) + 30
+            new_im = Image.new("RGBA", (im.width, im.height + rectangle_height), "white")
+            new_im.paste(im, (0, rectangle_height))
             draw = ImageDraw.Draw(new_im)
-            text_position = ((im.width - wrapped_text_width) // 2, 10)
-            draw.rectangle(
-                [
-                    (text_position[0] - 10, text_position[1] - 10),
-                    (
-                        text_position[0] + wrapped_text_width + 10,
-                        text_position[1] + wrapped_text_height + 10,
-                    ),
-                ],
-                fill="white",
-            )
-            draw.text(text_position, wrapped_text, font=font, fill="black")
+            draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
+            y = 20
+            for line in lines:
+                text_width, _ = draw.textsize(line, font=font)
+                text_position = ((im.width - text_width) // 2, y)
+                draw.text(text_position, line, font=font, fill="black")
+                y += (line_height + line_spacing)
             meme_file = f"{cache_dir}/meme.png"
             new_im.save(meme_file)
             with open(meme_file, "rb") as f:

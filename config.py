@@ -161,6 +161,8 @@ ball_responses = {
     "My sources say no.",
     "Outlook not so good.",
     "Very doubtful.",
+    "yeah",
+    "nah",
 }
 
 # logo list for the logo command
@@ -833,6 +835,24 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
     return
 
+# for caption stuff
+def wrap_text(text, draw, font, max_width):
+    wrapped_lines = []
+    for line in text.split('\n'):
+        if draw.textsize(line, font=font)[0] <= max_width:
+            wrapped_lines.append(line)
+        else:
+            words = line.split(' ')
+            wrapped_line = ''
+            for word in words:
+                test_line = f'{wrapped_line} {word}'.strip()
+                if draw.textsize(test_line, font=font)[0] <= max_width:
+                    wrapped_line = test_line
+                else:
+                    wrapped_lines.append(wrapped_line)
+                    wrapped_line = word
+            wrapped_lines.append(wrapped_line)
+    return wrapped_lines
 
 # makes a filename only have valid windows file chars
 def sanitize_filename(filename):
