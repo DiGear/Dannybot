@@ -19,6 +19,11 @@ class reactions(commands.Cog):
                 "https://cdn.discordapp.com/attachments/947963019319709777/1080011687979122779/latest.png",
                 reference=message,
             )
+        elif "500 cigarettes" in content:
+            await message.channel.send(
+                "https://tenor.com/view/500-cigarettes-the-orville-gif-7999465420984481267",
+                reference=message,
+            )
 
 
 async def setup(bot: commands.Bot):

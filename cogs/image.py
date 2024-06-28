@@ -51,28 +51,38 @@ class image(commands.Cog):
 
             def place_edge_bites(count, side):
                 for _ in range(count):
-                    if side == 'left':
+                    if side == "left":
                         x = random.randint(margin, margin + 50)
-                    elif side == 'right':
-                        x = random.randint(input_image.width - margin - 50, input_image.width - margin)
+                    elif side == "right":
+                        x = random.randint(
+                            input_image.width - margin - 50, input_image.width - margin
+                        )
                     y = random.randint(0, input_image.height)
                     radius = random.randint(50, 125)
                     mask = Image.new("L", input_image.size, 0)
                     mask_draw = ImageDraw.Draw(mask)
-                    mask_draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=255)
+                    mask_draw.ellipse(
+                        (x - radius, y - radius, x + radius, y + radius), fill=255
+                    )
                     input_image.paste((0, 0, 0, 0), mask=mask)
 
-            place_edge_bites(edge_bites_left, 'left')
-            place_edge_bites(edge_bites_right, 'right')
+            place_edge_bites(edge_bites_left, "left")
+            place_edge_bites(edge_bites_right, "right")
 
             center_bites = random.randint(5, 10)
             for _ in range(center_bites):
-                x = gaussian_clamped(input_image.width / 2, stddev_x, margin, input_image.width - margin)
-                y = gaussian_clamped(input_image.height / 2, stddev_y, 0, input_image.height)
+                x = gaussian_clamped(
+                    input_image.width / 2, stddev_x, margin, input_image.width - margin
+                )
+                y = gaussian_clamped(
+                    input_image.height / 2, stddev_y, 0, input_image.height
+                )
                 radius = random.randint(50, 125)
                 mask = Image.new("L", input_image.size, 0)
                 mask_draw = ImageDraw.Draw(mask)
-                mask_draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=255)
+                mask_draw.ellipse(
+                    (x - radius, y - radius, x + radius, y + radius), fill=255
+                )
                 input_image.paste((0, 0, 0, 0), mask=mask)
 
             background = Image.open(f"{dannybot}\\assets\\plate.png")
@@ -95,6 +105,59 @@ class image(commands.Cog):
         except Exception as e:
             await ctx.send("An error occurred while processing the image.")
             logging.error(f"Error processing the image: {str(e)}")
+
+    @commands.command(
+        name="caption",
+        description="Adds text on the provided image or GIF.",
+        brief="Adds text on an image or GIF",
+    )
+    async def caption(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        file_url = cmd_info[0]
+        text = cmd_info[1] if len(cmd_info) > 1 else "Default Text"
+        cache_dir = f"{dannybot}/cache"
+        await ctx.send(
+            "Processing. Please wait... This can take a while for GIF files.",
+            delete_after=5,
+        )
+
+        if ".gif" in file_url:
+            gif_file = f"{cache_dir}/gif.gif"
+            with open(gif_file, "wb") as f:
+                f.write(requests.get(file_url).content)
+            frames = unpack_gif(gif_file)
+
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
+                im = frames[frame]
+                draw = ImageDraw.Draw(im)
+                font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 40)
+                text_width, text_height = draw.textsize(text, font=font)
+                width, height = im.size
+                text_position = ((width - text_width) // 2, 10)
+                draw.text(text_position, text, font=font, fill="white")
+                im.save(f"{cache_dir}/ffmpeg/output/frame{frame:02d}.png", "PNG")
+
+            repack_gif(f"{cache_dir}/ffmpeg_out.gif")
+            with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
+                await ctx.reply(file=discord.File(f, "meme.gif"), mention_author=True)
+            clear_cache()
+
+        else:
+            image_file = f"{cache_dir}/image.png"
+            with open(image_file, "wb") as f:
+                f.write(requests.get(file_url).content)
+            im = Image.open(image_file)
+            draw = ImageDraw.Draw(im)
+            font = ImageFont.truetype("arial.ttf", 40)
+            text_width, text_height = draw.textsize(text, font=font)
+            width, height = im.size
+            text_position = ((width - text_width) // 2, 10)
+            draw.text(text_position, text, font=font, fill="white")
+            meme_file = f"{cache_dir}/meme.png"
+            im.save(meme_file)
+            with open(meme_file, "rb") as f:
+                await ctx.reply(file=discord.File(f, "meme.png"), mention_author=True)
+            clear_cache()
 
     @commands.command(
         description="Flips a provided image vertically.",
