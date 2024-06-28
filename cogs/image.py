@@ -106,58 +106,92 @@ class image(commands.Cog):
             await ctx.send("An error occurred while processing the image.")
             logging.error(f"Error processing the image: {str(e)}")
 
-    @commands.command(
-        name="caption",
-        description="Adds text on the provided image or GIF.",
-        brief="Adds text on an image or GIF",
+
+import os
+import textwrap
+from PIL import Image, ImageDraw, ImageFont
+import requests
+import discord
+
+
+async def caption(self, ctx, *args):
+    cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+    file_url = cmd_info[0]
+    text = cmd_info[1]
+    cache_dir = f"{dannybot}/cache"
+    await ctx.send(
+        "Processing. Please wait... This can take a while for GIF files.",
+        delete_after=5,
     )
-    async def caption(self, ctx, *args):
-        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
-        file_url = cmd_info[0]
-        text = cmd_info[1] if len(cmd_info) > 1 else "Default Text"
-        cache_dir = f"{dannybot}/cache"
-        await ctx.send(
-            "Processing. Please wait... This can take a while for GIF files.",
-            delete_after=5,
-        )
-
-        if ".gif" in file_url:
-            gif_file = f"{cache_dir}/gif.gif"
-            with open(gif_file, "wb") as f:
-                f.write(requests.get(file_url).content)
-            frames = unpack_gif(gif_file)
-
-            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
-                im = frames[frame]
+    if ".gif" in file_url:
+        gif_file = f"{cache_dir}/gif.gif"
+        with open(gif_file, "wb") as f:
+            f.write(requests.get(file_url).content)
+        unpack_gif(gif_file)
+        for frame in os.listdir(f"{cache_dir}/ffmpeg"):
+            if ".png" in frame:
+                im = Image.open(f"{cache_dir}/ffmpeg/{frame}")
                 draw = ImageDraw.Draw(im)
-                font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 40)
-                text_width, text_height = draw.textsize(text, font=font)
-                width, height = im.size
-                text_position = ((width - text_width) // 2, 10)
-                draw.text(text_position, text, font=font, fill="white")
-                im.save(f"{cache_dir}/ffmpeg/output/frame{frame:02d}.png", "PNG")
-
-            repack_gif(f"{cache_dir}/ffmpeg_out.gif")
-            with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
-                await ctx.reply(file=discord.File(f, "meme.gif"), mention_author=True)
-            clear_cache()
-
-        else:
-            image_file = f"{cache_dir}/image.png"
-            with open(image_file, "wb") as f:
-                f.write(requests.get(file_url).content)
-            im = Image.open(image_file)
-            draw = ImageDraw.Draw(im)
-            font = ImageFont.truetype("arial.ttf", 40)
-            text_width, text_height = draw.textsize(text, font=font)
-            width, height = im.size
-            text_position = ((width - text_width) // 2, 10)
-            draw.text(text_position, text, font=font, fill="white")
-            meme_file = f"{cache_dir}/meme.png"
-            im.save(meme_file)
-            with open(meme_file, "rb") as f:
-                await ctx.reply(file=discord.File(f, "meme.png"), mention_author=True)
-            clear_cache()
+                font = ImageFont.truetype(f"{dannybot}/assets/futura.ttf", 64)
+                max_width = im.width - 20
+                wrapped_text = textwrap.fill(text, width=20)
+                wrapped_text_width, wrapped_text_height = draw.textsize(
+                    wrapped_text, font=font
+                )
+                box_width = wrapped_text_width + 40
+                box_height = wrapped_text_height + 20
+                new_im = Image.new("RGBA", (im.width, im.height), (0, 0, 0, 0))
+                new_im.paste(im, (0, 0))
+                draw = ImageDraw.Draw(new_im)
+                text_position = ((im.width - wrapped_text_width) // 2, 10)
+                draw.rectangle(
+                    [
+                        (text_position[0] - 10, text_position[1] - 10),
+                        (
+                            text_position[0] + wrapped_text_width + 10,
+                            text_position[1] + wrapped_text_height + 10,
+                        ),
+                    ],
+                    fill="white",
+                )
+                draw.text(text_position, wrapped_text, font=font, fill="black")
+                new_im.save(f"{cache_dir}/ffmpeg/output/{frame}")
+        repack_gif()
+        with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
+            await ctx.reply(file=discord.File(f, "meme.gif"), mention_author=True)
+        clear_cache()
+    else:
+        image_file = f"{cache_dir}/image.png"
+        with open(image_file, "wb") as f:
+            f.write(requests.get(file_url).content)
+        im = Image.open(image_file)
+        draw = ImageDraw.Draw(im)
+        font = ImageFont.truetype(f"{dannybot}/assets/futura.ttf", 65)
+        max_width = im.width - 20
+        wrapped_text = textwrap.fill(text, width=20)
+        wrapped_text_width, wrapped_text_height = draw.textsize(wrapped_text, font=font)
+        box_width = wrapped_text_width + 40
+        box_height = wrapped_text_height + 20
+        new_im = Image.new("RGBA", (im.width, im.height), (0, 0, 0, 0))
+        new_im.paste(im, (0, 0))
+        draw = ImageDraw.Draw(new_im)
+        text_position = ((im.width - wrapped_text_width) // 2, 10)
+        draw.rectangle(
+            [
+                (text_position[0] - 10, text_position[1] - 10),
+                (
+                    text_position[0] + wrapped_text_width + 10,
+                    text_position[1] + wrapped_text_height + 10,
+                ),
+            ],
+            fill="white",
+        )
+        draw.text(text_position, wrapped_text, font=font, fill="black")
+        meme_file = f"{cache_dir}/meme.png"
+        new_im.save(meme_file)
+        with open(meme_file, "rb") as f:
+            await ctx.reply(file=discord.File(f, "meme.png"), mention_author=True)
+        clear_cache()
 
     @commands.command(
         description="Flips a provided image vertically.",
