@@ -106,7 +106,6 @@ class image(commands.Cog):
             await ctx.send("An error occurred while processing the image.")
             logging.error(f"Error processing the image: {str(e)}")
 
-
     @commands.command(
         name="caption",
         description="Adds text on the provided image or GIF.",
@@ -117,6 +116,7 @@ class image(commands.Cog):
         file_url = cmd_info[0]
         text = cmd_info[1]
         cache_dir = f"{dannybot}/cache"
+
         await ctx.send(
             "Processing. Please wait... This can take a while for GIF files.",
             delete_after=5,
@@ -127,59 +127,89 @@ class image(commands.Cog):
             with open(gif_file, "wb") as f:
                 f.write(requests.get(file_url).content)
             unpack_gif(gif_file)
+
             for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
                 if ".png" in frame:
                     im = Image.open(f"{cache_dir}/ffmpeg/{frame}")
                     draw = ImageDraw.Draw(im)
+
+                    # Load font and set parameters
                     font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
                     max_width = im.width - 40
+
+                    # Wrap text within image width
                     lines = wrap_text(text, draw, font, max_width)
-                    line_height = font.getsize('A')[1]
+                    line_height = font.getsize("A")[1]
                     line_spacing = 18
                     rectangle_height = (line_height + line_spacing) * len(lines) + 30
+
+                    # Create a new image with space for text
                     new_im = Image.new(
                         "RGBA", (im.width, im.height + rectangle_height), "white"
                     )
                     new_im.paste(im, (0, rectangle_height))
                     draw = ImageDraw.Draw(new_im)
+
+                    # Draw a white rectangle for text background
                     draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
                     y = 20
+
+                    # Add text lines to the image
                     for line in lines:
                         text_width, _ = draw.textsize(line, font=font)
                         text_position = ((im.width - text_width) // 2, y)
                         draw.text(text_position, line, font=font, fill="black")
-                        y += (line_height + line_spacing)
+                        y += line_height + line_spacing
+
                     new_im.save(f"{cache_dir}/ffmpeg/output/{frame}")
             repack_gif()
+
             with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=discord.File(f, "meme.gif"), mention_author=True)
+
             clear_cache()
+
         else:
             image_file = f"{cache_dir}/image.png"
+
             with open(image_file, "wb") as f:
                 f.write(requests.get(file_url).content)
             im = Image.open(image_file)
             draw = ImageDraw.Draw(im)
+
+            # Load font and set parameters
             font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
             max_width = im.width - 40
+
+            # Wrap text within image width
             lines = wrap_text(text, draw, font, max_width)
-            line_height = font.getsize('A')[1]
+            line_height = font.getsize("A")[1]
             line_spacing = 18
             rectangle_height = (line_height + line_spacing) * len(lines) + 30
-            new_im = Image.new("RGBA", (im.width, im.height + rectangle_height), "white")
+
+            # Create a new image with space for text
+            new_im = Image.new(
+                "RGBA", (im.width, im.height + rectangle_height), "white"
+            )
             new_im.paste(im, (0, rectangle_height))
             draw = ImageDraw.Draw(new_im)
+
+            # Draw a white rectangle for text background
             draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
             y = 20
+
+            # Add text lines to the image
             for line in lines:
                 text_width, _ = draw.textsize(line, font=font)
                 text_position = ((im.width - text_width) // 2, y)
                 draw.text(text_position, line, font=font, fill="black")
-                y += (line_height + line_spacing)
+                y += line_height + line_spacing
+
             meme_file = f"{cache_dir}/meme.png"
             new_im.save(meme_file)
             with open(meme_file, "rb") as f:
                 await ctx.reply(file=discord.File(f, "meme.png"), mention_author=True)
+
             clear_cache()
 
     @commands.command(

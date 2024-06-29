@@ -261,12 +261,19 @@ class ai(commands.Cog):
 
     @commands.hybrid_command(
         name="pootervision",
-        description="Runs a random pooter image through gptvision, and describes it without showing you the original image.",
+        description="runs a random pooter image through gptvision, and describes it without showing you the image.",
         brief="Identify an image using AI",
     )
-    async def pootervision(self, ctx, *args):
+    async def pootervision(self, ctx):
         log_channel = self.bot.get_channel(logs_channel)
-        pooter_files = os.listdir(f"{dannybot}/database/Pooter/")
+        allowed_extensions = ["png", "jpeg", "jpg", "gif", "webp"]
+        max_size = 20 * 1024 * 1024
+        pooter_files = [
+            file
+            for file in os.listdir(f"{dannybot}/database/Pooter/")
+            if file.split(".")[-1] in allowed_extensions
+            and os.path.getsize(f"{dannybot}/database/Pooter/{file}") < max_size
+        ]
         pooter_file = random.choice(pooter_files)
         with open(f"{dannybot}/database/Pooter/{pooter_file}", "rb") as f:
             message = await log_channel.send(file=discord.File(f, pooter_file))
