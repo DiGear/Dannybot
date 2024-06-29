@@ -721,7 +721,7 @@ def make_meme(Top_Text, Bottom_Text, path):
 # gif version
 def make_meme_gif(Top_Text, Bottom_Text):
     # iterate through every frame in the ffmpeg folder and edit them
-    for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg\\"):
+    for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
         if ".png" in frame:
             # open image in PIL
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")

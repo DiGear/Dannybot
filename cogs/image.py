@@ -127,7 +127,7 @@ class image(commands.Cog):
             with open(gif_file, "wb") as f:
                 f.write(requests.get(file_url).content)
             unpack_gif(gif_file)
-            for frame in os.listdir(f"{cache_dir}/ffmpeg"):
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
                 if ".png" in frame:
                     im = Image.open(f"{cache_dir}/ffmpeg/{frame}")
                     draw = ImageDraw.Draw(im)
@@ -385,7 +385,7 @@ class image(commands.Cog):
                 f.write(requests.get(file_url).content)
 
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
-            for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg"):
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
                 if ".png" in frame:
                     deepfry(
                         f"{dannybot}\\cache\\ffmpeg\\{frame}",
@@ -425,7 +425,7 @@ class image(commands.Cog):
                 f.write(requests.get(file_url).content)
 
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
-            for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg"):
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
                 if ".png" in frame:
                     image = PIL.Image.open(
                         f"{dannybot}\\cache\\ffmpeg\\{frame}"
@@ -464,7 +464,7 @@ class image(commands.Cog):
                 f.write(requests.get(file_url).content)
 
             unpack_gif(f"{dannybot}\\cache\\gif.gif")
-            for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg"):
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
                 if ".png" in frame:
                     image = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
                     koala1 = image.resize(
