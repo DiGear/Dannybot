@@ -233,13 +233,45 @@ class ai(commands.Cog):
 
     @commands.command(
         aliases=["vision"],
-        description="Runs the provided image through a vision, and describes it.",
+        description="Runs the provided image through gptvision, and describes it.",
         brief="Identify an image using AI",
     )
     async def identify(self, ctx, *args):
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
         file_url = cmd_info[0]
 
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image?"},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": file_url, "detail": "high"},
+                        },
+                    ],
+                }
+            ],
+            max_tokens=250,
+        )
+
+        await ctx.send(response.choices[0].message.content)
+
+    @commands.hybrid_command(
+        name="pootervision",
+        description="Runs a random pooter image through gptvision, and describes it without showing you the original image.",
+        brief="Identify an image using AI",
+    )
+    async def pootervision(self, ctx, *args):
+        log_channel = self.bot.get_channel(logs_channel)
+        pooter_files = os.listdir(f"{dannybot}/database/Pooter/")
+        pooter_file = random.choice(pooter_files)
+        with open(f"{dannybot}/database/Pooter/{pooter_file}", "rb") as f:
+            message = await log_channel.send(file=discord.File(f, pooter_file))
+
+        file_url = message.attachments[0].url
         response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
