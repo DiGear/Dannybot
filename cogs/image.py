@@ -133,28 +133,23 @@ class image(commands.Cog):
                     im = Image.open(f"{cache_dir}/ffmpeg/{frame}")
                     draw = ImageDraw.Draw(im)
 
-                    # Load font and set parameters
                     font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
                     max_width = im.width - 40
 
-                    # Wrap text within image width
                     lines = wrap_text(text, draw, font, max_width)
                     line_height = font.getsize("A")[1]
                     line_spacing = 18
                     rectangle_height = (line_height + line_spacing) * len(lines) + 30
 
-                    # Create a new image with space for text
                     new_im = Image.new(
                         "RGBA", (im.width, im.height + rectangle_height), "white"
                     )
                     new_im.paste(im, (0, rectangle_height))
                     draw = ImageDraw.Draw(new_im)
 
-                    # Draw a white rectangle for text background
                     draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
                     y = 20
 
-                    # Add text lines to the image
                     for line in lines:
                         text_width, _ = draw.textsize(line, font=font)
                         text_position = ((im.width - text_width) // 2, y)
@@ -177,28 +172,23 @@ class image(commands.Cog):
             im = Image.open(image_file)
             draw = ImageDraw.Draw(im)
 
-            # Load font and set parameters
             font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
             max_width = im.width - 40
 
-            # Wrap text within image width
             lines = wrap_text(text, draw, font, max_width)
             line_height = font.getsize("A")[1]
             line_spacing = 18
             rectangle_height = (line_height + line_spacing) * len(lines) + 30
 
-            # Create a new image with space for text
             new_im = Image.new(
                 "RGBA", (im.width, im.height + rectangle_height), "white"
             )
             new_im.paste(im, (0, rectangle_height))
             draw = ImageDraw.Draw(new_im)
 
-            # Draw a white rectangle for text background
             draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
             y = 20
 
-            # Add text lines to the image
             for line in lines:
                 text_width, _ = draw.textsize(line, font=font)
                 text_position = ((im.width - text_width) // 2, y)
