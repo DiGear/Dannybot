@@ -123,14 +123,16 @@ class image(commands.Cog):
         )
 
         if ".gif" in file_url:
+            unique = str(generate_id())
+            print("id is" + unique)
             gif_file = f"{cache_dir}/gif.gif"
             with open(gif_file, "wb") as f:
                 f.write(requests.get(file_url).content)
-            unpack_gif(gif_file)
+            unpack_gif(gif_file, unique)
 
-            for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
+            for frame in os.listdir(f"{cache_dir}\\ffmpeg\\{unique}"):
                 if ".png" in frame:
-                    im = Image.open(f"{cache_dir}/ffmpeg/{frame}")
+                    im = Image.open(f"{cache_dir}\\ffmpeg\\{unique}\\{frame}")
                     draw = ImageDraw.Draw(im)
 
                     font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
@@ -156,8 +158,10 @@ class image(commands.Cog):
                         draw.text(text_position, line, font=font, fill="black")
                         y += line_height + line_spacing
 
-                    new_im.save(f"{cache_dir}/ffmpeg/output/{frame}")
-            repack_gif()
+                    if not os.path.exists(f"{cache_dir}\\ffmpeg\\output\\{unique}"):
+                        os.makedirs(f"{cache_dir}\\ffmpeg\\output\\{unique}")
+                    new_im.save(f"{cache_dir}\\ffmpeg\\output\\{unique}\\{frame}")
+            repack_gif(unique)
 
             with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
                 await ctx.reply(file=discord.File(f, "meme.gif"), mention_author=True)

@@ -243,38 +243,61 @@ warnings.showwarning = custom_color_handler
 
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
-def unpack_gif(file):
+def unpack_gif(file, id):
     print(Fore.LIGHTMAGENTA_EX + "unpacking gif..." + Fore.RESET)
-    os.system(
-        f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{dannybot}\\cache\\ffmpeg\\temp%04d.png" -y'
-    )
+    directory = f"cache/ffmpeg/{id}"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{directory}/temp%04d.png" -y')
     return
 
 
 # take each frame in /cache/ffmpeg/out and turn it back into a gif
-def repack_gif():
+def repack_gif(id=None):
+    if id is not None:
+        directory = f"cache/ffmpeg/output/{id}"
+    else:
+        directory = f"cache/ffmpeg/output"
+
+    palette_path = f"{directory}/palette.png"
+    output_gif = "cache/ffmpeg_out.gif"
     print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
     os.system(
-        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y'
+        f'ffmpeg -i "{directory}/temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
     )
     print(Fore.LIGHTMAGENTA_EX + "repacking gif..." + Fore.RESET)
     os.system(
-        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y'
+        f'ffmpeg -i "{directory}/temp%04d.png" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
     )
+    shutil.rmtree(directory)
+    print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
+
     return
 
 
-# take each frame in /cache/ffmpeg/out and turn it back into a gif (jpg variant)
-def repack_gif_JPG():
+def repack_gif_JPG(id=None):
+    if id is not None:
+        directory = f"cache/ffmpeg/output/{id}"
+    else:
+        directory = f"cache/ffmpeg/output"
+
+    palette_path = f"{directory}/palette.png"
+    output_gif = "cache/ffmpeg_out.gif"
     print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
+    os.system(
+        f'ffmpeg -i "{directory}/temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
+    )
     print(Fore.LIGHTMAGENTA_EX + "repacking gif (jpg)..." + Fore.RESET)
     os.system(
-        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {dannybot}\\cache\\ffmpeg\\output\\palette.png -y'
+        f'ffmpeg -i "{directory}/temp%04d.png.jpg" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
     )
-    os.system(
-        f'ffmpeg -i "{dannybot}\\cache\\ffmpeg\\output\\temp%04d.png.jpg" -i "{dannybot}\\cache\\ffmpeg\\output\\palette.png" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{dannybot}\\cache\\ffmpeg_out.gif" -y'
-    )
+    shutil.rmtree(directory)
+    print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
     return
+
+
+def generate_id():
+    return random.randint(15679, 48568696543)
 
 
 # generate a random hexadecimal string
@@ -444,7 +467,9 @@ async def resolve_args(ctx, args, attachments, type="image"):
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
         if "https://tenor.com/view/" in referenced_message.content and type == "image":
             tenor = True
-            tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", referenced_message.content).group(1)
+            tenor_id = re.search(
+                r"tenor\.com/view/.*-(\d+)", referenced_message.content
+            ).group(1)
             url = gettenor(tenor_id)
             print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
         elif referenced_message.attachments:
@@ -492,11 +517,15 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
             if mentioned_member.guild_avatar:
                 url = str(mentioned_member.guild_avatar.url)
-                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
+                print(
+                    Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET
+                )
                 avatar = True
             else:
                 url = str(mentioned_member.avatar.url)
-                print(Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET)
+                print(
+                    Fore.BLUE + f"URL from avatar of mentioned user: {url}" + Fore.RESET
+                )
                 avatar = True
 
     # Message content iteration
@@ -532,7 +561,9 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     ext = http_url_parts[0].split(".")[-1]
                     if ext.lower() in extension_list:
                         url = combine_url(http_url_parts)
-                        print(Fore.BLUE + f"URL from message content: {url}" + Fore.RESET)
+                        print(
+                            Fore.BLUE + f"URL from message content: {url}" + Fore.RESET
+                        )
                         break
 
             # Generic URL extraction
@@ -835,17 +866,18 @@ def make_meme_gif(Top_Text, Bottom_Text):
 
     return
 
+
 # for caption stuff
 def wrap_text(text, draw, font, max_width):
     wrapped_lines = []
-    for line in text.split('\n'):
+    for line in text.split("\n"):
         if draw.textsize(line, font=font)[0] <= max_width:
             wrapped_lines.append(line)
         else:
-            words = line.split(' ')
-            wrapped_line = ''
+            words = line.split(" ")
+            wrapped_line = ""
             for word in words:
-                test_line = f'{wrapped_line} {word}'.strip()
+                test_line = f"{wrapped_line} {word}".strip()
                 if draw.textsize(test_line, font=font)[0] <= max_width:
                     wrapped_line = test_line
                 else:
@@ -853,6 +885,7 @@ def wrap_text(text, draw, font, max_width):
                     wrapped_line = word
             wrapped_lines.append(wrapped_line)
     return wrapped_lines
+
 
 # makes a filename only have valid windows file chars
 def sanitize_filename(filename):
