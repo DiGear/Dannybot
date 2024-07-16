@@ -243,9 +243,9 @@ warnings.showwarning = custom_color_handler
 
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
-def unpack_gif(file, id):
+def unpack_gif(file, id=None):
     print(Fore.LIGHTMAGENTA_EX + "unpacking gif..." + Fore.RESET)
-    directory = f"cache/ffmpeg/{id}"
+    directory = f"cache/ffmpeg/{id}" if id is not None else "cache/ffmpeg"
     if not os.path.exists(directory):
         os.makedirs(directory)
     os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{directory}/temp%04d.png" -y')
@@ -260,7 +260,7 @@ def repack_gif(id=None):
         directory = f"cache/ffmpeg/output"
 
     palette_path = f"{directory}/palette.png"
-    output_gif = "cache/ffmpeg_out.gif"
+    output_gif = f"cache/ffmpeg_out{id}.gif"
     print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{directory}/temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
@@ -313,31 +313,51 @@ def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
     output_folder = ffmpeg_cache_folder / "output"
-    folders_to_clear = [cache_folder, ffmpeg_cache_folder, output_folder]
 
     def clear_files(folder):
         for file_path in folder.glob("*"):
             if file_path.is_file() and "git" not in str(file_path):
                 try:
                     os.remove(file_path)
-                    print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file_path}" + Fore.RESET)
+                    print(
+                        Fore.LIGHTMAGENTA_EX + f"Deleted file: {file_path}" + Fore.RESET
+                    )
                 except PermissionError:
                     print(
-                        Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET
+                        Fore.YELLOW
+                        + f"Skipped file: {file_path} (File in use)"
+                        + Fore.RESET
+                    )
+                    continue
+            elif file_path.is_dir() and file_path != output_folder:
+                try:
+                    for sub_file in file_path.glob("**/*"):
+                        if sub_file.is_file():
+                            os.remove(sub_file)
+                            print(
+                                Fore.LIGHTMAGENTA_EX
+                                + f"Deleted file: {sub_file}"
+                                + Fore.RESET
+                            )
+                    os.rmdir(file_path)
+                    print(
+                        Fore.LIGHTMAGENTA_EX
+                        + f"Deleted folder: {file_path}"
+                        + Fore.RESET
+                    )
+                except OSError:
+                    print(
+                        Fore.YELLOW
+                        + f"Skipped folder: {file_path} (Not empty or in use)"
+                        + Fore.RESET
                     )
                     continue
 
-    threads = []
-    for folder in folders_to_clear:
-        thread = threading.Thread(target=clear_files, args=(folder,))
-        thread.start()
-        threads.append(thread)
-
-    for thread in threads:
-        thread.join()
+    thread = threading.Thread(target=clear_files, args=(ffmpeg_cache_folder,))
+    thread.start()
+    thread.join()
 
     print(Fore.BLUE + "Cache cleared." + Fore.RESET)
-
 
 # get the amount of files in a folder
 def fileCount(folder):

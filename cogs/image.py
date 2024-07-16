@@ -163,7 +163,7 @@ class image(commands.Cog):
                     new_im.save(f"{cache_dir}\\ffmpeg\\output\\{unique}\\{frame}")
             repack_gif(unique)
 
-            with open(f"{cache_dir}/ffmpeg_out.gif", "rb") as f:
+            with open(f"{cache_dir}/ffmpeg_out{unique}.gif", "rb") as f:
                 await ctx.reply(file=discord.File(f, "meme.gif"), mention_author=True)
 
             clear_cache()
