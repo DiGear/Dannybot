@@ -241,7 +241,7 @@ class ai(commands.Cog):
         file_url = cmd_info[0]
 
         response = openai.ChatCompletion.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
@@ -254,14 +254,14 @@ class ai(commands.Cog):
                     ],
                 }
             ],
-            max_tokens=250,
+            max_tokens=750,
         )
 
         await ctx.send(response.choices[0].message.content)
 
     @commands.hybrid_command(
         name="pootervision",
-        description="runs a random pooter image through gptvision, and describes it without showing you the image.",
+        description="Runs a random pooter image through GPT-4, and describes it without showing you the image.",
         brief="Identify an image using AI",
     )
     async def pootervision(self, ctx):
@@ -280,12 +280,12 @@ class ai(commands.Cog):
 
         file_url = message.attachments[0].url
         response = openai.ChatCompletion.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "What's in this image?"},
+                        {"type": "text", "text": "What's in this image? Be descriptive."},
                         {
                             "type": "image_url",
                             "image_url": {"url": file_url, "detail": "high"},
@@ -293,11 +293,81 @@ class ai(commands.Cog):
                     ],
                 }
             ],
-            max_tokens=250,
+            max_tokens=1000,
         )
 
-        await ctx.send(response.choices[0].message.content)
+        embed = discord.Embed(
+            description=response.choices[0].message.content,
+            color=discord.Color.blue()
+        )
+        embed.set_footer(text="Press 👀 to reveal the image")
 
+        msg = await ctx.send(embed=embed)
+        await msg.add_reaction("👀")
+
+        def check(reaction, user):
+            return user != self.bot.user and str(reaction.emoji) == "👀" and reaction.message.id == msg.id
+
+        reaction, user = await self.bot.wait_for("reaction_add", check=check)
+
+        embed.set_image(url=file_url)
+        await msg.edit(embed=embed)
+        await msg.clear_reactions()
+
+    @commands.hybrid_command(
+        name="lunaticvision",
+        description="Runs a random pooter image through GPT-4, and describes it without showing you the image.",
+        brief="Identify an image using AI",
+    )
+    async def lunaticvision(self, ctx):
+        log_channel = self.bot.get_channel(logs_channel)
+        allowed_extensions = ["png", "jpeg", "jpg", "gif", "webp"]
+        max_size = 20 * 1024 * 1024
+        pooter_files = [
+            file
+            for file in os.listdir(f"{dannybot}/database/Pooter/")
+            if file.split(".")[-1] in allowed_extensions
+            and os.path.getsize(f"{dannybot}/database/Pooter/{file}") < max_size
+        ]
+        pooter_file = random.choice(pooter_files)
+        with open(f"{dannybot}/database/Pooter/{pooter_file}", "rb") as f:
+            message = await log_channel.send(file=discord.File(f, pooter_file))
+
+        file_url = message.attachments[0].url
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "What's in this image? Describe the image in as few words as possible. Please use less than 10 total words. Sentences are discouraged"},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": file_url, "detail": "high"},
+                        },
+                    ],
+                }
+            ],
+            max_tokens=50,
+        )
+
+        embed = discord.Embed(
+            description=response.choices[0].message.content,
+            color=discord.Color.blue()
+        )
+        embed.set_footer(text="Press 👀 to reveal the image")
+
+        msg = await ctx.send(embed=embed)
+        await msg.add_reaction("👀")
+
+        def check(reaction, user):
+            return user != self.bot.user and str(reaction.emoji) == "👀" and reaction.message.id == msg.id
+
+        reaction, user = await self.bot.wait_for("reaction_add", check=check)
+
+        embed.set_image(url=file_url)
+        await msg.edit(embed=embed)
+        await msg.clear_reactions()
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(ai(bot))

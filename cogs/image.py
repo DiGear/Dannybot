@@ -86,7 +86,7 @@ class image(commands.Cog):
                 input_image.paste((0, 0, 0, 0), mask=mask)
 
             background = Image.open(f"{dannybot}\\assets\\plate.png")
-            background = change_hue(background, round(random.uniform(0, 1), 4))
+            background = change_hue(background, (random.randint(-180, 180)))
             background = background.convert("RGBA")
             x = (background.width - input_image.width) // 2
             y = (background.height - input_image.height) // 2
@@ -620,6 +620,37 @@ class image(commands.Cog):
 
             with open(f"{dannybot}\\cache\\exploded.png", "rb") as f:
                 await ctx.reply(file=File(f, "exploded.png"), mention_author=True)
+
+    @commands.command(
+        aliases=["hueshift", "hue_shift", "shift_hue", "shifthue"],
+        description="Changes the hue of a provided image by a specified amount. The value should be between -180 and 180.",
+        brief="Change the hue of an image by a specified amount",
+    )
+    async def hue(self, ctx, *args):
+        cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
+        file_url = cmd_info[0]
+        cmd_args = cmd_info[1].split(" ")
+        try:
+            hue_shift = int(cmd_args[0])
+        except ValueError:
+            hue_shift = 0
+
+        print(hue_shift)
+
+        if not (-180 <= hue_shift <= 180):
+            await ctx.send("Hue shift must be between -180 and 180.")
+            return
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(file_url) as response:
+                img_bytes = await response.read()
+
+        with Image.open(io.BytesIO(img_bytes)) as img:
+            img = change_hue(img, hue_shift)
+            with io.BytesIO() as image_binary:
+                img.save(image_binary, "PNG")
+                image_binary.seek(0)
+                await ctx.send(file=discord.File(fp=image_binary, filename="hue.png"))
 
     @commands.command(
         aliases=["pinch"],

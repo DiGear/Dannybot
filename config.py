@@ -90,12 +90,11 @@ dannybot_prefixes = {"d.", "#", "D.", "ratio + "}  # bot prefix(es)
 dannybot_token = os.getenv("TOKEN")  # token
 dannybot_team_ids = {343224184110841856, 158418656861093888, 249411048518451200}
 dannybot_denialRatio = 250  # chance for dannybot to deny your command input
-dannybot_denialResponses = {
+dannybot_denialResponses = [
     "no",
     "nah",
     "nope",
-    "no thanks",
-}  # what dannybot says upon denial
+    "no thanks",]  # what dannybot says upon denial
 dannybot = (
     os.getcwd()
 )  # easy to call variable that stores our current working directory
@@ -140,7 +139,7 @@ Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
 Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe"  # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
 
 # 8ball responses for the 8ball command
-ball_responses = {
+ball_responses = [
     "It is certain.",
     "It is decidedly so.",
     "Without a doubt.",
@@ -163,10 +162,10 @@ ball_responses = {
     "Very doubtful.",
     "yeah",
     "nah",
-}
+]
 
 # logo list for the logo command
-logolist = {
+logolist = [
     "clan",
     "neon",
     "fluffy",
@@ -203,10 +202,10 @@ logolist = {
     "golden",
     "outline",
     "funtime",
-}
+]
 
 # this is for the undertext command
-deltarune_dw = {
+deltarune_dw = [
     "ralsei",
     "lancer",
     "king",
@@ -216,7 +215,7 @@ deltarune_dw = {
     "clyde",
     "lori",
     "rhombo",
-}
+]
 
 
 # ----------
@@ -313,51 +312,31 @@ def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
     output_folder = ffmpeg_cache_folder / "output"
+    folders_to_clear = [cache_folder, ffmpeg_cache_folder, output_folder]
 
     def clear_files(folder):
         for file_path in folder.glob("*"):
             if file_path.is_file() and "git" not in str(file_path):
                 try:
                     os.remove(file_path)
-                    print(
-                        Fore.LIGHTMAGENTA_EX + f"Deleted file: {file_path}" + Fore.RESET
-                    )
+                    print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file_path}" + Fore.RESET)
                 except PermissionError:
                     print(
-                        Fore.YELLOW
-                        + f"Skipped file: {file_path} (File in use)"
-                        + Fore.RESET
-                    )
-                    continue
-            elif file_path.is_dir() and file_path != output_folder:
-                try:
-                    for sub_file in file_path.glob("**/*"):
-                        if sub_file.is_file():
-                            os.remove(sub_file)
-                            print(
-                                Fore.LIGHTMAGENTA_EX
-                                + f"Deleted file: {sub_file}"
-                                + Fore.RESET
-                            )
-                    os.rmdir(file_path)
-                    print(
-                        Fore.LIGHTMAGENTA_EX
-                        + f"Deleted folder: {file_path}"
-                        + Fore.RESET
-                    )
-                except OSError:
-                    print(
-                        Fore.YELLOW
-                        + f"Skipped folder: {file_path} (Not empty or in use)"
-                        + Fore.RESET
+                        Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET
                     )
                     continue
 
-    thread = threading.Thread(target=clear_files, args=(ffmpeg_cache_folder,))
-    thread.start()
-    thread.join()
+    threads = []
+    for folder in folders_to_clear:
+        thread = threading.Thread(target=clear_files, args=(folder,))
+        thread.start()
+        threads.append(thread)
+
+    for thread in threads:
+        thread.join()
 
     print(Fore.BLUE + "Cache cleared." + Fore.RESET)
+
 
 # get the amount of files in a folder
 def fileCount(folder):
@@ -609,20 +588,31 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
 
 # change hue (apparently not an inbuilt function of PIL)
-def change_hue(img, target_hue):
-    img = img.convert(
-        "RGB"
-    )  # Ensure image is RGB (so that i can convert it to hsv lmfao)
-    new_pixels = []
+def change_hue(image, hue_shift):
+    if image.mode != "RGBA":
+        image = image.convert("RGBA")
 
-    for r, g, b in img.getdata():
-        h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
-        h = (h + target_hue) % 1.0
-        r, g, b = colorsys.hsv_to_rgb(h, s, v)
-        new_pixels.append((int(r * 255), int(g * 255), int(b * 255)))
+    # Split the image into individual bands
+    r, g, b, a = image.split()
 
-    img.putdata(new_pixels)
-    return img
+    # Convert to HSV
+    hsv_image = image.convert("HSV")
+    h, s, v = hsv_image.split()
+
+    # Convert the 360 degree hue wheel into a float between 0 and 255
+    hue_shift_normalized = int((hue_shift / 360.0) * 255)
+
+    # Adjust hue by adding target_hue and modulo 256 to wrap around
+    h = h.point(lambda p: (p + hue_shift_normalized) % 256)
+
+    # Merge back HSV and convert to RGBA
+    hsv_image = Image.merge("HSV", (h, s, v))
+    rgba_image = hsv_image.convert("RGBA")
+
+    # Reattach the alpha channel
+    final_image = Image.merge("RGBA", (*rgba_image.split()[:-1], a))
+
+    return final_image
 
 
 # deepfry an image

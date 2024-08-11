@@ -30,6 +30,17 @@ bot = commands.Bot(
     case_insensitive=True,
 )
 
+class ThreadedBot(commands.Bot):
+    async def invoke(self, ctx):
+        # Run the command in a separate thread
+        thread = threading.Thread(target=self._run_command, args=(ctx,))
+        thread.start()
+
+    def _run_command(self, ctx):
+        asyncio.run(self.invoke_original(ctx))
+
+    async def invoke_original(self, ctx):
+        await super().invoke(ctx)
 
 # do this when everything else is done
 @bot.event
@@ -97,7 +108,6 @@ async def say(ctx: commands.Context, *, text):
             await ctx.message.delete()  # this only works for the text based
         except:
             return
-
 
 @bot.hybrid_command(
     name="reload",
