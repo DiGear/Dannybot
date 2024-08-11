@@ -14,9 +14,9 @@ class CustomGPT(commands.FlagConverter):
     frequency_penalty: typing.Optional[float] = 0.00
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
-    model: Literal["gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"] = (
-        "gpt-4o-mini"
-    )
+    model: Literal[
+        "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo",
+    ] = "gpt-4o"
 
 
 class chatbot(commands.Cog):
@@ -24,18 +24,7 @@ class chatbot(commands.Cog):
         self.bot = bot
         self.memory_length = memory_length
         self.model = model
-        self.active_message_array = deque(
-            [
-                {
-                    "role": "system",
-                    "content": """
-            Your name is Dannybot. You are talking to more than one person. The name format is (name said: thing) respond to their message
-            """,
-                }
-            ],
-            maxlen=memory_length + 1,
-        )
-        self.passive_message_array = deque(
+        self.message_array = deque(
             [
                 {
                     "role": "system",
@@ -49,23 +38,6 @@ class chatbot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        content = [
-            {
-                "type": "text",
-                "text": f"{message.author.display_name} said: {message.content}",
-            }
-        ]
-
-        if message.attachments:
-            attachment_url = message.attachments[0].url
-            content.append(
-                {"type": "image_url", "image_url": {"url": str(attachment_url)}}
-            )
-        self.passive_message_array.append({"role": "user", "content": content})
-
-        if len(self.passive_message_array) > self.memory_length:
-            self.pop_passive()
-
         if (
             message.author.bot
             or message.reference
@@ -74,21 +46,6 @@ class chatbot(commands.Cog):
         ):
             return
 
-
-        if (
-            not message.author.bot
-            and random.randint(1, 100) == 5
-            and not self.bot.user.mentioned_in(message)
-        ):
-            print("succ")
-            response_text = await self.get_openai_response2()
-            response_text = self.clean_response(response_text)
-            await message.channel.send(response_text, reference=message)
-            self.passive_message_array.append(
-                {"role": "assistant", "content": response_text}
-            )
-            return
-
         content = [
             {
                 "type": "text",
@@ -102,34 +59,23 @@ class chatbot(commands.Cog):
                 {"type": "image_url", "image_url": {"url": str(attachment_url)}}
             )
 
-        self.active_message_array.append({"role": "user", "content": content})
+        self.message_array.append({"role": "user", "content": content})
 
-        if len(self.active_message_array) > self.memory_length:
+        if len(self.message_array) > self.memory_length:
             self.pop_not_sys()
 
         response_text = await self.get_openai_response()
         response_text = self.clean_response(response_text)
         await message.channel.send(response_text, reference=message)
-        self.active_message_array.append(
-            {"role": "assistant", "content": response_text}
-        )
-        print(self.active_message_array)
+        self.message_array.append({"role": "assistant", "content": response_text})
+        print(self.message_array)
 
     async def get_openai_response(self) -> str:
         response_data = openai.ChatCompletion.create(
             model=self.model,
             temperature=1.0,
-            max_tokens=750,
-            messages=list(self.active_message_array),
-        )
-        return response_data.choices[0].message.content
-
-    async def get_openai_response2(self) -> str:
-        response_data = openai.ChatCompletion.create(
-            model=self.model,
-            temperature=1.0,
-            max_tokens=750,
-            messages=list(self.passive_message_array),
+            max_tokens=250,
+            messages=list(self.message_array),
         )
         return response_data.choices[0].message.content
 
@@ -139,15 +85,9 @@ class chatbot(commands.Cog):
         return response_text
 
     def pop_not_sys(self):
-        for msg in list(self.active_message_array):
+        for msg in list(self.message_array):
             if msg["role"] != "system":
-                self.active_message_array.remove(msg)
-                break
-
-    def pop_passive(self):
-        for msg in list(self.passive_message_array):
-            if msg["role"] != "system":
-                self.passive_message_array.remove(msg)
+                self.message_array.remove(msg)
                 break
 
     @commands.hybrid_command(
@@ -162,7 +102,7 @@ class chatbot(commands.Cog):
             return
         response = openai.ChatCompletion.create(
             model=flags.model,
-            max_tokens=750,
+            max_tokens=250,
             top_p=flags.top_p,
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,

@@ -18,7 +18,7 @@ intents.voice_states = True
 intents.messages = True
 
 # We set up logger here
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # define our prefix(es) and status

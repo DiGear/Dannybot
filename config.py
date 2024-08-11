@@ -36,10 +36,6 @@ from pathlib import Path
 from textwrap import wrap
 from typing import Literal
 from io import StringIO
-
-# tensorfuck
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-from textgenrnn import textgenrnn
 from urllib import request
 from rembg import new_session, remove
 from xml.etree import ElementTree
@@ -909,39 +905,6 @@ def listgen(directory):
     list = os.listdir(directory)
     string = ", ".join(list)
     return string
-
-
-# i hate this - FDG
-# i went back and make this more annoying to read and look at so hopefully people avoid it and dont get infected with the uwu virus
-def uwuify(input_text):
-    def case_agnostic_replace(text, old, new):
-        result = ""
-        i = 0
-        while i < len(text):
-            if text[i : i + len(old)].lower() == old.lower():
-                result += text[i : i + len(old)].replace(old, new, 1)
-                i += len(old)
-            else:
-                result += text[i]
-                i += 1
-        return result
-
-    modified_text1 = case_agnostic_replace(input_text, "l", "w")
-    modified_text2 = case_agnostic_replace(modified_text1, "u", "uu")
-    modified_text3 = case_agnostic_replace(modified_text2, "r", "w")
-    modified_text4 = case_agnostic_replace(modified_text3, "the", "de")
-    modified_text5 = case_agnostic_replace(modified_text4, "to", "tu")
-    emoticons = ["^_^", ">w<", "x3", "^.^", "^-^", "(・ˋω´・)", "x3", ";;w;;"]
-    words = modified_text5.split()
-    output_text = []
-    for i, word in enumerate(words):
-        output_text.append(word)
-        if i < len(words) - 1 and random.random() < 0.1:
-            output_text.append(random.choice(emoticons))
-    modified_text6 = " ".join(output_text)
-    modified_text7 = case_agnostic_replace(modified_text6, "~", "")
-    modified_text = case_agnostic_replace(modified_text7, "!", " !~ ")
-    return modified_text
 
 
 # clean up the pooter folder
