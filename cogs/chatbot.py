@@ -15,12 +15,12 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
-        "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo",
-    ] = "gpt-4o"
+        "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4",
+    ] = "gpt-4o-mini"
 
 
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=5, model="gpt-4o"):
+    def __init__(self, bot: commands.Bot, memory_length=5, model="gpt-4o-mini"):
         self.bot = bot
         self.memory_length = memory_length
         self.model = model
@@ -74,7 +74,7 @@ class chatbot(commands.Cog):
         response_data = openai.ChatCompletion.create(
             model=self.model,
             temperature=1.0,
-            max_tokens=250,
+            max_tokens=750,
             messages=list(self.message_array),
         )
         return response_data.choices[0].message.content
@@ -102,7 +102,7 @@ class chatbot(commands.Cog):
             return
         response = openai.ChatCompletion.create(
             model=flags.model,
-            max_tokens=250,
+            max_tokens=750,
             top_p=flags.top_p,
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,

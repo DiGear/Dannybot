@@ -41,7 +41,7 @@ class ai(commands.Cog):
                 engine="gpt-3.5-turbo-instruct-0914",
                 prompt=gpt_prompt,
                 temperature=random.uniform(0.1, 1.0),
-                max_tokens=768,
+                max_tokens=750,
                 top_p=1.0,
                 frequency_penalty=0.3,
                 presence_penalty=0.1,
@@ -293,7 +293,7 @@ class ai(commands.Cog):
                     ],
                 }
             ],
-            max_tokens=1000,
+            max_tokens=750,
         )
 
         embed = discord.Embed(
