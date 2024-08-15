@@ -73,7 +73,6 @@ class Pooter(commands.Cog):
                     f.write(requests.get(url).content)
 
                 bag_random_pooter.add_values('pooter', [file_name])
-                downloaded_files.add(url)
                 await self.bot.get_channel(logs_channel).send(
                     f"{payload.member.global_name} ({payload.member.id}) has pootered: {url}"
                 )
