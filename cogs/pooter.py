@@ -106,7 +106,7 @@ class Pooter(commands.Cog):
 
                 task = asyncio.create_task(
                     download_file(
-                        file_url, idx + 1, message_channel, sanitized_filename, 'pooter'
+                        file_url, idx + 1, message_channel, sanitized_filename
                     )
                 )
                 tasks.append(task)
