@@ -44,7 +44,7 @@ class Pooter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        async def download_file(url, count, message, file_name, bag_name = 'pooter'):
+        async def download_file(url, count, message, file_name):
             guild = self.bot.get_guild(payload.guild_id)
             if guild.id not in whitelist:
                 await message.send("This server is not whitelisted for this command.")
@@ -66,15 +66,14 @@ class Pooter(commands.Cog):
                 else:
                     file_url = url
                     file_extension = file_url.split(".")[-1]
-                with open(
-                    f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
-                ) as f:
+                file_name = f"{randhex(128)}.{file_extension}"
+                file_path = f"{dannybot}/database/Pooter/{file_name}"
+
+                with open(file_path, "wb") as f:
                     f.write(requests.get(url).content)
-                # Add the new file to the appropriate bag
-                if bag_name == 'pooter':
-                    bag_random_pooter.add_values('pooter', [f"{randhex(128)}.{file_extension}"])
-                elif bag_name == 'dooter':
-                    bag_random_dooter.add_values('dooter', [f"{randhex(128)}.{file_extension}"])
+
+                bag_random_pooter.add_values('pooter', [file_name])
+                downloaded_files.add(url)
                 await self.bot.get_channel(logs_channel).send(
                     f"{payload.member.global_name} ({payload.member.id}) has pootered: {url}"
                 )
@@ -140,11 +139,13 @@ class Pooter(commands.Cog):
                 else:
                     file_url = url
                     file_extension = file_url.split(".")[-1]
-                with open(
-                    f"{dannybot}/database/Pooter/{randhex(128)}.{file_extension}", "wb"
-                ) as f:
+                file_name = f"{randhex(128)}.{file_extension}"
+                file_path = f"{dannybot}/database/Pooter/{file_name}"
+
+                with open(file_path, "wb") as f:
                     f.write(requests.get(url).content)
-                bag_random_pooter.add_values('pooter', [f"{randhex(128)}.{file_extension}"])
+
+                bag_random_pooter.add_values('pooter', [file_name])
                 downloaded_files.add(url)
                 if len(downloaded_files) == total_downloads:
                     await ctx.message.add_reaction("✅")
@@ -200,11 +201,13 @@ class Pooter(commands.Cog):
                 else:
                     file_url = url
                     file_extension = file_url.split(".")[-1]
-                with open(
-                    f"{dannybot}/database/Dooter/{randhex(128)}.{file_extension}", "wb"
-                ) as f:
+                file_name = f"{randhex(128)}.{file_extension}"
+                file_path = f"{dannybot}/database/Dooter/{file_name}"
+
+                with open(file_path, "wb") as f:
                     f.write(requests.get(url).content)
-                bag_random_dooter.add_values('dooter', [f"{randhex(128)}.{file_extension}"])
+
+                bag_random_dooter.add_values('dooter', [file_name])
                 downloaded_files.add(url)
                 if len(downloaded_files) == total_downloads:
                     await ctx.message.add_reaction("✅")
