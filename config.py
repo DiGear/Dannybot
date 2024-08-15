@@ -75,6 +75,81 @@ from wand.image import Image as magick
 
 load_dotenv()
 logger = logging.getLogger(__name__)
+# ----------
+# Classes
+# ----------
+
+class BagRandom:
+    def __init__(self, file_path):
+        self.bags = {}
+        self.default_bag = None
+        self.file_path = file_path
+        self.load_bags()
+
+    def create_bag(self, name, values):
+        """Create a new bag with a given name and values."""
+        self.bags[name] = {
+            'original_values': list(values),
+            'bag': list(values)
+        }
+        if self.default_bag is None:
+            self.default_bag = name
+        self.save_bags()
+
+    def set_bag(self, name):
+        """Set the default bag to use."""
+        if name in self.bags:
+            self.default_bag = name
+
+    def _refill_bag(self, name):
+        """Refill the specified bag if empty."""
+        if name in self.bags:
+            self.bags[name]['bag'] = list(self.bags[name]['original_values'])
+        self.save_bags()
+
+    def choice(self, name):
+        """Return a random element from the specified bag."""
+        if name not in self.bags:
+            raise ValueError(f"Bag '{name}' does not exist.")
+        
+        bag = self.bags[name]
+        if not bag['bag']:
+            self._refill_bag(name)
+        choice = random.choice(bag['bag'])
+        bag['bag'].remove(choice)
+        self.save_bags()
+        return choice
+
+    def add_values(self, name, values):
+        """Add values to the specified bag."""
+        if name in self.bags:
+            self.bags[name]['original_values'].extend(values)
+            self.bags[name]['bag'].extend(values)
+        else:
+            raise ValueError(f"Bag '{name}' does not exist.")
+        self.save_bags()
+
+    def save_bags(self):
+        """Save the current state of the bags to a JSON file."""
+        with open(self.file_path, 'w') as file:
+            json.dump(self.bags, file, indent=4)
+
+    def load_bags(self):
+        """Load the bags from a JSON file."""
+        if os.path.exists(self.file_path):
+            with open(self.file_path, 'r') as file:
+                self.bags = json.load(file)
+        else:
+            self.bags = {}
+
+    def regenerate_bag(self, bag_name, directory_path):
+        """Regenerate the bag with files from the specified directory."""
+        files = os.listdir(directory_path)
+        if files:
+            self.create_bag(bag_name, files)
+            print(f"Regenerated '{bag_name}' bag with {len(files)} files.")
+        else:
+            print(f"No files found in directory: {directory_path}")
 
 # ----------
 # Variables

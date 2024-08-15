@@ -4,7 +4,7 @@
 from config import *
 
 logger = logging.getLogger(__name__)
-
+bag_random = BagRandom('dooter_bag.json')
 
 class server(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -36,38 +36,51 @@ class server(commands.Cog):
         description="Emulate Pizzi messages using textgenrnn.",
         brief="Emulate Pizzi using AI",
     )
-    async def pizzi(self, ctx: commands.Context, temperature: typing.Optional[float] = 1.26):
+    async def pizzi(self, ctx: commands.Context, temperature: typing.Optional[float] = 546.468):
         await ctx.defer()
         if ctx.guild.id not in whitelist:
             await ctx.send("This server is not whitelisted for this command.")
             return
-        response = openai.ChatCompletion.create(
-                model="ft:gpt-4o-mini-2024-07-18:personal::9uvYEluS",
+
+        def check_response(file_path, search_string):
+            search_string = search_string.strip().lower()
+            with open(file_path, 'r') as file:
+                for line in file:
+                    data = json.loads(line)
+                    for message in data.get("messages", []):
+                        if search_string == message.get("content", "").strip().lower():
+                            return True
+            return False
+
+        file_path = f"{dannybot}\\assets\\pizzidata.jsonl"
+
+        pizzi_text = ""
+        while True:
+            response = openai.ChatCompletion.create(
+                model="ft:gpt-4o-mini-2024-07-18:personal:pizzi:9v9U1nDc:ckpt-step-1464",
                 messages=[
-                    {"role": "system", "content": "you are pizzi"},
-                    {"role": "user", "content": "say a pizzi line"}
+                    {"role": "system", "content": "you are pizzi."},
                 ],
-                temperature=temperature,
-                max_tokens=768,
+                temperature=random.uniform(0.8, 1.35) if temperature == 546.468 else temperature,
+                max_tokens=250,
                 top_p=1.0,
-                frequency_penalty=0.3,
-                presence_penalty=0.1,
+                frequency_penalty=1.2,
+                presence_penalty=1.6,
             )
 
-        pizzi_text = response.choices[0].message.content[:2000]
-        replacements = {
-            "truck": "fuck",
-            "sharks": "bitches",
-            "shark": "bitch",
-            "pepsi": "penis"
-        }
+            pizzi_text = response.choices[0].message.content[:2000]
 
-        for old, new in replacements.items():
-            pizzi_text = pizzi_text.replace(old, new)
+            # check if the generated text matches any existing response in the JSONL file
+            if not check_response(file_path, pizzi_text):
+                break  # break the loop if the text is unique
 
-        pizzi_image = random.choice(os.listdir(f"{dannybot}\\database\\dooter\\"))
-        with open(f"{dannybot}\\database\\dooter\\{pizzi_image}", "rb") as f:
-            await ctx.reply(pizzi_text, file=File(f, "pizzi.png"))
+        if not bag_random_dooter.bags.get('dooter'):
+            bag_random_dooter.regenerate_bag('dooter', self.dooter_directory)
+
+        dooter_image = bag_random.choice('dooter')
+        with open(f"{dannybot}\\database\\Dooter\\{dooter_image}", "rb") as f:
+            await ctx.reply(pizzi_text, file=discord.File(f, "pizzi.png"))
+
 
     @commands.command(hidden=True)
     async def po(self, ctx):
