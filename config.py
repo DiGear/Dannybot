@@ -174,6 +174,15 @@ database_acceptedFiles = {
     "mp4",
     "webm",
     "mov",
+# lazy caps
+    "PNG",
+    "JPG",
+    "JPEG",
+    "GIF",
+    "WEBP",
+    "MP4",
+    "WEBM",
+    "MOV",
 }  # list of accepted files for the bots public database
 cmd_blacklist = ["0"]  # Users who cant use the bot lol
 whitelist = {
