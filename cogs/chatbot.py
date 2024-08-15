@@ -15,7 +15,7 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
-        "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4",
+        "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-pizzi",
     ] = "gpt-4o-mini"
 
 
@@ -100,15 +100,21 @@ class chatbot(commands.Cog):
         if ctx.guild.id not in whitelist:
             await ctx.send("This server is not whitelisted for this command.")
             return
+        if flags.model == "gpt-pizzi":
+            modelname = "ft:gpt-4o-mini-2024-07-18:personal:pizzi:9v9U1nDc:ckpt-step-1464"
+            nuinstructions = "you are pizzi." + flags.instructions
+        else:
+            modelname = flags.model
+            nuinstructions = flags.instructions
         response = openai.ChatCompletion.create(
-            model=flags.model,
+            model=modelname,
             max_tokens=750,
             top_p=flags.top_p,
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,
             presence_penalty=flags.presence_penalty,
             messages=[
-                {"role": "system", "content": f"{flags.instructions}"},
+                {"role": "system", "content": f"{nuinstructions}"},
                 {"role": "user", "content": f"{flags.prompt}"},
             ],
         )
