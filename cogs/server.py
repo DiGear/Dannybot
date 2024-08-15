@@ -9,6 +9,34 @@ bag_random_dooter = BagRandom('dooter_bag.json')
 class server(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.file_paths = {
+            "mimi": f"{dannybot}\\database\\Mimi",
+            "nekopara": f"{dannybot}\\database\\Nekopara",
+            "leffrey": f"{dannybot}\\database\\Leffrey",
+            "femboy": f"{dannybot}\\database\\Femboy",
+            "fanboy": f"{dannybot}\\database\\Fanboy",
+            "glasscup": f"{dannybot}\\database\\Glasscup",
+            "plasticcup": f"{dannybot}\\database\\Plasticcup",
+            "burger": f"{dannybot}\\database\\Burger",
+            "danny": f"{dannybot}\\database\\Danny",
+        }
+
+        # Initialize BagRandom instances for each category except 'dooter'
+        self.bags = {category: BagRandom(f'{category}_bag.json') for category in self.file_paths if category != "dooter"}
+        
+        # Generate bags if they don't exist
+        self.initialize_bags()
+
+    def initialize_bags(self):
+        """Generate bags if they don't already exist."""
+        for category, path in self.file_paths.items():
+            if category != "dooter":  # Skip the 'dooter' category
+                if category not in self.bags[category].bags:
+                    if os.path.exists(path):
+                        files = os.listdir(path)
+                        self.bags[category].create_bag(category, files)
+                    else:
+                        print(f"Directory for category '{category}' does not exist: {path}")
 
     @commands.hybrid_command(
         name="neko",
@@ -109,26 +137,23 @@ class server(commands.Cog):
         if ctx.guild.id not in whitelist:
             await ctx.send("This server is not whitelisted for this command.")
             return
-        file_types = {
-            "mimi": f"{dannybot}\\database\\Mimi",
-            "nekopara": f"{dannybot}\\database\\Nekopara",
-            "leffrey": f"{dannybot}\\database\\Leffrey",
-            "femboy": f"{dannybot}\\database\\Femboy",
-            "fanboy": f"{dannybot}\\database\\Fanboy",
-            "glasscup": f"{dannybot}\\database\\Glasscup",
-            "plasticcup": f"{dannybot}\\database\\Plasticcup",
-            "burger": f"{dannybot}\\database\\Burger",
-            "danny": f"{dannybot}\\database\\Danny",
-        }
-        if category not in file_types:
+
+        if category not in self.bags:
             await ctx.reply(
-                "Invalid category. Please choose from: " + ", ".join(file_types.keys())
+                "Invalid category. Please choose from: " + ", ".join(self.bags.keys())
             )
             return
-        dir = file_types[category]
-        file_name = random.choice(os.listdir(dir))
-        with open(f"{dir}\\{file_name}", "rb") as f:
-            await ctx.reply(file=File(f, "img.png"), mention_author=True)
+        
+        bag = self.bags[category]
+        try:
+            file_name = bag.choice(category)
+            file_path = os.path.join('database', category, file_name)
+            with open(file_path, "rb") as f:
+                await ctx.reply(file=File(f, "img.png"), mention_author=True)
+        except ValueError:
+            await ctx.reply("No files available in this category.")
+        except FileNotFoundError:
+            await ctx.reply("File not found.")
 
     @commands.hybrid_command(
         name="database",
