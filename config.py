@@ -80,10 +80,13 @@ logger = logging.getLogger(__name__)
 # ----------
 
 class BagRandom:
-    def __init__(self, file_path):
+    def __init__(self, file_name):
         self.bags = {}
         self.default_bag = None
-        self.file_path = file_path
+        self.directory = 'bags'
+        self.file_path = os.path.join(self.directory, file_name)
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory)
         self.load_bags()
 
     def create_bag(self, name, values):
@@ -141,15 +144,6 @@ class BagRandom:
                 self.bags = json.load(file)
         else:
             self.bags = {}
-
-    def regenerate_bag(self, bag_name, directory_path):
-        """Regenerate the bag with files from the specified directory."""
-        files = os.listdir(directory_path)
-        if files:
-            self.create_bag(bag_name, files)
-            print(f"Regenerated '{bag_name}' bag with {len(files)} files.")
-        else:
-            print(f"No files found in directory: {directory_path}")
 
 # ----------
 # Variables

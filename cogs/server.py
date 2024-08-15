@@ -4,7 +4,7 @@
 from config import *
 
 logger = logging.getLogger(__name__)
-bag_random = BagRandom('dooter_bag.json')
+bag_random_dooter = BagRandom('dooter_bag.json')
 
 class server(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -74,10 +74,7 @@ class server(commands.Cog):
             if not check_response(file_path, pizzi_text):
                 break  # break the loop if the text is unique
 
-        if not bag_random_dooter.bags.get('dooter'):
-            bag_random_dooter.regenerate_bag('dooter', self.dooter_directory)
-
-        dooter_image = bag_random.choice('dooter')
+        dooter_image = bag_random_dooter.choice('dooter')
         with open(f"{dannybot}\\database\\Dooter\\{dooter_image}", "rb") as f:
             await ctx.reply(pizzi_text, file=discord.File(f, "pizzi.png"))
 

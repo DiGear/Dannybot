@@ -38,8 +38,6 @@ class Pooter(commands.Cog):
             return
 
         for _ in range(poo_count):
-            if not self.bag_random_pooter.bags.get('pooter'):
-                self.bag_random_pooter.regenerate_bag('pooter', self.pooter_directory)
             img_file = bag_random_pooter.choice('pooter')
             with open(os.path.join(self.pooter_db_path, img_file), "rb") as img:
                 await msg.channel.send(file=discord.File(img), reference=msg)
@@ -176,8 +174,6 @@ class Pooter(commands.Cog):
         elif not File_Url:
             if ctx.guild.id not in whitelist:
                 return
-        if not self.bag_random_pooter.bags.get('pooter'):
-            self.bag_random_pooter.regenerate_bag('pooter', self.pooter_directory)
             pooter_file = bag_random_pooter.choice('pooter')
             with open(os.path.join(self.pooter_db_path, pooter_file), "rb") as f:
                 await ctx.reply(file=discord.File(f, pooter_file))
