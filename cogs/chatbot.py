@@ -15,7 +15,11 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
-        "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-pizzi",
+        "gpt-4o-mini",
+        "gpt-4o",
+        "gpt-4-turbo",
+        "gpt-4",
+        "gpt-pizzi",
     ] = "gpt-4o-mini"
 
 
@@ -45,11 +49,10 @@ class chatbot(commands.Cog):
         ):
             return
 
-        if (
-        message.reference and 
-        ("d." in message.content.lower() or 
-        "#" in message.content.lower() or 
-        "ratio +" in message.content.lower())
+        if message.reference and (
+            "d." in message.content.lower()
+            or "#" in message.content.lower()
+            or "ratio +" in message.content.lower()
         ):
             return
 
@@ -59,6 +62,17 @@ class chatbot(commands.Cog):
                 "text": f"{message.author.display_name} said: {message.content}",
             }
         ]
+
+        if message.reference:
+            referenced_message = await message.channel.fetch_message(
+                message.reference.message_id
+            )
+
+            if referenced_message.attachments:
+                attachment_url = referenced_message.attachments[0].url
+                content.append(
+                    {"type": "image_url", "image_url": {"url": str(attachment_url)}}
+                )
 
         if message.attachments:
             attachment_url = message.attachments[0].url
@@ -89,8 +103,7 @@ class chatbot(commands.Cog):
     def clean_response(self, response_text: str) -> str:
         response_text = re.sub(r"(?i)dannybot:", "", response_text)
         response_text = re.sub(r"(?i)dannybot-s:", "", response_text)
-        response_text = re.sub(r"(?i)dannybot-s said:", "", response_text)
-        response_text = re.sub(r"(?i)dannybot said:", "", response_text).strip()[:1990]
+        response_text = re.sub(r"(?i)\b.+?\b said:", "", response_text).strip()[:1990]
         return response_text
 
     def pop_not_sys(self):
@@ -110,7 +123,9 @@ class chatbot(commands.Cog):
             await ctx.send("This server is not whitelisted for this command.")
             return
         if flags.model == "gpt-pizzi":
-            modelname = "ft:gpt-4o-mini-2024-07-18:personal:pizzi:9v9U1nDc:ckpt-step-1464"
+            modelname = (
+                "ft:gpt-4o-mini-2024-07-18:personal:pizzi:9v9U1nDc:ckpt-step-1464"
+            )
             nuinstructions = "you are pizzi." + flags.instructions
         else:
             modelname = flags.model
