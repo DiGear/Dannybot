@@ -135,10 +135,25 @@ class image(commands.Cog):
                     im = Image.open(f"{cache_dir}\\ffmpeg\\{unique}\\{frame}")
                     draw = ImageDraw.Draw(im)
 
-                    font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
+                    # Initial font size
+                    font_size = 64
+                    font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
                     max_width = im.width - 40
 
-                    lines = wrap_text(text, draw, font, max_width)
+                    # Function to wrap text and adjust font size
+                    def wrap_text_and_adjust_font(text, draw, font, max_width, max_lines):
+                        while True:
+                            lines = wrap_text(text, draw, font, max_width)
+                            if len(lines) <= max_lines:
+                                break
+                            font_size = font.size - 2
+                            font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
+                        return lines, font
+
+                    # Set max lines and get adjusted lines and font
+                    max_lines = 4
+                    lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_lines)
+
                     line_height = font.getsize("A")[1]
                     line_spacing = 18
                     rectangle_height = (line_height + line_spacing) * len(lines) + 30
@@ -176,10 +191,25 @@ class image(commands.Cog):
             im = Image.open(image_file)
             draw = ImageDraw.Draw(im)
 
-            font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", 64)
+            # Initial font size
+            font_size = 64
+            font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
             max_width = im.width - 40
 
-            lines = wrap_text(text, draw, font, max_width)
+            # Function to wrap text and adjust font size
+            def wrap_text_and_adjust_font(text, draw, font, max_width, max_lines):
+                while True:
+                    lines = wrap_text(text, draw, font, max_width)
+                    if len(lines) <= max_lines:
+                        break
+                    font_size = font.size - 2
+                    font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
+                return lines, font
+
+            # Set max lines and get adjusted lines and font
+            max_lines = 4
+            lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_lines)
+
             line_height = font.getsize("A")[1]
             line_spacing = 18
             rectangle_height = (line_height + line_spacing) * len(lines) + 30

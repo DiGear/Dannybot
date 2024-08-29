@@ -267,7 +267,7 @@ class ai(commands.Cog):
     async def pootervision(self, ctx):
         await ctx.defer()
         log_channel = self.bot.get_channel(logs_channel)
-        allowed_extensions = ["png", "jpeg", "jpg", "gif", "webp"]
+        allowed_extensions = ["png", "jpeg", "jpg"]
         max_size = 20 * 1024 * 1024
         pooter_files = [
             file
@@ -323,7 +323,7 @@ class ai(commands.Cog):
     async def lunaticvision(self, ctx):
         await ctx.defer()
         log_channel = self.bot.get_channel(logs_channel)
-        allowed_extensions = ["png", "jpeg", "jpg", "gif", "webp"]
+        allowed_extensions = ["png", "jpeg", "jpg"]
         max_size = 20 * 1024 * 1024
         pooter_files = [
             file
