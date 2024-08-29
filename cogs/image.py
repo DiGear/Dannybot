@@ -135,28 +135,27 @@ class image(commands.Cog):
                     im = Image.open(f"{cache_dir}\\ffmpeg\\{unique}\\{frame}")
                     draw = ImageDraw.Draw(im)
 
-                    # Initial font size
-                    font_size = 64
+                    font_size = 192
                     font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
-                    max_width = im.width - 40
+                    max_width = im.width - 4
 
-                    # Function to wrap text and adjust font size
-                    def wrap_text_and_adjust_font(text, draw, font, max_width, max_lines):
+                    def wrap_text_and_adjust_font(text, draw, font, max_width, max_height):
                         while True:
                             lines = wrap_text(text, draw, font, max_width)
-                            if len(lines) <= max_lines:
+                            line_height = font.getsize("A")[1]
+                            total_height = (line_height + line_spacing) * len(lines)
+                            if total_height <= max_height or font.size <= 10:
                                 break
-                            font_size = font.size - 2
+                            font_size = font.size - 1
                             font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
                         return lines, font
 
-                    # Set max lines and get adjusted lines and font
-                    max_lines = 4
-                    lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_lines)
+                    max_height = int(im.height * 0.4)
+                    line_spacing = 45 if font_size > 128 else 5
+                    lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_height)
 
-                    line_height = font.getsize("A")[1]
-                    line_spacing = 18
-                    rectangle_height = (line_height + line_spacing) * len(lines) + 30
+                    line_height = font.getsize("y")[1]
+                    rectangle_height = (line_height + line_spacing) * len(lines) + 20
 
                     new_im = Image.new(
                         "RGBA", (im.width, im.height + rectangle_height), "white"
@@ -165,7 +164,7 @@ class image(commands.Cog):
                     draw = ImageDraw.Draw(new_im)
 
                     draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
-                    y = 20
+                    y = 10 
 
                     for line in lines:
                         text_width, _ = draw.textsize(line, font=font)
@@ -191,28 +190,27 @@ class image(commands.Cog):
             im = Image.open(image_file)
             draw = ImageDraw.Draw(im)
 
-            # Initial font size
-            font_size = 64
+            font_size = 192
             font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
-            max_width = im.width - 40
+            max_width = im.width - 4
 
-            # Function to wrap text and adjust font size
-            def wrap_text_and_adjust_font(text, draw, font, max_width, max_lines):
+            def wrap_text_and_adjust_font(text, draw, font, max_width, max_height):
                 while True:
                     lines = wrap_text(text, draw, font, max_width)
-                    if len(lines) <= max_lines:
+                    line_height = font.getsize("y")[1]
+                    total_height = (line_height + line_spacing) * len(lines)
+                    if total_height <= max_height or font.size <= 10:
                         break
-                    font_size = font.size - 2
+                    font_size = font.size - 1
                     font = ImageFont.truetype(f"{dannybot}\\assets\\futura.ttf", font_size)
                 return lines, font
 
-            # Set max lines and get adjusted lines and font
-            max_lines = 4
-            lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_lines)
+            max_height = int(im.height * 0.4)
+            line_spacing = 45 if font_size > 128 else 5
+            lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_height)
 
             line_height = font.getsize("A")[1]
-            line_spacing = 18
-            rectangle_height = (line_height + line_spacing) * len(lines) + 30
+            rectangle_height = (line_height + line_spacing) * len(lines) + 20
 
             new_im = Image.new(
                 "RGBA", (im.width, im.height + rectangle_height), "white"
@@ -221,7 +219,7 @@ class image(commands.Cog):
             draw = ImageDraw.Draw(new_im)
 
             draw.rectangle([(0, 0), (im.width, rectangle_height)], fill="white")
-            y = 20
+            y = 10 
 
             for line in lines:
                 text_width, _ = draw.textsize(line, font=font)
