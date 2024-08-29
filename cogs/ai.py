@@ -265,6 +265,7 @@ class ai(commands.Cog):
         brief="Identify an image using AI",
     )
     async def pootervision(self, ctx):
+        await ctx.defer()
         log_channel = self.bot.get_channel(logs_channel)
         allowed_extensions = ["png", "jpeg", "jpg", "gif", "webp"]
         max_size = 20 * 1024 * 1024
@@ -320,6 +321,7 @@ class ai(commands.Cog):
         brief="Identify an image using AI",
     )
     async def lunaticvision(self, ctx):
+        await ctx.defer()
         log_channel = self.bot.get_channel(logs_channel)
         allowed_extensions = ["png", "jpeg", "jpg", "gif", "webp"]
         max_size = 20 * 1024 * 1024

@@ -29,7 +29,7 @@ class chatbot(commands.Cog):
                 {
                     "role": "system",
                     "content": """
-            Your name is Dannybot. You are talking to more than one person. The name format is (name said: thing) respond to their message
+            Your name is Dannybot-S. You are cooler than the original Dannybot. Also, You are talking to more than one person. The name format is (name said: thing) respond to their message
             """,
                 }
             ],
@@ -40,9 +40,16 @@ class chatbot(commands.Cog):
     async def on_message(self, message):
         if (
             message.author.bot
-            or message.reference
             or message.guild.id not in whitelist
             or not self.bot.user.mentioned_in(message)
+        ):
+            return
+
+        if (
+        message.reference and 
+        ("d." in message.content.lower() or 
+        "#" in message.content.lower() or 
+        "ratio +" in message.content.lower())
         ):
             return
 
@@ -81,6 +88,8 @@ class chatbot(commands.Cog):
 
     def clean_response(self, response_text: str) -> str:
         response_text = re.sub(r"(?i)dannybot:", "", response_text)
+        response_text = re.sub(r"(?i)dannybot-s:", "", response_text)
+        response_text = re.sub(r"(?i)dannybot-s said:", "", response_text)
         response_text = re.sub(r"(?i)dannybot said:", "", response_text).strip()[:1990]
         return response_text
 
