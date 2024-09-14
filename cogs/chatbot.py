@@ -140,8 +140,8 @@ class chatbot(commands.Cog):
             frequency_penalty=flags.frequency_penalty,
             presence_penalty=flags.presence_penalty,
             messages=[
-                {"role": "system", "content": f"{nuinstructions.replace('/n','\n')}"},
-                {"role": "user", "content": f"{flags.prompt.replace('/n','\n')}"},
+                {"role": "system", "content": nuinstructions.replace('/n','\n')},
+                {"role": "user", "content": flags.prompt.replace('/n','\n')},
             ],
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
