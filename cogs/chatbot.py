@@ -132,6 +132,10 @@ class chatbot(commands.Cog):
         else:
             modelname = flags.model
             nuinstructions = flags.instructions
+        messages = [
+            {"role": "system", "content": nuinstructions.replace('/n', '\n')},
+            {"role": "user", "content": flags.prompt.replace('/n', '\n')},
+        ]
         response = openai.ChatCompletion.create(
             model=modelname,
             max_tokens=750,
@@ -139,13 +143,9 @@ class chatbot(commands.Cog):
             temperature=flags.temperature,
             frequency_penalty=flags.frequency_penalty,
             presence_penalty=flags.presence_penalty,
-            messages=[
-                {"role": "system", "content": nuinstructions.replace('/n','\n')},
-                {"role": "user", "content": flags.prompt.replace('/n','\n')},
-            ],
+            messages=messages,
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(chatbot(bot))
