@@ -151,7 +151,7 @@ class image(commands.Cog):
                         return lines, font
 
                     max_height = int(im.height * 0.4)
-                    line_spacing = 45 if font_size > 128 else 5
+                    line_spacing = 5 if font_size > 128 else 5
                     lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_height)
 
                     line_height = font.getsize("y")[1]
@@ -206,7 +206,7 @@ class image(commands.Cog):
                 return lines, font
 
             max_height = int(im.height * 0.4)
-            line_spacing = 45 if font_size > 128 else 5
+            line_spacing = 5 if font_size > 140 else 5
             lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_height)
 
             line_height = font.getsize("A")[1]
