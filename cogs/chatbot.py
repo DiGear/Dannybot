@@ -121,7 +121,7 @@ class chatbot(commands.Cog):
     )
     async def chatgpt(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
-        if ctx.guild.id not in whitelist:
+        if ctx.guild.id not in whitelist and ctx.author.id != bot.owner_id:
             await ctx.send("This server is not whitelisted for this command.")
             return
         if flags.model == "gpt-pizzi":

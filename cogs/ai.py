@@ -32,7 +32,7 @@ class ai(commands.Cog):
     )
     async def write(self, ctx: commands.Context, *, prompt: str):
         await ctx.defer()
-        if ctx.guild.id not in whitelist:
+        if ctx.guild.id not in whitelist and ctx.author.id != bot.owner_id:
             await ctx.send("This server is not whitelisted for this command.")
             return
         try:
@@ -59,7 +59,7 @@ class ai(commands.Cog):
         self, ctx: commands.Context, *, flags: CustomWrite, append: bool = False
     ):
         await ctx.defer()
-        if ctx.guild.id not in whitelist:
+        if ctx.guild.id not in whitelist and ctx.author.id != bot.owner_id:
             await ctx.send("This server is not whitelisted for this command.")
             return
         try:
@@ -83,7 +83,7 @@ class ai(commands.Cog):
         brief="Upscale images using waifu2x",
     )
     async def waifu(self, ctx, *args):
-        if ctx.guild.id not in whitelist:
+        if ctx.guild.id not in whitelist and ctx.author.id != bot.owner_id:
             await ctx.send("This server is not whitelisted for this command.")
             return
         try:
@@ -145,7 +145,7 @@ class ai(commands.Cog):
         brief="Remove the background from an image using AI",
     )
     async def removebg(self, ctx, *args):
-        if ctx.guild.id not in whitelist:
+        if ctx.guild.id not in whitelist and ctx.author.id != bot.owner_id:
             await ctx.send("This server is not whitelisted for this command.")
             return
         cmd_info = await resolve_args(ctx, args, ctx.message.attachments)
