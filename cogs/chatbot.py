@@ -114,6 +114,8 @@ class chatbot(commands.Cog):
                 self.message_array.remove(msg)
                 break
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="chatgpt",
         description="Interact with ChatGPT using instructions and prompts.",

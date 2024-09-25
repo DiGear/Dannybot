@@ -38,6 +38,8 @@ class server(commands.Cog):
                     else:
                         print(f"Directory for category '{category}' does not exist: {path}")
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="neko",
         aliases=["catgirl"],
@@ -59,6 +61,8 @@ class server(commands.Cog):
                     else:
                         await ctx.send("Failed to retrieve catgirl image.")
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="pizzi",
         description="Emulate Pizzi messages using textgenrnn.",
@@ -113,6 +117,8 @@ class server(commands.Cog):
         with open(f"{dannybot}\\database\\Po\\{file_name}", "rb") as f:
             await ctx.reply(file=File(f, "img.png"), mention_author=True)
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="img",
         description="Send a random picture or file from a category.",
@@ -155,6 +161,8 @@ class server(commands.Cog):
         except FileNotFoundError:
             await ctx.reply("File not found.")
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="database",
         aliases=["db", "databases", "dbs"],
@@ -190,6 +198,8 @@ class server(commands.Cog):
 
         await ctx.reply(embed=embed, mention_author=True)
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command()
     @commands.is_owner()
     async def kill(self, ctx, user: discord.User):

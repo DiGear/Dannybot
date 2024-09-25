@@ -10,6 +10,8 @@ class misc(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="8ball",
         description="Ask Dannybot a question and he will respond with one of many answers.",
@@ -18,6 +20,8 @@ class misc(commands.Cog):
     async def _8ball(self, ctx: commands.Context, *, question: str):
         await ctx.send(f"Question: {question}\nAnswer: {random.choice(ball_responses)}")
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="logo",
         description="Use a custom flamingtext.com api to generate logos using random presets.",
@@ -40,6 +44,8 @@ class misc(commands.Cog):
             f.write(image_bytes)
         await ctx.reply(file=File(f"{dannybot}/cache/{filename}"), mention_author=True)
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="undertext",
         description="Generate a custom Undertale-Styled textbox by defining the character and text to be said.",
@@ -68,6 +74,8 @@ class misc(commands.Cog):
             file=discord.File(f"{dannybot}/cache/{filename}"), mention_author=True
         )
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="robloxstock",
         description="Get information about the Roblox Corporation's stock (RBLX).",
@@ -102,6 +110,8 @@ class misc(commands.Cog):
         with open(f"{dannybot}\\assets\\bugle.png", "rb") as f:
             await ctx.reply(file=File(f, "dumbass.png"), mention_author=True)
 
+    @discord.app_commands.allowed_installs(guilds=True, users=True)
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="download",
         aliases=["dl", "ytdl", "down"],

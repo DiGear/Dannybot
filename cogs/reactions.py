@@ -11,7 +11,7 @@ class reactions(commands.Cog):
         content = message.content.lower()
         if content.startswith("balls in"):
             await message.channel.send(
-                "https://cdn.discordapp.com/attachments/947963019319709777/1080006889468862555/maxresdefault.png",
+                "https://cdn.discordapp.com/attachments/896060285763325962/1285826127272611840/DOEvKrgUMAEn_tO.png",
                 reference=message,
             )
         elif content.startswith("balls out"):

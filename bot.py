@@ -79,6 +79,8 @@ async def on_message(message):
 
 
 # this is a ping command and it's pretty self-explanatory
+@discord.app_commands.allowed_installs(guilds=True, users=True)
+@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 @bot.hybrid_command(
     name="ping",
     description="Calculate bot latency and send the results.",
@@ -95,6 +97,8 @@ async def ping(ctx: commands.Context):
 
 
 # say command because every good bot should be a vessel for its creator to speak through - FDG
+@discord.app_commands.allowed_installs(guilds=True, users=True)
+@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 @bot.hybrid_command(
     name="say", description="DEV COMMAND | No description given", hidden=True
 )
@@ -109,6 +113,8 @@ async def say(ctx: commands.Context, *, text):
         except:
             return
 
+@discord.app_commands.allowed_installs(guilds=True, users=True)
+@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 @bot.hybrid_command(
     name="reload",
     description="DEV COMMAND | Reload specified cogs on the bot",
