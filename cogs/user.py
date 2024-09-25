@@ -12,8 +12,8 @@ class user(commands.Cog):
         super().__init__()
 
     @discord.app_commands.allowed_installs(guilds=True, users=True)
-@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-@commands.hybrid_command(
+    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+    @commands.hybrid_command(
         name="avatar",
         description="Grab the command users avatar, and send it.",
         brief="Display provided users avatar(s)",
