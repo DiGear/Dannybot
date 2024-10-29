@@ -16,12 +16,21 @@ class reactions(commands.Cog):
             )
         elif content.startswith("balls out"):
             await message.channel.send(
-                "https://cdn.discordapp.com/attachments/947963019319709777/1080011687979122779/latest.png",
+                "https://cdn.discordapp.com/attachments/886788323648094219/1298440117417017434/92kyi4ewfkha1.jpg",
                 reference=message,
             )
         elif "cigarette" in content and not message.author.bot:
             await message.channel.send(
                 "https://tenor.com/view/500-cigarettes-the-orville-gif-7999465420984481267",
+                reference=message,
+            )
+        elif content.startswith("ourgh") and not message.author.bot:
+            await message.channel.send(
+                "Banned."
+            )
+        elif content.startswith("mommy"):
+            await message.channel.send(
+                "https://cdn.discordapp.com/attachments/900431883559661649/1259755505824436254/meme.gif",
                 reference=message,
             )
 
