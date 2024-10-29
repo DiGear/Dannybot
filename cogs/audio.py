@@ -56,23 +56,35 @@ class audio(commands.Cog):
             midi_output_path = (
                 f"{dannybot}\\cache\\{filename.replace('.mid', '_negative.mid')}"
             )
+            wav_output_path = f"{dannybot}\\cache\\midislap_{ctx.message.id}.wav"
+            
+            # Generate the audio using Fluidsynth
             fluidsynth_cmd = [
                 "fluidsynth",
                 "-ni",
                 f"{dannybot}\\assets\\SF2\\general.sf2",
                 midi_output_path,
                 "-F",
-                f"{dannybot}\\cache\\midislap_{ctx.message.id}.wav",
+                wav_output_path,
                 "-r",
                 "44100",
             ]
             subprocess.Popen(fluidsynth_cmd).wait()
 
+            # Normalize the audio to 0dB max using pydub
+            audio = AudioSegment.from_file(wav_output_path)
+            normalized_audio = audio.apply_gain(-audio.max_dBFS)  # Normalization
+
+            # Export the normalized audio back to wav
+            normalized_output_path = f"{dannybot}\\cache\\normalized_midislap_{ctx.message.id}.wav"
+            normalized_audio.export(normalized_output_path, format="wav")
+
+            # Convert the normalized wav to ogg
             ogg_output_path = f"{dannybot}\\cache\\{filename.replace('.mid', f'_midislap_{ctx.message.id}.ogg')}"
             ffmpeg_cmd = [
                 "ffmpeg",
                 "-i",
-                f"{dannybot}\\cache\\midislap_{ctx.message.id}.wav",
+                normalized_output_path,  # Use normalized audio here
                 "-c:a",
                 "libopus",
                 "-b:a",
@@ -81,6 +93,7 @@ class audio(commands.Cog):
             ]
             subprocess.Popen(ffmpeg_cmd).wait()
 
+        # Send the MIDI and OGG files as replies
         with open(midi_output_path, "rb") as i, open(ogg_output_path, "rb") as f:
             await ctx.reply(file=File(i, filename.replace(".mid", "_flipped.mid")))
             await ctx.reply(
@@ -126,14 +139,22 @@ class audio(commands.Cog):
             f"fluidsynth -ni {dannybot}\\assets\\SF2\\{SF2} {dannybot}\\cache\\midislap.mid -F {midi_output_path} -r 44100"
         )
 
+        # Normalize the audio to 0dB max using pydub
+        audio = AudioSegment.from_file(midi_output_path)
+        normalized_audio = audio.apply_gain(-audio.max_dBFS)  # Normalization
+
+        # Export the normalized audio back to wav
+        normalized_output_path = f"{dannybot}\\cache\\normalized_midislap_{ctx.message.id}.wav"
+        normalized_audio.export(normalized_output_path, format="wav")
+
+        # Convert the normalized wav to ogg
         ogg_output_path = f"{dannybot}\\cache\\midislap_{ctx.message.id}.ogg"
         os.system(
-            f"ffmpeg -i {midi_output_path} -c:a libopus -b:a 64k {ogg_output_path}"
+            f"ffmpeg -i {normalized_output_path} -c:a libopus -b:a 64k {ogg_output_path}"
         )
 
         with open(ogg_output_path, "rb") as f:
             await ctx.reply(f"Midislapped with {SF2}:", file=File(f, "midislap.ogg"))
-
     @commands.command()
     async def play(self, ctx, url=None):
         if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
