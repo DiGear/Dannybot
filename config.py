@@ -7,37 +7,37 @@
 
 import asyncio
 import base64
+import colorsys
 import glob
 import hashlib
 import io
 import json
 import logging
 import math
-import shutil
 import os
 import random
 import re
-import subprocess
-import colorsys
+import shutil
 import string
+import subprocess
 import sys
 import textwrap
 import threading
 import time
+import traceback
 import typing
 import urllib
 import urllib.request
 import uuid
-from collections import namedtuple, deque
+import warnings
+from collections import deque, namedtuple
 from datetime import datetime
 from functools import lru_cache, partial
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from textwrap import wrap
 from typing import Literal
-from io import StringIO
 from urllib import request
-from rembg import new_session, remove
 from xml.etree import ElementTree
 
 import aiofiles
@@ -47,30 +47,23 @@ import furl
 import numpy
 import openai
 import PIL
+import pydub
 import requests
 import ujson
 import websocket
-import traceback
-import warnings
 import yt_dlp
 from aiohttp import ClientSession
-from colorama import init, Fore
-from discord import File, Interaction, InteractionType, app_commands, FFmpegPCMAudio
+from colorama import Fore, init
+from discord import (AppCommandContext, FFmpegPCMAudio, File, Interaction,
+                     InteractionType, app_commands)
 from discord.ext import commands, tasks
 from discord.utils import get
 from dotenv import load_dotenv
 from petpetgif import petpet
-from PIL import (
-    GifImagePlugin,
-    Image,
-    ImageColor,
-    ImageDraw,
-    ImageEnhance,
-    ImageFilter,
-    ImageFont,
-    ImageOps,
-    ImageSequence,
-)
+from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
+                 ImageFilter, ImageFont, ImageOps, ImageSequence)
+from pydub import AudioSegment
+from rembg import new_session, remove
 from wand.image import Image as magick
 
 load_dotenv()
@@ -663,7 +656,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
 
 # change hue (apparently not an inbuilt function of PIL)
-def change_hue(image, hue_shift):
+def change_hue(image, hue_shift, saturation_shift = 1):
     if image.mode != "RGBA":
         image = image.convert("RGBA")
 
@@ -677,8 +670,12 @@ def change_hue(image, hue_shift):
     # Convert the 360 degree hue wheel into a float between 0 and 255
     hue_shift_normalized = int((hue_shift / 360.0) * 255)
 
-    # Adjust hue by adding target_hue and modulo 256 to wrap around
+    # Adjust hue by adding hue_shift and modulo 256 to wrap around
     h = h.point(lambda p: (p + hue_shift_normalized) % 256)
+
+    # Adjust saturation by multiplying with the saturation_shift factor
+    # We ensure the saturation value stays in the 0-255 range
+    s = s.point(lambda p: min(max(int(p * saturation_shift), 0), 255))
 
     # Merge back HSV and convert to RGBA
     hsv_image = Image.merge("HSV", (h, s, v))
