@@ -28,7 +28,7 @@ class reactions(commands.Cog):
             await message.channel.send(
                 "Banned."
             )
-        elif content.startswith("mommy"):
+        elif content.startswith("mommy") and "angry" in content:
             await message.channel.send(
                 "https://cdn.discordapp.com/attachments/900431883559661649/1259755505824436254/meme.gif",
                 reference=message,
