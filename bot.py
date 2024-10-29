@@ -21,11 +21,19 @@ intents.messages = True
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# define our prefix(es) and status
+# Define your prefixes and intents
+dannybot_prefixes = dannybot_prefixes
+
+# Define allowed contexts
+AppCommandContext.dm_channel = True
+AppCommandContext.guild = True
+AppCommandContext.private_channel = True
+
+# Initialize the bot
 bot = commands.Bot(
-    command_prefix=(dannybot_prefixes),
+    command_prefix=dannybot_prefixes,
     status=discord.Status.online,
-    activity=discord.Activity(name="for d.help", type=3),
+    activity=discord.Activity(name="for d.help", type=discord.ActivityType.watching),
     intents=intents,
     case_insensitive=True,
 )
