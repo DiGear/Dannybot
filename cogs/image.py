@@ -86,7 +86,7 @@ class image(commands.Cog):
                 input_image.paste((0, 0, 0, 0), mask=mask)
 
             background = Image.open(f"{dannybot}\\assets\\plate.png")
-            background = change_hue(background, (random.randint(-180, 180)))
+            background = change_hue(background, (random.randint(-180, 180)),(random.uniform(0, 3)))
             background = background.convert("RGBA")
             x = (background.width - input_image.width) // 2
             y = (background.height - input_image.height) // 2
