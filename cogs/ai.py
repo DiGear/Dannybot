@@ -31,6 +31,7 @@ class ai(commands.Cog):
         aliases=["davinci", "gpt"],
         description="Interact with GPT with ONLY prompts.",
         brief="Get AI generated text based on provided prompts",
+        with_app_command=True
     )
     async def write(self, ctx: commands.Context, *, prompt: str):
         await ctx.defer()
