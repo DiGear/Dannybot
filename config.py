@@ -327,7 +327,7 @@ def repack_gif(id=None):
         directory = f"cache/ffmpeg/output"
 
     palette_path = f"{directory}/palette.png"
-    output_gif = f"cache/ffmpeg_out{id}.gif"
+    output_gif = f"cache/ffmpeg_out{id}.gif" if id is not None else f"cache/ffmpeg_out.gif"
     print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{directory}/temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
@@ -336,7 +336,7 @@ def repack_gif(id=None):
     os.system(
         f'ffmpeg -i "{directory}/temp%04d.png" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
     )
-    shutil.rmtree(directory)
+    #shutil.rmtree(directory)
     print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
 
     return
@@ -834,7 +834,7 @@ def make_meme(Top_Text, Bottom_Text, path):
 # gif version
 def make_meme_gif(Top_Text, Bottom_Text):
     # iterate through every frame in the ffmpeg folder and edit them
-    for frame in os.listdir(f"{cache_dir}\\ffmpeg"):
+    for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg"):
         if ".png" in frame:
             # open image in PIL
             img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
