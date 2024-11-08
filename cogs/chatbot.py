@@ -87,11 +87,18 @@ class chatbot(commands.Cog):
         if len(self.message_array) > self.memory_length:
             self.pop_not_sys()
 
-        response_text = await self.get_openai_response()
-        response_text = self.clean_response(response_text)
-        await message.channel.send(response_text, reference=message)
-        self.message_array.append({"role": "assistant", "content": response_text})
-        print(self.message_array)
+        try:
+            response_text = await self.get_openai_response()
+            response_text = self.clean_response(response_text)
+            await message.channel.send(response_text, reference=message)
+            self.message_array.append({"role": "assistant", "content": response_text})
+            print(self.message_array)
+
+        except Exception as e:
+            reload_command = self.bot.get_command("reload")
+            if reload_command:
+                ctx = await self.bot.get_context(message)
+                await reload_command(ctx, module="chatbot")
 
     async def get_openai_response(self) -> str:
         response_data = openai.ChatCompletion.create(
@@ -123,7 +130,9 @@ class chatbot(commands.Cog):
     )
     async def chatgpt(self, ctx: commands.Context, *, flags: CustomGPT):
         await ctx.defer()
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (
+            ctx.guild is not None and ctx.guild.id not in whitelist
+        ) and ctx.author.id != bot.owner_id:
             await ctx.send("This server is not whitelisted for this command.")
             return
         if flags.model == "gpt-pizzi":
@@ -135,8 +144,8 @@ class chatbot(commands.Cog):
             modelname = flags.model
             nuinstructions = flags.instructions
         messages = [
-            {"role": "system", "content": nuinstructions.replace('/n', '\n')},
-            {"role": "user", "content": flags.prompt.replace('/n', '\n')},
+            {"role": "system", "content": nuinstructions.replace("/n", "\n")},
+            {"role": "user", "content": flags.prompt.replace("/n", "\n")},
         ]
         response = openai.ChatCompletion.create(
             model=modelname,
@@ -148,6 +157,7 @@ class chatbot(commands.Cog):
             messages=messages,
         )
         await ctx.reply(response.choices[0].message.content[:2000], mention_author=True)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(chatbot(bot))
