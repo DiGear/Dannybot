@@ -202,6 +202,7 @@ class server(commands.Cog):
                 value=f"{fileCount(path)} files\n{fileSize(path)}\n{bag_remaining}/{total_files} files remaining in bag"
             )
         await ctx.reply(embed=embed, mention_author=True)
+
     @discord.app_commands.allowed_installs(guilds=True, users=True)
     @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command()
