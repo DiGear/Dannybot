@@ -192,12 +192,16 @@ class server(commands.Cog):
 
         # Add fields to the embed
         for name, path in directory_paths.items():
+            category = path.split("\\")[-1].lower()
+            with open(f'bags/{category}_bag.json', 'r') as f:
+                bag_data = json.load(f)
+                bag_remaining = len(bag_data[category]['bag'])
+                total_files = len(bag_data[category]['original_values'])
             embed.add_field(
-                name=name, value=f"{fileCount(path)} files\n{fileSize(path)}"
+                name=name, 
+                value=f"{fileCount(path)} files\n{fileSize(path)}\n{bag_remaining}/{total_files} files remaining in bag"
             )
-
         await ctx.reply(embed=embed, mention_author=True)
-
     @discord.app_commands.allowed_installs(guilds=True, users=True)
     @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command()

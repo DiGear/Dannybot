@@ -187,6 +187,7 @@ whitelist = {
     1131490848014598268,
     352972878645428225,
     1274900393285124126,
+    882143616754147350,
 }  # servers with full bot access
 
 # configs for the image manipulation commands
