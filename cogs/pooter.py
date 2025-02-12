@@ -12,12 +12,12 @@ class Pooter(commands.Cog):
         self.bot = bot
         self.pooter_db_path = os.path.join(dannybot, "database", "Pooter")
         self.dooter_db_path = os.path.join(dannybot, "database", "Dooter")
-        
+
         # Initialize the pooter bag if it doesn't exist
         if not 'pooter' in bag_random_pooter.bags:
             pooter_files = os.listdir(self.pooter_db_path)
             bag_random_pooter.create_bag('pooter', pooter_files)
-        
+
         # Initialize the dooter bag if it doesn't exist
         if not 'dooter' in bag_random_dooter.bags:
             dooter_files = os.listdir(self.dooter_db_path)
@@ -66,7 +66,7 @@ class Pooter(commands.Cog):
                 else:
                     file_url = url
                     file_extension = file_url.split(".")[-1]
-                file_name = f"{randhex(128)}.{file_extension}"
+                file_name = f"pooterquiz_{payload.member.id}_{randhex(64)}.{file_extension}"
                 file_path = f"{dannybot}/database/Pooter/{file_name}"
 
                 with open(file_path, "wb") as f:
@@ -138,7 +138,7 @@ class Pooter(commands.Cog):
                 else:
                     file_url = url
                     file_extension = file_url.split(".")[-1]
-                file_name = f"{randhex(128)}.{file_extension}"
+                file_name = f"pooterquiz_{ctx.author.id}_{randhex(64)}.{file_extension}"
                 file_path = f"{dannybot}/database/Pooter/{file_name}"
 
                 with open(file_path, "wb") as f:
@@ -167,7 +167,7 @@ class Pooter(commands.Cog):
                 file_url = attachment.url.split("?")
                 file_extension = file_url[0].split(".")[-1]
                 file_url = f"{file_url[0]}?{file_url[1]}"
-                filename = f"{randhex(128)}.{file_extension}"
+                filename = f"pooterquiz_{ctx.author.id}_{randhex(64)}.{file_extension}"
                 task = asyncio.create_task(download_file(file_url, i + 1))
                 tasks.append(task)
             await asyncio.gather(*tasks)
@@ -236,6 +236,62 @@ class Pooter(commands.Cog):
         else:
             total_downloads = 1
             await download_file(File_Url, 1)
+
+    @commands.command(hidden=True)
+    async def pooterquiz(self, ctx):
+        all_files = os.listdir(self.pooter_db_path)
+        quiz_files = [f for f in all_files if f.startswith("pooterquiz_")]
+        if not quiz_files:
+            await ctx.send("shit is fucked")
+            return
+        
+        chosen_file = random.choice(quiz_files)
+        file_path = os.path.join(self.pooter_db_path, chosen_file)
+        
+        match = re.match(r"pooterquiz_(\d+)_", chosen_file)
+        if not match:
+            await ctx.send("shit is fucked again")
+            return
+        target_id = int(match.group(1))
+        
+        target_user = self.bot.get_user(target_id)
+        if target_user is None:
+            try:
+                target_user = await self.bot.fetch_user(target_id)
+            except Exception as e:
+                await ctx.send("idk who submitted this lol")
+                print(f"Error fetching user {target_id}: {e}")  # Log the exception
+                return
+        
+        member = ctx.guild.get_member(target_id) if ctx.guild else None
+        
+        allowed_answers = {target_user.name.lower()}
+        if member and member.display_name:
+            allowed_answers.add(member.display_name.lower())
+        
+        embed = discord.Embed(
+            title="Pooter Quiz",
+            description="Who Pootered this file? (answer in chat within 30 seconds)"
+        )
+        embed.set_image(url=f"attachment://{chosen_file}")
+        
+        file_attachment = discord.File(file_path, filename=chosen_file)
+        await ctx.send(embed=embed, file=file_attachment)
+        
+        async def check(msg):
+            return (
+                msg.channel == ctx.channel and
+                msg.author != self.bot.user and
+                msg.content.strip().lower() in allowed_answers
+            )
+        
+        try:
+            response = await self.bot.wait_for('message', timeout=30.0, check=check)
+            correct_name = member.display_name if member and member.display_name else target_user.name
+            await ctx.send(f"epic win")
+        except asyncio.TimeoutError:
+            correct_name = member.display_name if member and member.display_name else target_user.name
+            await ctx.send(f"Time's up! The correct answer was **{correct_name}**.")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Pooter(bot))

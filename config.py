@@ -5,9 +5,9 @@
 # Imports
 # ----------
 
+# Standard library imports
 import asyncio
 import base64
-import colorsys
 import glob
 import hashlib
 import io
@@ -26,8 +26,6 @@ import threading
 import time
 import traceback
 import typing
-import urllib
-import urllib.request
 import uuid
 import warnings
 from collections import deque, namedtuple
@@ -40,6 +38,7 @@ from typing import Literal
 from urllib import request
 from xml.etree import ElementTree
 
+# Third-party imports
 import aiofiles
 import aiohttp
 import discord
@@ -54,14 +53,29 @@ import websocket
 import yt_dlp
 from aiohttp import ClientSession
 from colorama import Fore, init
-from discord import (AppCommandContext, FFmpegPCMAudio, File, Interaction,
-                     InteractionType, app_commands)
+from discord import (
+    AppCommandContext,
+    FFmpegPCMAudio,
+    File,
+    Interaction,
+    InteractionType,
+    app_commands,
+)
 from discord.ext import commands, tasks
 from discord.utils import get
 from dotenv import load_dotenv
 from petpetgif import petpet
-from PIL import (GifImagePlugin, Image, ImageColor, ImageDraw, ImageEnhance,
-                 ImageFilter, ImageFont, ImageOps, ImageSequence)
+from PIL import (
+    GifImagePlugin,
+    Image,
+    ImageColor,
+    ImageDraw,
+    ImageEnhance,
+    ImageFilter,
+    ImageFont,
+    ImageOps,
+    ImageSequence,
+)
 from pydub import AudioSegment
 from rembg import new_session, remove
 from wand.image import Image as magick
@@ -72,75 +86,70 @@ logger = logging.getLogger(__name__)
 # Classes
 # ----------
 
+
 class BagRandom:
     def __init__(self, file_name):
         self.bags = {}
         self.default_bag = None
-        self.directory = 'bags'
+        self.directory = "bags"
         self.file_path = os.path.join(self.directory, file_name)
         if not os.path.exists(self.directory):
             os.makedirs(self.directory)
         self.load_bags()
 
     def create_bag(self, name, values):
-        """Create a new bag with a given name and values."""
-        self.bags[name] = {
-            'original_values': list(values),
-            'bag': list(values)
-        }
-        if self.default_bag is None:
-            self.default_bag = name
-        self.save_bags()
+            self.bags[name] = {"original_values": list(values), "bag": list(values)}
+            if self.default_bag is None:
+                self.default_bag = name
+            self.save_bags()
 
     def set_bag(self, name):
-        """Set the default bag to use."""
-        if name in self.bags:
-            self.default_bag = name
+            if name in self.bags:
+                self.default_bag = name
+                self.save_bags()
+            else:
+                raise ValueError(f"Bag '{name}' does not exist.")
 
     def _refill_bag(self, name):
-        """Refill the specified bag if empty."""
-        if name in self.bags:
-            self.bags[name]['bag'] = list(self.bags[name]['original_values'])
-        self.save_bags()
+            if name in self.bags:
+                self.bags[name]["bag"] = list(self.bags[name]["original_values"])
+            self.save_bags()
 
     def choice(self, name):
-        """Return a random element from the specified bag."""
-        if name not in self.bags:
-            raise ValueError(f"Bag '{name}' does not exist.")
-        
-        bag = self.bags[name]
-        if not bag['bag']:
-            self._refill_bag(name)
-        choice = random.choice(bag['bag'])
-        bag['bag'].remove(choice)
-        self.save_bags()
-        return choice
+            if name not in self.bags:
+                raise ValueError(f"Bag '{name}' does not exist.")
+
+            bag = self.bags[name]
+            if not bag["bag"]:
+                self._refill_bag(name)
+
+            selected = random.choice(bag["bag"])
+            bag["bag"].remove(selected)
+            self.save_bags()
+            return selected
 
     def add_values(self, name, values):
-        """Add values to the specified bag."""
-        if name in self.bags:
-            self.bags[name]['original_values'].extend(values)
-            self.bags[name]['bag'].extend(values)
-        else:
-            raise ValueError(f"Bag '{name}' does not exist.")
-        self.save_bags()
+            if name in self.bags:
+                self.bags[name]["original_values"].extend(values)
+                self.bags[name]["bag"].extend(values)
+            else:
+                raise ValueError(f"Bag '{name}' does not exist.")
+            self.save_bags()
 
     def save_bags(self):
-        """Save the current state of the bags to a JSON file."""
-        with open(self.file_path, 'w') as file:
-            json.dump(self.bags, file, indent=4)
+            with open(self.file_path, "w") as file:
+                json.dump(state, file, indent=4)
 
     def load_bags(self):
-        """Load the bags from a JSON file."""
-        if os.path.exists(self.file_path):
-            with open(self.file_path, 'r') as file:
-                self.bags = json.load(file)
-        else:
-            self.bags = {}
+            if os.path.exists(self.file_path):
+                with open(self.file_path, "r") as file:
+                    self.bags = json.load(file)
+            else:
+                self.bags = {}
+
 
 # ----------
 # Variables
-# (im considering moving these into a large config json, not the functions but just this stuff)
 # ----------
 
 # dannybot config
@@ -152,7 +161,8 @@ dannybot_denialResponses = [
     "no",
     "nah",
     "nope",
-    "no thanks",]  # what dannybot says upon denial
+    "no thanks",
+]  # what dannybot says upon denial
 dannybot = (
     os.getcwd()
 )  # easy to call variable that stores our current working directory
@@ -167,7 +177,7 @@ database_acceptedFiles = {
     "mp4",
     "webm",
     "mov",
-# lazy caps
+    # lazy caps
     "PNG",
     "JPG",
     "JPEG",
@@ -328,7 +338,9 @@ def repack_gif(id=None):
         directory = f"cache/ffmpeg/output"
 
     palette_path = f"{directory}/palette.png"
-    output_gif = f"cache/ffmpeg_out{id}.gif" if id is not None else f"cache/ffmpeg_out.gif"
+    output_gif = (
+        f"cache/ffmpeg_out{id}.gif" if id is not None else f"cache/ffmpeg_out.gif"
+    )
     print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
     os.system(
         f'ffmpeg -i "{directory}/temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
@@ -337,7 +349,7 @@ def repack_gif(id=None):
     os.system(
         f'ffmpeg -i "{directory}/temp%04d.png" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
     )
-    #shutil.rmtree(directory)
+    # shutil.rmtree(directory)
     print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
 
     return
@@ -437,19 +449,15 @@ def fileSize(folder):
 
 
 def undertext(name, text, isAnimated):
-    # animated override: if the name contains "animated-", remove it and set isAnimated to True
+    # replace underscores with dashes
+    name = name.replace("_", "-")
+
+    # handle animation override
     if text.endswith("True"):
         text = text[:-4]
         isAnimated = True
 
-    # AU style overrides: if the name contains a valid AU, add the AU style to the name and text
-    if "uf" in name:  # underfell
-        name = f"{name}&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"
-        text = f"color=%23b93b3c%20{text}"
-    if name in deltarune_dw:  # deltarune
-        name = f"{name}&box=deltarune&mode=darkworld"
-
-    # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
+    # define character links
     character_links = {
         "danny": "digear/danny",
         "danny-funny": "digear/danny-funny",
@@ -468,20 +476,32 @@ def undertext(name, text, isAnimated):
         "reimu-fumo": "digear/reimu-fumo",
         "suggagugga": "digear/suggagugga",
     }
+
+    # character link override
     name = character_links.get(name, name)
 
-    # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
-    if name.startswith("http"):
-        name = f"custom&url={name}"
+    # define AU styles
+    au_styles = {"uf": "&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"}
 
-    # text overrides: modify the box and text display based on passed parameters
-    if "font=wingdings" in text:
-        name = f"{name}&asterisk=null"
+    # apply AU styles if the name contains a matching AU key
+    for au, style in au_styles.items():
+        if au in name:
+            name += style
+            text = f"color=%23b93b3c%20{text}"
+            break
 
-    # finalizing: set the name and text to the name and text, then return the name, text, and isAnimated
-    name = name
-    # replacing the discord double underscore shit with spaces
+    # deltarune characters
+    name += "&box=deltarune&mode=darkworld" if name in deltarune_dw else ""
+
+    # link override
+    name = f"custom&url={name}" if name.startswith("http") else name
+
+    # font override
+    name += "&asterisk=null" if "font=wingdings" in text else ""
+
+    # discord underscore shit lol
     text = text.replace("_ _", "%20")
+
     return name, text, isAnimated
 
 
@@ -652,7 +672,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
 
 
 # change hue (apparently not an inbuilt function of PIL)
-def change_hue(image, hue_shift, saturation_shift = 1):
+def change_hue(image, hue_shift, saturation_shift=1):
     if image.mode != "RGBA":
         image = image.convert("RGBA")
 

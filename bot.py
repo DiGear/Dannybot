@@ -9,28 +9,20 @@ print("---------------------------------------------------------------------")
 print(Fore.LIGHTMAGENTA_EX + "DANNYBOT IS STARTING UP... PLEASE WAIT..." + Fore.RESET)
 print("---------------------------------------------------------------------")
 
-# asyncio bad btw
+# stupid shit
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-# intents shit
 intents = discord.Intents.all()
-intents.voice_states = True
-intents.messages = True
+AppCommandContext.guild = True
 
-# We set up logger here
+# set up logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define your prefixes and intents
+# import prefixes
 dannybot_prefixes = dannybot_prefixes
 
-# Define allowed contexts
-AppCommandContext.dm_channel = True
-AppCommandContext.guild = True
-AppCommandContext.private_channel = True
-
-# Initialize the bot
-bot = commands.Bot(
+# initialize the bot
+bot = commands.AutoShardedBot(
     command_prefix=dannybot_prefixes,
     status=discord.Status.online,
     activity=discord.Activity(name="for d.help", type=discord.ActivityType.watching),
@@ -38,19 +30,7 @@ bot = commands.Bot(
     case_insensitive=True,
 )
 
-class ThreadedBot(commands.Bot):
-    async def invoke(self, ctx):
-        # Run the command in a separate thread
-        thread = threading.Thread(target=self._run_command, args=(ctx,))
-        thread.start()
 
-    def _run_command(self, ctx):
-        asyncio.run(self.invoke_original(ctx))
-
-    async def invoke_original(self, ctx):
-        await super().invoke(ctx)
-
-# do this when everything else is done
 @bot.event
 async def on_ready():
     print("---------------------------------------------------------------------")
@@ -59,36 +39,32 @@ async def on_ready():
     print("---------------------------------------------------------------------")
     print(
         Fore.GREEN
-        + f"{bot.user} successfully booted on discord.py version {discord.__version__}"
+        + f"{bot.user} successfully booted on discord.py version {discord.__version__} with {bot.shard_count} shards"
         + Fore.RESET
     )
     print("---------------------------------------------------------------------")
     return
 
 
-# this is our message handler
 @bot.event
 async def on_message(message):
     if message.author.bot:
         return
 
-    is_denial = random.randint(0, dannybot_denialRatio) == dannybot_denialRatio and any(
-        message.content.startswith(prefix) for prefix in dannybot_prefixes
-    )
+    has_prefix = any(message.content.startswith(prefix) for prefix in dannybot_prefixes)
+    is_denial = (
+        random.randint(0, dannybot_denialRatio) == dannybot_denialRatio
+    ) and has_prefix
 
     if is_denial:
         await message.channel.send(
             random.choice(dannybot_denialResponses), reference=message
         )
-    else:
-        if any(message.content.startswith(prefix) for prefix in dannybot_prefixes):
-            os.chdir(dannybot)
-            await bot.process_commands(message)
+    elif has_prefix:
+        os.chdir(dannybot)  # idk why it does this but let's not find out why
+        await bot.process_commands(message)
 
 
-# this is a ping command and it's pretty self-explanatory
-@discord.app_commands.allowed_installs(guilds=True, users=True)
-@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 @bot.hybrid_command(
     name="ping",
     description="Calculate bot latency and send the results.",
@@ -96,7 +72,7 @@ async def on_message(message):
 )
 async def ping(ctx: commands.Context):
     start_time = time.monotonic()
-    message = await ctx.send(f"Round-trip Latency: NANms | API Latency: NANms")
+    message = await ctx.send("Round-trip Latency: NANms | API Latency: NANms")
     end_time = time.monotonic()
     ping_time = round((end_time - start_time) * 1000)
     await message.edit(
@@ -104,25 +80,21 @@ async def ping(ctx: commands.Context):
     )
 
 
-# say command because every good bot should be a vessel for its creator to speak through - FDG
-@discord.app_commands.allowed_installs(guilds=True, users=True)
-@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 @bot.hybrid_command(
     name="say", description="DEV COMMAND | No description given", hidden=True
 )
 async def say(ctx: commands.Context, *, text):
-    if not ctx.author.id in dannybot_team_ids:
+    if ctx.author.id not in dannybot_team_ids:
         await ctx.reply("This command is restricted.", ephemeral=True, delete_after=3)
     else:
         await ctx.reply("say command issued.", ephemeral=True, delete_after=1)
         await ctx.channel.send(text)
         try:
-            await ctx.message.delete()  # this only works for the text based
-        except:
+            await ctx.message.delete()  # this only works for text-based messages
+        except Exception:
             return
 
-@discord.app_commands.allowed_installs(guilds=True, users=True)
-@discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+
 @bot.hybrid_command(
     name="reload",
     description="DEV COMMAND | Reload specified cogs on the bot",
@@ -142,20 +114,17 @@ async def reload(ctx: commands.Context, module: str):
     # loop through each specified cog to unload and reload
     for cog in cogs:
         try:
-            # attempt to unload the extension if loaded
             await bot.unload_extension(cog)
         except discord.ext.commands.errors.ExtensionNotLoaded:
             pass
-        # reload the extension
         await bot.load_extension(cog)
 
-    # resynchronize slash commands
+    # eesynchronize slash commands
     command_sync = await bot.tree.sync()
     print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
     await ctx.send(f"Reloaded {module} module(s)!")
 
 
-# hide pooter shit
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound) and ctx.invoked_with.startswith(
@@ -186,8 +155,6 @@ async def load_extensions():
             cog_name = filename[:-3]
             cog_path = f"cogs.{cog_name}"
             tasks.append(asyncio.create_task(load_extension(cog_path)))
-
-    # gather and execute all load_extension tasks concurrently
     await asyncio.gather(*tasks)
 
 
