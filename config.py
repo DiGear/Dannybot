@@ -451,28 +451,23 @@ def undertext(name, text, isAnimated):
 
     # character overrides: replace underscores with dashes, then use the dictionary to replace the name with the link
     character_links = {
-        "danny": "https://cdn.discordapp.com/attachments/560608550850789377/1005989141768585276/dannyportrait1.png",
-        "danny-funny": "https://cdn.discordapp.com/attachments/560608550850789377/1005999509496660060/dannyportrait3.png",
-        "danny-angry": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142825553971/dannyportrait4.png",
-        "danny-pissed": "https://cdn.discordapp.com/attachments/560608550850789377/1005989142083145828/dannyportrait2.png",
-        "crackhead": "https://cdn.discordapp.com/attachments/1063552619110477844/1076067803649556480/image.png",
-        "pizzi": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228005256044575/pizziportrait1.png",
-        "pizzi-stare": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228014856814612/pizziportrait2.png",
-        "pizzi-scream": "https://cdn.discordapp.com/attachments/1063552619110477844/1082228022796615720/pizziportrait3.png",
-        "sam": "https://cdn.discordapp.com/attachments/1063552619110477844/1082220603387428894/samportrait1.png",
-        "flashlight": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-        "ezo": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-        "ezogaming": "https://cdn.discordapp.com/attachments/1063552619110477844/1068251386430619758/image.png",
-        "incine": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552737435992084/FIncine.png",
-        "cris": "https://cdn.discordapp.com/attachments/1063552619110477844/1063552816397951037/FCris.png",
-        "seki": "https://cdn.discordapp.com/attachments/1063552619110477844/1063738177212399658/sekiportrait1.png",
-        "seki-eyes": "https://cdn.discordapp.com/attachments/560608550850789377/1075684786489798696/sekiportrait2.png",
-        "seki-evil": "https://cdn.discordapp.com/attachments/1063552619110477844/1075687740793946122/sekiportrait3.png",
-        "leffrey": "https://cdn.discordapp.com/attachments/886788323648094219/1068253912919982100/image.png",
-        "reimu-fumo": "https://cdn.discordapp.com/attachments/1063552619110477844/1082233613040504892/image.png",
-        "suggagugga": "https://cdn.discordapp.com/attachments/1063552619110477844/1068248384164614154/mcflurger.png",
+        "danny": "digear/danny",
+        "danny-funny": "digear/danny-funny",
+        "danny-angry": "digear/danny-angry",
+        "danny-pissed": "digear/danny-pissed",
+        "crackhead": "digear/crackhead",
+        "pizzi": "digear/pizzi",
+        "pizzi-stare": "digear/pizzi-stare",
+        "pizzi-screech": "digear/pizzi-screech",
+        "sam": "digear/sam",
+        "ezogaming": "flashlight/ezo",
+        "seki": "digear/seki",
+        "seki-eyes": "digear/seki-eyes",
+        "seki-evil": "digear/seki-evil",
+        "leffrey": "digear/leffrey",
+        "reimu-fumo": "digear/reimu-fumo",
+        "suggagugga": "digear/suggagugga",
     }
-
     name = character_links.get(name, name)
 
     # link overrides: if the name starts with "https://", add "custom&url=" to the beginning of the name
