@@ -4,6 +4,8 @@
 # if you can't find a variable used in this file its probably imported from here
 from config import *
 
+print("\n\ncope and seethe pyparser\n\n")
+
 # make it look nice in the console
 print("---------------------------------------------------------------------")
 print(Fore.LIGHTMAGENTA_EX + "DANNYBOT IS STARTING UP... PLEASE WAIT..." + Fore.RESET)

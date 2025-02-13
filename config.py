@@ -27,7 +27,6 @@ import time
 import traceback
 import typing
 import uuid
-import warnings
 from collections import deque, namedtuple
 from datetime import datetime
 from functools import lru_cache, partial
@@ -98,54 +97,57 @@ class BagRandom:
         self.load_bags()
 
     def create_bag(self, name, values):
-            self.bags[name] = {"original_values": list(values), "bag": list(values)}
-            if self.default_bag is None:
-                self.default_bag = name
-            self.save_bags()
+        """Create a new bag with a given name and values."""
+        self.bags[name] = {"original_values": list(values), "bag": list(values)}
+        if self.default_bag is None:
+            self.default_bag = name
+        self.save_bags()
 
     def set_bag(self, name):
-            if name in self.bags:
-                self.default_bag = name
-                self.save_bags()
-            else:
-                raise ValueError(f"Bag '{name}' does not exist.")
+        """Set the default bag to use."""
+        if name in self.bags:
+            self.default_bag = name
 
     def _refill_bag(self, name):
-            if name in self.bags:
-                self.bags[name]["bag"] = list(self.bags[name]["original_values"])
-            self.save_bags()
+        """Refill the specified bag if empty."""
+        if name in self.bags:
+            self.bags[name]["bag"] = list(self.bags[name]["original_values"])
+        self.save_bags()
 
     def choice(self, name):
-            if name not in self.bags:
-                raise ValueError(f"Bag '{name}' does not exist.")
+        """Return a random element from the specified bag."""
+        if name not in self.bags:
+            raise ValueError(f"Bag '{name}' does not exist.")
 
-            bag = self.bags[name]
-            if not bag["bag"]:
-                self._refill_bag(name)
-
-            selected = random.choice(bag["bag"])
-            bag["bag"].remove(selected)
-            self.save_bags()
-            return selected
+        bag = self.bags[name]
+        if not bag["bag"]:
+            self._refill_bag(name)
+        choice = random.choice(bag["bag"])
+        bag["bag"].remove(choice)
+        self.save_bags()
+        return choice
 
     def add_values(self, name, values):
-            if name in self.bags:
-                self.bags[name]["original_values"].extend(values)
-                self.bags[name]["bag"].extend(values)
-            else:
-                raise ValueError(f"Bag '{name}' does not exist.")
-            self.save_bags()
+        """Add values to the specified bag."""
+        if name in self.bags:
+            self.bags[name]["original_values"].extend(values)
+            self.bags[name]["bag"].extend(values)
+        else:
+            raise ValueError(f"Bag '{name}' does not exist.")
+        self.save_bags()
 
     def save_bags(self):
-            with open(self.file_path, "w") as file:
-                json.dump(state, file, indent=4)
+        """Save the current state of the bags to a JSON file."""
+        with open(self.file_path, "w") as file:
+            json.dump(self.bags, file, indent=4)
 
     def load_bags(self):
-            if os.path.exists(self.file_path):
-                with open(self.file_path, "r") as file:
-                    self.bags = json.load(file)
-            else:
-                self.bags = {}
+        """Load the bags from a JSON file."""
+        if os.path.exists(self.file_path):
+            with open(self.file_path, "r") as file:
+                self.bags = json.load(file)
+        else:
+            self.bags = {}
 
 
 # ----------
@@ -300,24 +302,6 @@ deltarune_dw = [
 # ----------
 # Functions
 # ----------
-
-
-# Custom colors
-def custom_color_handler(exc_type, exc_value, exc_traceback):
-    if issubclass(exc_type, Warning):
-        msg = Fore.YELLOW + f"Warning: {exc_type.__name__}: {exc_value}\n" + Fore.RESET
-    else:
-        error_msg = f"Error: {exc_value}\n"
-        traceback_str = "".join(
-            traceback.format_exception(exc_type, exc_value, exc_traceback)
-        )
-        msg = Fore.RED + error_msg + traceback_str + Fore.RESET
-    sys.stderr.write(msg)
-    sys.__excepthook__(exc_type, exc_value, exc_traceback)
-
-
-sys.excepthook = custom_color_handler
-warnings.showwarning = custom_color_handler
 
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
