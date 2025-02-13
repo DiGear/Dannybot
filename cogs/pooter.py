@@ -315,7 +315,7 @@ class Pooter(commands.Cog):
                 continue
 
         history.append(chosen_file)
-        if len(history) > 250:
+        if len(history) > 357:
             history.pop(0)
 
         self.save_history(history_file_path, history)
