@@ -8,6 +8,7 @@
 # Standard library imports
 import asyncio
 import base64
+import builtins
 import glob
 import hashlib
 import io
@@ -27,6 +28,7 @@ import time
 import traceback
 import typing
 import uuid
+import webbrowser
 from collections import deque, namedtuple
 from datetime import datetime
 from functools import lru_cache, partial
