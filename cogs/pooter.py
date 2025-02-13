@@ -263,7 +263,36 @@ class Pooter(commands.Cog):
             await ctx.send("shit is fucked")
             return
 
-        chosen_file = random.choice(quiz_files)
+        id_counts = {}
+        for file in quiz_files:
+            match = re.match(r"pooterquiz_(\d+)_", file)
+            if match:
+                user_id = match.group(1)
+                id_counts[user_id] = id_counts.get(user_id, 0) + 1
+
+        def weight(count):
+            ranges = [(10, (0.05, 0.1)), (100, (0.1, 0.15)), (1000, (0.4, 0.5)),
+                    (2000, (0.15, 0.2)), (5000, (0.1, 0.15))]
+            
+            for max_count, prob_range in ranges:
+                if count <= max_count:
+                    return random.uniform(*prob_range)
+            return random.uniform(0.05, 0.07)
+
+        # new weighted list
+        weighted_files = []
+        for file in quiz_files:
+            match = re.match(r"pooterquiz_(\d+)_", file)
+            if match:
+                user_id = match.group(1)
+                weight_value = weight(id_counts[user_id])
+                weighted_files.extend([file] * int(weight_value * 1000))
+        if not weighted_files:
+            await ctx.send("no valid quiz files after weighting")
+            return
+
+        chosen_file = random.choice(weighted_files)
+
         if chosen_file in os.listdir(self.pooter_db_path):
             file_path = os.path.join(self.pooter_db_path, chosen_file)
         else:
