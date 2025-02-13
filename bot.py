@@ -37,7 +37,7 @@ logger.addHandler(stream_handler)
 # create a discord bot instance
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 intents = discord.Intents.all()
-bot = commands.Bot(
+bot = commands.AutoShardedBot(
     command_prefix=dannybot_prefixes,
     status=discord.Status.online,
     activity=discord.Activity(name="for d.help", type=discord.ActivityType.watching),
@@ -118,6 +118,7 @@ def update_status(status_choice, activity_name, activity_type):
         "streaming": discord.ActivityType.streaming,
         "listening": discord.ActivityType.listening,
         "watching": discord.ActivityType.watching,
+        "competing": discord.ActivityType.competing,
     }
     selected_status = status_mapping.get(status_choice, discord.Status.online)
     selected_activity_type = activity_mapping.get(
@@ -221,7 +222,7 @@ async def launch_gradio_async():
                     value="online",
                 )
                 activity_type = gr.Dropdown(
-                    choices=["playing", "streaming", "listening", "watching"],
+                    choices=["playing", "streaming", "listening", "watching", "competing"],
                     label="Activity Type",
                     value="playing",
                 )
