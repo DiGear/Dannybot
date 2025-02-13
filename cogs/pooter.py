@@ -12,6 +12,7 @@ class Pooter(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.pooter_db_path = os.path.join(dannybot, "database", "Pooter")
+        self.pooter_quiz_db_path = os.path.join(dannybot, "database", "Pooterquiz")
         self.dooter_db_path = os.path.join(dannybot, "database", "Dooter")
 
         # Initialize the pooter bag if it doesn't exist
@@ -248,7 +249,9 @@ class Pooter(commands.Cog):
 
     @commands.command()
     async def pooterquiz(self, ctx):
-        all_files = os.listdir(self.pooter_db_path)
+        pooter_db_path = self.pooter_db_path
+        pooter_quiz_db_path = self.pooter_quiz_db_path
+        all_files = os.listdir(pooter_db_path) + os.listdir(pooter_quiz_db_path)
         excluded_extensions = {".mp4", ".webm", ".mov"}
         quiz_files = [
             f
@@ -261,7 +264,10 @@ class Pooter(commands.Cog):
             return
 
         chosen_file = random.choice(quiz_files)
-        file_path = os.path.join(self.pooter_db_path, chosen_file)
+        if chosen_file in os.listdir(self.pooter_db_path):
+            file_path = os.path.join(self.pooter_db_path, chosen_file)
+        else:
+            file_path = os.path.join(self.pooter_quiz_db_path, chosen_file)
 
         match = re.match(r"pooterquiz_(\d+)_", chosen_file)
         if not match:

@@ -103,6 +103,76 @@ async def say(ctx: commands.Context, *, text):
         except Exception:
             return
 
+@bot.command()
+async def rebuild_pooter(ctx: commands.Context):
+    pooter_directory = "E:\\Dannybot\\database\\Pooterquiz\\"
+
+    def snowflake_time(snowflake):
+        return int(((snowflake >> 22) + 1420070400000) / 1000)
+    
+    yeet = await ctx.send('REBUILDING POOTER.....')
+    secondsLeft = 0
+    messagesFound = 0
+    start_time = time.time()
+    channel = bot.get_channel(971178342550216705)
+    
+    true_start_time = time.time()
+    await yeet.edit(content='REBUILDING POOTER.....')
+    gah = None
+
+    msgcounter = 1
+    async for msg in channel.history(limit=None, oldest_first=False):
+        days = secondsLeft // 86400
+
+        if time.time() - start_time >= 5:
+            hehe = f'REBUILDING POOTER (messages found: {messagesFound} {msgcounter}/~135115)'
+            await yeet.edit(content=hehe)
+            start_time = time.time()
+
+        if 'has pootered' in msg.content:
+            if 'pootered:' in msg.content:
+                burl = msg.content.split('has pootered: ')[-1]
+            else:
+                burl = msg.content.split('has pootered ')[-1]
+
+            can = True
+            try:
+                the_fixed_link = msg.embeds[0].to_dict()['thumbnail']['url']
+            except IndexError:
+                can = False
+            except KeyError:
+                can = False
+
+            if can:
+                burl = the_fixed_link
+                fn = burl.split('/')[-1].split('.')[0] + '-' + str(msg.id)
+                fn = burl.split('?')[0].split('/')[-1].split('.')[0]
+                print('downloading ' + burl.split('?')[0])
+                filcon = requests.get(burl).content
+                hsh = hashlib.md5(filcon).hexdigest()
+                try:
+                    uid = msg.content.split(') has pootered')[0].split('(')[1]
+                except:
+                    uid = msg.content.split(' has pootered')[0].split(' ')[-1]
+                fn = str(uid) + '_' + str(hsh)
+                print(fn)
+                ext = '.'.join(burl.split('?')[0].split('/')[-1].split('.')[-1])
+                ext = burl.split('?')[0].split('/')[-1].split('.')[-1]
+
+                if not os.path.exists(pooter_directory + "pooterquiz_" + fn + '.' + ext):
+                    print('saving')
+                    q2 = filcon
+
+                    with open(pooter_directory + "pooterquiz_" + fn + '.' + ext, 'wb') as f:
+                        f.write(q2)
+                    
+                    os.utime(pooter_directory + "pooterquiz_" + fn + '.' + ext, (msg.created_at.timestamp(), msg.created_at.timestamp()))
+            messagesFound += 1
+        msgcounter += 1
+
+    await yeet.edit(content='done')
+
+
 # ------------------------
 # discord bot functions
 # ------------------------
