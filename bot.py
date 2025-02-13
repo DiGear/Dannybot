@@ -104,7 +104,7 @@ async def say(ctx: commands.Context, *, text):
             return
 
 # ------------------------
-# Discord Bot Helper Functions
+# discord bot functions
 # ------------------------
 def update_status(status_choice, activity_name, activity_type):
     status_mapping = {
