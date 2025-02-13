@@ -394,7 +394,7 @@ class Pooter(commands.Cog):
                 if response_content in [
                     name.lower() for name in users_dict[str(target_id)]
                 ]:
-                    await ctx.send(f"epic win")
+                    await ctx.send(f"epic win\n(this will give you 1 point later)")
                     return
                 else:
                     correct_names = ", ".join(users_dict[str(target_id)])
@@ -407,7 +407,7 @@ class Pooter(commands.Cog):
 
         except asyncio.TimeoutError:
             correct_names = ", ".join(users_dict[str(target_id)])
-            await ctx.send(f"times up\nthe correct answer(s) would have been **{correct_names}**.")
+            await ctx.send(f"times up, {ctx.message.author.mention}\nthe correct answer(s) would have been **{correct_names}**.")
             return
         except asyncio.CancelledError:
             await ctx.send("the quiz was cancelled")
