@@ -324,10 +324,10 @@ class Pooter(commands.Cog):
         embed.set_image(url=f"attachment://{chosen_file}")
 
         file_attachment = discord.File(file_path, filename=chosen_file)
-        await ctx.send(embed=embed, file=file_attachment)
+        botmessage = await ctx.send(embed=embed, file=file_attachment)
 
-        async def check(msg):
-            return msg.channel == ctx.channel and msg.author == ctx.author
+        async def check(message):
+            return message.channel == botmessage.channel and message.author == ctx.message.author and message.author != self.bot.user
 
         try:
             response = await self.bot.wait_for("message", timeout=30.0, check=check)
@@ -338,11 +338,13 @@ class Pooter(commands.Cog):
                     name.lower() for name in users_dict[str(target_id)]
                 ]:
                     await ctx.send(f"epic win")
+                    return
                 else:
                     correct_names = ", ".join(users_dict[str(target_id)])
                     await ctx.send(
                         f"wrong answer, {response.author.mention}! the correct answer would have been: **{correct_names}**."
                     )
+                    return
             else:
                 # logic for non dict people
                 correct_name = (
