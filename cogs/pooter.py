@@ -352,10 +352,12 @@ class Pooter(commands.Cog):
                 )
                 if response_content in allowed_answers:
                     await ctx.send(f"epic win")
+                    return
                 else:
                     await ctx.send(
                         f"wrong answer, {response.author.mention}! the correct answer was **{correct_name}**."
                     )
+                    return
 
         except asyncio.TimeoutError:
             correct_name = (
@@ -364,8 +366,10 @@ class Pooter(commands.Cog):
                 else target_user.name
             )
             await ctx.send(f"times up! the correct answer was **{correct_name}**.")
+            return
         except asyncio.CancelledError:
             await ctx.send("the quiz was cancelled")
+            return
 
 
 async def setup(bot: commands.Bot):
