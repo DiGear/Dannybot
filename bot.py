@@ -207,12 +207,24 @@ def get_log():
 def get_last_command():
     return last_command
 
+directory_paths = {
+    "Pooter Files": "database/Pooter",
+    "Danny Files": "database/Danny",
+    "Leffrey Files": "database/Leffrey",
+    "Femboy Files": "database/Femboy",
+    "Fanboy Files": "database/Fanboy",
+    "Glass Cup Images": "database/Glasscup",
+    "Plastic Cup Images": "database/Plasticcup",
+    "Burger Files": "database/Burger",
+    "Nekopara Files": "database/Nekopara",
+    "Animal Girl Images": "database/Mimi",
+}
+
 def get_file_info(category):
     path = os.path.join('database', category)
     if not os.path.exists(path):
         return f"Category '{category}' not found."
     
-    # Load bag data
     bag_path = f'bags/{category}_bag.json'
     if os.path.exists(bag_path):
         with open(bag_path, 'r') as f:
@@ -228,12 +240,7 @@ def get_file_info(category):
     return f"{file_count} files\nSize: {size:.2f} MB\n{bag_remaining}/{total_files} files remaining in bag"
 
 def display_database():
-    categories = [
-        "mimi", "nekopara", "leffrey", "femboy", "fanboy",
-        "glasscup", "plasticcup", "burger", "danny"
-    ]
-    
-    results = {cat: get_file_info(cat) for cat in categories}
+    results = {cat: get_file_info(path.split('/')[-1].lower()) for cat, path in directory_paths.items()}
     return results
 
 # ------------------------
@@ -253,12 +260,12 @@ async def launch_gradio_async():
                 gr.Markdown("### Database Stuff")
                 with gr.Row():
                     category_input = gr.Dropdown(
-                        ["mimi", "nekopara", "leffrey", "femboy", "fanboy", "glasscup", "plasticcup", "burger", "danny"],
+                        list(directory_paths.keys()),
                         label="Select Category"
                     )
                     output = gr.Textbox(label="Category Info")
                     fetch_btn = gr.Button("Fetch Info")
-                fetch_btn.click(get_file_info, inputs=[category_input], outputs=[output])
+                fetch_btn.click(lambda cat: get_file_info(directory_paths[cat].split('/')[-1].lower()), inputs=[category_input], outputs=[output])
                 full_db_btn = gr.Button("Show Full Database")
                 db_output = gr.JSON(label="Database Overview")
                 full_db_btn.click(display_database, inputs=[], outputs=[db_output])
