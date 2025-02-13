@@ -247,10 +247,22 @@ class Pooter(commands.Cog):
             total_downloads = 1
             await download_file(File_Url, 1)
 
+    def load_history(self, history_file_path):
+        if os.path.exists(history_file_path):
+            with open(history_file_path, 'r') as f:
+                return json.load(f)
+        else:
+            return []
+
+    def save_history(self, history_file_path, history):
+        with open(history_file_path, 'w') as f:
+            json.dump(history, f, indent=4)
+
     @commands.command()
     async def pooterquiz(self, ctx):
         pooter_db_path = self.pooter_db_path
         pooter_quiz_db_path = self.pooter_quiz_db_path
+        history_file_path = f"{dannybot}\\assets\\pooterquiz_history.json"
         all_files = os.listdir(pooter_db_path) + os.listdir(pooter_quiz_db_path)
         excluded_extensions = {".mp4", ".webm", ".mov"}
         quiz_files = [
@@ -262,6 +274,8 @@ class Pooter(commands.Cog):
         if not quiz_files:
             await ctx.send("shit is fucked")
             return
+
+        history = self.load_history(history_file_path)
 
         id_counts = {}
         for file in quiz_files:
@@ -279,7 +293,6 @@ class Pooter(commands.Cog):
                     return random.uniform(*prob_range)
             return random.uniform(0.05, 0.07)
 
-        # new weighted list
         weighted_files = []
         for file in quiz_files:
             match = re.match(r"pooterquiz_(\d+)_", file)
@@ -287,11 +300,25 @@ class Pooter(commands.Cog):
                 user_id = match.group(1)
                 weight_value = weight(id_counts[user_id])
                 weighted_files.extend([file] * int(weight_value * 1000))
+
         if not weighted_files:
             await ctx.send("no valid quiz files after weighting")
             return
 
-        chosen_file = random.choice(weighted_files)
+        # keep rerolling until we get a file not in the last 250
+        while True:
+            chosen_file = random.choice(weighted_files)
+
+            if chosen_file not in history:
+                break
+            else:
+                continue
+
+        history.append(chosen_file)
+        if len(history) > 250:
+            history.pop(0)
+
+        self.save_history(history_file_path, history)
 
         if chosen_file in os.listdir(self.pooter_db_path):
             file_path = os.path.join(self.pooter_db_path, chosen_file)
