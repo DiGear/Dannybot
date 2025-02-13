@@ -42,6 +42,7 @@ import aiofiles
 import aiohttp
 import discord
 import furl
+import gradio as gr
 import numpy
 import openai
 import PIL

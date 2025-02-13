@@ -249,7 +249,13 @@ class Pooter(commands.Cog):
     @commands.command()
     async def pooterquiz(self, ctx):
         all_files = os.listdir(self.pooter_db_path)
-        quiz_files = [f for f in all_files if f.startswith("pooterquiz_")]
+        excluded_extensions = {".mp4", ".webm", ".mov"}
+        quiz_files = [
+            f
+            for f in all_files
+            if f.startswith("pooterquiz_")
+            and os.path.splitext(f)[1].lower() not in excluded_extensions
+        ]
         if not quiz_files:
             await ctx.send("shit is fucked")
             return
@@ -286,7 +292,7 @@ class Pooter(commands.Cog):
             "243104841021390859": ["crypted"],
             "249411048518451200": ["rotty"],
             "229401113382617088": ["leffrey", "leif"],
-            "211419370860183552": ["cris"],
+            "211419370860183552": ["cris", "crys", "crystal"],
             "327207076067803156": ["scroogily man", "isaac"],
             "569267645707321344": ["jordi"],
             "206392667351941121": ["sam", "sam deluxe"],
