@@ -147,16 +147,7 @@ def update_status(status_choice, activity_name, activity_type):
     return f"status updated to {status_choice} with activity {activity_type}: {activity_name}"
 
 
-def stop_bot():
-    async def close_bot():
-        await bot.close()
-        logging.info("bot stopped via gradio panel")
-
-    asyncio.run_coroutine_threadsafe(close_bot(), bot.loop)
-    return "bot is stopping"
-
-
-def restart_bot():
+def reload_all_cogs():
     async def quick_restart():
         for ext in list(bot.extensions.keys()):
             try:
@@ -166,7 +157,7 @@ def restart_bot():
                 logging.error(f"failed to reload cog {ext}: {e}")
 
     asyncio.run_coroutine_threadsafe(quick_restart(), bot.loop)
-    return "bot cogs reloaded quick restart simulated"
+    return "success"
 
 
 def get_loaded_cogs():
@@ -216,6 +207,34 @@ def get_log():
 def get_last_command():
     return last_command
 
+def get_file_info(category):
+    path = os.path.join('database', category)
+    if not os.path.exists(path):
+        return f"Category '{category}' not found."
+    
+    # Load bag data
+    bag_path = f'bags/{category}_bag.json'
+    if os.path.exists(bag_path):
+        with open(bag_path, 'r') as f:
+            bag_data = json.load(f)
+        bag_remaining = len(bag_data.get(category, {}).get('bag', []))
+        total_files = len(bag_data.get(category, {}).get('original_values', []))
+    else:
+        bag_remaining = total_files = 0
+    
+    file_count = len(os.listdir(path))
+    size = sum(os.path.getsize(os.path.join(path, f)) for f in os.listdir(path)) / (1024 * 1024)
+    
+    return f"{file_count} files\nSize: {size:.2f} MB\n{bag_remaining}/{total_files} files remaining in bag"
+
+def display_database():
+    categories = [
+        "mimi", "nekopara", "leffrey", "femboy", "fanboy",
+        "glasscup", "plasticcup", "burger", "danny"
+    ]
+    
+    results = {cat: get_file_info(cat) for cat in categories}
+    return results
 
 # ------------------------
 # gradio ui
@@ -224,14 +243,25 @@ async def launch_gradio_async():
     with gr.Blocks() as demo:
         with gr.Tabs():
             with gr.Tab("Main"):
-                gr.Markdown("### This Shit empty lol")
-                # this gradio textbox updates automatically to show the last command issued
+                gr.Markdown("### Information")
                 last_command_textbox = gr.Textbox(
-                    label="Last Command",
+                    label="Last Issued Command",
                     value=get_last_command,
                     interactive=False,
                     every=0.1,
                 )
+                gr.Markdown("### Database Stuff")
+                with gr.Row():
+                    category_input = gr.Dropdown(
+                        ["mimi", "nekopara", "leffrey", "femboy", "fanboy", "glasscup", "plasticcup", "burger", "danny"],
+                        label="Select Category"
+                    )
+                    output = gr.Textbox(label="Category Info")
+                    fetch_btn = gr.Button("Fetch Info")
+                fetch_btn.click(get_file_info, inputs=[category_input], outputs=[output])
+                full_db_btn = gr.Button("Show Full Database")
+                db_output = gr.JSON(label="Database Overview")
+                full_db_btn.click(display_database, inputs=[], outputs=[db_output])
 
             with gr.Tab("Status"):
                 gr.Markdown("### Update Bot Status")
@@ -275,7 +305,7 @@ async def launch_gradio_async():
                 reload_all_btn = gr.Button("Reload All Cogs")
                 reload_all_output = gr.Textbox(label="Reload All Cogs Output")
                 reload_all_btn.click(
-                    fn=restart_bot, inputs=[], outputs=reload_all_output
+                    fn=reload_all_cogs, inputs=[], outputs=reload_all_output
                 )
                 loaded_cogs_btn = gr.Button("Show Loaded Cogs")
                 loaded_cogs_output = gr.Textbox(label="Loaded Cogs")
