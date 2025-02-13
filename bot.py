@@ -70,14 +70,15 @@ async def on_message(message):
     global last_command
     if message.author == bot.user:
         return
-    last_command = message.content
-    os.chdir(dannybot)  # brought back from the old bot.py fle
-    if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio:
-        await message.channel.send(
-            random.choice(dannybot_denialResponses), reference=message
-        )
-    else:
-        await bot.process_commands(message)
+    if any(message.content.startswith(prefix) for prefix in dannybot_prefixes):
+        last_command = message.content
+        os.chdir(dannybot)  # brought back from the old bot.py fle
+        if random.randint(0, dannybot_denialRatio) == dannybot_denialRatio:
+            await message.channel.send(
+                random.choice(dannybot_denialResponses), reference=message
+            )
+        else:
+            await bot.process_commands(message)
 
 
 # ping command
