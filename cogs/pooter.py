@@ -326,7 +326,7 @@ class Pooter(commands.Cog):
         file_attachment = discord.File(file_path, filename=chosen_file)
         botmessage = await ctx.send(embed=embed, file=file_attachment)
 
-        async def check(message):
+        def check(message):
             return message.channel == botmessage.channel and message.author == ctx.message.author and message.author != self.bot.user
 
         try:

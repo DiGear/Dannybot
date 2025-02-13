@@ -121,7 +121,7 @@ async def rebuild_pooter(ctx: commands.Context):
     gah = None
 
     msgcounter = 1
-    async for msg in channel.history(limit=None, oldest_first=False):
+    async for msg in channel.history(limit = None, before=datetime.fromtimestamp(1693872982), oldest_first=False):
         days = secondsLeft // 86400
 
         if time.time() - start_time >= 5:
