@@ -246,7 +246,6 @@ async def launch_gradio_async():
                 load_btn.click(load_cog, inputs=cog_name, outputs=cog_output)
                 unload_btn.click(unload_cog, inputs=cog_name, outputs=cog_output)
                 reload_btn.click(reload_cog, inputs=cog_name, outputs=cog_output)
-                # New button to reload all cogs
                 reload_all_btn = gr.Button("Reload All Cogs")
                 reload_all_output = gr.Textbox(label="Reload All Cogs Output")
                 reload_all_btn.click(
