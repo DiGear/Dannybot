@@ -1,11 +1,12 @@
-#fuick
+# fuick
 from config import *
 
 logger = logging.getLogger(__name__)
 
 # Initialize BagRandom instances for pooter and dooter
-bag_random_pooter = BagRandom('pooter_bag.json')
-bag_random_dooter = BagRandom('dooter_bag.json')
+bag_random_pooter = BagRandom("pooter_bag.json")
+bag_random_dooter = BagRandom("dooter_bag.json")
+
 
 class Pooter(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -14,14 +15,14 @@ class Pooter(commands.Cog):
         self.dooter_db_path = os.path.join(dannybot, "database", "Dooter")
 
         # Initialize the pooter bag if it doesn't exist
-        if not 'pooter' in bag_random_pooter.bags:
+        if not "pooter" in bag_random_pooter.bags:
             pooter_files = os.listdir(self.pooter_db_path)
-            bag_random_pooter.create_bag('pooter', pooter_files)
+            bag_random_pooter.create_bag("pooter", pooter_files)
 
         # Initialize the dooter bag if it doesn't exist
-        if not 'dooter' in bag_random_dooter.bags:
+        if not "dooter" in bag_random_dooter.bags:
             dooter_files = os.listdir(self.dooter_db_path)
-            bag_random_dooter.create_bag('dooter', dooter_files)
+            bag_random_dooter.create_bag("dooter", dooter_files)
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
@@ -38,7 +39,7 @@ class Pooter(commands.Cog):
             return
 
         for _ in range(poo_count):
-            img_file = bag_random_pooter.choice('pooter')
+            img_file = bag_random_pooter.choice("pooter")
             with open(os.path.join(self.pooter_db_path, img_file), "rb") as img:
                 await msg.channel.send(file=discord.File(img), reference=msg)
 
@@ -66,13 +67,15 @@ class Pooter(commands.Cog):
                 else:
                     file_url = url
                     file_extension = file_url.split(".")[-1]
-                file_name = f"pooterquiz_{payload.member.id}_{randhex(64)}.{file_extension}"
+                file_name = (
+                    f"pooterquiz_{payload.member.id}_{randhex(64)}.{file_extension}"
+                )
                 file_path = f"{dannybot}/database/Pooter/{file_name}"
 
                 with open(file_path, "wb") as f:
                     f.write(requests.get(url).content)
 
-                bag_random_pooter.add_values('pooter', [file_name])
+                bag_random_pooter.add_values("pooter", [file_name])
                 await self.bot.get_channel(logs_channel).send(
                     f"{payload.member.global_name} ({payload.member.id}) has pootered: {url}"
                 )
@@ -97,7 +100,9 @@ class Pooter(commands.Cog):
                     file_url = file.url.split("?")
                     file_extension = file_url[0].split(".")[-1]
                     file_url = f"{file_url[0]}?{file_url[1]}"
-                    sanitized_filename = sanitize_filename(file_url) + "." + file_extension
+                    sanitized_filename = (
+                        sanitize_filename(file_url) + "." + file_extension
+                    )
                 else:
                     file_url = file
                     file_extension = file.split(".")[-1]
@@ -122,7 +127,9 @@ class Pooter(commands.Cog):
     )
     async def pooter(self, ctx, File_Url: typing.Optional[str] = None):
         async def download_file(url, current_download):
-            if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+            if (
+                ctx.guild is not None and ctx.guild.id not in whitelist
+            ) and ctx.author.id != bot.owner_id:
                 await ctx.send("This server is not whitelisted for this command.")
                 return
             tenor = False
@@ -144,7 +151,7 @@ class Pooter(commands.Cog):
                 with open(file_path, "wb") as f:
                     f.write(requests.get(url).content)
 
-                bag_random_pooter.add_values('pooter', [file_name])
+                bag_random_pooter.add_values("pooter", [file_name])
                 downloaded_files.add(url)
                 if len(downloaded_files) == total_downloads:
                     await ctx.message.add_reaction("✅")
@@ -172,9 +179,11 @@ class Pooter(commands.Cog):
                 tasks.append(task)
             await asyncio.gather(*tasks)
         elif not File_Url:
-            if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+            if (
+                ctx.guild is not None and ctx.guild.id not in whitelist
+            ) and ctx.author.id != bot.owner_id:
                 return
-            pooter_file = bag_random_pooter.choice('pooter')
+            pooter_file = bag_random_pooter.choice("pooter")
             with open(os.path.join(self.pooter_db_path, pooter_file), "rb") as f:
                 await ctx.reply(file=discord.File(f, pooter_file))
         else:
@@ -206,7 +215,7 @@ class Pooter(commands.Cog):
                 with open(file_path, "wb") as f:
                     f.write(requests.get(url).content)
 
-                bag_random_dooter.add_values('dooter', [file_name])
+                bag_random_dooter.add_values("dooter", [file_name])
                 downloaded_files.add(url)
                 if len(downloaded_files) == total_downloads:
                     await ctx.message.add_reaction("✅")
@@ -239,22 +248,21 @@ class Pooter(commands.Cog):
 
     @commands.command()
     async def pooterquiz(self, ctx):
-        await ctx.send("preparing...")
         all_files = os.listdir(self.pooter_db_path)
         quiz_files = [f for f in all_files if f.startswith("pooterquiz_")]
         if not quiz_files:
             await ctx.send("shit is fucked")
             return
-        
+
         chosen_file = random.choice(quiz_files)
         file_path = os.path.join(self.pooter_db_path, chosen_file)
-        
+
         match = re.match(r"pooterquiz_(\d+)_", chosen_file)
         if not match:
             await ctx.send("shit is fucked again")
             return
         target_id = int(match.group(1))
-        
+
         target_user = self.bot.get_user(target_id)
         if target_user is None:
             try:
@@ -263,43 +271,90 @@ class Pooter(commands.Cog):
                 await ctx.send("idk who submitted this lol")
                 print(f"Error fetching user {target_id}: {e}")
                 return
-        
+
         member = ctx.guild.get_member(target_id) if ctx.guild else None
-        
+
         allowed_answers = {target_user.name.lower()}
         if member and member.display_name:
             allowed_answers.add(member.display_name.lower())
-        
+
+        users_dict = {
+            "343224184110841856": ["danny", "fdg"],
+            "158418656861093888": ["flashlight", "ezogaming", "ezo"],
+            "422249760876003328": ["flashlight", "ezogaming", "ezo"],
+            "305161653463285780": ["pizzi"],
+            "243104841021390859": ["crypted"],
+            "249411048518451200": ["rotty"],
+            "229401113382617088": ["leffrey", "leif"],
+            "211419370860183552": ["cris"],
+            "327207076067803156": ["scroogily man", "isaac"],
+            "569267645707321344": ["jordi"],
+            "206392667351941121": ["sam", "sam deluxe"],
+            "588539600428072971": ["incine"],
+            "538112945800871938": ["reese", "videogame71", "joycons"],
+            "285049524068810762": ["outerspacepirate", "outer", "osp", "sean", "shawn"],
+            "229396708201594881": ["indev", "devin"],
+            "114112473430360070": ["kneecap", "viath"],
+            "419715716770562078": ["momentum"],
+            "299907871640911872": ["maki", "maki ligon"],
+            "588342367476776961": ["maki", "maki ligon"],
+            "519202056846704680": ["chris", "chris j"],
+            "847276836172988426": ["dannybot"],
+            "246131844859297800": ["neatcrown", "neat"],
+            "176084654850310145": ["ben", "ben3759"],
+            "562369969879253054": ["gilbert", "liam"],
+        }
+
         embed = discord.Embed(
             title="Pooter Quiz",
-            description="Who Pootered this file? (answer in chat within 30 seconds)"
+            description="Who Pootered this file? (answer in chat within 30 seconds)",
         )
         embed.set_image(url=f"attachment://{chosen_file}")
-        
+
         file_attachment = discord.File(file_path, filename=chosen_file)
         await ctx.send(embed=embed, file=file_attachment)
-        
+
         async def check(msg):
-            return (
-                msg.channel == ctx.channel and
-                msg.author == ctx.author
-            )
-        
+            return msg.channel == ctx.channel and msg.author == ctx.author
+
         try:
-            response = await self.bot.wait_for('message', timeout=30.0, check=check)
+            response = await self.bot.wait_for("message", timeout=30.0, check=check)
             response_content = response.content.strip().lower()
-            correct_name = member.display_name if member and member.display_name else target_user.name
-            
-            if response_content in allowed_answers:
-                await ctx.send(f"epic win")
+
+            if str(target_id) in users_dict:
+                if response_content in [
+                    name.lower() for name in users_dict[str(target_id)]
+                ]:
+                    await ctx.send(f"epic win")
+                else:
+                    correct_names = ", ".join(users_dict[str(target_id)])
+                    await ctx.send(
+                        f"wrong answer, {response.author.mention}! the correct answer would have been: **{correct_names}**."
+                    )
             else:
-                await ctx.send(f"wrong answer, {response.author.mention}! the correct answer was **{correct_name}**.")
-            
+                # logic for non dict people
+                correct_name = (
+                    member.display_name
+                    if member and member.display_name
+                    else target_user.name
+                )
+                if response_content in allowed_answers:
+                    await ctx.send(f"epic win")
+                else:
+                    await ctx.send(
+                        f"wrong answer, {response.author.mention}! the correct answer was **{correct_name}**."
+                    )
+
         except asyncio.TimeoutError:
-            correct_name = member.display_name if member and member.display_name else target_user.name
-            await ctx.send(f"time's up! the correct answer was **{correct_name}**.")
+            correct_name = (
+                member.display_name
+                if member and member.display_name
+                else target_user.name
+            )
+            await ctx.send(f"times up! the correct answer was **{correct_name}**.")
         except asyncio.CancelledError:
             await ctx.send("the quiz was cancelled")
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Pooter(bot))
