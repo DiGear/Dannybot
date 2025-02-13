@@ -318,13 +318,13 @@ class Pooter(commands.Cog):
         }
 
         embed = discord.Embed(
-            title="Pooter Quiz",
+            title=f"{ctx.author.name}'s Pooter Quiz",
             description="Who Pootered this file? (answer in chat within 30 seconds)",
         )
         embed.set_image(url=f"attachment://{chosen_file}")
 
         file_attachment = discord.File(file_path, filename=chosen_file)
-        botmessage = await ctx.send(embed=embed, file=file_attachment)
+        botmessage = await ctx.reply(embed=embed, file=file_attachment, mention_author=True)
 
         def check(message):
             return message.channel == botmessage.channel and message.author == ctx.message.author and message.author != self.bot.user
@@ -342,7 +342,7 @@ class Pooter(commands.Cog):
                 else:
                     correct_names = ", ".join(users_dict[str(target_id)])
                     await ctx.send(
-                        f"wrong answer, {response.author.mention}! the correct answer would have been: **{correct_names}**."
+                        f"wrong answer, {response.author.mention}\nthe correct answer(s) would have been **{correct_names}**."
                     )
                     return
             else:
@@ -357,7 +357,7 @@ class Pooter(commands.Cog):
                     return
                 else:
                     await ctx.send(
-                        f"wrong answer, {response.author.mention}! the correct answer was **{correct_name}**."
+                        f"wrong answer, {response.author.mention}\nthe correct answer was **{correct_name}**."
                     )
                     return
 
@@ -367,7 +367,7 @@ class Pooter(commands.Cog):
                 if member and member.display_name
                 else target_user.name
             )
-            await ctx.send(f"times up! the correct answer was **{correct_name}**.")
+            await ctx.send(f"times up\nthe correct answer was **{correct_name}**.")
             return
         except asyncio.CancelledError:
             await ctx.send("the quiz was cancelled")
