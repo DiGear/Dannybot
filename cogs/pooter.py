@@ -237,8 +237,9 @@ class Pooter(commands.Cog):
             total_downloads = 1
             await download_file(File_Url, 1)
 
-    @commands.command(hidden=True)
+    @commands.command()
     async def pooterquiz(self, ctx):
+        await ctx.send("preparing...")
         all_files = os.listdir(self.pooter_db_path)
         quiz_files = [f for f in all_files if f.startswith("pooterquiz_")]
         if not quiz_files:
@@ -260,7 +261,7 @@ class Pooter(commands.Cog):
                 target_user = await self.bot.fetch_user(target_id)
             except Exception as e:
                 await ctx.send("idk who submitted this lol")
-                print(f"Error fetching user {target_id}: {e}")  # Log the exception
+                print(f"Error fetching user {target_id}: {e}")
                 return
         
         member = ctx.guild.get_member(target_id) if ctx.guild else None
@@ -281,17 +282,24 @@ class Pooter(commands.Cog):
         async def check(msg):
             return (
                 msg.channel == ctx.channel and
-                msg.author != self.bot.user and
-                msg.content.strip().lower() in allowed_answers
+                msg.author == ctx.author
             )
         
         try:
             response = await self.bot.wait_for('message', timeout=30.0, check=check)
+            response_content = response.content.strip().lower()
             correct_name = member.display_name if member and member.display_name else target_user.name
-            await ctx.send(f"epic win")
+            
+            if response_content in allowed_answers:
+                await ctx.send(f"epic win")
+            else:
+                await ctx.send(f"wrong answer, {response.author.mention}! the correct answer was **{correct_name}**.")
+            
         except asyncio.TimeoutError:
             correct_name = member.display_name if member and member.display_name else target_user.name
-            await ctx.send(f"Time's up! The correct answer was **{correct_name}**.")
+            await ctx.send(f"time's up! the correct answer was **{correct_name}**.")
+        except asyncio.CancelledError:
+            await ctx.send("the quiz was cancelled")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Pooter(bot))
