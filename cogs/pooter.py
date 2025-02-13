@@ -371,6 +371,7 @@ class Pooter(commands.Cog):
             "246131844859297800": ["neatcrown", "neat"],
             "176084654850310145": ["ben", "ben3759"],
             "562369969879253054": ["gilbert", "liam"],
+            "203882027366350859": ["bravo"],
         }
 
         embed = discord.Embed(
@@ -402,28 +403,11 @@ class Pooter(commands.Cog):
                     )
                     return
             else:
-                # logic for non dict people
-                correct_name = (
-                    member.display_name
-                    if member and member.display_name
-                    else target_user.name
-                )
-                if response_content in allowed_answers:
-                    await ctx.send(f"epic win")
-                    return
-                else:
-                    await ctx.send(
-                        f"wrong answer, {response.author.mention}\nthe correct answer was **{correct_name}**."
-                    )
-                    return
+                await ctx.send(f"add {target_user.name} ({target_user.id}) to the users_dict")
 
         except asyncio.TimeoutError:
-            correct_name = (
-                member.display_name
-                if member and member.display_name
-                else target_user.name
-            )
-            await ctx.send(f"times up\nthe correct answer was **{correct_name}**.")
+            correct_names = ", ".join(users_dict[str(target_id)])
+            await ctx.send(f"times up\nthe correct answer(s) would have been **{correct_names}**.")
             return
         except asyncio.CancelledError:
             await ctx.send("the quiz was cancelled")
