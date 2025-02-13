@@ -1,9 +1,8 @@
 # this is where most of the bullshit will be taking place
 # anything you need to configure will be located in here
-
-# ----------
+# -------------------------------------------------------
 # Imports
-# ----------
+# -------------------------------------------------------
 
 # Standard library imports
 import asyncio
@@ -84,9 +83,10 @@ from wand.image import Image as magick
 
 load_dotenv()
 logger = logging.getLogger(__name__)
-# ----------
+
+# -------------------------------------------------------
 # Classes
-# ----------
+# -------------------------------------------------------
 
 
 class BagRandom:
@@ -153,9 +153,9 @@ class BagRandom:
             self.bags = {}
 
 
-# ----------
+# -------------------------------------------------------
 # Variables
-# ----------
+# -------------------------------------------------------
 
 # dannybot config
 dannybot_prefixes = {"d.", "#", "D.", "ratio + "}  # bot prefix(es)
@@ -301,10 +301,103 @@ deltarune_dw = [
     "rhombo",
 ]
 
-
-# ----------
+# -------------------------------------------------------
 # Functions
-# ----------
+# -------------------------------------------------------
+
+
+# private helper to unify repack_gif and repack_gif_JPG
+def _repack_gif_core(
+    directory,
+    input_pattern,
+    palette_path,
+    output_gif,
+    palette_msg,
+    repack_msg,
+    remove_directory=False,
+):
+    print(Fore.LIGHTMAGENTA_EX + palette_msg + Fore.RESET)
+    os.system(
+        f'ffmpeg -i "{directory}/{input_pattern}" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
+    )
+    print(Fore.LIGHTMAGENTA_EX + repack_msg + Fore.RESET)
+    os.system(
+        f'ffmpeg -i "{directory}/{input_pattern}" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
+    )
+    if remove_directory:
+        shutil.rmtree(directory)
+    print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
+    return
+
+
+# private helper to unify repeated meme text logic
+def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
+    text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
+    text_draw = PIL.ImageDraw.Draw(text_image)
+    padding = 10
+
+    def get_wrapped_lines(text_value):
+        if len(text_value) > 27:
+            return textwrap.wrap(text_value, width=27)
+        return [text_value]
+
+    top_text_lines = get_wrapped_lines(Top_Text)
+    bottom_text_lines = get_wrapped_lines(Bottom_Text)
+    bottom_text_lines.reverse()
+
+    max_top_font_size = int(img.width / 8)
+    top_font_size = max_top_font_size
+    while True:
+        top_line_widths = [
+            text_draw.textsize(
+                line, font=PIL.ImageFont.truetype(font_path, top_font_size)
+            )[0]
+            for line in top_text_lines
+        ]
+        if max(top_line_widths) <= img.width - padding * 2:
+            break
+        top_font_size -= 1
+
+    max_bottom_font_size = int(img.width / 8)
+    bottom_font_size = max_bottom_font_size
+    while True:
+        bottom_line_widths = [
+            text_draw.textsize(
+                line, font=PIL.ImageFont.truetype(font_path, bottom_font_size)
+            )[0]
+            for line in bottom_text_lines
+        ]
+        if max(bottom_line_widths) <= img.width - padding * 2:
+            break
+        bottom_font_size -= 1
+
+    # draw top
+    top_text_height = 0
+    for line, font_size in zip(top_text_lines, [top_font_size] * len(top_text_lines)):
+        font = PIL.ImageFont.truetype(font_path, font_size)
+        text_width, text_height = text_draw.textsize(line, font=font)
+        x = (img.width - text_width) // 2
+        y = padding + top_text_height
+        text_draw.text(
+            (x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black"
+        )
+        top_text_height += text_height
+
+    # draw bottom
+    bottom_text_height = 0
+    for line, font_size in zip(
+        bottom_text_lines, [bottom_font_size] * len(bottom_text_lines)
+    ):
+        font = PIL.ImageFont.truetype(font_path, font_size)
+        text_width, text_height = text_draw.textsize(line, font=font)
+        x = (img.width - text_width) // 2
+        y = img.height - padding - text_height - bottom_text_height
+        text_draw.text(
+            (x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black"
+        )
+        bottom_text_height += text_height
+
+    return PIL.Image.alpha_composite(img, text_image)
 
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
@@ -328,18 +421,15 @@ def repack_gif(id=None):
     output_gif = (
         f"cache/ffmpeg_out{id}.gif" if id is not None else f"cache/ffmpeg_out.gif"
     )
-    print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
-    os.system(
-        f'ffmpeg -i "{directory}/temp%04d.png" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
+    _repack_gif_core(
+        directory=directory,
+        input_pattern="temp%04d.png",
+        palette_path=palette_path,
+        output_gif=output_gif,
+        palette_msg="generating palette...",
+        repack_msg="repacking gif...",
+        remove_directory=False,
     )
-    print(Fore.LIGHTMAGENTA_EX + "repacking gif..." + Fore.RESET)
-    os.system(
-        f'ffmpeg -i "{directory}/temp%04d.png" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
-    )
-    # shutil.rmtree(directory)
-    print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
-
-    return
 
 
 def repack_gif_JPG(id=None):
@@ -350,17 +440,15 @@ def repack_gif_JPG(id=None):
 
     palette_path = f"{directory}/palette.png"
     output_gif = "cache/ffmpeg_out.gif"
-    print(Fore.LIGHTMAGENTA_EX + "generating palette..." + Fore.RESET)
-    os.system(
-        f'ffmpeg -i "{directory}/temp%04d.png.jpg" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
+    _repack_gif_core(
+        directory=directory,
+        input_pattern="temp%04d.png.jpg",
+        palette_path=palette_path,
+        output_gif=output_gif,
+        palette_msg="generating palette...",
+        repack_msg="repacking gif (jpg)...",
+        remove_directory=True,
     )
-    print(Fore.LIGHTMAGENTA_EX + "repacking gif (jpg)..." + Fore.RESET)
-    os.system(
-        f'ffmpeg -i "{directory}/temp%04d.png.jpg" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
-    )
-    shutil.rmtree(directory)
-    print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
-    return
 
 
 def generate_id():
@@ -733,7 +821,7 @@ def imagebounds(path):
 # primary function of the meme command
 def make_meme(Top_Text, Bottom_Text, path):
     # Open the image
-    img = PIL.Image.open(path)
+    image = PIL.Image.open(path)
 
     # Calculate the image bounds
     imagebounds(path)
@@ -742,89 +830,9 @@ def make_meme(Top_Text, Bottom_Text, path):
     img = PIL.Image.open(path)
     img = img.convert("RGBA")
 
-    # Set the path to the font file
+    # Draw text
     font_path = f"{dannybot}\\assets\\impactjpn.otf"
-
-    # Set the padding size
-    padding = 10
-
-    # Split the top and bottom text into if lengths exceed 27 characters (this should ultimately end us up with 3 lines of text)
-    top_text_lines = [Top_Text]
-    bottom_text_lines = [Bottom_Text]
-
-    if len(Top_Text) > 27:
-        top_text_lines = textwrap.wrap(Top_Text, width=27)
-
-    if len(Bottom_Text) > 27:
-        bottom_text_lines = textwrap.wrap(Bottom_Text, width=27)
-        bottom_text_lines.reverse()
-
-    # Create a new image with transparent background for text overlay
-    text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
-    text_draw = PIL.ImageDraw.Draw(text_image)
-
-    # Calculate the font size for the top text
-    max_top_font_size = int(img.width / 8)
-    top_font_size = max_top_font_size
-
-    # Adjust the font size until the top text fits within the image width
-    while True:
-        top_line_widths = [
-            text_draw.textsize(
-                line, font=PIL.ImageFont.truetype(font_path, top_font_size)
-            )[0]
-            for line in top_text_lines
-        ]
-        if max(top_line_widths) <= img.width - padding * 2:
-            break
-        top_font_size -= 1
-
-    # Calculate the font size for the bottom text
-    max_bottom_font_size = int(img.width / 8)
-    bottom_font_size = max_bottom_font_size
-
-    # Adjust the font size until the bottom text fits within the image width
-    while True:
-        bottom_line_widths = [
-            text_draw.textsize(
-                line, font=PIL.ImageFont.truetype(font_path, bottom_font_size)
-            )[0]
-            for line in bottom_text_lines
-        ]
-        if max(bottom_line_widths) <= img.width - padding * 2:
-            break
-        bottom_font_size -= 1
-
-    # Set the initial height for the top text
-    top_text_height = 0
-
-    # Draw each line of the top text on the image
-    for line, font_size in zip(top_text_lines, [top_font_size] * 3):
-        font = PIL.ImageFont.truetype(font_path, font_size)
-        text_width, text_height = text_draw.textsize(line, font=font)
-        x = (img.width - text_width) // 2
-        y = padding + top_text_height
-        text_draw.text(
-            (x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black"
-        )
-        top_text_height += text_height
-
-    # Set the initial height for the bottom text
-    bottom_text_height = 0
-
-    # Draw each line of the bottom text on the image
-    for line, font_size in zip(bottom_text_lines, [bottom_font_size] * 3):
-        font = PIL.ImageFont.truetype(font_path, font_size)
-        text_width, text_height = text_draw.textsize(line, font=font)
-        x = (img.width - text_width) // 2
-        y = img.height - padding - text_height - bottom_text_height
-        text_draw.text(
-            (x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black"
-        )
-        bottom_text_height += text_height
-
-    # Combine the original image with the text overlay
-    composite_image = PIL.Image.alpha_composite(img, text_image)
+    composite_image = _draw_meme_text(img, Top_Text, Bottom_Text, font_path)
 
     # Set the output path for the final meme image
     output_path = f"{dannybot}\\cache\\meme_out.png"
@@ -839,112 +847,11 @@ def make_meme_gif(Top_Text, Bottom_Text):
     # iterate through every frame in the ffmpeg folder and edit them
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg"):
         if ".png" in frame:
-            # open image in PIL
-            img = PIL.Image.open(f"{dannybot}\\cache\\ffmpeg\\{frame}")
-            path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
-
-            # Calculate the image bounds
-            imagebounds(path)
-
-            # Open the image and convert it to RGBA format
-            img = PIL.Image.open(path)
-            img = img.convert("RGBA")
-
-            # Set the path to the font file
+            img_path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
+            imagebounds(img_path)
+            img = PIL.Image.open(img_path).convert("RGBA")
             font_path = f"{dannybot}\\assets\\impactjpn.otf"
-
-            # Set the padding size
-            padding = 10
-
-            # Split the top and bottom text into if lengths exceed 27 characters (this should ultimately end us up with 3 lines of text)
-            top_text_lines = [Top_Text]
-            bottom_text_lines = [Bottom_Text]
-
-            if len(Top_Text) > 27:
-                top_text_lines = textwrap.wrap(Top_Text, width=27)
-
-            if len(Bottom_Text) > 27:
-                bottom_text_lines = textwrap.wrap(Bottom_Text, width=27)
-                bottom_text_lines.reverse()
-
-            # Create a new image with transparent background for text overlay
-            text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
-            text_draw = PIL.ImageDraw.Draw(text_image)
-
-            # Calculate the font size for the top text
-            max_top_font_size = int(img.width / 8)
-            top_font_size = max_top_font_size
-
-            # Adjust the font size until the top text fits within the image width
-            while True:
-                top_line_widths = [
-                    text_draw.textsize(
-                        line, font=PIL.ImageFont.truetype(font_path, top_font_size)
-                    )[0]
-                    for line in top_text_lines
-                ]
-                if max(top_line_widths) <= img.width - padding * 2:
-                    break
-                top_font_size -= 1
-
-            # Calculate the font size for the bottom text
-            max_bottom_font_size = int(img.width / 8)
-            bottom_font_size = max_bottom_font_size
-
-            # Adjust the font size until the bottom text fits within the image width
-            while True:
-                bottom_line_widths = [
-                    text_draw.textsize(
-                        line, font=PIL.ImageFont.truetype(font_path, bottom_font_size)
-                    )[0]
-                    for line in bottom_text_lines
-                ]
-                if max(bottom_line_widths) <= img.width - padding * 2:
-                    break
-                bottom_font_size -= 1
-
-            # Set the initial height for the top text
-            top_text_height = 0
-
-            # Draw each line of the top text on the image
-            for line, font_size in zip(top_text_lines, [top_font_size] * 3):
-                font = PIL.ImageFont.truetype(font_path, font_size)
-                text_width, text_height = text_draw.textsize(line, font=font)
-                x = (img.width - text_width) // 2
-                y = padding + top_text_height
-                text_draw.text(
-                    (x, y),
-                    line,
-                    font=font,
-                    fill="white",
-                    stroke_width=2,
-                    stroke_fill="black",
-                )
-                top_text_height += text_height
-
-            # Set the initial height for the bottom text
-            bottom_text_height = 0
-
-            # Draw each line of the bottom text on the image
-            for line, font_size in zip(bottom_text_lines, [bottom_font_size] * 3):
-                font = PIL.ImageFont.truetype(font_path, font_size)
-                text_width, text_height = text_draw.textsize(line, font=font)
-                x = (img.width - text_width) // 2
-                y = img.height - padding - text_height - bottom_text_height
-                text_draw.text(
-                    (x, y),
-                    line,
-                    font=font,
-                    fill="white",
-                    stroke_width=2,
-                    stroke_fill="black",
-                )
-                bottom_text_height += text_height
-
-            # Combine the original image with the text overlay
-            composite_image = PIL.Image.alpha_composite(img, text_image)
-
-            # save the resulting image
+            composite_image = _draw_meme_text(img, Top_Text, Bottom_Text, font_path)
             output_path = f"{dannybot}\\cache\\ffmpeg\\output\\{frame}"
             composite_image.save(output_path)
     repack_gif()
