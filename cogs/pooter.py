@@ -279,7 +279,7 @@ class Pooter(commands.Cog):
             allowed_answers.add(member.display_name.lower())
 
         users_dict = {
-            "343224184110841856": ["danny", "fdg"],
+            "343224184110841856": ["danny", "fdg", "digear"],
             "158418656861093888": ["flashlight", "ezogaming", "ezo"],
             "422249760876003328": ["flashlight", "ezogaming", "ezo"],
             "305161653463285780": ["pizzi"],
