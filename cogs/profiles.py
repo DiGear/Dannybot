@@ -1,4 +1,3 @@
-# profiles testing
 from config import *
 
 logger = logging.getLogger(__name__)
@@ -95,30 +94,57 @@ class Profiles(commands.Cog):
             card_height = 250
             card = Image.new("RGBA", (card_width, card_height), (255, 255, 255, 0))
 
-            # add banner to card
+            # paste banner as full background
             banner_resized = banner_img.resize((card_width, card_height), Image.LANCZOS)
             card.paste(banner_resized, (0, 0))
 
-            # add avatar to card
+            # overlay white on the bottom half
+            draw = ImageDraw.Draw(card)
+            draw.rectangle([0, card_height // 2-8, card_width, card_height], fill="white")
+
+            # create black outline for avatar
+            outline_size = 136
+            outline = Image.new("RGBA", (outline_size, outline_size), (0, 0, 0, 0))
+            draw_outline = ImageDraw.Draw(outline)
+            draw_outline.ellipse((0, 0, outline_size, outline_size), fill="black")
+
+            # paste outline first
             avatar_x = 30
             avatar_y = 30
+            card.paste(outline, (avatar_x - 4, avatar_y - 4), outline)
+
+            # paste avatar on top
             card.paste(avatar_img, (avatar_x, avatar_y), avatar_img)
 
-            # add text elements
-            draw = ImageDraw.Draw(card)
+            # function to draw text with an outline
+            def draw_text_with_outline(draw, position, text, font, text_color="white", outline_color="black", outline_thickness=2):
+                x, y = position
+
+                # draw outline (8 directions)
+                for dx, dy in [(-outline_thickness, 0), (outline_thickness, 0), (0, -outline_thickness), (0, outline_thickness),
+                               (-outline_thickness, -outline_thickness), (-outline_thickness, outline_thickness),
+                               (outline_thickness, -outline_thickness), (outline_thickness, outline_thickness)]:
+                    draw.text((x + dx, y + dy), text, font=font, fill=outline_color)
+
+                # draw main text
+                draw.text((x, y), text, font=font, fill=text_color)
+
+            # draw nickname with outline
             text_x = avatar_x + 140
             text_y = avatar_y + 10
-            draw.text((text_x, text_y), nickname, font=self.font_large, fill="white")
+            draw_text_with_outline(draw, (text_x, text_y), nickname, self.font_large)
+
+            # draw level and xp
             text_y += 40
             level_text = f"Level {level} | {xp_current}/{xp_total} XP"
-            draw.text((text_x, text_y), level_text, font=self.font_small, fill="white")
+            draw_text_with_outline(draw, (text_x, text_y), level_text, self.font_small)
 
             # draw xp progress bar
             bar_width = 300
             bar_height = 20
             bar_x = text_x
             bar_y = text_y + 40
-            draw.rectangle([bar_x, bar_y, bar_x + bar_width, bar_y + bar_height], outline=(255, 255, 255), width=2)
+            draw.rectangle([bar_x-4, bar_y-4, bar_x+4 + bar_width, bar_y+4 + bar_height], outline=(0, 0, 0), width=4)
             xp_ratio = xp_current / xp_total if xp_total != 0 else 0
             fill_width = int(bar_width * xp_ratio)
             fill_color = (66, 135, 245)
