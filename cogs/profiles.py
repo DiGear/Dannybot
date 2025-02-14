@@ -39,7 +39,7 @@ def add_experience(member: discord.Member, xp: int):
         while profile["experience_current"] >= profile["experience_total"]:
             profile["experience_current"] -= profile["experience_total"]
             profile["level"] += 1
-            profile["experience_total"] = int(profile["experience_total"] * 1.1)
+            profile["experience_total"] = int(profile["experience_total"] * 1.25)
             leveled_up = True
 
         save_user_profile(member, profile)

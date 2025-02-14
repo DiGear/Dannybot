@@ -60,6 +60,12 @@ async def load_all_cogs():
 @bot.event
 async def on_ready():
     logging.info(f"logged in as {bot.user}")
+    if cache_clear_onLaunch:
+        print("clearing cache...")
+        clear_cache()
+    if clean_pooter_onLaunch:
+        print("cleaning pooter...")
+        clean_pooter()
     await bot.tree.sync()  # sync slash commands
     await load_all_cogs()
 
