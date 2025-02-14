@@ -48,6 +48,7 @@ class chatbot(commands.Cog):
             message.author.bot
             or message.guild.id not in whitelist
             or not self.bot.user.mentioned_in(message)
+            or any(message.content.startswith(prefix) for prefix in dannybot_prefixes)
         ):
             return
 

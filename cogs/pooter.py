@@ -394,7 +394,9 @@ class Pooter(commands.Cog):
                 if response_content in [
                     name.lower() for name in users_dict[str(target_id)]
                 ]:
-                    await ctx.send(f"epic win\n(this will give you 1 point later)")
+                    await ctx.send(f"epic win\n(you gained 10 DP)")
+                    addxp_command = self.bot.get_command('addxp')
+                    await ctx.invoke(addxp_command, xp=10)
                     return
                 else:
                     correct_names = ", ".join(users_dict[str(target_id)])

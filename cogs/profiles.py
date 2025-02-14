@@ -15,7 +15,7 @@ def get_user_profile(member: discord.Member):
             default_profile = {
                 "level": 1,
                 "experience_current": 0,
-                "experience_total": 100 
+                "experience_total": 10 
             }
             with open(profile_path, "w") as f:
                 json.dump(default_profile, f, indent=4)
@@ -39,11 +39,28 @@ def add_experience(member: discord.Member, xp: int):
         while profile["experience_current"] >= profile["experience_total"]:
             profile["experience_current"] -= profile["experience_total"]
             profile["level"] += 1
-            profile["experience_total"] = int(profile["experience_total"] * 1.25)
+            profile["experience_total"] = int(profile["experience_total"] * 1.1)
             leveled_up = True
 
         save_user_profile(member, profile)
         return leveled_up
+
+# numbers
+def abbreviate_xp(xp):
+    if xp >= 1e300: # not quite the limit of 10^308, but close enough and i dont want it to be too close to the limit idk why i just dont want it to
+        return "inf"
+    elif xp >= 1e13:
+        return f"{xp:.2e}" # too big
+    elif xp >= 1e12:
+        return f"{xp / 1e12:.2f}T"   # trillion
+    elif xp >= 1e9:
+        return f"{xp / 1e9:.2f}B"    # billion
+    elif xp >= 1e6:
+        return f"{xp / 1e6:.2f}M"    # million
+    elif xp >= 1e3:
+        return f"{xp / 1e3:.2f}K"    # thousand
+    else:
+        return str(xp)
 
 class Profiles(commands.Cog):
         def __init__(self, bot: commands.Bot):
@@ -65,6 +82,10 @@ class Profiles(commands.Cog):
             level = user_data.get("level", 1)
             xp_current = user_data.get("experience_current", 0)
             xp_total = user_data.get("experience_total", 100)
+
+            # abbreviate the XP values
+            xp_current_abbr = abbreviate_xp(xp_current)
+            xp_total_abbr = abbreviate_xp(xp_total)
 
             # get avatar and banner urls
             avatar_url = member.guild_avatar.url if member.guild_avatar else member.display_avatar.url
@@ -136,7 +157,7 @@ class Profiles(commands.Cog):
 
             # draw level and xp
             text_y += 40
-            level_text = f"Level {level} | {xp_current}/{xp_total} XP"
+            level_text = f"Level {level} | {xp_current_abbr}/{xp_total_abbr} DP"
             draw_text_with_outline(draw, (text_x, text_y), level_text, self.font_small)
 
             # draw xp progress bar
@@ -159,14 +180,16 @@ class Profiles(commands.Cog):
         @commands.command(name="addxp")
         async def addxp(self, ctx, xp: int):
             # check for valid xp amount
-            if xp <= 0:
+            if xp <= 0 or xp > 1e301: # higher than the abbreviated max int so it can reach inf
                 await ctx.send("xp gain error")
                 return
 
             # add xp and check for level up
             leveled_up = add_experience(ctx.author, xp)
             if leveled_up:
-                await ctx.send("level up")
+                user_data = get_user_profile(ctx.author)
+                level = user_data.get("level", 1)
+                await ctx.send(f"you fucking moron idiot you just leveled up to level {level}")
                 return
 
 async def setup(bot: commands.Bot):
