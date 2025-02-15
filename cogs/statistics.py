@@ -62,7 +62,7 @@ def abbreviate_xp(xp):
     else:
         return str(xp)
 
-class Profiles(commands.Cog):
+class Stats(commands.Cog):
         def __init__(self, bot: commands.Bot):
             self.bot = bot
             # load fonts for the profile card
@@ -70,7 +70,7 @@ class Profiles(commands.Cog):
             self.font_large = ImageFont.truetype(font_path, 32)
             self.font_small = ImageFont.truetype(font_path, 20)
 
-        @commands.command(name="profile")
+        @commands.hybrid_command(name="profile")
         async def profile(self, ctx, member: discord.Member = None):
             # use author if no member specified
             if member is None:
@@ -176,7 +176,8 @@ class Profiles(commands.Cog):
                 card.save(image_binary, "PNG")
                 image_binary.seek(0)
                 await ctx.send(file=discord.File(fp=image_binary, filename="profile.png"))
-
+    
+        @commands.is_owner()
         @commands.command(name="addxp")
         async def addxp(self, ctx, xp: int):
             # check for valid xp amount
@@ -193,4 +194,4 @@ class Profiles(commands.Cog):
                 return
 
 async def setup(bot: commands.Bot):
-        await bot.add_cog(Profiles(bot))
+        await bot.add_cog(Stats(bot))

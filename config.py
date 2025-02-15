@@ -417,6 +417,8 @@ def repack_gif(id=None):
         directory = f"cache/ffmpeg/output/{id}"
     else:
         directory = f"cache/ffmpeg/output"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
     palette_path = f"{directory}/palette.png"
     output_gif = (
@@ -438,6 +440,8 @@ def repack_gif_JPG(id=None):
         directory = f"cache/ffmpeg/output/{id}"
     else:
         directory = f"cache/ffmpeg/output"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
     palette_path = f"{directory}/palette.png"
     output_gif = "cache/ffmpeg_out.gif"
@@ -468,19 +472,24 @@ def randhex(bits):
 def clear_cache():
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
-    output_folder = ffmpeg_cache_folder / "output"
-    folders_to_clear = [cache_folder, ffmpeg_cache_folder, output_folder]
+    folders_to_clear = [cache_folder, ffmpeg_cache_folder]
 
     def clear_files(folder):
-        for file_path in folder.glob("*"):
+        for file_path in folder.rglob("*"):
             if file_path.is_file() and "git" not in str(file_path):
                 try:
                     os.remove(file_path)
                     print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file_path}" + Fore.RESET)
                 except PermissionError:
-                    print(
-                        Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET
-                    )
+                    print(Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET)
+                    continue
+        for dir_path in folder.rglob("*"):
+            if dir_path.is_dir() and "git" not in str(dir_path):
+                try:
+                    shutil.rmtree(dir_path)
+                    print(Fore.LIGHTMAGENTA_EX + f"Deleted folder: {dir_path}" + Fore.RESET)
+                except PermissionError:
+                    print(Fore.YELLOW + f"Skipped: {dir_path} (Folder in use)" + Fore.RESET)
                     continue
 
     threads = []
@@ -493,6 +502,7 @@ def clear_cache():
         thread.join()
 
     print(Fore.BLUE + "Cache cleared." + Fore.RESET)
+
 
 
 # get the amount of files in a folder

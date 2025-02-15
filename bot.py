@@ -59,15 +59,36 @@ async def load_all_cogs():
 # bot is ready
 @bot.event
 async def on_ready():
-    logging.info(f"logged in as {bot.user}")
-    if cache_clear_onLaunch:
-        print("clearing cache...")
-        clear_cache()
+    print("---------------------------------------------------------------------")
     if clean_pooter_onLaunch:
-        print("cleaning pooter...")
+        print(
+            Fore.LIGHTMAGENTA_EX
+            + "Cleaning up pooter folder... This may clog up the terminal if there are a lot of files..."
+            + Fore.RESET
+        )
+        print("---------------------------------------------------------------------")
         clean_pooter()
-    await bot.tree.sync()  # sync slash commands
+        print("---------------------------------------------------------------------")
+    if cache_clear_onLaunch:
+        print(
+            Fore.LIGHTMAGENTA_EX
+            + "Clearing cache from the previous session..."
+            + Fore.RESET
+        )
+        print("---------------------------------------------------------------------")
+        clear_cache()
+        print("---------------------------------------------------------------------")
     await load_all_cogs()
+    print("---------------------------------------------------------------------")
+    command_sync = await bot.tree.sync()
+    print(Fore.BLUE + f"Synced {len(command_sync)} slashes" + Fore.RESET)
+    print("---------------------------------------------------------------------")
+    print(
+        Fore.GREEN
+        + f"{bot.user} successfully booted on discord.py version {discord.__version__} with {bot.shard_count} shards"
+        + Fore.RESET
+    )
+    print("---------------------------------------------------------------------")
 
 
 # process messages and update the last command variable
@@ -256,7 +277,7 @@ async def launch_gradio_async():
     with gr.Blocks() as demo:
         with gr.Tabs():
             with gr.Tab("Main"):
-                gr.Markdown("### Information")
+                gr.Markdown("### Command Management")
                 last_command_textbox = gr.Textbox(
                     label="Last Issued Command",
                     value=get_last_command,

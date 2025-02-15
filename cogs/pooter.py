@@ -258,7 +258,7 @@ class Pooter(commands.Cog):
         with open(history_file_path, 'w') as f:
             json.dump(history, f, indent=4)
 
-    @commands.command()
+    @commands.hybrid_command(alisess=["pooquiz", "wpi"])
     async def pooterquiz(self, ctx):
         pooter_db_path = self.pooter_db_path
         pooter_quiz_db_path = self.pooter_quiz_db_path
