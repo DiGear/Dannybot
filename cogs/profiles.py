@@ -189,7 +189,7 @@ class Profiles(commands.Cog):
             if leveled_up:
                 user_data = get_user_profile(ctx.author)
                 level = user_data.get("level", 1)
-                await ctx.send(f"you fucking moron idiot you just leveled up to level {level}")
+                await ctx.send(f"you fucking moron idiot you just leveled up to level {level} **(d.profile)**")
                 return
 
 async def setup(bot: commands.Bot):

@@ -363,7 +363,7 @@ class Pooter(commands.Cog):
             "285049524068810762": ["outerspacepirate", "outer", "osp", "sean", "shawn"],
             "229396708201594881": ["indev", "devin"],
             "114112473430360070": ["kneecap", "viath"],
-            "419715716770562078": ["momentum"],
+            "419715716770562078": ["momentum", "mom"],
             "299907871640911872": ["maki", "maki ligon"],
             "588342367476776961": ["maki", "maki ligon"],
             "519202056846704680": ["chris", "chris j"],
@@ -391,10 +391,8 @@ class Pooter(commands.Cog):
             response_content = response.content.strip().lower()
 
             if str(target_id) in users_dict:
-                if response_content in [
-                    name.lower() for name in users_dict[str(target_id)]
-                ]:
-                    await ctx.send(f"epic win\n(you gained 10 DP)")
+                if any(fuzz.partial_ratio(response_content.lower(), name.lower()) >= 80 for name in users_dict[str(target_id)]):
+                    await ctx.send(f"epic win **(you gained 10 DP)**")
                     addxp_command = self.bot.get_command('addxp')
                     await ctx.invoke(addxp_command, xp=10)
                     return

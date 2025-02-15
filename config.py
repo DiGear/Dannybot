@@ -79,6 +79,7 @@ from PIL import (
 )
 from pydub import AudioSegment
 from rembg import new_session, remove
+from thefuzz import fuzz
 from wand.image import Image as magick
 
 load_dotenv()
