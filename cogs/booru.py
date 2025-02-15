@@ -12,8 +12,6 @@ class booru(commands.Cog):
         self.last_msg = None
 
     # gelbooru
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="gelbooru",
         aliases=["gel"],

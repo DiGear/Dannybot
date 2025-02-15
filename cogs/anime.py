@@ -31,8 +31,6 @@ class anime(commands.Cog):
         embed.set_image(url=image_url)
         await ctx.send(embed=embed)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="tickle",
         description="tickles the Recipient (or yourself).",
@@ -42,8 +40,6 @@ class anime(commands.Cog):
         member = member or ctx.author
         await self.send_anime_action(ctx, "tickle", member)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="feed",
         description="feeds the Recipient (or yourself).",
@@ -53,8 +49,6 @@ class anime(commands.Cog):
         member = member or ctx.author
         await self.send_anime_action(ctx, "feed", member)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="slap",
         description="slaps the Recipient (or yourself).",
@@ -64,8 +58,6 @@ class anime(commands.Cog):
         member = member or ctx.author
         await self.send_anime_action(ctx, "slap", member)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="pat",
         description="pats the Recipient (or yourself).",
@@ -75,8 +67,6 @@ class anime(commands.Cog):
         member = member or ctx.author
         await self.send_anime_action(ctx, "pat", member)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="kiss",
         description="kisses the Recipient (or yourself).",
@@ -86,8 +76,6 @@ class anime(commands.Cog):
         member = member or ctx.author
         await self.send_anime_action(ctx, "kiss", member)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="cuddle",
         description="cuddles the Recipient (or yourself).",
@@ -97,8 +85,6 @@ class anime(commands.Cog):
         member = member or ctx.author
         await self.send_anime_action(ctx, "cuddle", member)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="hug",
         description="hugs the Recipient (or yourself).",

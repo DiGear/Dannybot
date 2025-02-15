@@ -121,7 +121,6 @@ class Pooter(commands.Cog):
             await input_message.remove_reaction("💩", payload.member)
 
     @commands.command(
-        hidden=True,
         aliases=["poo", "poop", ":spoon:", "🥄", "💩"],
         description="Send or receive a file from a user-built archive of files.",
         brief="Send/Receive files from a public archive.",

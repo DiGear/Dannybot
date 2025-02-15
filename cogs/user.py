@@ -11,8 +11,6 @@ class user(commands.Cog):
         self.bot = bot
         super().__init__()
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="avatar",
         description="Grab the command users avatar, and send it.",
@@ -41,8 +39,6 @@ class user(commands.Cog):
                 f"Avatar of {member.display_name}.", mention_author=True, embed=embed
             )
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="info",
         description="Grab the users account information, and then send it in an embed.",

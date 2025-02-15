@@ -24,8 +24,6 @@ class ai(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="write",
         aliases=["davinci", "gpt"],
@@ -53,8 +51,6 @@ class ai(commands.Cog):
         except Exception as e:
             await ctx.send(f"An error occurred while generating the text: **{str(e)}**")
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="writecustom",
         description="Interact with GPT with all the funny settings.",
@@ -105,8 +101,6 @@ class ai(commands.Cog):
         except Exception as e:
             await ctx.send(f"An error occurred while upscaling the image: **{str(e)}**")
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="inspire",
         aliases=["quote"],
@@ -266,8 +260,6 @@ class ai(commands.Cog):
 
         await ctx.send(response.choices[0].message.content)
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="pootervision",
         description="Runs a random pooter image through GPT-4, and describes it without showing you the image.",
@@ -324,8 +316,6 @@ class ai(commands.Cog):
         await msg.edit(embed=embed)
         await msg.clear_reactions()
 
-    @discord.app_commands.allowed_installs(guilds=True, users=True)
-    @discord.app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
     @commands.hybrid_command(
         name="lunaticvision",
         description="Runs a random pooter image through GPT-4, and describes it without showing you the image.",

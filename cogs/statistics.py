@@ -178,7 +178,7 @@ class Stats(commands.Cog):
                 await ctx.send(file=discord.File(fp=image_binary, filename="profile.png"))
     
         @commands.is_owner()
-        @commands.command(name="addxp")
+        @commands.command(name="addxp", hidden=True)
         async def addxp(self, ctx, xp: int):
             # check for valid xp amount
             if xp <= 0 or xp > 1e301: # higher than the abbreviated max int so it can reach inf
