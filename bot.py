@@ -182,6 +182,7 @@ def reload_all_cogs():
                 logging.info(f"reloaded cog: {ext}")
             except Exception as e:
                 logging.error(f"failed to reload cog {ext}: {e}")
+        await bot.tree.sync()
 
     asyncio.run_coroutine_threadsafe(quick_restart(), bot.loop)
     return "success"
@@ -196,6 +197,7 @@ def load_cog(cog_name):
         try:
             await bot.load_extension(f"cogs.{cog_name}")
             logging.info(f"loaded cog: {cog_name}")
+            await bot.tree.sync()
         except Exception as e:
             logging.error(f"failed to load cog {cog_name}: {e}")
 
@@ -284,6 +286,7 @@ async def launch_gradio_async():
                     interactive=False,
                     every=0.1,
                 )
+
                 gr.Markdown("### Database Stuff")
                 with gr.Row():
                     category_input = gr.Dropdown(
