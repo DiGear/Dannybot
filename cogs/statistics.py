@@ -179,16 +179,17 @@ class Stats(commands.Cog):
     
         @commands.is_owner()
         @commands.command(name="addxp", hidden=True)
-        async def addxp(self, ctx, xp: int):
+        async def addxp(self, ctx, xp: int, member: discord.Member = None):
+            member = member or ctx.author
             # check for valid xp amount
             if xp <= 0 or xp > 1e301: # higher than the abbreviated max int so it can reach inf
                 await ctx.send("xp gain error")
                 return
 
             # add xp and check for level up
-            leveled_up = add_experience(ctx.author, xp)
+            leveled_up = add_experience(member, xp)
             if leveled_up:
-                user_data = get_user_profile(ctx.author)
+                user_data = get_user_profile(member)
                 level = user_data.get("level", 1)
                 await ctx.send(f"you fucking moron idiot you just leveled up to level {level} **(d.profile)**")
                 return
