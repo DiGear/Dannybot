@@ -55,11 +55,6 @@ class chatbot(commands.Cog):
         self.frequency_penalty = 0.0
         self.presence_penalty = 0.0
 
-        # we use regex to clean up and format the response
-        self.dannybot_pattern = re.compile(r"(?i)dannybot:?")
-        self.dannybots_pattern = re.compile(r"(?i)dannybot-s:?")
-        self.name_format_pattern = re.compile(r"(?i)\b.+?\b said:")
-
         self.logger = logging.getLogger(__name__)
 
     @commands.Cog.listener()
@@ -152,12 +147,12 @@ class chatbot(commands.Cog):
 
     def clean_response(self, response_text: str) -> str:
         """cleans up GPTs response by removing potential bot mentions and name formats."""
-        response_text = self.dannybot_pattern.sub("", response_text)
-        response_text = self.dannybots_pattern.sub("", response_text)
-        response_text = self.name_format_pattern.sub("", response_text)
-        return response_text.strip()[
+        response_text = re.sub(r"(?i)dannybot:", "", response_text)
+        response_text = re.sub(r"(?i)dannybot-s:", "", response_text)
+        response_text = re.sub(r"(?i)\b.+?\b said:", "", response_text).strip()[
             :1990
         ]  # this is a little bit below the 2000 character limit but i like to be safe
+        return response_text
 
     # i cant be fucked to comment this and its basically the same thing as the one above anyways
     @commands.hybrid_command(
