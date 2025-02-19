@@ -82,7 +82,7 @@ from rembg import new_session, remove
 from thefuzz import fuzz
 from wand.image import Image as magick
 
-load_dotenv()
+load_dotenv()  # load extra private variables from dotenv
 logger = logging.getLogger(__name__)
 
 # -------------------------------------------------------
@@ -90,6 +90,7 @@ logger = logging.getLogger(__name__)
 # -------------------------------------------------------
 
 
+# this allows me to manage "bags" of values for random selection without repeats
 class BagRandom:
     def __init__(self, file_name):
         self.bags = {}
@@ -158,22 +159,22 @@ class BagRandom:
 # Variables
 # -------------------------------------------------------
 
-# dannybot config
 dannybot_prefixes = {"d.", "#", "D.", "ratio + "}  # bot prefix(es)
 dannybot_token = os.getenv("TOKEN")  # token
 dannybot_team_ids = {343224184110841856, 158418656861093888, 249411048518451200}
 dannybot_denialRatio = 250  # chance for dannybot to deny your command input
-dannybot_denialResponses = [
+dannybot_denialResponses = [  # responses that dannybot can use when denying a command
     "no",
     "nah",
     "nope",
     "no thanks",
-]  # what dannybot says upon denial
-dannybot = (
-    os.getcwd()
-)  # easy to call variable that stores our current working directory
+]
+dannybot = os.getcwd()  # current working directory of dannybot for ease of access
+
 cache_clear_onLaunch = True  # dannybot will clear his cache on launch if set to true
 clean_pooter_onLaunch = True  # dannybot will clean up pooter on launch if set to true
+
+# accepted file extensions for pooter
 database_acceptedFiles = {
     "png",
     "jpg",
@@ -192,8 +193,9 @@ database_acceptedFiles = {
     "MP4",
     "WEBM",
     "MOV",
-}  # list of accepted files for the bots public database
-cmd_blacklist = ["0"]  # Users who cant use the bot lol
+}
+
+# whitelist of server IDs that have full bot access
 whitelist = {
     779136383033147403,
     367767486004985857,
@@ -204,26 +206,23 @@ whitelist = {
     352972878645428225,
     1274900393285124126,
     882143616754147350,
-}  # servers with full bot access
+}
 
-# configs for the image manipulation commands
-imageLower = 250  # the smallest image width image commands will use. if the image is thinner than this, it will proportionally scale to this size
-imageUpper = 1500  # the largest image width image commands will use. if the image is wider than this, it will proportionally scale to this size
+# minimum and maximum image widths to use for processing
+imageLower = 250  # the smallest image width image commands will use
+imageUpper = 1500  # the largest image width image commands will use
 
-# channel configs (WHY WERE THESE NEVER PUT INTO THE .ENV UNTIL 2023/4/5)
 bookmarks_channel = int(os.getenv("BOOKMARKS"))  # channel to send personal bookmarks to
 logs_channel = int(os.getenv("LOGS"))  # channel to log commands
 
-# more .env keys being assigned here
-openai.api_key = os.getenv("OPENAI_API_KEY")  # i hope i can remove this soon
-tenor_apikey = os.getenv("TENOR_KEY")
-AlphaVantageAPI = os.getenv("AV_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")  # OpenAI API key
+tenor_apikey = os.getenv("TENOR_KEY")  # Tenor API key for GIFs
+AlphaVantageAPI = os.getenv("AV_API_KEY")  # Alpha Vantage API key for stock data
 
-# internal paths
 Cookies = f"{dannybot}\\assets\\cookies.txt"  # set this to your YT-DL cookies
-Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe"  # set this to the path of your waifu2x-caffe-cui.exe file in your waifu2x-caffe install
+Waifu2x = f"{dannybot}\\tools\\waifu2x-caffe\\waifu2x-caffe-cui.exe"  # path to waifu2x-caffe-cui.exe
 
-# 8ball responses for the 8ball command
+# responses for the 8ball command
 ball_responses = [
     "It is certain.",
     "It is decidedly so.",
@@ -249,7 +248,7 @@ ball_responses = [
     "nah",
 ]
 
-# logo list for the logo command
+# list of logo types for the logo command
 logolist = [
     "clan",
     "neon",
@@ -289,7 +288,7 @@ logolist = [
     "funtime",
 ]
 
-# this is for the undertext command
+# list for the undertext command featuring Deltarune characters
 deltarune_dw = [
     "ralsei",
     "lancer",
@@ -318,13 +317,16 @@ def _repack_gif_core(
     remove_directory=False,
 ):
     print(Fore.LIGHTMAGENTA_EX + palette_msg + Fore.RESET)
+    # generate a palette from the input frames using ffmpeg
     os.system(
         f'ffmpeg -i "{directory}/{input_pattern}" -lavfi "scale=256x256,fps=25,palettegen=max_colors=256:stats_mode=diff" {palette_path} -y'
     )
     print(Fore.LIGHTMAGENTA_EX + repack_msg + Fore.RESET)
+    # repack the frames into a GIF using the generated palette
     os.system(
         f'ffmpeg -i "{directory}/{input_pattern}" -i "{palette_path}" -lavfi "fps=25,mpdecimate,paletteuse=dither=none" -fs 99M "{output_gif}" -y'
     )
+
     if remove_directory:
         shutil.rmtree(directory)
     print(Fore.LIGHTMAGENTA_EX + f"Deleted directory {directory}" + Fore.RESET)
@@ -333,10 +335,12 @@ def _repack_gif_core(
 
 # private helper to unify repeated meme text logic
 def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
+    # create a transparent image for drawing text overlays
     text_image = PIL.Image.new("RGBA", img.size, (255, 255, 255, 0))
     text_draw = PIL.ImageDraw.Draw(text_image)
-    padding = 10
+    padding = 10  # padding
 
+    # wrap text if it exceeds a certain length
     def get_wrapped_lines(text_value):
         if len(text_value) > 27:
             return textwrap.wrap(text_value, width=27)
@@ -344,10 +348,12 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
 
     top_text_lines = get_wrapped_lines(Top_Text)
     bottom_text_lines = get_wrapped_lines(Bottom_Text)
-    bottom_text_lines.reverse()
+    bottom_text_lines.reverse()  # reverse bottom text lines for proper drawing order
 
+    # determine maximum font sizes based on image width
     max_top_font_size = int(img.width / 8)
     top_font_size = max_top_font_size
+    # reduce font size until text fits within image width
     while True:
         top_line_widths = [
             text_draw.textsize(
@@ -372,19 +378,18 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
             break
         bottom_font_size -= 1
 
-    # draw top
+    # draw the top text lines onto the image
     top_text_height = 0
     for line, font_size in zip(top_text_lines, [top_font_size] * len(top_text_lines)):
         font = PIL.ImageFont.truetype(font_path, font_size)
         text_width, text_height = text_draw.textsize(line, font=font)
-        x = (img.width - text_width) // 2
+        x = (img.width - text_width) // 2  # center horizontally
         y = padding + top_text_height
         text_draw.text(
             (x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black"
         )
         top_text_height += text_height
 
-    # draw bottom
     bottom_text_height = 0
     for line, font_size in zip(
         bottom_text_lines, [bottom_font_size] * len(bottom_text_lines)
@@ -398,6 +403,7 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
         )
         bottom_text_height += text_height
 
+    # composite the text overlay with the original image
     return PIL.Image.alpha_composite(img, text_image)
 
 
@@ -407,6 +413,7 @@ def unpack_gif(file, id=None):
     directory = f"cache/ffmpeg/{id}" if id is not None else "cache/ffmpeg"
     if not os.path.exists(directory):
         os.makedirs(directory)
+    # use ffmpeg to extract frames from the gif
     os.system(f'ffmpeg -i "{file}" -vf fps=25 -vsync 0 "{directory}/temp%04d.png" -y')
     return
 
@@ -424,6 +431,7 @@ def repack_gif(id=None):
     output_gif = (
         f"cache/ffmpeg_out{id}.gif" if id is not None else f"cache/ffmpeg_out.gif"
     )
+    # call the helper function to generate the palette and repack the gif
     _repack_gif_core(
         directory=directory,
         input_pattern="temp%04d.png",
@@ -435,6 +443,7 @@ def repack_gif(id=None):
     )
 
 
+# the same thing but jpg
 def repack_gif_JPG(id=None):
     if id is not None:
         directory = f"cache/ffmpeg/output/{id}"
@@ -456,11 +465,12 @@ def repack_gif_JPG(id=None):
     )
 
 
+# generate a random numerical id within a given range
 def generate_id():
     return random.randint(15679, 48568696543)
 
 
-# generate a random hexadecimal string
+# generate a random hexadecimal string with a specified number of bits
 def randhex(bits):
     num_bytes = (bits + 3) // 4
     random_number = random.getrandbits(bits)
@@ -470,47 +480,61 @@ def randhex(bits):
 
 # clear the cache folder of all files
 def clear_cache():
+    # define the cache folder and ffmpeg subfolder paths
     cache_folder = Path(f"{dannybot}/cache")
     ffmpeg_cache_folder = cache_folder / "ffmpeg"
     folders_to_clear = [cache_folder, ffmpeg_cache_folder]
 
     def clear_files(folder):
+        # iterate through all files and delete them if possible
         for file_path in folder.rglob("*"):
             if file_path.is_file() and "git" not in str(file_path):
                 try:
                     os.remove(file_path)
                     print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file_path}" + Fore.RESET)
                 except PermissionError:
-                    print(Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET)
+                    print(
+                        Fore.YELLOW + f"Skipped: {file_path} (File in use)" + Fore.RESET
+                    )
                     continue
+        # iterate through directories and delete them
         for dir_path in folder.rglob("*"):
             if dir_path.is_dir() and "git" not in str(dir_path):
                 try:
                     shutil.rmtree(dir_path)
-                    print(Fore.LIGHTMAGENTA_EX + f"Deleted folder: {dir_path}" + Fore.RESET)
+                    print(
+                        Fore.LIGHTMAGENTA_EX
+                        + f"Deleted folder: {dir_path}"
+                        + Fore.RESET
+                    )
                 except PermissionError:
-                    print(Fore.YELLOW + f"Skipped: {dir_path} (Folder in use)" + Fore.RESET)
+                    print(
+                        Fore.YELLOW
+                        + f"Skipped: {dir_path} (Folder in use)"
+                        + Fore.RESET
+                    )
                     continue
 
     threads = []
+    # create threads for clearing each folder concurrently
     for folder in folders_to_clear:
         thread = threading.Thread(target=clear_files, args=(folder,))
         thread.start()
         threads.append(thread)
 
+    # wait for all threads to complete
     for thread in threads:
         thread.join()
 
     print(Fore.BLUE + "Cache cleared." + Fore.RESET)
 
 
-
-# get the amount of files in a folder
+# get the total count of files in a folder
 def fileCount(folder):
     return sum(len(filenames) for _, _, filenames in os.walk(folder))
 
 
-# checks if a value is a float, why the fuck is this an external function
+# check if a given value can be converted to a float
 def is_float(value):
     try:
         float(value)
@@ -519,7 +543,7 @@ def is_float(value):
         return False
 
 
-# get the total size of all files in a folder
+# calculate the total size of all files within a folder
 def fileSize(folder):
     total_size = 0
     for root, _, filenames in os.walk(folder, topdown=False):
@@ -534,6 +558,7 @@ def fileSize(folder):
     return f"{total_size:.2f} {units[unit_index]}"
 
 
+# undertext bullshit
 def undertext(name, text, isAnimated):
     # replace underscores with dashes
     name = name.replace("_", "-")
@@ -543,7 +568,7 @@ def undertext(name, text, isAnimated):
         text = text[:-4]
         isAnimated = True
 
-    # define character links
+    # dict that maps shorthand names to demirramon names
     character_links = {
         "danny": "digear/danny",
         "danny-funny": "digear/danny-funny",
@@ -563,35 +588,34 @@ def undertext(name, text, isAnimated):
         "suggagugga": "digear/suggagugga",
     }
 
-    # character link override
     name = character_links.get(name, name)
 
-    # define AU styles
+    # define AU styles for alternate text styling
     au_styles = {"uf": "&boxcolor=b93b3c&asterisk=b93b3c&charcolor=b93b3c"}
 
-    # apply AU styles if the name contains a matching AU key
+    # apply AU styles
     for au, style in au_styles.items():
         if au in name:
             name += style
             text = f"color=%23b93b3c%20{text}"
             break
 
-    # deltarune characters
+    # append Deltarune styles
     name += "&box=deltarune&mode=darkworld" if name in deltarune_dw else ""
 
-    # link override
+    # this makes custom links work
     name = f"custom&url={name}" if name.startswith("http") else name
 
     # font override
     name += "&asterisk=null" if "font=wingdings" in text else ""
 
-    # discord underscore shit lol
+    # discord underscore thing
     text = text.replace("_ _", "%20")
 
     return name, text, isAnimated
 
 
-# grab the gif url of a tenor id using the tenor api
+# retrieve the GIF URL from Tenor using a provided Tenor gif ID
 def gettenor(gifid=None):
     # get the api key from the config file
     apikey = tenor_apikey
@@ -604,10 +628,11 @@ def gettenor(gifid=None):
         gifs = ujson.loads(r.content)
     else:
         gifs = None
+    # return the URL of the gif from the Tenor response
     return gifs["results"][0]["media"][0]["gif"]["url"]
 
 
-# this shit hole of a function is how dannybot handles files sent within discord and how they should be used with other args
+# dumb stupid bullshit
 async def resolve_args(ctx, args, attachments, type="image"):
     url = None
     tenor = False
@@ -627,11 +652,10 @@ async def resolve_args(ctx, args, attachments, type="image"):
     }
     extension_list = [ext.lower() for ext in extensions.get(type, ())]
 
-    # Helper function to ensure proper URL combination
     def combine_url(url_parts):
         return "?".join(filter(None, url_parts))
 
-    # Grab a URL if the command is a reply to an image
+    # grab a URL if the command is a reply to an image
     if ctx.message.reference:
         referenced_message = await ctx.fetch_message(ctx.message.reference.message_id)
         if "https://tenor.com/view/" in referenced_message.content and type == "image":
@@ -657,7 +681,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                     url = combine_url(http_url_parts)
                     print(Fore.BLUE + f"URL from reply: {url}" + Fore.RESET)
 
-    # Grab a URL if the command has an attachment
+    # grab a URL if the command has an attachment
     if not url and attachments:
         for attachment in attachments:
             if attachment.content_type.startswith(type):
@@ -666,7 +690,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 print(Fore.BLUE + f"URL from attachment: {url}" + Fore.RESET)
                 break
 
-    # Grab a URL passed from args
+    # grab a URL passed from args
     if not url:
         if args and args[0].startswith("http"):
             if "https://tenor.com/view/" in args[0]:
@@ -680,7 +704,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 text = " ".join(args[1:])
                 print(Fore.BLUE + f"URL from argument: {url}" + Fore.RESET)
 
-        # Grab a URL from mentioned user's avatar
+        # grab a URL from mentioned user's avatar
         if ctx.message.mentions:
             mentioned_member = ctx.message.mentions[0]
 
@@ -697,13 +721,13 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 )
                 avatar = True
 
-    # Message content iteration
+    # iterate over recent messages to find a valid URL if none was found
     if not url:
         channel = ctx.message.channel
         async for msg in channel.history(limit=500):
             content = msg.content
 
-            # Grab the URL from the last sent message's attachment
+            # check for attachment URLs in the message
             for attachment in msg.attachments:
                 attch_url_parts = attachment.url.split("?")
                 ext = attch_url_parts[0].split(".")[-1]
@@ -714,7 +738,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
             if url:
                 break
 
-            # Grab the URL (tenor) from the last sent message
+            # check for Tenor URL in message content for image type
             if "https://tenor.com/view/" in content and type == "image":
                 tenor = True
                 tenor_id = re.search(r"tenor\.com/view/.*-(\d+)", content).group(1)
@@ -722,7 +746,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                 print(Fore.BLUE + f"URL from Tenor: {url}" + Fore.RESET)
                 break
 
-            # Grab the URL from the last sent message
+            # check for generic HTTP URLs in message content
             if type == "image":
                 http_urls = re.findall(r"http\S+", content)
                 if http_urls:
@@ -735,7 +759,7 @@ async def resolve_args(ctx, args, attachments, type="image"):
                         )
                         break
 
-            # Generic URL extraction
+            # generic URL extraction code
             http_urls = re.findall(r"http\S+", content)
             if http_urls:
                 http_url_parts = http_urls[0].split("?")[0]
@@ -748,53 +772,50 @@ async def resolve_args(ctx, args, attachments, type="image"):
     try:
         if not avatar and isinstance(url, list):
             url = combine_url(url)
+        # remove mentions from the text argument
         text = re.sub(r"<@[^>]+>\s*", "", text)
     except Exception as e:
-        # Handle any exceptions in URL processing
         print(Fore.RED + f"Error combining URL: {e}" + Fore.RESET)
     finally:
         print(Fore.CYAN + f"Arguments: {url}, {text}" + Fore.RESET)
         return [url, text]
 
 
-# change hue (apparently not an inbuilt function of PIL)
+# change the hue of an image by a given shift (in degrees) and adjust saturation
 def change_hue(image, hue_shift, saturation_shift=1):
     if image.mode != "RGBA":
         image = image.convert("RGBA")
 
-    # Split the image into individual bands
+    # split the image into individual bands
     r, g, b, a = image.split()
 
-    # Convert to HSV
+    # convert the image to HSV
     hsv_image = image.convert("HSV")
     h, s, v = hsv_image.split()
 
-    # Convert the 360 degree hue wheel into a float between 0 and 255
+    # normalize hue_shift from degrees (0-360) to the 0-255 scale used by PIL
     hue_shift_normalized = int((hue_shift / 360.0) * 255)
 
-    # Adjust hue by adding hue_shift and modulo 256 to wrap around
+    # adjust hue by adding hue_shift and wrap around using modulo 256
     h = h.point(lambda p: (p + hue_shift_normalized) % 256)
 
-    # Adjust saturation by multiplying with the saturation_shift factor
-    # We ensure the saturation value stays in the 0-255 range
+    # adjust saturation ensuring values remain in the valid range (0-255)
     s = s.point(lambda p: min(max(int(p * saturation_shift), 0), 255))
 
-    # Merge back HSV and convert to RGBA
+    # merge the adjusted HSV channels and convert back to RGBA
     hsv_image = Image.merge("HSV", (h, s, v))
     rgba_image = hsv_image.convert("RGBA")
 
-    # Reattach the alpha channel
+    # reattach the original alpha channel
     final_image = Image.merge("RGBA", (*rgba_image.split()[:-1], a))
-
     return final_image
 
 
-# deepfry an image
+# funni deepfry
 def deepfry(inputpath, outputpath):
-    # open image
     image = PIL.Image.open(f"{inputpath}").convert("RGB")
-    image.save(f"{dannybot}\\cache\\deepfry_in.jpg", quality=15)
-    with magick(filename=f"{dannybot}\\cache\\deepfry_in.jpg") as img:
+    image.save(f"{dannybot}\\cache\\deepfry_in.jpg", quality=15) # this makes it look like shit
+    with magick(filename=f"{dannybot}\\cache\\deepfry_in.jpg") as img: # this make it shittier
         for _ in range(2):
             img.level(0.2, 0.9, gamma=1.1)
             img.sharpen(radius=8, sigma=4)
@@ -803,74 +824,62 @@ def deepfry(inputpath, outputpath):
     return
 
 
-# resize image to fit within bounds
+# resize an image to imagebounds
 def imagebounds(path):
-    # Open image and get size
     image = PIL.Image.open(path)
     width, height = image.size
 
-    # Calculate the aspect ratio
+    # calculate the aspect ratio to preserve proportions
     aspect_ratio = height / width
 
-    # Check if image width is smaller than the lower bound
+    # adjust image size
     if width < imageLower:
         new_width = imageLower
         new_height = int(new_width * aspect_ratio)
-    # Check if image width is larger than the upper bound
     elif width > imageUpper:
         new_width = imageUpper
         new_height = int(new_width * aspect_ratio)
     else:
-        # No need to resize the image
         return
 
-    # Resize the image and save it
     resized_image = image.resize((new_width, new_height), PIL.Image.Resampling.LANCZOS)
     resized_image.save(path)
 
 
-# primary function of the meme command
+# main function for meme text generation
 def make_meme(Top_Text, Bottom_Text, path):
-    # Open the image
     image = PIL.Image.open(path)
-
-    # Calculate the image bounds
     imagebounds(path)
 
-    # Open the image and convert it to RGBA format
     img = PIL.Image.open(path)
     img = img.convert("RGBA")
 
-    # Draw text
     font_path = f"{dannybot}\\assets\\impactjpn.otf"
     composite_image = _draw_meme_text(img, Top_Text, Bottom_Text, font_path)
 
-    # Set the output path for the final meme image
     output_path = f"{dannybot}\\cache\\meme_out.png"
 
-    # Save the composite image as the final meme image
     composite_image.save(output_path)
     return
 
 
-# gif version
+# meme generation function for GIFs
 def make_meme_gif(Top_Text, Bottom_Text):
-    # iterate through every frame in the ffmpeg folder and edit them
+    # iterate through each frame extracted by ffmpeg
     for frame in os.listdir(f"{dannybot}\\cache\\ffmpeg"):
         if ".png" in frame:
             img_path = f"{dannybot}\\cache\\ffmpeg\\{frame}"
             imagebounds(img_path)
             img = PIL.Image.open(img_path).convert("RGBA")
             font_path = f"{dannybot}\\assets\\impactjpn.otf"
-            composite_image = _draw_meme_text(img, Top_Text, Bottom_Text, font_path)
+            composite_image = _draw_meme_text(img, Top_Text, Bottom_Text, font_path) # make meme
             output_path = f"{dannybot}\\cache\\ffmpeg\\output\\{frame}"
             composite_image.save(output_path)
     repack_gif()
-
     return
 
 
-# for caption stuff
+#  wrap text to a specified maximum width for d.caption
 def wrap_text(text, draw, font, max_width):
     wrapped_lines = []
     for line in text.split("\n"):
@@ -890,21 +899,21 @@ def wrap_text(text, draw, font, max_width):
     return wrapped_lines
 
 
-# makes a filename only have valid windows file chars
+# sanitize a filename by
 def sanitize_filename(filename):
     valid_chars = string.ascii_letters + string.digits + "._- "
     sanitized_filename = "".join(char for char in filename if char in valid_chars)
     return sanitized_filename
 
 
-# generate list from directory of files
+# generate a comma-separated list of files in a directory
 def listgen(directory):
     list = os.listdir(directory)
     string = ", ".join(list)
     return string
 
 
-# clean up the pooter folder
+# clean up the pooter folder by removing duplicate files or files with no extension
 def clean_pooter():
     directory_path = os.path.join(dannybot, "database", "Pooter")
 
@@ -915,6 +924,7 @@ def clean_pooter():
     file_hashes = {}
     lock = threading.Lock()
 
+    # calculate the MD5 hash of a file to detect duplicates
     def calculate_file_hash(file_path, block_size=65536):
         hasher = hashlib.md5()
         with open(file_path, "rb") as f:
@@ -922,6 +932,7 @@ def clean_pooter():
                 hasher.update(chunk)
         return hasher.hexdigest()
 
+    # process each file and remove if duplicate or lacking an extension
     def clean_file(file):
         nonlocal file_hashes
         file_path = os.path.join(directory_path, file)
@@ -938,6 +949,7 @@ def clean_pooter():
             else:
                 file_hashes[file_hash] = file_path
 
+    # get list of files to clean in the pooter folder
     files_to_clean = [
         file
         for file in os.listdir(directory_path)
@@ -945,11 +957,13 @@ def clean_pooter():
     ]
 
     threads = []
+    # launch a separate thread for each file cleanup operation
     for file in files_to_clean:
         thread = threading.Thread(target=clean_file, args=(file,))
         thread.start()
         threads.append(thread)
 
+    # wait for all cleanup threads to finish
     for thread in threads:
         thread.join()
 
