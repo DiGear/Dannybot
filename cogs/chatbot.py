@@ -163,7 +163,7 @@ class chatbot(commands.Cog):
         await ctx.defer()
         if (
             ctx.guild is not None and ctx.guild.id not in whitelist
-        ) and ctx.author.id != bot.owner_id:
+        ) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
 

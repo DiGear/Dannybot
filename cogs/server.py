@@ -45,7 +45,7 @@ class server(commands.Cog):
         brief="Send a picture of an catgirl",
     )
     async def neko(self, ctx: commands.Context):
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
         async with aiohttp.ClientSession() as session:
@@ -66,7 +66,7 @@ class server(commands.Cog):
     )
     async def pizzi(self, ctx: commands.Context, temperature: typing.Optional[float] = 546.468):
         await ctx.defer()
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
 
@@ -134,7 +134,7 @@ class server(commands.Cog):
         ] = "danny",
     ):
         await ctx.defer()
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
 
@@ -162,7 +162,7 @@ class server(commands.Cog):
         brief="Display file counts for key directories in Dannybot",
     )
     async def db(self, ctx):
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
         # Define directory paths in a dictionary

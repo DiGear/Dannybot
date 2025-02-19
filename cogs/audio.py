@@ -13,7 +13,7 @@ class audio(commands.Cog):
 
     @commands.command(hidden=True)
     async def join(self, ctx):
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
         channel = ctx.author.voice.channel
@@ -23,7 +23,7 @@ class audio(commands.Cog):
 
     @commands.command(hidden=True)
     async def leave(self, ctx):
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
         if ctx.voice_client is not None:
@@ -157,7 +157,7 @@ class audio(commands.Cog):
             await ctx.reply(f"Midislapped with {SF2}:", file=File(f, "midislap.ogg"))
     @commands.command()
     async def play(self, ctx, url=None):
-        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != bot.owner_id:
+        if (ctx.guild is not None and ctx.guild.id not in whitelist) and ctx.author.id != 343224184110841856:
             await ctx.send("This server is not whitelisted for this command.")
             return
         current_directory = os.getcwd()

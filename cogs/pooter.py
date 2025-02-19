@@ -129,7 +129,7 @@ class Pooter(commands.Cog):
         async def download_file(url, current_download):
             if (
                 ctx.guild is not None and ctx.guild.id not in whitelist
-            ) and ctx.author.id != bot.owner_id:
+            ) and ctx.author.id != 343224184110841856:
                 await ctx.send("This server is not whitelisted for this command.")
                 return
             tenor = False
@@ -181,7 +181,7 @@ class Pooter(commands.Cog):
         elif not File_Url:
             if (
                 ctx.guild is not None and ctx.guild.id not in whitelist
-            ) and ctx.author.id != bot.owner_id:
+            ) and ctx.author.id != 343224184110841856:
                 return
             pooter_file = bag_random_pooter.choice("pooter")
             with open(os.path.join(self.pooter_db_path, pooter_file), "rb") as f:
