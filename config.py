@@ -27,6 +27,7 @@ import time
 import traceback
 import typing
 import uuid
+import urllib
 import webbrowser
 from collections import deque, namedtuple
 from datetime import datetime
@@ -409,7 +410,7 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
 
 # take a provided gif file and unpack each frame to /cache/ffmpegs
 def unpack_gif(file, id=None):
-    print(Fore.LIGHTMAGENTA_EX + "unpacking gif..." + Fore.RESET)
+    print(Fore.LIGHTMAGENTA_EX + f"unpacking gif {id}..." + Fore.RESET)
     directory = f"cache/ffmpeg/{id}" if id is not None else "cache/ffmpeg"
     if not os.path.exists(directory):
         os.makedirs(directory)

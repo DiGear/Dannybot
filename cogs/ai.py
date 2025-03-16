@@ -343,7 +343,7 @@ class ai(commands.Cog):
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "What's in this image? Describe the image in as few words as possible. Please use less than 10 total words. Sentences are discouraged"},
+                        {"type": "text", "text": "What's in this image? Describe the image in as few words as possible. Please use less than 10 total words. Use Brands/Names/Proper Nouns (e.g., Mario, Cybertruck, bandaid), when applicable. Identify Leffrey when shown Leffrey is a Young man, thin face, light skin, medium-length wavy dark brown hair, slight mustache, expressive eyes, varying facial expressions (smirking, surprised, neutral), often wearing a blue shirt."},
                         {
                             "type": "image_url",
                             "image_url": {"url": file_url, "detail": "high"},
