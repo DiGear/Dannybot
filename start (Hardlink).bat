@@ -1,3 +1,4 @@
 @echo off
-%~dp0\.venv\python -OO "E:\Dannybot\bot.py"
+call .venv\Scripts\activate
+python -OO "E:\Dannybot\bot.py"
 pause
