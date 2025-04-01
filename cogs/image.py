@@ -142,7 +142,8 @@ class image(commands.Cog):
                     def wrap_text_and_adjust_font(text, draw, font, max_width, max_height):
                         while True:
                             lines = wrap_text(text, draw, font, max_width)
-                            line_height = font.getsize("A")[1]
+                            text_bbox = font.getbbox("A")
+                            line_height = text_bbox[3] - text_bbox[1]
                             total_height = (line_height + line_spacing) * len(lines)
                             if total_height <= max_height or font.size <= 10:
                                 break
@@ -153,8 +154,8 @@ class image(commands.Cog):
                     max_height = int(im.height * 0.4)
                     line_spacing = 5 if font_size > 128 else 5
                     lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_height)
-
-                    line_height = font.getsize("y")[1]
+                    text_bbox = font.getbbox("y")
+                    line_height = text_bbox[3] - text_bbox[1]
                     rectangle_height = (line_height + line_spacing) * len(lines) + 20
 
                     new_im = Image.new(
@@ -167,7 +168,8 @@ class image(commands.Cog):
                     y = 10 
 
                     for line in lines:
-                        text_width, _ = draw.textsize(line, font=font)
+                        text_bbox = draw.textbbox((0, 0), line, font=font)  
+                        text_width = text_bbox[2]
                         text_position = ((im.width - text_width) // 2, y)
                         draw.text(text_position, line, font=font, fill="black")
                         y += line_height + line_spacing
@@ -197,7 +199,8 @@ class image(commands.Cog):
             def wrap_text_and_adjust_font(text, draw, font, max_width, max_height):
                 while True:
                     lines = wrap_text(text, draw, font, max_width)
-                    line_height = font.getsize("y")[1]
+                    text_bbox = font.getbbox("y")
+                    line_height = text_bbox[3] - text_bbox[1]
                     total_height = (line_height + line_spacing) * len(lines)
                     if total_height <= max_height or font.size <= 10:
                         break
@@ -209,7 +212,8 @@ class image(commands.Cog):
             line_spacing = 5 if font_size > 140 else 5
             lines, font = wrap_text_and_adjust_font(text, draw, font, max_width, max_height)
 
-            line_height = font.getsize("A")[1]
+            text_bbox = font.getbbox("A")
+            line_height = text_bbox[3] - text_bbox[1]
             rectangle_height = (line_height + line_spacing) * len(lines) + 20
 
             new_im = Image.new(
@@ -222,8 +226,9 @@ class image(commands.Cog):
             y = 10 
 
             for line in lines:
-                text_width, _ = draw.textsize(line, font=font)
-                text_position = ((im.width - text_width) // 2, y)
+                text_bbox = draw.textbbox((0, 0), line, font=font)
+                text_width, _ = text_bbox[2], text_bbox[3]
+                text_position = ((im.width - text_width) // 2, y) 
                 draw.text(text_position, line, font=font, fill="black")
                 y += line_height + line_spacing
 

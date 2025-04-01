@@ -30,6 +30,7 @@ import uuid
 import urllib
 import webbrowser
 from collections import deque, namedtuple
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from functools import lru_cache, partial
 from io import BytesIO, StringIO
@@ -357,9 +358,9 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
     # reduce font size until text fits within image width
     while True:
         top_line_widths = [
-            text_draw.textsize(
-                line, font=PIL.ImageFont.truetype(font_path, top_font_size)
-            )[0]
+            text_draw.textbbox(
+                (0, 0), line, font=PIL.ImageFont.truetype(font_path, top_font_size)
+            )[2]
             for line in top_text_lines
         ]
         if max(top_line_widths) <= img.width - padding * 2:
@@ -368,11 +369,12 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
 
     max_bottom_font_size = int(img.width / 8)
     bottom_font_size = max_bottom_font_size
+    # reduce font size until text fits within image width
     while True:
         bottom_line_widths = [
-            text_draw.textsize(
-                line, font=PIL.ImageFont.truetype(font_path, bottom_font_size)
-            )[0]
+            text_draw.textbbox(
+                (0, 0), line, font=PIL.ImageFont.truetype(font_path, bottom_font_size)
+            )[2]
             for line in bottom_text_lines
         ]
         if max(bottom_line_widths) <= img.width - padding * 2:
@@ -383,7 +385,11 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
     top_text_height = 0
     for line, font_size in zip(top_text_lines, [top_font_size] * len(top_text_lines)):
         font = PIL.ImageFont.truetype(font_path, font_size)
-        text_width, text_height = text_draw.textsize(line, font=font)
+        text_bbox = text_draw.textbbox((0, 0), line, font=font)  # Get the bounding box
+        text_width, text_height = (
+            text_bbox[2],
+            text_bbox[3],
+        )  # Extract width and height from bbox
         x = (img.width - text_width) // 2  # center horizontally
         y = padding + top_text_height
         text_draw.text(
@@ -396,8 +402,12 @@ def _draw_meme_text(img, Top_Text, Bottom_Text, font_path):
         bottom_text_lines, [bottom_font_size] * len(bottom_text_lines)
     ):
         font = PIL.ImageFont.truetype(font_path, font_size)
-        text_width, text_height = text_draw.textsize(line, font=font)
-        x = (img.width - text_width) // 2
+        text_bbox = text_draw.textbbox((0, 0), line, font=font)  # Get the bounding box
+        text_width, text_height = (
+            text_bbox[2],
+            text_bbox[3],
+        )  # Extract width and height from bbox
+        x = (img.width - text_width) // 2  # center horizontally
         y = img.height - padding - text_height - bottom_text_height
         text_draw.text(
             (x, y), line, font=font, fill="white", stroke_width=2, stroke_fill="black"
@@ -815,8 +825,12 @@ def change_hue(image, hue_shift, saturation_shift=1):
 # funni deepfry
 def deepfry(inputpath, outputpath):
     image = PIL.Image.open(f"{inputpath}").convert("RGB")
-    image.save(f"{dannybot}\\cache\\deepfry_in.jpg", quality=15) # this makes it look like shit
-    with magick(filename=f"{dannybot}\\cache\\deepfry_in.jpg") as img: # this make it shittier
+    image.save(
+        f"{dannybot}\\cache\\deepfry_in.jpg", quality=15
+    )  # this makes it look like shit
+    with magick(
+        filename=f"{dannybot}\\cache\\deepfry_in.jpg"
+    ) as img:  # this make it shittier
         for _ in range(2):
             img.level(0.2, 0.9, gamma=1.1)
             img.sharpen(radius=8, sigma=4)
@@ -873,7 +887,9 @@ def make_meme_gif(Top_Text, Bottom_Text):
             imagebounds(img_path)
             img = PIL.Image.open(img_path).convert("RGBA")
             font_path = f"{dannybot}\\assets\\impactjpn.otf"
-            composite_image = _draw_meme_text(img, Top_Text, Bottom_Text, font_path) # make meme
+            composite_image = _draw_meme_text(
+                img, Top_Text, Bottom_Text, font_path
+            )  # make meme
             output_path = f"{dannybot}\\cache\\ffmpeg\\output\\{frame}"
             composite_image.save(output_path)
     repack_gif()
@@ -884,14 +900,20 @@ def make_meme_gif(Top_Text, Bottom_Text):
 def wrap_text(text, draw, font, max_width):
     wrapped_lines = []
     for line in text.split("\n"):
-        if draw.textsize(line, font=font)[0] <= max_width:
+        text_bbox = draw.textbbox(
+            (0, 0), line, font=font
+        )  # Get the bounding box for the line
+        if text_bbox[2] <= max_width:  # text_bbox[2] gives the width of the line
             wrapped_lines.append(line)
         else:
             words = line.split(" ")
             wrapped_line = ""
             for word in words:
                 test_line = f"{wrapped_line} {word}".strip()
-                if draw.textsize(test_line, font=font)[0] <= max_width:
+                text_bbox_test = draw.textbbox((0, 0), test_line, font=font)
+                if (
+                    text_bbox_test[2] <= max_width
+                ):  # text_bbox_test[2] gives the width of the test line
                     wrapped_line = test_line
                 else:
                     wrapped_lines.append(wrapped_line)
@@ -937,11 +959,15 @@ def clean_pooter():
     def clean_file(file):
         nonlocal file_hashes
         file_path = os.path.join(directory_path, file)
+
+        # skip files without an extension and delete them
         if "." not in file:
             os.remove(file_path)
             with lock:
                 print(Fore.LIGHTMAGENTA_EX + f"Deleted: {file}" + Fore.RESET)
             return
+
+        # calculate file hash to check for duplicates
         file_hash = calculate_file_hash(file_path)
         with lock:
             if file_hash in file_hashes:
@@ -957,15 +983,8 @@ def clean_pooter():
         if os.path.isfile(os.path.join(directory_path, file))
     ]
 
-    threads = []
-    # launch a separate thread for each file cleanup operation
-    for file in files_to_clean:
-        thread = threading.Thread(target=clean_file, args=(file,))
-        thread.start()
-        threads.append(thread)
-
-    # wait for all cleanup threads to finish
-    for thread in threads:
-        thread.join()
+    max_threads = 25
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        executor.map(clean_file, files_to_clean)
 
     print(Fore.BLUE + "No more files to clean." + Fore.RESET)
