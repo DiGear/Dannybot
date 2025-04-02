@@ -31,7 +31,7 @@ class CustomGPT(commands.FlagConverter):
 
 # class for the cog where i store most of the script-wide variables
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=6, model="gpt-4o-mini"):
+    def __init__(self, bot: commands.Bot, memory_length=6, model="gpt-4o-mini-search-preview"):
         self.bot = bot
         self.memory_length = memory_length  # length of conversation history
         self.model = model
@@ -42,18 +42,12 @@ class chatbot(commands.Cog):
             "content": (
                 "Your name is Dannybot, a Discord bot that responds to people in a chatroom. "
                 "Also, you are typically talking to more than one person. "
-                "The name format is USERNAME said: CONTENT, respond to their messages."
+                "The name format is USERNAME said: CONTENT, respond to their messages. Do not include the prompt/queestion in your response."
             ),
         }
 
         # we store the conversation history here
         self.conversation_history = deque(maxlen=memory_length)
-
-        # the parameters for GPT
-        self.temperature = 1.2
-        self.top_p = 1.0
-        self.frequency_penalty = 0.0
-        self.presence_penalty = 0.0
 
         self.logger = logging.getLogger(__name__)
 
@@ -132,10 +126,6 @@ class chatbot(commands.Cog):
                 # lamba function that calls the API and passes in our parameters
                 lambda: openai.ChatCompletion.create(
                     model=self.model,
-                    temperature=self.temperature,
-                    top_p=self.top_p,
-                    frequency_penalty=self.frequency_penalty,
-                    presence_penalty=self.presence_penalty,
                     max_tokens=750,
                     messages=messages,
                 ),
