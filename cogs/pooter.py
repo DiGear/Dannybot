@@ -190,6 +190,21 @@ class Pooter(commands.Cog):
             total_downloads = 1
             await download_file(File_Url, 1)
 
+    @commands.command(
+        aliases=["poovid", "poopvid", "spoonvid", "🥄vid", "💩vid", "shitvid", "crapvid"],
+        description="Receive a video file from a user-built archive of files.",
+        brief="Receive video files from a public archive.",
+    )
+    async def pootervid(self, ctx, File_Url: typing.Optional[str] = None):
+        if (
+            ctx.guild is not None and ctx.guild.id not in whitelist
+        ) and ctx.author.id != 343224184110841856:
+            await ctx.send("This server is not whitelisted for this command.")
+            return
+        pooter_file = bag_random_pooter.choice(name="pooter", type="video")
+        with open(os.path.join(self.pooter_db_path, pooter_file), "rb") as f:
+            await ctx.reply(file=discord.File(f, pooter_file))
+
     @commands.command(hidden=True)
     async def dooter(self, ctx, File_Url: typing.Optional[str] = None):
         async def download_file(url, current_download):

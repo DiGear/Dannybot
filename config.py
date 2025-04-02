@@ -121,7 +121,7 @@ class BagRandom:
             self.bags[name]["bag"] = list(self.bags[name]["original_values"])
         self.save_bags()
 
-    def choice(self, name):
+    def choice(self, name, type=None):
         """Return a random element from the specified bag."""
         if name not in self.bags:
             raise ValueError(f"Bag '{name}' does not exist.")
@@ -129,7 +129,16 @@ class BagRandom:
         bag = self.bags[name]
         if not bag["bag"]:
             self._refill_bag(name)
-        choice = random.choice(bag["bag"])
+
+        #support for pootervid
+        if type == "video":
+            allowed_extension = (".mp4", ".webm", ".mov")
+            video_choices = [item for item in bag["bag"] if item.lower().endswith(allowed_extension)]
+            choice = random.choice(video_choices)
+
+        else:
+            choice = random.choice(bag["bag"])
+
         bag["bag"].remove(choice)
         self.save_bags()
         return choice
