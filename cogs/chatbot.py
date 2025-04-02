@@ -42,7 +42,7 @@ class chatbot(commands.Cog):
             "content": (
                 "Your name is Dannybot, a Discord bot that responds to people in a chatroom. "
                 "Also, you are typically talking to more than one person. "
-                "The name format is (USERNAME said: CONTENT), respond to their messages."
+                "The name format is USERNAME said: CONTENT, respond to their messages."
             ),
         }
 
