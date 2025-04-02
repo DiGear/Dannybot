@@ -80,12 +80,12 @@ class Pooter(commands.Cog):
                 await self.bot.get_channel(logs_channel).send(
                     f"{payload.member.global_name} ({payload.member.id}) has pootered: {url}"
                 )
+                await input_message.remove_reaction("💩", payload.member)
                 return True
             await message.send(
                 "This file is not a valid image or video file!", delete_after=3
             )
-            await input_message.add_reaction("⚠️")
-            return False
+            return
 
         message_channel = self.bot.get_channel(payload.channel_id)
         input_message = await message_channel.fetch_message(payload.message_id)
@@ -118,7 +118,6 @@ class Pooter(commands.Cog):
             results = await asyncio.gather(*tasks)
             if all(results):
                 await input_message.add_reaction("✅")
-            await input_message.remove_reaction("💩", payload.member)
 
     @commands.command(
         aliases=["poo", "poop", "spoon", "🥄", "💩", "shit", "crap"],
