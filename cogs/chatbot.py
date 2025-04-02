@@ -31,7 +31,7 @@ class CustomGPT(commands.FlagConverter):
 
 # class for the cog where i store most of the script-wide variables
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=10):
+    def __init__(self, bot: commands.Bot, memory_length=5):
         self.bot = bot
         self.memory_length = memory_length  # length of conversation history
         self.image_messages = [] #stores images for model switching
