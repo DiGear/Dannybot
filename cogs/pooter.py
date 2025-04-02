@@ -298,6 +298,7 @@ class Pooter(commands.Cog):
             "249411048518451200": ["rotty"],
             "229401113382617088": ["leffrey", "leif"],
             "211419370860183552": ["crys", "cris", "crystal"],
+            "534246284526092288": ["crys", "cris", "crystal"],
             "327207076067803156": ["scroogily man", "isaac"],
             "569267645707321344": ["jordi"],
             "206392667351941121": ["sam", "sam deluxe"],
@@ -315,7 +316,14 @@ class Pooter(commands.Cog):
             "176084654850310145": ["ben", "ben3759"],
             "562369969879253054": ["gilbert", "liam"],
             "203882027366350859": ["bravo"],
-            "420815071426379778": ["thomas", "mcalmost", "mcneko"]
+            "420815071426379778": ["thomas", "mcalmost", "mcneko"],
+            "309849222470041601": ["melvin", "melvin8d"],
+            "710150557356130314": ["silvergaming", "silver"],
+            "267359702961094656": ["kas", "kasper", "kasrim"],
+            "454778341640241172": ["qwizibo"],
+            "472938239599181824": ["kem", "kemfriend"],
+            "707789720410783764": ["liene", "ebro"],
+            "781594874675331113": ["ame", "akiyama"],
         }
 
         history = self.load_history(history_file_path)
