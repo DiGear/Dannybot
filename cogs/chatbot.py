@@ -31,10 +31,9 @@ class CustomGPT(commands.FlagConverter):
 
 # class for the cog where i store most of the script-wide variables
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=6, model="gpt-4o-mini-search-preview"):
+    def __init__(self, bot: commands.Bot, memory_length=6):
         self.bot = bot
         self.memory_length = memory_length  # length of conversation history
-        self.model = model
 
         # the system message influences how GPT responds
         self.system_message = {
@@ -79,6 +78,8 @@ class chatbot(commands.Cog):
             }
         ]
 
+        determined_model = "gpt-4o-mini-search-preview"
+
         # if there any any attachments we put the first one in the content we send to GPT
         if message.reference:
             referenced_message = await message.channel.fetch_message(
@@ -89,6 +90,7 @@ class chatbot(commands.Cog):
                 content.append(
                     {"type": "image_url", "image_url": {"url": str(attachment_url)}}
                 )
+                determined_model = "gpt-4o-mini"
 
         # the same thing as above but for not replies
         if message.attachments:
@@ -96,12 +98,13 @@ class chatbot(commands.Cog):
             content.append(
                 {"type": "image_url", "image_url": {"url": str(attachment_url)}}
             )
+            determined_model = "gpt-4o-mini"
 
         # update the conversation history
         self.conversation_history.append({"role": "user", "content": content})
 
         try:
-            response_text = await self.get_openai_response()
+            response_text = await self.get_openai_response(determined_model)
             response_text = self.clean_response(response_text)
             await message.channel.send(response_text, reference=message)
 
@@ -113,7 +116,8 @@ class chatbot(commands.Cog):
             self.logger.exception("an error occurred: %s\nreloading the cog...", e)
             self.bot.reload_extension("chatbot")
 
-    async def get_openai_response(self) -> str:
+    async def get_openai_response(self, determined_model: str) -> str:
+        print(determined_model)
 
         # add the system message to the conversation history
         messages = [self.system_message] + list(self.conversation_history)
@@ -125,7 +129,7 @@ class chatbot(commands.Cog):
                 None,
                 # lamba function that calls the API and passes in our parameters
                 lambda: openai.ChatCompletion.create(
-                    model=self.model,
+                    model=determined_model,
                     max_tokens=750,
                     messages=messages,
                 ),
