@@ -41,7 +41,7 @@ class chatbot(commands.Cog):
             "content": (
                 "Your name is Dannybot, a Discord bot that responds to people in a chatroom. "
                 "Also, you are typically talking to more than one person. "
-                "The name format is USERNAME said: CONTENT, respond to their messages. Do not include the prompt/queestion in your response."
+                "The name format is USERNAME said: CONTENT, respond to their messages. Do not include the prompt/question in your response."
             ),
         }
 
@@ -62,7 +62,7 @@ class chatbot(commands.Cog):
         ):
             return
 
-        # more command ignorance shit
+        # more command ignorance checks
         if message.reference and (
             "d." in message.content.lower()
             or "#" in message.content.lower()
@@ -79,8 +79,9 @@ class chatbot(commands.Cog):
         ]
 
         determined_model = "gpt-4o-mini-search-preview"
+        uses_image_model = False
 
-        # if there any any attachments we put the first one in the content we send to GPT
+        # check for referenced message attachments
         if message.reference:
             referenced_message = await message.channel.fetch_message(
                 message.reference.message_id
@@ -91,14 +92,23 @@ class chatbot(commands.Cog):
                     {"type": "image_url", "image_url": {"url": str(attachment_url)}}
                 )
                 determined_model = "gpt-4o-mini"
+                uses_image_model = True
 
-        # the same thing as above but for not replies
+        # check for direct attachments
         if message.attachments:
             attachment_url = message.attachments[0].url
             content.append(
                 {"type": "image_url", "image_url": {"url": str(attachment_url)}}
             )
             determined_model = "gpt-4o-mini"
+            uses_image_model = True
+
+        # remove previous images from conversation history if using image model
+        if uses_image_model:
+            self.conversation_history = deque(
+                [entry for entry in self.conversation_history if "image_url" not in entry["content"]],
+                maxlen=self.memory_length,
+            )
 
         # update the conversation history
         self.conversation_history.append({"role": "user", "content": content})
@@ -118,16 +128,15 @@ class chatbot(commands.Cog):
 
     async def get_openai_response(self, determined_model: str) -> str:
         print(determined_model)
-
+        print(self.conversation_history)
         # add the system message to the conversation history
         messages = [self.system_message] + list(self.conversation_history)
 
-        # we prepare a separate thread for the call to OpenAI incase it takes a while
+        # we prepare a separate thread for the call to OpenAI in case it takes a while
         loop = asyncio.get_running_loop()
         try:
             response_data = await loop.run_in_executor(
                 None,
-                # lamba function that calls the API and passes in our parameters
                 lambda: openai.ChatCompletion.create(
                     model=determined_model,
                     max_tokens=750,
