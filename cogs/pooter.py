@@ -273,7 +273,7 @@ class Pooter(commands.Cog):
             json.dump(history, f, indent=4)
 
     @commands.hybrid_command(alisess=["pooquiz", "wpi"])
-    async def pooterquiz(self, ctx):
+    async def pooterquiz(self, ctx, count=None):
         pooter_db_path = self.pooter_db_path
         pooter_quiz_db_path = self.pooter_quiz_db_path
         history_file_path = f"{dannybot}\\assets\\pooterquiz_history.json"
@@ -289,6 +289,35 @@ class Pooter(commands.Cog):
             await ctx.send("shit is fucked")
             return
 
+        users_dict = {
+            "343224184110841856": ["danny", "fdg", "digear"],
+            "158418656861093888": ["flashlight", "ezogaming", "ezo"],
+            "422249760876003328": ["flashlight", "ezogaming", "ezo"],
+            "305161653463285780": ["pizzi"],
+            "243104841021390859": ["crypted"],
+            "249411048518451200": ["rotty"],
+            "229401113382617088": ["leffrey", "leif"],
+            "211419370860183552": ["cris", "crys", "crystal"],
+            "327207076067803156": ["scroogily man", "isaac"],
+            "569267645707321344": ["jordi"],
+            "206392667351941121": ["sam", "sam deluxe"],
+            "588539600428072971": ["incine"],
+            "538112945800871938": ["reese", "videogame71", "joycons"],
+            "285049524068810762": ["outerspacepirate", "outer", "osp", "sean", "shawn"],
+            "229396708201594881": ["indev", "devin"],
+            "114112473430360070": ["kneecap", "viath"],
+            "419715716770562078": ["momentum", "mom"],
+            "299907871640911872": ["maki", "maki ligon"],
+            "588342367476776961": ["maki", "maki ligon"],
+            "519202056846704680": ["chris", "chris j"],
+            "847276836172988426": ["dannybot"],
+            "246131844859297800": ["neatcrown", "neat"],
+            "176084654850310145": ["ben", "ben3759"],
+            "562369969879253054": ["gilbert", "liam"],
+            "203882027366350859": ["bravo"],
+            "420815071426379778": ["thomas", "mcalmost", "mcneko"]
+        }
+
         history = self.load_history(history_file_path)
 
         id_counts = {}
@@ -297,6 +326,17 @@ class Pooter(commands.Cog):
             if match:
                 user_id = match.group(1)
                 id_counts[user_id] = id_counts.get(user_id, 0) + 1
+
+        if count == "count":
+            message_lines = ["# Pooter Counts:\n"]
+            for user_id, cnt in id_counts.items():
+                if user_id in users_dict:
+                    name = users_dict[user_id][0]
+                    message_lines.append(f"**{name}**: {cnt}")
+                else:
+                    message_lines.append(f"*{user_id}*: {cnt}")
+            await ctx.send("\n".join(message_lines))
+            return
 
         def weight(count):
             ranges = [(10, (0.05, 0.1)), (100, (0.1, 0.15)), (1000, (0.4, 0.5)),
@@ -359,34 +399,6 @@ class Pooter(commands.Cog):
         allowed_answers = {target_user.name.lower()}
         if member and member.display_name:
             allowed_answers.add(member.display_name.lower())
-
-        users_dict = {
-            "343224184110841856": ["danny", "fdg", "digear"],
-            "158418656861093888": ["flashlight", "ezogaming", "ezo"],
-            "422249760876003328": ["flashlight", "ezogaming", "ezo"],
-            "305161653463285780": ["pizzi"],
-            "243104841021390859": ["crypted"],
-            "249411048518451200": ["rotty"],
-            "229401113382617088": ["leffrey", "leif"],
-            "211419370860183552": ["cris", "crys", "crystal"],
-            "327207076067803156": ["scroogily man", "isaac"],
-            "569267645707321344": ["jordi"],
-            "206392667351941121": ["sam", "sam deluxe"],
-            "588539600428072971": ["incine"],
-            "538112945800871938": ["reese", "videogame71", "joycons"],
-            "285049524068810762": ["outerspacepirate", "outer", "osp", "sean", "shawn"],
-            "229396708201594881": ["indev", "devin"],
-            "114112473430360070": ["kneecap", "viath"],
-            "419715716770562078": ["momentum", "mom"],
-            "299907871640911872": ["maki", "maki ligon"],
-            "588342367476776961": ["maki", "maki ligon"],
-            "519202056846704680": ["chris", "chris j"],
-            "847276836172988426": ["dannybot"],
-            "246131844859297800": ["neatcrown", "neat"],
-            "176084654850310145": ["ben", "ben3759"],
-            "562369969879253054": ["gilbert", "liam"],
-            "203882027366350859": ["bravo"],
-        }
 
         embed = discord.Embed(
             title=f"{ctx.author.name}'s Pooter Quiz",
