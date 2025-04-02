@@ -31,9 +31,10 @@ class CustomGPT(commands.FlagConverter):
 
 # class for the cog where i store most of the script-wide variables
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=6):
+    def __init__(self, bot: commands.Bot, memory_length=10):
         self.bot = bot
         self.memory_length = memory_length  # length of conversation history
+        self.image_messages = [] #stores images for model switching
 
         # the system message influences how GPT responds
         self.system_message = {
@@ -103,16 +104,41 @@ class chatbot(commands.Cog):
             determined_model = "gpt-4o-mini"
             uses_image_model = True
 
-        # remove images from conversation history if switching to gpt-4o-mini-search-preview
+        # handle image swapping
         if determined_model == "gpt-4o-mini-search-preview":
+            temp_conversation = []
+            self.image_messages.clear()  # reset stored images
+
+            for i, entry in enumerate(self.conversation_history):
+                if any("image_url" in msg for msg in entry["content"]):
+                    self.image_messages.append((i, entry))  # store index and message
+                else:
+                    temp_conversation.append(entry)
+
             self.conversation_history = deque(
-                [
-                    entry
-                    for entry in self.conversation_history
-                    if not any("image_url" in msg for msg in entry["content"])
-                ],
-                maxlen=self.memory_length,
+                temp_conversation, maxlen=self.memory_length
             )
+
+        elif determined_model == "gpt-4o-mini" and self.image_messages:
+            # restore images in their original positions
+            self.image_messages.sort(key=lambda x: x[0])  # sort by original position
+            new_conversation = []
+            image_index = 0
+
+            for i in range(len(self.conversation_history) + len(self.image_messages)):
+                if (
+                    image_index < len(self.image_messages)
+                    and self.image_messages[image_index][0] == i
+                ):
+                    new_conversation.append(self.image_messages[image_index][1])
+                    image_index += 1
+                elif self.conversation_history:
+                    new_conversation.append(self.conversation_history.popleft())
+
+            self.conversation_history = deque(
+                new_conversation, maxlen=self.memory_length
+            )
+            self.image_messages.clear()  # clear after restoring
 
         # update the conversation history
         self.conversation_history.append({"role": "user", "content": content})
@@ -132,11 +158,11 @@ class chatbot(commands.Cog):
 
     async def get_openai_response(self, determined_model: str) -> str:
         print(determined_model)
+        print(self.conversation_history)
 
         # add the system message to the conversation history
         messages = [self.system_message] + list(self.conversation_history)
 
-        # we prepare a separate thread for the call to OpenAI in case it takes a while
         loop = asyncio.get_running_loop()
         try:
             response_data = await loop.run_in_executor(
