@@ -103,10 +103,14 @@ class chatbot(commands.Cog):
             determined_model = "gpt-4o-mini"
             uses_image_model = True
 
-        # remove previous images from conversation history if using image model
-        if uses_image_model:
+        # remove images from conversation history if switching to gpt-4o-mini-search-preview
+        if determined_model == "gpt-4o-mini-search-preview":
             self.conversation_history = deque(
-                [entry for entry in self.conversation_history if "image_url" not in entry["content"]],
+                [
+                    entry
+                    for entry in self.conversation_history
+                    if not any("image_url" in msg for msg in entry["content"])
+                ],
                 maxlen=self.memory_length,
             )
 
@@ -123,12 +127,12 @@ class chatbot(commands.Cog):
                 {"role": "assistant", "content": response_text}
             )
         except Exception as e:
-            self.logger.exception("an error occurred: %s\nreloading the cog...", e)
+            self.logger.exception("An error occurred: %s\nReloading the cog...", e)
             self.bot.reload_extension("chatbot")
 
     async def get_openai_response(self, determined_model: str) -> str:
         print(determined_model)
-        print(self.conversation_history)
+
         # add the system message to the conversation history
         messages = [self.system_message] + list(self.conversation_history)
 
