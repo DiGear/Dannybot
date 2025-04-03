@@ -53,7 +53,6 @@ class Pooter(commands.Cog):
             await msg.channel.send("This server is not whitelisted for this command.")
             return
 
-        # Count occurrences of all aliases
         alias_count = sum(msg.content.lower().count(alias) for alias in aliases)
 
         if alias_count == 1:
