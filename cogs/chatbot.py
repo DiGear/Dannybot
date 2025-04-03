@@ -31,10 +31,10 @@ class CustomGPT(commands.FlagConverter):
 
 # class for the cog where i store most of the script-wide variables
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=5):
+    def __init__(self, bot: commands.Bot, memory_length=6, model="gpt-4o-mini"):
         self.bot = bot
         self.memory_length = memory_length  # length of conversation history
-        self.image_messages = [] #stores images for model switching
+        self.model = model
 
         # the system message influences how GPT responds
         self.system_message = {
@@ -42,12 +42,18 @@ class chatbot(commands.Cog):
             "content": (
                 "Your name is Dannybot, a Discord bot that responds to people in a chatroom. "
                 "Also, you are typically talking to more than one person. "
-                "The name format is USERNAME said: CONTENT, respond to their messages. Do not include the prompt/question in your response."
+                "The name format is USERNAME said: CONTENT, respond to their messages."
             ),
         }
 
         # we store the conversation history here
         self.conversation_history = deque(maxlen=memory_length)
+
+        # the parameters for GPT
+        self.temperature = 1.2
+        self.top_p = 1.0
+        self.frequency_penalty = 0.0
+        self.presence_penalty = 0.0
 
         self.logger = logging.getLogger(__name__)
 
@@ -63,7 +69,7 @@ class chatbot(commands.Cog):
         ):
             return
 
-        # more command ignorance checks
+        # more command ignorance shit
         if message.reference and (
             "d." in message.content.lower()
             or "#" in message.content.lower()
@@ -79,10 +85,7 @@ class chatbot(commands.Cog):
             }
         ]
 
-        determined_model = "gpt-4o-mini-search-preview"
-        uses_image_model = False
-
-        # check for referenced message attachments
+        # if there any any attachments we put the first one in the content we send to GPT
         if message.reference:
             referenced_message = await message.channel.fetch_message(
                 message.reference.message_id
@@ -92,59 +95,19 @@ class chatbot(commands.Cog):
                 content.append(
                     {"type": "image_url", "image_url": {"url": str(attachment_url)}}
                 )
-                determined_model = "gpt-4o-mini"
-                uses_image_model = True
 
-        # check for direct attachments
+        # the same thing as above but for not replies
         if message.attachments:
             attachment_url = message.attachments[0].url
             content.append(
                 {"type": "image_url", "image_url": {"url": str(attachment_url)}}
             )
-            determined_model = "gpt-4o-mini"
-            uses_image_model = True
-
-        # handle image swapping
-        if determined_model == "gpt-4o-mini-search-preview":
-            temp_conversation = []
-            self.image_messages.clear()  # reset stored images
-
-            for i, entry in enumerate(self.conversation_history):
-                if any("image_url" in msg for msg in entry["content"]):
-                    self.image_messages.append((i, entry))  # store index and message
-                else:
-                    temp_conversation.append(entry)
-
-            self.conversation_history = deque(
-                temp_conversation, maxlen=self.memory_length
-            )
-
-        elif determined_model == "gpt-4o-mini" and self.image_messages:
-            # restore images in their original positions
-            self.image_messages.sort(key=lambda x: x[0])  # sort by original position
-            new_conversation = []
-            image_index = 0
-
-            for i in range(len(self.conversation_history) + len(self.image_messages)):
-                if (
-                    image_index < len(self.image_messages)
-                    and self.image_messages[image_index][0] == i
-                ):
-                    new_conversation.append(self.image_messages[image_index][1])
-                    image_index += 1
-                elif self.conversation_history:
-                    new_conversation.append(self.conversation_history.popleft())
-
-            self.conversation_history = deque(
-                new_conversation, maxlen=self.memory_length
-            )
-            self.image_messages.clear()  # clear after restoring
 
         # update the conversation history
         self.conversation_history.append({"role": "user", "content": content})
 
         try:
-            response_text = await self.get_openai_response(determined_model)
+            response_text = await self.get_openai_response()
             response_text = self.clean_response(response_text)
             await message.channel.send(response_text, reference=message)
 
@@ -153,22 +116,26 @@ class chatbot(commands.Cog):
                 {"role": "assistant", "content": response_text}
             )
         except Exception as e:
-            self.logger.exception("An error occurred: %s\nReloading the cog...", e)
+            self.logger.exception("an error occurred: %s\nreloading the cog...", e)
             self.bot.reload_extension("chatbot")
 
-    async def get_openai_response(self, determined_model: str) -> str:
-        print(determined_model)
-        print(self.conversation_history)
+    async def get_openai_response(self) -> str:
 
         # add the system message to the conversation history
         messages = [self.system_message] + list(self.conversation_history)
 
+        # we prepare a separate thread for the call to OpenAI incase it takes a while
         loop = asyncio.get_running_loop()
         try:
             response_data = await loop.run_in_executor(
                 None,
+                # lamba function that calls the API and passes in our parameters
                 lambda: openai.ChatCompletion.create(
-                    model=determined_model,
+                    model=self.model,
+                    temperature=self.temperature,
+                    top_p=self.top_p,
+                    frequency_penalty=self.frequency_penalty,
+                    presence_penalty=self.presence_penalty,
                     max_tokens=750,
                     messages=messages,
                 ),
