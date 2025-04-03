@@ -27,19 +27,39 @@ class Pooter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
-        if not any(msg.content.startswith(f"{pfx}poo") for pfx in dannybot_prefixes):
+        aliases = [
+            "pooter",
+            "poo",
+            "poop",
+            "spoon",
+            "🥄",
+            "💩",
+            "shit",
+            "crap",
+            "hankey",
+            "feces",
+            "dung",
+            "scat",
+        ]
+
+        if not any(
+            msg.content.startswith(f"{pfx}{alias}")
+            for pfx in dannybot_prefixes
+            for alias in aliases
+        ):
             return
 
         if msg.guild.id not in whitelist:
             await msg.channel.send("This server is not whitelisted for this command.")
             return
 
-        poo_count = msg.content.count("poo")
+        # Count occurrences of all aliases
+        alias_count = sum(msg.content.lower().count(alias) for alias in aliases)
 
-        if poo_count == 1:
+        if alias_count == 1:
             return
 
-        for _ in range(poo_count):
+        for _ in range(alias_count):
             img_file = bag_random_pooter.choice("pooter")
             with open(os.path.join(self.pooter_db_path, img_file), "rb") as img:
                 await msg.channel.send(file=discord.File(img), reference=msg)
@@ -131,6 +151,7 @@ class Pooter(commands.Cog):
             "hankey",
             "feces",
             "dung",
+            "scat",
         ],
         description="Send or receive a file from a user-built archive of files.",
         brief="Send/Receive files from a public archive.",
@@ -212,6 +233,7 @@ class Pooter(commands.Cog):
             "hankeyvid",
             "fecesvid",
             "dungvid",
+            "scatvid",
         ],
         description="Receive a video file from a user-built archive of files.",
         brief="Receive video files from a public archive.",
