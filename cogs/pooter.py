@@ -49,6 +49,9 @@ class Pooter(commands.Cog):
         ):
             return
 
+        if "quiz" in msg.content.lower():
+            return
+
         if msg.guild.id not in whitelist:
             await msg.channel.send("This server is not whitelisted for this command.")
             return
