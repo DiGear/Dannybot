@@ -120,7 +120,18 @@ class Pooter(commands.Cog):
                 await input_message.add_reaction("✅")
 
     @commands.command(
-        aliases=["poo", "poop", "spoon", "🥄", "💩", "shit", "crap"],
+        aliases=[
+            "poo",
+            "poop",
+            "spoon",
+            "🥄",
+            "💩",
+            "shit",
+            "crap",
+            "hankey",
+            "feces",
+            "dung",
+        ],
         description="Send or receive a file from a user-built archive of files.",
         brief="Send/Receive files from a public archive.",
     )
@@ -190,7 +201,18 @@ class Pooter(commands.Cog):
             await download_file(File_Url, 1)
 
     @commands.command(
-        aliases=["poovid", "poopvid", "spoonvid", "🥄vid", "💩vid", "shitvid", "crapvid"],
+        aliases=[
+            "poovid",
+            "poopvid",
+            "spoonvid",
+            "🥄vid",
+            "💩vid",
+            "shitvid",
+            "crapvid",
+            "hankeyvid",
+            "fecesvid",
+            "dungvid",
+        ],
         description="Receive a video file from a user-built archive of files.",
         brief="Receive video files from a public archive.",
     )
@@ -262,16 +284,16 @@ class Pooter(commands.Cog):
 
     def load_history(self, history_file_path):
         if os.path.exists(history_file_path):
-            with open(history_file_path, 'r') as f:
+            with open(history_file_path, "r") as f:
                 return json.load(f)
         else:
             return []
 
     def save_history(self, history_file_path, history):
-        with open(history_file_path, 'w') as f:
+        with open(history_file_path, "w") as f:
             json.dump(history, f, indent=4)
 
-    @commands.hybrid_command(alises=["pooquiz", "wpi"])
+    @commands.hybrid_command(aliases=["pooquiz", "wpi"])
     async def pooterquiz(self, ctx, count=None):
         pooter_db_path = self.pooter_db_path
         pooter_quiz_db_path = self.pooter_quiz_db_path
@@ -303,7 +325,7 @@ class Pooter(commands.Cog):
             "206392667351941121": ["sam", "sam deluxe"],
             "588539600428072971": ["incine"],
             "538112945800871938": ["reese", "videogame71", "joycons"],
-            "285049524068810762": ["outer","outerspacepirate", "osp", "sean", "shawn"],
+            "285049524068810762": ["outer", "outerspacepirate", "osp", "sean", "shawn"],
             "229396708201594881": ["indev", "devin"],
             "114112473430360070": ["kneecap", "viath"],
             "419715716770562078": ["momentum", "mom"],
@@ -346,9 +368,14 @@ class Pooter(commands.Cog):
             return
 
         def weight(count):
-            ranges = [(10, (0.05, 0.1)), (100, (0.1, 0.15)), (1000, (0.4, 0.5)),
-                    (2000, (0.15, 0.2)), (5000, (0.1, 0.15))]
-            
+            ranges = [
+                (10, (0.05, 0.1)),
+                (100, (0.1, 0.15)),
+                (1000, (0.4, 0.5)),
+                (2000, (0.1, 0.15)),
+                (5000, (0.05, 0.1)),
+            ]
+
             for max_count, prob_range in ranges:
                 if count <= max_count:
                     return random.uniform(*prob_range)
@@ -414,33 +441,51 @@ class Pooter(commands.Cog):
         embed.set_image(url=f"attachment://{chosen_file}")
 
         file_attachment = discord.File(file_path, filename=chosen_file)
-        botmessage = await ctx.reply(embed=embed, file=file_attachment, mention_author=True)
+        botmessage = await ctx.reply(
+            embed=embed, file=file_attachment, mention_author=True
+        )
 
         def check(message):
-            return message.channel == botmessage.channel and message.author == ctx.message.author and message.author != self.bot.user
+            return (
+                message.channel == botmessage.channel
+                and message.author == ctx.message.author
+                and message.author != self.bot.user
+            )
 
         try:
             response = await self.bot.wait_for("message", timeout=30.0, check=check)
             response_content = response.content.strip().lower()
 
             if str(target_id) in users_dict:
-                if any(fuzz.partial_ratio(response_content.lower(), name.lower()) >= 80 for name in users_dict[str(target_id)]):
+                if any(
+                    fuzz.ratio(response_content.lower(), name.lower()) == 100
+                    for name in users_dict[str(target_id)]
+                ):
                     await ctx.send(f"epic win **(you gained 10 DP)**")
-                    addxp_command = self.bot.get_command('addxp')
+                elif any(
+                    fuzz.ratio(response_content.lower(), name.lower()) >= 80
+                    for name in users_dict[str(target_id)]
+                ):
+                    await ctx.send(f"close enough **(you gained 10 DP)**")
+
+                    addxp_command = self.bot.get_command("addxp")
                     await ctx.invoke(addxp_command, xp=10)
-                    return
                 else:
                     correct_names = ", ".join(users_dict[str(target_id)])
                     await ctx.send(
-                        f"wrong answer, {response.author.mention}\nthe correct answer(s) would have been **{correct_names}**."
+                        f"**{response.content.strip()}** is the wrong answer, {response.author.mention}\nthe correct answer(s) would have been **{correct_names}**."
                     )
                     return
             else:
-                await ctx.send(f"add {target_user.name} ({target_user.id}) to the users_dict")
+                await ctx.send(
+                    f"add {target_user.name} ({target_user.id}) to the users_dict"
+                )
 
         except asyncio.TimeoutError:
             correct_names = ", ".join(users_dict[str(target_id)])
-            await ctx.send(f"times up, {ctx.message.author.mention}\nthe correct answer(s) would have been **{correct_names}**.")
+            await ctx.send(
+                f"times up, {ctx.message.author.mention}\nthe correct answer(s) would have been **{correct_names}**."
+            )
             return
         except asyncio.CancelledError:
             await ctx.send("the quiz was cancelled")
