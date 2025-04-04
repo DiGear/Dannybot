@@ -30,7 +30,7 @@ class Pooter(commands.Cog):
         aliases = [
             "pooter",
             "poo",
-            "poop",
+            # "poop", removed (for now maybe forever) because it makes poo not work
             "spoon",
             "🥄",
             "💩",
@@ -40,6 +40,7 @@ class Pooter(commands.Cog):
             "feces",
             "dung",
             "scat",
+            "assmatter",
         ]
 
         if not any(
@@ -56,8 +57,16 @@ class Pooter(commands.Cog):
             await msg.channel.send("This server is not whitelisted for this command.")
             return
 
-        alias_count = sum(msg.content.lower().count(alias) for alias in aliases)
-
+        # fuck
+        msg_lower = msg.content.lower()
+        alias_count = 0
+        for alias in sorted(aliases, key=len, reverse=True):
+            matches = re.findall(re.escape(alias), msg_lower)
+            count = len(matches)
+            alias_count += count
+            if count:
+                msg_lower = re.sub(re.escape(alias), ' ' * len(alias), msg_lower)
+        
         if alias_count == 1:
             return
 
@@ -154,6 +163,7 @@ class Pooter(commands.Cog):
             "feces",
             "dung",
             "scat",
+            "assmatter",
         ],
         description="Send or receive a file from a user-built archive of files.",
         brief="Send/Receive files from a public archive.",
@@ -236,6 +246,7 @@ class Pooter(commands.Cog):
             "fecesvid",
             "dungvid",
             "scatvid",
+            "assmattervid",
         ],
         description="Receive a video file from a user-built archive of files.",
         brief="Receive video files from a public archive.",
