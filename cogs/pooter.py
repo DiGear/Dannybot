@@ -65,8 +65,8 @@ class Pooter(commands.Cog):
             count = len(matches)
             alias_count += count
             if count:
-                msg_lower = re.sub(re.escape(alias), ' ' * len(alias), msg_lower)
-        
+                msg_lower = re.sub(re.escape(alias), " " * len(alias), msg_lower)
+
         if alias_count == 1:
             return
 
