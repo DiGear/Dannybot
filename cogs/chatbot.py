@@ -22,16 +22,19 @@ class CustomGPT(commands.FlagConverter):
     presence_penalty: typing.Optional[float] = 0.00
     prompt: str
     model: Literal[
+        "gpt-4.1-nano"
+        "gpt-4.1-mini",
         "gpt-4o-mini",
-        "gpt-4o",
-        "gpt-4",
         "gpt-pizzi",
-    ] = "gpt-4o-mini"
+        "o4-mini",
+        "o3-mini",
+        "o1-mini",
+    ] = "gpt-4.1-nano"
 
 
 # class for the cog where i store most of the script-wide variables
 class chatbot(commands.Cog):
-    def __init__(self, bot: commands.Bot, memory_length=6, model="gpt-4o-mini"):
+    def __init__(self, bot: commands.Bot, memory_length=6, model="gpt-4.1-nano"):
         self.bot = bot
         self.memory_length = memory_length  # length of conversation history
         self.model = model
